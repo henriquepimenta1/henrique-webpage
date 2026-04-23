@@ -1,426 +1,177 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
-import { useEffect, useRef } from "react";
-import SiteNav from "@/components/nav";
+import { useState } from "react";
+import { HOME_CARDS, NAV_LINKS, SITE_AUTHOR } from "@/content/home";
 
-const CARDS = [
-  {
-    href: "/portfolio",
-    label: "Portfolio",
-    labelColor: "#7EC47E",
-    title: "Fotos &",
-    titleBold: "Trabalhos",
-    desc: "Imagens de lugares, luz e momentos que valeram a viagem.",
-    cta: "Explorar",
-    bg: "/images/mountain-lake.jpg",
-    bgPosition: "center",
-  },
-  {
-    href: "/presets",
-    label: "Presets",
-    labelColor: "#C8905A",
-    title: "Outdoor",
-    titleBold: "Cinematic",
-    desc: "45 presets para Lightroom. Tons honestos, contraste limpo.",
-    cta: "$59 — Ver Presets",
-    bg: "/images/desert-dunes.jpg",
-    bgPosition: "center",
-  },
-  {
-    href: "/expedicoes",
-    label: "Expedições",
-    labelColor: "#6FA3D8",
-    title: "Aventuras &",
-    titleBold: "Trilhas",
-    desc: "Registos de lugares remotos, montanhas e natureza selvagem.",
-    cta: "Explorar",
-    bg: "/images/hiker.jpg",
-    bgPosition: "center top",
-  },
-];
-
-const BRANDS = ["Artlist", "DJI", "Expedia", "Framekit", "Nvidia", "Sony", "Canon", "Blackmagic"];
-
-const FOOTER_IMAGES = [
-  "/images/desert-dunes.jpg",
-  "/images/dunes-aerial.jpg",
-  "/images/mountain-lake.jpg",
-  "/images/mineral.jpg",
-  "/images/hiker.jpg",
-  "/images/portrait.jpg",
-];
-
-function ArrowIcon() {
-  return (
-    <svg width="11" height="11" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-    </svg>
-  );
-}
-
-function ExternalIcon() {
-  return (
-    <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: "#4C4440" }}>
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 17L17 7M17 7H7M17 7v10" />
-    </svg>
-  );
-}
+const HAND_WORDS = ["explorar", "caminhar", "aplicar"] as const;
 
 export default function HomePage() {
-  const revealRefs = useRef<HTMLElement[]>([]);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("reveal-visible");
-            obs.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-    revealRefs.current.forEach((el) => el && obs.observe(el));
-    return () => obs.disconnect();
-  }, []);
-
-  const addReveal = (el: HTMLElement | null) => {
-    if (el && !revealRefs.current.includes(el)) revealRefs.current.push(el);
-  };
+  const [hover, setHover] = useState<number | null>(null);
 
   return (
-    <div style={{ background: "#0E0C0A", color: "#E6DDD4", minHeight: "100vh", overflowX: "hidden" }}>
+    <div
+      style={{ background: "var(--forest)", color: "var(--canvas)", height: "100svh", overflow: "hidden", fontFamily: "var(--font-ui)" }}
+    >
       <style>{`
-        .cat-card { flex: 1; transition: flex 600ms cubic-bezier(.4,0,.2,1), border-color 400ms; }
-        .cards-row:hover .cat-card { flex: .55; }
-        .cards-row:hover .cat-card:hover { flex: 2.2; border-color: rgba(255,255,255,.18); }
-        .cat-card:hover .cat-glass { backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); background: rgba(14,12,10,.08); }
-        .cat-card-bg { transition: transform 700ms cubic-bezier(.4,0,.2,1), filter 500ms; filter: brightness(.7); }
-        .cat-card:hover .cat-card-bg { transform: scale(1.05); filter: brightness(.9); }
-        .cat-card-overlay { transition: opacity 400ms; }
-        .cat-card:hover .cat-card-overlay { opacity: .85; }
-        .cat-desc { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 500ms cubic-bezier(.4,0,.2,1), opacity 400ms; }
-        .cat-card:hover .cat-desc { max-height: 80px; opacity: 1; }
-        .cat-pill { opacity: 0; transform: translateY(6px); transition: opacity 350ms 100ms, transform 350ms 100ms; }
-        .cat-card:hover .cat-pill { opacity: 1; transform: translateY(0); }
-        @keyframes cardIn { from { opacity:0; transform: translateY(32px) scale(.97); } to { opacity:1; transform: translateY(0) scale(1); } }
-        .cat-card:nth-child(1) { animation: cardIn .75s cubic-bezier(.4,0,.2,1) .25s both; }
-        .cat-card:nth-child(2) { animation: cardIn .75s cubic-bezier(.4,0,.2,1) .4s both; }
-        .cat-card:nth-child(3) { animation: cardIn .75s cubic-bezier(.4,0,.2,1) .55s both; }
-        @keyframes marquee { to { transform: translateX(-50%); } }
-        .logo-track { animation: marquee 28s linear infinite; }
-        .logo-track:hover { animation-play-state: paused; }
-        .fade-lr { -webkit-mask-image: linear-gradient(to right, transparent, black 240px, black calc(100% - 240px), transparent); mask-image: linear-gradient(to right, transparent, black 240px, black calc(100% - 240px), transparent); }
-        .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1); }
-        .reveal-visible { opacity: 1; transform: translateY(0); }
+        @keyframes kb1 { 0%,100%{transform:scale(1.05) translate(0%,0%)} 50%{transform:scale(1.18) translate(-2%,-1.5%)} }
+        @keyframes kb2 { 0%,100%{transform:scale(1.08) translate(-1%,-1%)} 50%{transform:scale(1.2) translate(2%,1%)} }
+        @keyframes kb3 { 0%,100%{transform:scale(1.1) translate(1%,0%)} 50%{transform:scale(1.22) translate(-1.5%,-2%)} }
+
+        .hf-card { position:relative; flex:1; height:100%; overflow:hidden; cursor:pointer;
+          transition:flex .9s cubic-bezier(.2,.7,.2,1);
+          border-right:1px solid rgba(232,223,201,.08); }
+        .hf-card:last-child { border-right:0; }
+        .hf-card.hov  { flex:1.4; }
+        .hf-card.dim  { flex:.85; }
+
+        .kb1 { animation:kb1 22s ease-in-out infinite; }
+        .kb2 { animation:kb2 25s ease-in-out infinite; }
+        .kb3 { animation:kb3 27s ease-in-out infinite; }
+
+        .hf-grad { position:absolute;inset:0;
+          background:linear-gradient(180deg,rgba(30,42,24,.4) 0%,rgba(30,42,24,.1) 35%,rgba(30,42,24,.1) 55%,rgba(30,42,24,.88) 100%);
+          transition:background .4s; }
+        .hf-card.hov .hf-grad { background:linear-gradient(180deg,rgba(30,42,24,.2) 0%,rgba(30,42,24,.04) 35%,rgba(30,42,24,.2) 55%,rgba(30,42,24,.75) 100%); }
+        .hf-card.dim .hf-grad { background:linear-gradient(180deg,rgba(30,42,24,.6) 0%,rgba(30,42,24,.35) 35%,rgba(30,42,24,.35) 55%,rgba(30,42,24,.92) 100%); }
+
+        .hf-hand { position:absolute;top:168px;right:24px;
+          font-family:var(--font-hand);font-size:22px;color:var(--rust-soft);
+          transform:rotate(-4deg);opacity:0;transition:opacity .4s .1s,transform .4s;pointer-events:none; }
+        .hf-card.hov .hf-hand { opacity:1;transform:rotate(-6deg) translateY(-2px); }
+
+        .hf-arrow { font-family:var(--font-serif);font-style:italic;font-size:22px;font-weight:400;
+          transition:transform .3s cubic-bezier(.2,.7,.2,1),color .3s; }
+        .hf-card.hov .hf-arrow { transform:translateX(8px);color:var(--rust-soft); }
+
+        .hf-nav-link { color:var(--canvas);opacity:.75;font-size:11px;letter-spacing:.22em;
+          text-transform:uppercase;font-weight:500;text-decoration:none;
+          padding-bottom:2px;border-bottom:1px solid transparent;
+          transition:opacity .2s,border-color .2s; }
+        .hf-nav-link:hover { opacity:1;border-color:var(--rust-soft); }
+
+        /* Mobile */
+        @media(max-width:767px){
+          .hf-row { flex-direction:column !important; height:auto !important; }
+          .hf-card { flex:none !important; width:100% !important; height:260px; border-right:0;
+            border-bottom:1px solid rgba(232,223,201,.08); }
+          .hf-card:last-child { border-bottom:0; }
+          .hf-card.hov,.hf-card.dim { flex:none !important; }
+          .hf-tagline { display:none !important; }
+          .hf-coords  { display:none !important; }
+          .hf-topbar-name { display:none !important; }
+        }
       `}</style>
 
-      <SiteNav />
+      {/* ── Topbar ── */}
+      <header style={{ position:"absolute",top:0,left:0,right:0,height:72,
+        display:"flex",alignItems:"center",justifyContent:"space-between",
+        padding:"0 40px",zIndex:20 }}>
 
-      {/* ── HERO: 3 expanding cards ── */}
-      <section style={{ height: "100svh", overflow: "hidden" }}>
-        <div
-          className="relative h-full flex flex-col px-8"
-          style={{ paddingTop: 88, paddingBottom: 28 }}
-        >
-          <div className="cards-row flex gap-2.5 w-full flex-1">
-            {CARDS.map((card) => (
-              <Link
-                key={card.href}
-                href={card.href}
-                className="cat-card relative overflow-hidden rounded-2xl cursor-pointer no-underline"
-                style={{ border: "1px solid rgba(255,255,255,.07)" }}
-              >
-                {/* BG image */}
-                <div
-                  className="cat-card-bg absolute inset-0"
-                  style={{
-                    backgroundImage: `url(${card.bg})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: card.bgPosition,
-                  }}
-                />
-                {/* Glass */}
-                <div
-                  className="cat-glass absolute inset-0"
-                  style={{ background: "rgba(14,12,10,.18)" }}
-                />
-                {/* Overlay */}
-                <div
-                  className="cat-card-overlay absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(to top, rgba(14,12,10,.95) 0%, rgba(14,12,10,.5) 50%, rgba(14,12,10,.05) 100%)",
-                  }}
-                />
-                {/* Content */}
-                <div
-                  className="relative z-10 h-full flex flex-col justify-between"
-                  style={{ padding: 28 }}
-                >
-                  <div className="flex items-center justify-between">
-                    <span
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 700,
-                        letterSpacing: ".2em",
-                        textTransform: "uppercase",
-                        color: card.labelColor,
-                      }}
-                    >
-                      {card.label}
-                    </span>
-                    <ExternalIcon />
-                  </div>
-                  <div>
-                    <h2
-                      className="font-display"
-                      style={{
-                        fontSize: "1.65rem",
-                        fontWeight: 400,
-                        color: "#E6DDD4",
-                        lineHeight: 1.2,
-                        marginBottom: 10,
-                      }}
-                    >
-                      {card.title}
-                      <br />
-                      <strong style={{ fontWeight: 800 }}>{card.titleBold}</strong>
-                    </h2>
-                    <p
-                      className="cat-desc"
-                      style={{ color: "#8A8078", fontSize: 12, lineHeight: 1.7, marginBottom: 14 }}
-                    >
-                      {card.desc}
-                    </p>
-                    <span
-                      className="cat-pill inline-flex items-center gap-2"
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 700,
-                        letterSpacing: ".16em",
-                        textTransform: "uppercase",
-                        color: "#E6DDD4",
-                        border: "1px solid rgba(255,255,255,.15)",
-                        borderRadius: 999,
-                        padding: "6px 16px",
-                      }}
-                    >
-                      {card.cta}
-                      <ArrowIcon />
-                    </span>
-                  </div>
+        {/* Logo */}
+        <div style={{ display:"flex",alignItems:"center",gap:10 }}>
+          <div style={{ width:34,height:34,border:"1.5px solid var(--canvas)",
+            display:"flex",alignItems:"center",justifyContent:"center",
+            fontFamily:"var(--font-serif)",fontStyle:"italic",fontSize:19,fontWeight:500 }}>
+            H
+          </div>
+          <span className="hf-topbar-name" style={{ fontFamily:"var(--font-ui)",fontSize:12,
+            letterSpacing:".28em",textTransform:"uppercase",fontWeight:600 }}>
+            {SITE_AUTHOR}
+          </span>
+        </div>
+
+        {/* Nav direita */}
+        <nav style={{ display:"flex",gap:28 }}>
+          <Link href="/sobre"   className="hf-nav-link">Quem sou</Link>
+          <Link href="/contato" className="hf-nav-link">Contato</Link>
+        </nav>
+      </header>
+
+      {/* ── Cards ── */}
+      <div className="hf-row" style={{ display:"flex",height:"100%",width:"100%" }}
+        onMouseLeave={() => setHover(null)}>
+        {HOME_CARDS.map((card, i) => {
+          const kickers = ["Fotografias autorais", "Tratamento de cor", "Viagens guiadas"] as const;
+          const accents = ["№ 01", "№ 02", "№ 03"] as const;
+          const kbClass = `kb${i + 1}`;
+          const cls = `hf-card hf-card-${i+1}${hover === i ? " hov" : ""}${hover !== null && hover !== i ? " dim" : ""}`;
+
+          return (
+            <Link key={card.href} href={card.href} className={cls}
+              style={{ textDecoration:"none",color:"inherit" }}
+              onMouseEnter={() => setHover(i)}>
+
+              {/* BG com Ken Burns */}
+              <div className={kbClass} style={{ position:"absolute",inset:0,
+                backgroundImage:`url(${card.bg})`,backgroundSize:"cover",
+                backgroundPosition:card.bgPosition,willChange:"transform" }} />
+
+              <div className="hf-grad" />
+
+              {/* Accent top-left */}
+              <div style={{ position:"absolute",top:110,left:32,zIndex:2 }}>
+                <div style={{ fontFamily:"var(--font-mono)",fontSize:10,
+                  letterSpacing:".22em",color:"rgba(232,223,201,.7)" }}>
+                  {accents[i]}
                 </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+                <div style={{ width:28,height:1,background:"rgba(232,223,201,.45)",marginTop:8 }} />
+              </div>
 
-      {/* ── BRANDS marquee ── */}
-      <section
-        className="py-20 overflow-hidden"
-        style={{ background: "#0E0C0A", borderTop: "1px solid #2B2420" }}
-      >
-        <p
-          ref={addReveal}
-          className="reveal text-center text-[10px] uppercase tracking-[.2em] mb-10"
-          style={{ color: "#4C4440" }}
-        >
-          Marcas com quem já trabalhei
-        </p>
-        <div className="relative overflow-hidden fade-lr">
-          <div className="logo-track flex gap-16 py-1 whitespace-nowrap">
-            {[...BRANDS, ...BRANDS].map((brand, i) => (
-              <span
-                key={i}
-                className="flex-shrink-0 font-bold text-2xl tracking-widest uppercase"
-                style={{ color: "#38302C" }}
-              >
-                {brand}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
+              {/* Counter top-right */}
+              <div style={{ position:"absolute",top:110,right:32,zIndex:2,
+                fontFamily:"var(--font-mono)",fontSize:10,letterSpacing:".22em",
+                color:"rgba(232,223,201,.55)" }}>
+                {String(i+1).padStart(2,"0")} / 03
+              </div>
 
-      {/* ── SOBRE ── */}
-      <section
-        id="sobre"
-        className="py-24 px-8"
-        style={{ background: "#161310", borderTop: "1px solid #2B2420" }}
-      >
-        <div
-          className="grid grid-cols-2 gap-20 items-start"
-          style={{ maxWidth: 1280, margin: "0 auto" }}
-        >
-          <div ref={addReveal} className="reveal space-y-6">
-            <div>
-              <p
-                className="text-[10px] uppercase tracking-widest mb-3"
-                style={{ color: "#60584E" }}
-              >
-                Sobre
-              </p>
-              <h2 className="text-4xl font-light leading-tight" style={{ color: "#E6DDD4" }}>
-                Fotógrafo
-                <br />
-                <span className="font-semibold">&amp; Explorador</span>
-                <br />
-                <span className="font-light" style={{ color: "#746A62" }}>
-                  Outdoor
-                </span>
-              </h2>
-            </div>
-            <p className="text-sm leading-relaxed" style={{ color: "#8A8078", lineHeight: 1.85 }}>
-              Nascido em Portugal, cresci entre trilhas e paisagens que me ensinaram a ver antes de fotografar.
-              A câmera veio depois — mas a obsessão por luz, cor e lugares remotos sempre esteve lá.
-            </p>
-            <p className="text-sm leading-relaxed" style={{ color: "#8A8078", lineHeight: 1.85 }}>
-              Hoje fotografo expedições, natureza e viagens. Criei 45 presets para Lightroom que capturam
-              a atmosfera real de cada ambiente — sem filtros artificiais, só tons honestos.
-            </p>
-            <div className="flex items-center gap-4 pt-2">
-              <a
-                href="mailto:management@henriq.eu"
-                className="text-sm font-medium px-6 py-3 rounded-full transition-all hover:opacity-90"
-                style={{ background: "#E6DDD4", color: "#0E0C0A" }}
-              >
-                Entrar em Contacto
-              </a>
-              <span className="text-sm" style={{ color: "#4C4440" }}>
-                management@henriq.eu
-              </span>
-            </div>
-          </div>
+              {/* Manuscrita hover */}
+              <div className="hf-hand">{HAND_WORDS[i]}—</div>
 
-          <div className="space-y-4">
-            <div className="rounded-xl overflow-hidden" style={{ height: 520 }}>
-              <Image
-                src="/images/portrait.jpg"
-                alt="Henrique"
-                width={600}
-                height={520}
-                className="w-full h-full object-cover object-top"
-                style={{ objectFit: "cover", objectPosition: "top" }}
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { value: "2000+", label: "Clientes" },
-                { value: "45", label: "Presets" },
-                { value: "2018", label: "Início" },
-              ].map((s) => (
-                <div
-                  key={s.label}
-                  className="rounded-xl p-4 text-center"
-                  style={{ border: "1px solid #2B2420", background: "#161310" }}
-                >
-                  <div className="font-semibold text-xl mb-0.5" style={{ color: "#E6DDD4" }}>
-                    {s.value}
-                  </div>
-                  <div
-                    className="text-[11px] uppercase tracking-wider"
-                    style={{ color: "#4C4440" }}
-                  >
-                    {s.label}
-                  </div>
+              {/* Conteúdo inferior */}
+              <div style={{ position:"absolute",inset:0,display:"flex",flexDirection:"column",
+                justifyContent:"flex-end",padding:"36px 32px",zIndex:2 }}>
+                <div style={{ fontFamily:"var(--font-serif)",fontStyle:"italic",fontSize:15,
+                  color:"rgba(232,223,201,.78)",marginBottom:12,letterSpacing:".01em" }}>
+                  {kickers[i]}
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+                <h2 style={{ fontFamily:"var(--font-ui)",fontWeight:600,fontSize:36,
+                  letterSpacing:"-.02em",color:"var(--canvas)",margin:0,lineHeight:1 }}>
+                  {card.label}
+                </h2>
+                <div style={{ marginTop:28,display:"flex",alignItems:"center",
+                  justifyContent:"space-between",paddingTop:18,
+                  borderTop:"1px solid rgba(232,223,201,.22)",
+                  fontFamily:"var(--font-ui)",fontSize:11,letterSpacing:".22em",
+                  textTransform:"uppercase",fontWeight:600,color:"var(--canvas)" }}>
+                  <span>Explorar</span>
+                  <span className="hf-arrow">→</span>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
 
-      {/* ── FOOTER ── */}
-      <footer className="py-16 px-8" style={{ borderTop: "1px solid #2B2420", background: "#0E0C0A" }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <div className="grid grid-cols-3 gap-12 mb-12">
-            <div>
-              <p className="text-[10px] uppercase tracking-[.2em] mb-5" style={{ color: "#4C4440" }}>
-                Páginas
-              </p>
-              <div className="space-y-2">
-                {[
-                  { label: "Portfolio", href: "/portfolio" },
-                  { label: "Presets", href: "/presets" },
-                  { label: "Expedições", href: "/expedicoes" },
-                  { label: "Sobre", href: "#sobre" },
-                ].map((l) => (
-                  <Link
-                    key={l.label}
-                    href={l.href}
-                    className="block text-sm transition-colors hover:text-[#E6DDD4]"
-                    style={{ color: "#887E76" }}
-                  >
-                    {l.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-[.2em] mb-5" style={{ color: "#4C4440" }}>
-                Localização
-              </p>
-              <div className="space-y-1.5">
-                <p className="text-sm" style={{ color: "#887E76" }}>Disponível Mundialmente</p>
-                <a
-                  href="mailto:management@henriq.eu"
-                  className="block text-sm transition-colors hover:text-[#E6DDD4]"
-                  style={{ color: "#887E76" }}
-                >
-                  management@henriq.eu
-                </a>
-                <p className="text-sm" style={{ color: "#4C4440" }}>Chipre</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-[10px] uppercase tracking-[.2em] mb-5" style={{ color: "#4C4440" }}>
-                Redes Sociais
-              </p>
-              <div className="space-y-2">
-                {["Instagram", "Twitter", "Behance"].map((l) => (
-                  <a
-                    key={l}
-                    href="#"
-                    className="block text-sm transition-colors hover:text-[#E6DDD4] underline underline-offset-2"
-                    style={{ color: "#887E76", textDecorationColor: "#2B2420" }}
-                  >
-                    {l}
-                  </a>
-                ))}
-              </div>
-            </div>
-          </div>
+      {/* ── Tagline inferior esquerda ── */}
+      <div className="hf-tagline" style={{ position:"absolute",bottom:24,left:40,
+        display:"flex",alignItems:"center",gap:14,zIndex:15,pointerEvents:"none" }}>
+        <span style={{ fontFamily:"var(--font-mono)",fontSize:10,letterSpacing:".22em",
+          textTransform:"uppercase",color:"rgba(232,223,201,.5)" }}>
+          Fotografia de campo · desde 2018
+        </span>
+        <span style={{ fontFamily:"var(--font-hand)",fontSize:26,
+          color:"rgba(232,223,201,.8)",transform:"rotate(-2deg)" }}>
+          onde a câmera vai junto—
+        </span>
+      </div>
 
-          {/* Photo strip */}
-          <div className="grid grid-cols-6 gap-2 mb-10">
-            {FOOTER_IMAGES.map((src, i) => (
-              <div key={i} className="aspect-square rounded-lg overflow-hidden">
-                <Image
-                  src={src}
-                  alt=""
-                  width={200}
-                  height={200}
-                  className="w-full h-full"
-                  style={{ objectFit: "cover", objectPosition: i >= 4 ? "top" : "center" }}
-                />
-              </div>
-            ))}
-          </div>
-
-          <div
-            className="flex items-center justify-between pt-6"
-            style={{ borderTop: "1px solid #2B2420" }}
-          >
-            <p className="text-xs" style={{ color: "#4C4440" }}>@henriq.eu</p>
-            <p className="text-xs" style={{ color: "#4C4440" }}>henriq.eu</p>
-          </div>
-        </div>
-      </footer>
+      {/* ── Coordenadas inferior direita ── */}
+      <div className="hf-coords" style={{ position:"absolute",bottom:24,right:40,
+        fontFamily:"var(--font-mono)",fontSize:10,letterSpacing:".15em",
+        color:"rgba(232,223,201,.4)",zIndex:15 }}>
+        10°17′S &nbsp; 76°54′W &nbsp;·&nbsp; alt 4 800 m
+      </div>
     </div>
   );
 }
