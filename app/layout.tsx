@@ -1,17 +1,31 @@
 import type { Metadata } from "next";
-import { Inter, Reenie_Beanie, Geist } from "next/font/google";
+import { Work_Sans, Newsreader, IBM_Plex_Mono, Reenie_Beanie } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const workSans = Work_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-ui",
+});
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const newsreader = Newsreader({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+});
 
-// Reenie Beanie — handwritten script, only weight 400
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
+});
+
 const reenieBeanie = Reenie_Beanie({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-script",
+  variable: "--font-hand",
 });
 
 export const metadata: Metadata = {
@@ -23,10 +37,16 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt" className={cn(inter.variable, reenieBeanie.variable, "font-sans", geist.variable)}>
-      <body style={{ background: "#0E0C0A", color: "#E6DDD4" }}>
-        {children}
-      </body>
+    <html
+      lang="pt"
+      className={cn(
+        workSans.variable,
+        newsreader.variable,
+        ibmPlexMono.variable,
+        reenieBeanie.variable,
+      )}
+    >
+      <body>{children}</body>
     </html>
   );
 }

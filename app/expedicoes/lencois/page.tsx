@@ -114,9 +114,7 @@ export default function LencoisPage() {
       `}</style>
 
       {/* ══════════════════ HERO ══════════════════ */}
-export function HeroLencois() {
-  return (
-    <section style={{ position: 'relative', height: '100svh', overflow: 'hidden' }}>
+      <section style={{ position: 'relative', height: '100svh', overflow: 'hidden' }}>
       {/* Foto de fundo — anima com zoom suave na entrada */}
       <motion.div
         initial={{ scale: 1.06, opacity: 0.7 }}
@@ -198,9 +196,8 @@ export function HeroLencois() {
           </div>
         </AnimatedGroup>
       </div>
-    </section>
-  )
-}
+      </section>
+
       {/* ══════════════════ INTRO ══════════════════ */}
       <section className="sec-pad" style={{ padding: '96px 48px' }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }} className="two-col">
