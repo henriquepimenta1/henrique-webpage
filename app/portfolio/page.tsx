@@ -6,34 +6,51 @@ interface Photo {
   ar: number
   title: string
   place: string
+  coord?: string
   year: number
 }
 
 const PHOTOS: Photo[] = [
-  { src: '/images/lencois/DJI_20250828174205_0403_D-HDR.jpg', ar: 1.78, title: 'Silhueta',         place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/lencois/DSC02245.jpg',                       ar: 0.75, title: 'Travesseiro',      place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/lencois/DJI_20250826043905_0121_D.jpg',      ar: 1.78, title: 'Vista aérea',      place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/lencois/DSC01675.jpg',                       ar: 0.75, title: 'Nascer do sol',    place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/lencois/DJI_20250829042015_0506_D-HDR.jpg',  ar: 1.78, title: 'Lagoa espetacular',place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/exp-huayhuash.jpg',                          ar: 1.5,  title: 'Cordilheira',      place: 'Peru',        year: 2024 },
-  { src: '/images/lencois/DJI_20250828042744_0378_D.jpg',      ar: 1.78, title: 'Chegada',          place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/lencois/DSC01537.jpg',                       ar: 0.75, title: 'Primeiro oásis',   place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/lencois/DJI_20250828175706_0461_D-Edit-2.jpg', ar: 1.78, title: 'Poente dourado', place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/lencois/DSC02529.jpg',                       ar: 1.0,  title: 'Lagoa cristalina', place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/lencois/DSC01958.jpg',                       ar: 0.75, title: 'Solidão',          place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/presets/22-poente.jpg',                      ar: 1.5,  title: 'Poente',           place: 'Brasil',      year: 2025 },
-  { src: '/images/lencois/DSC02599.jpg',                       ar: 0.75, title: 'Caminhar devagar', place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/presets/14-vista-do-oceano.jpg',             ar: 1.5,  title: 'Vista do oceano',  place: 'Brasil',      year: 2025 },
-  { src: '/images/lencois/DSC03215.jpg',                       ar: 0.75, title: 'Câmera na mão',    place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/presets/8-abissal.jpg',                      ar: 1.33, title: 'Abissal',          place: 'Brasil',      year: 2025 },
-  { src: '/images/presets/11-devaneio.jpg',                    ar: 0.75, title: 'Devaneio',         place: 'Brasil',      year: 2025 },
-  { src: '/images/presets/21-campo-seco.jpg',                  ar: 1.33, title: 'Campo seco',       place: 'Brasil',      year: 2025 },
-  { src: '/images/mountain-lake.jpg',                          ar: 1.5,  title: 'Lago de montanha', place: 'Brasil',      year: 2024 },
-  { src: '/images/hiker.jpg',                                  ar: 0.67, title: 'Trilheiro',        place: 'Brasil',      year: 2024 },
-  { src: '/images/presets/2-bosque.jpg',                       ar: 1.33, title: 'Bosque',           place: 'Brasil',      year: 2025 },
-  { src: '/images/desert-dunes.jpg',                           ar: 1.5,  title: 'Dunas',            place: 'Lençóis MA',  year: 2025 },
-  { src: '/images/presets/6-dourado-reluzente.jpg',            ar: 1.5,  title: 'Dourado',          place: 'Brasil',      year: 2025 },
-  { src: '/images/dunes-aerial.jpg',                           ar: 1.78, title: 'Aérea',            place: 'Lençóis MA',  year: 2025 },
+  { src: '/images/portfolio/lencois-aerial-drone.jpg',                          ar: 1.78, title: 'Lençóis · aérea',            place: 'Lençóis Maranhenses, MA',       coord: '2°34\'S 43°07\'W', year: 2025 },
+  { src: '/images/portfolio/lencois-silhueta-pordosol.jpg',                     ar: 0.75, title: 'Silhueta ao pôr do sol',      place: 'Lençóis Maranhenses, MA',       coord: '2°34\'S 43°07\'W', year: 2025 },
+  { src: '/images/portfolio/cordilheira-blanca-caminho-ate-laguna69-peru.jpg',  ar: 1.78, title: 'Cordilheira Blanca',          place: 'Laguna 69, Peru',               coord: '9°01\'S 77°37\'W', year: 2025 },
+  { src: '/images/portfolio/ocaminhante-lencois.jpg',                           ar: 0.75, title: 'O Caminhante',                place: 'Lençóis Maranhenses, MA',                                  year: 2025 },
+  { src: '/images/portfolio/nascer-do-sol-mantiqueira-marinsxitaguaré.jpg',     ar: 1.78, title: 'Nascer do sol',               place: 'Mantiqueira · Marins, SP',      coord: '22°36\'S 45°01\'W', year: 2024 },
+  { src: '/images/portfolio/pessoas-caminhando-travessia-lencois.jpg',          ar: 1.5,  title: 'A travessia',                 place: 'Lençóis Maranhenses, MA',                                  year: 2025 },
+  { src: '/images/portfolio/acapamento-janca-huayhuash.jpg',                    ar: 1.5,  title: 'Acampamento Janca',           place: 'Huayhuash, Peru',               coord: '10°12\'S 76°48\'W', year: 2025 },
+  { src: '/images/portfolio/lencois-caminhando-na-duna.jpg',                    ar: 0.75, title: 'Caminhando na duna',          place: 'Lençóis Maranhenses, MA',                                  year: 2025 },
+  { src: '/images/portfolio/pico-parana-visto-do-topo-serradoibitiraquire.jpg', ar: 1.78, title: 'Pico Paraná visto do topo',   place: 'Serra do Ibitiraquire, PR',     coord: '25°14\'S 48°49\'W', year: 2024 },
+  { src: '/images/portfolio/via-lactea-lencois-baixa-grande.jpg',               ar: 0.75, title: 'Via Láctea · Baixa Grande',  place: 'Lençóis Maranhenses, MA',       coord: '2°34\'S 43°07\'W', year: 2025 },
+  { src: '/images/portfolio/grupo-caminhando-lencois.jpg',                      ar: 1.5,  title: 'Grupo em marcha',             place: 'Lençóis Maranhenses, MA',                                  year: 2025 },
+  { src: '/images/portfolio/acapamento-janca-huayhuash2.jpg',                   ar: 0.75, title: 'Janca ao entardecer',         place: 'Huayhuash, Peru',               coord: '10°12\'S 76°48\'W', year: 2025 },
+  { src: '/images/portfolio/lencois-silhueta-pordosol-drone.jpg',               ar: 1.78, title: 'Silhueta · drone',            place: 'Lençóis Maranhenses, MA',       coord: '2°34\'S 43°07\'W', year: 2025 },
+  { src: '/images/portfolio/serra-da-mantiqueira-pico-dos-marins.jpg',          ar: 1.78, title: 'Serra da Mantiqueira',        place: 'Pico dos Marins, SP',           coord: '22°36\'S 45°01\'W', year: 2024 },
+  { src: '/images/portfolio/o-escolhido-lencois-maranhenses.jpg',               ar: 0.75, title: 'O Escolhido',                 place: 'Lençóis Maranhenses, MA',                                  year: 2025 },
+  { src: '/images/portfolio/as3lagunas-huayhuash.jpg',                          ar: 1.5,  title: 'As três lagunas',             place: 'Huayhuash, Peru',               coord: '10°12\'S 76°48\'W', year: 2025 },
+  { src: '/images/portfolio/queimada-dos-britos-lencois.jpg',                   ar: 1.5,  title: 'Queimada dos Britos',         place: 'Lençóis Maranhenses, MA',       coord: '2°34\'S 43°07\'W', year: 2025 },
+  { src: '/images/portfolio/pordosol-cordilheira-blanca-peru.jpg',              ar: 1.78, title: 'Pôr do sol · Cordilheira',   place: 'Cordilheira Blanca, Peru',      coord: '9°01\'S 77°37\'W', year: 2025 },
+  { src: '/images/portfolio/lagoa-lencois-drone.jpg',                           ar: 1.78, title: 'Lagoa · vista aérea',         place: 'Lençóis Maranhenses, MA',       coord: '2°34\'S 43°07\'W', year: 2025 },
+  { src: '/images/portfolio/escalada-cabeca-depeixe.jpg',                       ar: 0.75, title: 'Escalada',                    place: 'Cabeça de Peixe, SP',                                      year: 2024 },
+  { src: '/images/portfolio/vista-para-montanhas-itatiaia.jpg',                 ar: 1.78, title: 'Vista para as montanhas',     place: 'Parque Itatiaia, RJ',           coord: '22°25\'S 44°37\'W', year: 2024 },
+  { src: '/images/portfolio/caminho-para-laguna69-peru.jpg',                    ar: 1.5,  title: 'Caminho para Laguna 69',      place: 'Cordilheira Blanca, Peru',      coord: '9°01\'S 77°37\'W', year: 2025 },
+  { src: '/images/portfolio/arara-canindé-rondonia.jpg',                        ar: 0.75, title: 'Arara-canindé',               place: 'Rondônia, BR',                  coord: '10°52\'S 65°20\'W', year: 2023 },
+  { src: '/images/portfolio/laguna-acampamento-janca-huayhuash.jpg',            ar: 1.5,  title: 'Laguna Janca',                place: 'Huayhuash, Peru',               coord: '10°12\'S 76°48\'W', year: 2025 },
+  { src: '/images/portfolio/eu-e-oguia-caminhando no por do sol.jpg',           ar: 1.5,  title: 'Guia e fotógrafo',            place: 'Lençóis Maranhenses, MA',                                  year: 2025 },
+  { src: '/images/portfolio/asas-de-hermes-itatiaia.jpg',                       ar: 1.5,  title: 'Asas de Hermes',              place: 'Parque Itatiaia, RJ',           coord: '22°25\'S 44°37\'W', year: 2024 },
+  { src: '/images/portfolio/observador-itatiaia-chapada-da-lua.jpg',            ar: 1.5,  title: 'O Observador',                place: 'Chapada da Lua, Itatiaia RJ',   coord: '22°23\'S 44°38\'W', year: 2024 },
+  { src: '/images/portfolio/via-lactea-lencois1.jpg',                           ar: 1.5,  title: 'Via Láctea',                  place: 'Lençóis Maranhenses, MA',                                  year: 2025 },
+  { src: '/images/portfolio/grupo-caminhando-travesisa-lencois.jpg',            ar: 1.5,  title: 'Travessia em grupo',          place: 'Lençóis Maranhenses, MA',       coord: '2°34\'S 43°07\'W', year: 2025 },
+  { src: '/images/portfolio/cordilheira-blanca-caminho-ate-laguna69-peru2.jpg', ar: 1.5,  title: 'Altitude',                    place: 'Cordilheira Blanca, Peru',      coord: '9°01\'S 77°37\'W', year: 2025 },
+  { src: '/images/portfolio/pico-ciririca-serradoibitiraquire.jpg',             ar: 1.5,  title: 'Pico Ciririca',               place: 'Serra do Ibitiraquire, PR',     coord: '25°14\'S 48°49\'W', year: 2024 },
+  { src: '/images/portfolio/cachoeira-ratunde-rondonia.jpg',                    ar: 1.5,  title: 'Cachoeira Ratunde',           place: 'Rondônia, BR',                  coord: '10°52\'S 65°20\'W', year: 2023 },
+  { src: '/images/portfolio/lencois-caminhate-15hrsdatarde.jpg',                ar: 1.5,  title: 'Às 15h da tarde',             place: 'Lençóis Maranhenses, MA',                                  year: 2025 },
+  { src: '/images/portfolio/vista-vilarejo-lencois.jpg',                        ar: 1.5,  title: 'Vista do vilarejo',           place: 'Lençóis Maranhenses, MA',                                  year: 2025 },
+  { src: '/images/portfolio/hotel-pakaas-ronodonia-riomamore-riopakaas.jpg',    ar: 1.78, title: 'Rio Pakaás · Hotel',          place: 'Rio Mamoré, Rondônia, BR',                                 year: 2023 },
+  { src: '/images/portfolio/vista-do-picomateo.jpg',                            ar: 1.5,  title: 'Vista do Pico Mateo',         place: 'Huayhuash, Peru',               coord: '10°12\'S 76°48\'W', year: 2025 },
+  { src: '/images/portfolio/cachoeira-dos-macacaquinhos-rondonia.jpg',          ar: 1.5,  title: 'Cachoeira dos Macacaquinhos', place: 'Rondônia, BR',                  coord: '10°52\'S 65°20\'W', year: 2023 },
+  { src: '/images/portfolio/caverna-do-diabo-petar-eldorado-SP.jpg',            ar: 1.0,  title: 'Caverna do Diabo',            place: 'PETAR, Eldorado SP',            coord: '24°32\'S 48°41\'W', year: 2023 },
+  { src: '/images/portfolio/ronondia-riopakaas-riomamore.jpg',                  ar: 1.78, title: 'Rio Pakaás · Mamoré',        place: 'Rondônia, BR',                                             year: 2023 },
+  { src: '/images/portfolio/cachoeira-ratunde-ronodonia-2.jpg',                 ar: 0.75, title: 'Ratunde · detalhe',           place: 'Rondônia, BR',                  coord: '10°52\'S 65°20\'W', year: 2023 },
 ]
 
 function buildRows(photos: Photo[], containerW: number, targetH: number, gap: number): Photo[][] {
@@ -156,6 +173,11 @@ export default function PortfolioPage() {
                         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(232,223,201,.65)', letterSpacing: '.15em', marginTop: 5 }}>
                           № {num} · {p.place} · {p.year}
                         </div>
+                        {p.coord && (
+                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'rgba(232,223,201,.4)', letterSpacing: '.12em', marginTop: 3 }}>
+                            {p.coord}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </figure>
