@@ -1,484 +1,394 @@
 'use client'
 
 import Link from 'next/link'
-import { AnimatedGroup } from '@/components/ui/animated-group'
-import { motion } from 'framer-motion'
-
-const pacotes = [
-  {
-    label: 'Travessia Intensiva',
-    datas: '8 a 10 de Agosto',
-    dias: '3 dias',
-    km: '35km',
-    oasis: '2 oásis',
-    price: 'R$ 3.599',
-    desc: 'Aventura concentrada para quem tem menos tempo. A essência dos Lençóis em 3 dias completos.',
-    featured: false,
-  },
-  {
-    label: 'Travessia Completa',
-    datas: '3 a 6 de Agosto',
-    dias: '4 dias',
-    km: '52km',
-    oasis: '3 oásis',
-    price: 'R$ 3.899',
-    desc: '52km do início ao fim. A experiência mais equilibrada e completa dos Lençóis.',
-    featured: true,
-  },
-  {
-    label: 'Imersão Total',
-    datas: '12 a 16 de Agosto',
-    dias: '5 dias',
-    km: '64km',
-    oasis: '4 oásis',
-    price: 'R$ 4.499',
-    desc: 'Ritmo contemplativo, mais tempo em cada oásis. Para quem quer viver cada detalhe.',
-    featured: false,
-  },
-]
-
-const dias = [
-  {
-    num: '01',
-    rota: 'Barreirinhas → Baixa Grande',
-    tempo: '8h lancha + 9km caminhada',
-    desc: 'Chegada a Atins de lancha pelo Rio Preguiças. Primeiro contato com as dunas. Caminhada até o primeiro oásis e pernoite sob o céu estrelado.',
-    highlight: 'Primeiro oásis · Céu estrelado',
-    img: '/images/lencois/DSC01537.jpg',
-  },
-  {
-    num: '02',
-    rota: 'Baixa Grande → Queimada dos Britos',
-    tempo: 'Saída 5h · 10km trekking',
-    desc: 'Nascer do sol nas dunas — o momento mais fotográfico da travessia. Travessia do Rio Negro e chegada às lagoas cristalinas do coração do parque.',
-    highlight: 'Nascer do sol · Lagoas cristalinas',
-    img: '/images/lencois/DSC01675.jpg',
-  },
-  {
-    num: '03',
-    rota: 'Queimada dos Britos → Betânia',
-    tempo: 'Saída 3h · 18km de aventura',
-    desc: 'O dia mais longo e mais épico. Lagoas encantadas que parecem irreais. Comunidades que vivem isoladas entre as dunas há gerações.',
-    highlight: 'Lagoas espetaculares · Comunidades locais',
-    img: '/images/lencois/DJI_20250829042015_0506_D-HDR.jpg',
-  },
-  {
-    num: '04',
-    rota: 'Betânia → Santo Amaro',
-    tempo: 'Início 7h · 15km finais',
-    desc: 'Os 15km finais com cenários épicos. Chegada triunfal em Santo Amaro — e a sensação de ter atravessado um outro planeta.',
-    highlight: 'Cenários épicos · Chegada triunfal',
-    img: '/images/lencois/DJI_20250828042744_0378_D.jpg',
-  },
-]
-
-const waBase = 'https://wa.me/5511988128064?text='
-const waGeral = waBase + encodeURIComponent('Olá! Tenho interesse na Travessia dos Lençóis Maranhenses. Pode me passar mais informações sobre datas e vagas disponíveis?')
-
-const CheckIcon = () => (
-  <svg style={{ flexShrink: 0, marginTop: '3px' }} width="15" height="15" fill="none" viewBox="0 0 24 24">
-    <circle cx="12" cy="12" r="11" stroke="#8B6F47" strokeWidth="1.5" />
-    <path d="M8 12l3 3 5-5" stroke="#8B6F47" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-)
-
-const ArrowIcon = () => (
-  <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-  </svg>
-)
+import SiteNav from '@/components/nav'
+import SiteFooter from '@/components/site-footer'
+import {
+  PACOTES,
+  ROTEIRO,
+  INCLUIDO,
+  NAO_INCLUIDO,
+  POLITICA_PAGAMENTO,
+  FOTOS_GALERIA,
+  WA_GERAL,
+  waMsg,
+} from '@/content/lencois'
 
 export default function LencoisPage() {
   return (
-    <main style={{ background: '#F5F0E8', minHeight: '100vh', color: '#2C2016' }}>
+    <main style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)' }}>
       <style>{`
-        .rn { font-family: var(--font-hand), cursive; }
-        .hover-scale { transition: transform 600ms cubic-bezier(.4,0,.2,1); }
-        .img-wrap:hover .hover-scale { transform: scale(1.04); }
-        .pack-card { transition: transform 300ms ease, box-shadow 300ms ease; }
-        .pack-card:hover { transform: translateY(-5px); box-shadow: 0 20px 60px rgba(44,32,22,.12); }
-        .wa-btn { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; transition: opacity 250ms, transform 250ms; }
-        .wa-btn:hover { opacity: .88; transform: translateY(-2px); }
-        .wa-btn-full { display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; transition: opacity 250ms, transform 250ms; width: 100%; box-sizing: border-box; }
-        .wa-btn-full:hover { opacity: .88; }
-        .divider { border-top: 1px solid #DDD5C4; }
+        .lenc-trip-img { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
+        .lenc-img-wrap:hover .lenc-trip-img { transform: scale(1.04); }
+        .lenc-pack:hover { outline: 1px solid var(--rust); }
+        .lenc-cta-btn:hover { opacity: .88; }
         @media(max-width:768px){
-          .two-col { grid-template-columns: 1fr !important; gap: 40px !important; }
-          .three-col { grid-template-columns: 1fr !important; }
-          .dia-grid { grid-template-columns: 1fr !important; }
-          .hero-pad { padding: 0 24px 56px !important; }
-          .sec-pad { padding: 64px 24px !important; }
-          .hide-mobile { display: none !important; }
+          .lenc-two { grid-template-columns: 1fr !important; gap: 48px !important; }
+          .lenc-four { grid-template-columns: 1fr 1fr !important; }
+          .lenc-pad { padding: 64px 24px !important; }
+          .lenc-hero-pad { padding: 120px 24px 56px !important; }
+          .lenc-day { grid-template-columns: 48px 1fr !important; }
+          .lenc-day-img { display: none !important; }
+          .lenc-packs { grid-template-columns: 1fr !important; }
+          .lenc-pol { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
-      {/* ══════════════════ HERO ══════════════════ */}
-      <section style={{ position: 'relative', height: '100svh', overflow: 'hidden' }}>
-      {/* Foto de fundo — anima com zoom suave na entrada */}
-      <motion.div
-        initial={{ scale: 1.06, opacity: 0.7 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 1.6, ease: [0.4, 0, 0.2, 1] }}
-        style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'url(/images/lencois/DJI_20250828174205_0403_D-HDR.jpg)',
-          backgroundSize: 'cover', backgroundPosition: 'center 30%',
-          filter: 'brightness(.68) saturate(.85)',
-        }}
-      />
+      <SiteNav dark={true} />
 
-      {/* Gradiente areia */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'linear-gradient(to top, #F5F0E8 0%, rgba(245,240,232,.25) 52%, transparent 100%)',
-      }} />
-
-      {/* Back link */}
-      <motion.div
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-        style={{ position: 'absolute', top: '104px', left: '48px', zIndex: 20 }}
-      >
-        <Link href="/expedicoes" style={{
-          display: 'inline-flex', alignItems: 'center', gap: '7px',
-          fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase',
-          color: 'rgba(44,32,22,.4)', textDecoration: 'none',
-        }}>
-          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
-          </svg>
-          Expedições
-        </Link>
-      </motion.div>
-
-      {/* Conteúdo principal */}
-      <div style={{
-        position: 'relative', zIndex: 10, height: '100%',
-        display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
-        padding: '0 48px 72px',
-      }}>
-        {/* Tag location — blur-slide */}
-        <AnimatedGroup
-          preset="blur-slide"
-          variants={{ container: { hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.2 } } } }}
-          style={{ display: 'contents' }}
-        >
-          {/* Location */}
-          <p style={{ fontSize: '11px', letterSpacing: '.28em', textTransform: 'uppercase', color: '#8B6F47', marginBottom: '12px' }}>
-            Maranhão, Brasil · Agosto 2026
-          </p>
-
-          {/* Título Reenie Beanie */}
-          <h1 style={{ margin: '0 0 12px', lineHeight: .9 }}>
-            <span className="rn" style={{ fontSize: 'clamp(4rem, 10vw, 9rem)', fontWeight: 400, color: '#2C2016', display: 'block' }}>
-              Travessia dos
-            </span>
-            <span style={{ fontSize: 'clamp(2rem, 5.5vw, 5.2rem)', fontWeight: 800, letterSpacing: '-.03em', color: '#2C2016', display: 'block' }}>
-              Lençóis Maranhenses
-            </span>
-          </h1>
-
-          {/* Subtitle */}
-          <p style={{ fontSize: '14px', color: '#8B6F47', marginBottom: '44px', fontStyle: 'italic' }}>
-            Fotografia profissional inclusa · Grupos de até 10 pessoas
-          </p>
-
-          {/* Stats */}
-          <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
-            {[['35–64km', 'Distância'], ['3–5 dias', 'Duração'], ['2–4 oásis', 'Pernoites'], ['máx. 10', 'Por turma']].map(([v, l]) => (
-              <div key={l}>
-                <div style={{ fontSize: '20px', fontWeight: 700, color: '#2C2016', lineHeight: 1 }}>{v}</div>
-                <div style={{ fontSize: '9px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#A08060', marginTop: '5px' }}>{l}</div>
-              </div>
-            ))}
-          </div>
-        </AnimatedGroup>
-      </div>
-      </section>
-
-      {/* ══════════════════ INTRO ══════════════════ */}
-      <section className="sec-pad" style={{ padding: '96px 48px' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }} className="two-col">
-          <div>
-            <p style={{ fontSize: '10px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#A08060', marginBottom: '20px' }}>A experiência</p>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)', fontWeight: 300, lineHeight: 1.1, marginBottom: '6px' }}>
-              Mais do que uma viagem.
-            </h2>
-            <div className="rn" style={{ fontSize: 'clamp(2.5rem, 5vw, 4.5rem)', color: '#8B6F47', lineHeight: 1.1, marginBottom: '32px' }}>
-              Um reset completo.
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '32px' }}>
-              {['Noites sob céu estrelado nos oásis', 'Nasceres do sol sobre dunas infinitas', 'Lagoas cristalinas que parecem irreais', 'Histórias ao redor da fogueira', 'Conexão genuína com moradores locais'].map(item => (
-                <div key={item} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                  <CheckIcon />
-                  <span style={{ fontSize: '15px', color: '#6B5040', lineHeight: 1.65 }}>{item}</span>
-                </div>
-              ))}
-            </div>
-            <p style={{ fontSize: '14px', color: '#A08060', lineHeight: 1.9 }}>
-              52km conectando Atins a Santo Amaro — a travessia mais autêntica dos Lençóis Maranhenses.
-            </p>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-            <div className="img-wrap" style={{ borderRadius: '16px', overflow: 'hidden', gridRow: 'span 2', aspectRatio: '3/4' }}>
-              <img src="/images/lencois/DSC02245.jpg" alt="Lençóis" className="hover-scale" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-            </div>
-            <div className="img-wrap" style={{ borderRadius: '16px', overflow: 'hidden', aspectRatio: '1' }}>
-              <img src="/images/lencois/DJI_20250826043905_0121_D.jpg" alt="Drone" className="hover-scale" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-            </div>
-            <div className="img-wrap" style={{ borderRadius: '16px', overflow: 'hidden', aspectRatio: '1' }}>
-              <img src="/images/lencois/DSC02529.jpg" alt="Lagoa" className="hover-scale" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════ ROTEIRO — foto de fundo discreta ══════════════════ */}
-      <section style={{ position: 'relative', overflow: 'hidden' }}>
+      {/* ── HERO ── */}
+      <section style={{ position: 'relative', minHeight: 820, overflow: 'hidden', background: 'var(--forest)' }}>
+        <div
+          className="lenc-trip-img"
+          style={{
+            position: 'absolute', inset: 0,
+            backgroundImage: `url(${FOTOS_GALERIA[0]})`,
+            backgroundSize: 'cover', backgroundPosition: 'center 30%',
+          }}
+        />
         <div style={{
           position: 'absolute', inset: 0,
-          backgroundImage: 'url(/images/lencois/DJI_20250828042744_0378_D.jpg)',
-          backgroundSize: 'cover', backgroundPosition: 'center',
-          filter: 'brightness(.28) saturate(.5)',
+          background: 'linear-gradient(180deg, rgba(30,42,24,.45) 0%, rgba(30,42,24,.05) 40%, rgba(30,42,24,.9) 100%)',
         }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'rgba(245,240,232,.93)' }} />
 
-        <div className="sec-pad" style={{ position: 'relative', zIndex: 5, padding: '96px 48px' }}>
-          <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-            <p style={{ fontSize: '10px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#A08060', marginBottom: '10px' }}>Roteiro base</p>
-            <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, marginBottom: '64px' }}>
-              4 dias.<br /><strong style={{ fontWeight: 800 }}>Cada um inesquecível.</strong>
-            </h2>
-            {dias.map((dia) => (
-              <div key={dia.num} className="divider dia-grid" style={{
-                display: 'grid', gridTemplateColumns: '64px 1fr 260px',
-                gap: '40px', padding: '40px 0', alignItems: 'center',
-              }}>
-                <div style={{ fontSize: 'clamp(3rem, 6vw, 5rem)', fontWeight: 800, color: '#DDD5C4', lineHeight: 1, letterSpacing: '-.04em' }}>
-                  {dia.num}
-                </div>
-                <div>
-                  <p style={{ fontSize: '10px', letterSpacing: '.2em', textTransform: 'uppercase', color: '#8B6F47', marginBottom: '5px' }}>{dia.rota}</p>
-                  <p style={{ fontSize: '11px', color: '#A08060', marginBottom: '12px' }}>{dia.tempo}</p>
-                  <p style={{ fontSize: '14px', color: '#6B5040', lineHeight: 1.85, maxWidth: '440px' }}>{dia.desc}</p>
-                  <div style={{
-                    display: 'inline-flex', alignItems: 'center', gap: '8px', marginTop: '16px',
-                    background: 'rgba(139,111,71,.07)', border: '1px solid rgba(139,111,71,.18)',
-                    borderRadius: '999px', padding: '5px 14px',
-                    fontSize: '11px', color: '#8B6F47', fontWeight: 600,
-                  }}>
-                    {dia.highlight}
-                  </div>
-                </div>
-                <div className="img-wrap hide-mobile" style={{ borderRadius: '14px', overflow: 'hidden', aspectRatio: '4/3' }}>
-                  <img src={dia.img} alt={`Dia ${dia.num}`} className="hover-scale" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-                </div>
-              </div>
-            ))}
+        <div
+          className="lenc-hero-pad"
+          style={{
+            position: 'relative', zIndex: 2, minHeight: 820,
+            padding: '140px 56px 56px',
+            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+            color: 'var(--canvas)',
+          }}
+        >
+          {/* breadcrumb */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe)', fontWeight: 500 }}>
+            <Link href="/expedicoes" style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" /></svg>
+              Expedições
+            </Link>
+            <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--rust-soft)', display: 'inline-block' }} />
+            <span>Lençóis Maranhenses</span>
+            <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--rust-soft)', display: 'inline-block' }} />
+            <span style={{ color: 'var(--rust-soft)' }}>Agosto 2026</span>
           </div>
-        </div>
-      </section>
 
-      {/* ══════════════════ FOTOGRAFIA ══════════════════ */}
-      <section className="sec-pad" style={{ padding: '96px 48px' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }} className="two-col">
-          <div className="img-wrap" style={{ borderRadius: '20px', overflow: 'hidden', aspectRatio: '3/4' }}>
-            <img src="/images/lencois/DSC03215.jpg" alt="Fotografia" className="hover-scale" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          </div>
+          {/* title block */}
           <div>
-            <p style={{ fontSize: '10px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#A08060', marginBottom: '20px' }}>Diferencial exclusivo</p>
-            <h2 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.8rem)', fontWeight: 300, lineHeight: 1.1, marginBottom: '6px' }}>
-              Guarda o celular.
-            </h2>
-            <div className="rn" style={{ fontSize: 'clamp(2.5rem, 4.5vw, 4rem)', color: '#8B6F47', lineHeight: 1.05, marginBottom: '6px' }}>
-              Vive de verdade.
+            <div style={{ fontFamily: 'var(--font-hand)', fontSize: 44, color: 'var(--rust-soft)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 6 }}>
+              deserto com lagoas, Via Láctea garantida—
             </div>
-            <h2 style={{ fontSize: 'clamp(1.6rem, 2.8vw, 2.4rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: '32px' }}>
-              A gente cuida das fotos.
-            </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '36px' }}>
-              {[
-                'Fotógrafo profissional durante toda a travessia',
-                'Cobertura completa: paisagens épicas, momentos espontâneos, interações com comunidades',
-                'Fotos tratadas profissionalmente, entregues em até 15 dias',
-              ].map(item => (
-                <div key={item} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                  <CheckIcon />
-                  <span style={{ fontSize: '14px', color: '#6B5040', lineHeight: 1.75 }}>{item}</span>
+            <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(64px, 10vw, 140px)', letterSpacing: '-.04em', lineHeight: 0.9, margin: 0, color: 'var(--canvas)' }}>
+              Lençóis<br />
+              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>Maranhenses</span>
+            </h1>
+          </div>
+
+          {/* bottom: lead + stats */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 40, flexWrap: 'wrap' }}>
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 20, fontStyle: 'italic', lineHeight: 1.5, maxWidth: '46ch', color: 'var(--canvas)', margin: 0 }}>
+              Travessia a pé entre dunas brancas e lagoas de água doce — o parque que parece outro planeta, com fotografia profissional inclusa.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: 32, flexShrink: 0 }}>
+              {[['35–64km', 'Distância'], ['3–5 dias', 'Duração'], ['2–4 oásis', 'Pernoites'], ['máx. 10', 'Por turma']].map(([v, l]) => (
+                <div key={l}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 6 }}>{l}</div>
+                  <div style={{ fontFamily: 'var(--font-ui)', fontSize: 20, fontWeight: 600, color: 'var(--canvas)' }}>{v}</div>
                 </div>
               ))}
             </div>
-            <div style={{ padding: '20px 24px', background: '#EDE7DB', borderRadius: '16px', border: '1px solid #DDD5C4', display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div className="img-wrap" style={{ width: '48px', height: '48px', borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid #DDD5C4' }}>
-                <img src="/images/lencois/henrique_sesana1.jpg" alt="Henrique" className="hover-scale" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+        </div>
+      </section>
+
+      {/* ── INTRO ── */}
+      <section
+        className="lenc-pad"
+        style={{ padding: '72px 56px', borderBottom: '1px solid var(--line)', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 80, alignItems: 'start' }}
+      >
+        <div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 01 · O lugar</div>
+          <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 32, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.1, margin: 0, color: 'var(--bark)' }}>
+            Deserto branco<br />com lagoas<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>de safira.</span>
+          </h2>
+        </div>
+        <p style={{ fontFamily: 'var(--font-serif)', fontSize: 20, lineHeight: 1.55, color: '#3A3530', margin: 0 }}>
+          Os Lençóis Maranhenses são um dos lugares mais irreais do planeta — um deserto de dunas brancas que, entre janeiro e setembro, se preenche com lagoas de água doce cristalina. A travessia a pé conecta Atins a Santo Amaro pelos caminhos internos do parque, passando por comunidades que vivem isoladas há gerações. Não existe trilha marcada. Você segue guias locais, o vento e a cor da água.
+        </p>
+      </section>
+
+      {/* ── ROTEIRO ── */}
+      <section style={{ background: 'var(--canvas-deep)', borderBottom: '1px solid var(--line)' }}>
+        <div className="lenc-pad" style={{ padding: '96px 56px' }}>
+          <div style={{ marginBottom: 56 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 02 · Roteiro</div>
+            <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 56, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
+              4 dias.<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>Cada um inesquecível.</span>
+            </h2>
+          </div>
+
+          {ROTEIRO.map((dia) => (
+            <div
+              key={dia.num}
+              className="lenc-day"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '80px 1fr 300px',
+                gap: 40, padding: '40px 0',
+                borderTop: '1px solid var(--line)',
+                alignItems: 'center',
+              }}
+            >
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 72, fontWeight: 500, letterSpacing: '-.04em', lineHeight: 1, color: 'var(--line)', userSelect: 'none' }}>
+                {dia.num}
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 600, color: '#2C2016' }}>Henrique Pimenta</div>
-                <div style={{ fontSize: '11px', color: '#A08060' }}>@henriq.eu · Fotógrafo e guia da expedição</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 4 }}>{dia.rota}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--stone)', marginBottom: 16 }}>{dia.tempo}</div>
+                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, lineHeight: 1.65, color: '#3A3530', margin: '0 0 16px', maxWidth: '52ch' }}>{dia.desc}</p>
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  background: 'rgba(166,84,43,.08)', border: '1px solid rgba(166,84,43,.2)',
+                  padding: '5px 14px',
+                  fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--rust)',
+                }}>
+                  {dia.highlight}
+                </div>
               </div>
+              <div
+                className="lenc-img-wrap lenc-day-img"
+                style={{ overflow: 'hidden', aspectRatio: '4/3' }}
+              >
+                <img
+                  src={dia.img}
+                  alt={`Dia ${dia.num}`}
+                  className="lenc-trip-img"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── FOTOGRAFIA ── */}
+      <section
+        className="lenc-pad lenc-two"
+        style={{ padding: '96px 56px', borderBottom: '1px solid var(--line)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}
+      >
+        <div className="lenc-img-wrap" style={{ overflow: 'hidden', aspectRatio: '3/4' }}>
+          <img
+            src="/images/lencois/DSC03215.jpg"
+            alt="Fotografia"
+            className="lenc-trip-img"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        </div>
+        <div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 03 · Diferencial</div>
+          <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 42, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.05, margin: '0 0 10px', color: 'var(--bark)' }}>
+            Fotografia<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>profissional inclusa.</span>
+          </h2>
+          <p style={{ fontFamily: 'var(--font-serif)', fontSize: 18, lineHeight: 1.6, color: '#3A3530', marginBottom: 32 }}>
+            Henrique (@henriq.eu) vai junto na travessia como fotógrafo e guia — você vive a experiência, a gente cuida das imagens. Cobertura completa: dunas ao nascer do sol, lagoas, momentos espontâneos, comunidades locais.
+          </p>
+          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {['Fotógrafo profissional durante toda a travessia', 'Fotos tratadas profissionalmente — entregues em até 15 dias', 'Álbum digital com as melhores fotos do grupo'].map(item => (
+              <li key={item} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontFamily: 'var(--font-serif)', fontSize: 15, color: '#3A3530', lineHeight: 1.6 }}>
+                <span style={{ color: 'var(--moss)', fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <div style={{ padding: '16px 20px', background: 'var(--canvas-deep)', border: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div className="lenc-img-wrap" style={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid var(--line)' }}>
+              <img src="/images/lencois/henrique_sesana1.jpg" alt="Henrique" className="lenc-trip-img" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+            <div>
+              <div style={{ fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 700, color: 'var(--bark)' }}>Henrique Pimenta</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--stone)', marginTop: 2 }}>@henriq.eu · Fotógrafo e guia da expedição</div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════ INCLUÍDO ══════════════════ */}
-      <section className="sec-pad" style={{ padding: '96px 48px', background: '#EDE7DB', borderTop: '1px solid #DDD5C4', borderBottom: '1px solid #DDD5C4' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-          <p style={{ fontSize: '10px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#A08060', marginBottom: '10px' }}>Pacote</p>
-          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, marginBottom: '48px' }}>
-            O que está <strong style={{ fontWeight: 800 }}>incluído.</strong>
-          </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '14px', marginBottom: '16px' }}>
-            {[
-              { svg: <svg width="20" height="20" fill="none" stroke="#8B6F47" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>, title: 'Guia Especializado', desc: 'Profissionais que conhecem cada duna e lagoa do percurso' },
-              { svg: <svg width="20" height="20" fill="none" stroke="#8B6F47" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>, title: 'Todos os Transportes', desc: 'Lancha, barcos e veículos 4x4 durante a travessia, a partir de Barreirinhas' },
-              { svg: <svg width="20" height="20" fill="none" stroke="#8B6F47" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>, title: 'Alimentação Completa', desc: 'Todas as refeições preparadas por famílias locais' },
-              { svg: <svg width="20" height="20" fill="none" stroke="#8B6F47" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>, title: 'Hospedagem Autêntica', desc: 'Pernoites em redários nos oásis — experiência única com a natureza' },
-              { svg: <svg width="20" height="20" fill="none" stroke="#8B6F47" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>, title: 'Fotografia Profissional', desc: 'Henrique (@henriq.eu) vai junto registrando cada momento da jornada' },
-            ].map(item => (
-              <div key={item.title} style={{ padding: '28px', background: '#F5F0E8', borderRadius: '16px', border: '1px solid #DDD5C4' }}>
-                <div style={{ marginBottom: '14px' }}>{item.svg}</div>
-                <div style={{ fontSize: '11px', fontWeight: 700, color: '#2C2016', letterSpacing: '.07em', textTransform: 'uppercase', marginBottom: '8px' }}>{item.title}</div>
-                <div style={{ fontSize: '13px', color: '#7A6050', lineHeight: 1.75 }}>{item.desc}</div>
+      {/* ── INCLUÍDO / NÃO INCLUÍDO ── */}
+      <section
+        className="lenc-pad"
+        style={{ padding: '96px 56px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60 }}
+      >
+        {/* Incluído */}
+        <div style={{ background: 'var(--canvas-deep)', padding: 40, border: '1px solid var(--line)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 18 }}>№ 04.a · Na mochila</div>
+          <h3 style={{ fontFamily: 'var(--font-ui)', fontSize: 28, fontWeight: 600, letterSpacing: '-.01em', margin: '0 0 20px', color: 'var(--bark)' }}>
+            O que está <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>incluso.</span>
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {INCLUIDO.map(item => (
+              <div
+                key={item.title}
+                style={{ display: 'flex', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--line)', fontFamily: 'var(--font-serif)', fontSize: 15, color: '#3A3530', alignItems: 'flex-start' }}
+              >
+                <span style={{ color: 'var(--moss)', fontWeight: 700, flexShrink: 0, marginTop: 2 }}>✓</span>
+                <div>
+                  <strong style={{ fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 700, color: 'var(--bark)', display: 'block', marginBottom: 2 }}>{item.title}</strong>
+                  {item.desc}
+                </div>
               </div>
             ))}
           </div>
-          <div style={{ padding: '22px 28px', background: '#F5F0E8', borderRadius: '14px', border: '1px solid #DDD5C4' }}>
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#A08060', letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: '10px' }}>Não incluído</div>
-            <p style={{ fontSize: '13px', color: '#A08060', lineHeight: 1.85 }}>
-              Transporte São Luís → Barreirinhas · Hospedagem antes/depois da travessia · Bebidas extras · Despesas pessoais
-            </p>
+        </div>
+
+        {/* Não incluído */}
+        <div style={{ padding: 40, border: '1px dashed var(--stone)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 18 }}>№ 04.b · Por sua conta</div>
+          <h3 style={{ fontFamily: 'var(--font-ui)', fontSize: 28, fontWeight: 600, letterSpacing: '-.01em', margin: '0 0 20px', color: 'var(--bark)' }}>
+            O que <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--stone)' }}>não</span> está.
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {NAO_INCLUIDO.split(' · ').map(item => (
+              <div key={item} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--stone)', lineHeight: 1.5 }}>
+                <span style={{ flexShrink: 0, marginTop: 3 }}>—</span>
+                {item}
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ══════════════════ PACOTES ══════════════════ */}
-      <section className="sec-pad" style={{ padding: '96px 48px' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-          <p style={{ fontSize: '10px', letterSpacing: '.25em', textTransform: 'uppercase', color: '#A08060', marginBottom: '10px' }}>Datas · Agosto 2026</p>
-          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 300, marginBottom: '12px' }}>
-            Escolha seu <strong style={{ fontWeight: 800 }}>pacote.</strong>
-          </h2>
-          <p style={{ fontSize: '13px', color: '#A08060', marginBottom: '48px' }}>
-            Máximo 10 pessoas por turma · 25% de sinal para reservar a vaga
-          </p>
+      {/* ── PACOTES ── */}
+      <section style={{ background: 'var(--canvas-deep)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+        <div className="lenc-pad" style={{ padding: '96px 56px' }}>
+          <div style={{ marginBottom: 48 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 05 · Datas · Agosto 2026</div>
+            <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 56, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
+              Escolha seu <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>pacote.</span>
+            </h2>
+          </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', marginBottom: '40px' }} className="three-col">
-            {pacotes.map(p => (
-              <div key={p.label} className="pack-card" style={{
-                padding: '36px 28px', borderRadius: '20px', position: 'relative',
-                border: p.featured ? '1.5px solid #8B6F47' : '1px solid #DDD5C4',
-                background: p.featured ? '#2C2016' : '#EDE7DB',
-              }}>
+          <div
+            className="lenc-packs"
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, marginBottom: 32 }}
+          >
+            {PACOTES.map(p => (
+              <div
+                key={p.label}
+                className="lenc-pack"
+                style={{
+                  padding: '40px 32px',
+                  position: 'relative',
+                  background: p.featured ? 'var(--bark)' : 'var(--canvas)',
+                  borderTop: p.featured ? '3px solid var(--rust)' : '3px solid transparent',
+                  outline: p.featured ? '1px solid var(--rust)' : '1px solid var(--line)',
+                }}
+              >
                 {p.featured && (
                   <div style={{
-                    position: 'absolute', top: '-13px', left: '28px',
-                    background: '#8B6F47', color: '#F5F0E8',
-                    fontSize: '9px', fontWeight: 800, letterSpacing: '.15em', textTransform: 'uppercase',
-                    padding: '5px 14px', borderRadius: '999px',
+                    position: 'absolute', top: -13, left: 32,
+                    background: 'var(--rust)', color: 'var(--canvas)',
+                    fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase',
+                    padding: '5px 14px',
                   }}>Mais popular</div>
                 )}
-                <div style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', color: '#A08060', marginBottom: '8px' }}>{p.label}</div>
-                <div style={{ fontSize: '20px', fontWeight: 800, color: p.featured ? '#F5F0E8' : '#2C2016', marginBottom: '10px' }}>{p.datas}</div>
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: p.featured ? 'var(--rust-soft)' : 'var(--stone)', marginBottom: 8 }}>{p.label}</div>
+                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 22, fontWeight: 700, color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 10 }}>{p.datas}</div>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
                   {[p.dias, p.km, p.oasis].map(v => (
                     <span key={v} style={{
-                      fontSize: '10px', borderRadius: '999px', padding: '3px 10px',
-                      color: p.featured ? '#A08060' : '#7A6050',
-                      background: p.featured ? 'rgba(255,255,255,.05)' : 'rgba(139,111,71,.07)',
-                      border: `1px solid ${p.featured ? 'rgba(255,255,255,.09)' : '#DDD5C4'}`,
+                      fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em',
+                      padding: '3px 10px',
+                      color: p.featured ? 'var(--canvas)' : 'var(--stone)',
+                      border: `1px solid ${p.featured ? 'var(--forest-soft)' : 'var(--line)'}`,
                     }}>{v}</span>
                   ))}
                 </div>
-                <p style={{ fontSize: '13px', color: p.featured ? '#A08060' : '#7A6050', lineHeight: 1.75, marginBottom: '28px' }}>{p.desc}</p>
-                <div style={{ fontSize: '32px', fontWeight: 800, color: p.featured ? '#F5F0E8' : '#2C2016', marginBottom: '4px' }}>{p.price}</div>
-                <div style={{ fontSize: '10px', color: p.featured ? '#60503C' : '#A08060', marginBottom: '28px' }}>por pessoa · até 12x (taxas por conta do cliente)</div>
+                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, lineHeight: 1.6, color: p.featured ? 'var(--ashe)' : '#3A3530', marginBottom: 28 }}>{p.desc}</p>
+                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 36, fontWeight: 700, letterSpacing: '-.02em', color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 4 }}>{p.price}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', color: p.featured ? 'var(--ashe-dim)' : 'var(--stone)', marginBottom: 28 }}>por pessoa · até 12x</div>
                 <a
-                  href={waBase + encodeURIComponent(`Olá! Tenho interesse na ${p.label} (${p.datas}) — ${p.price}. Ainda tem vagas disponíveis?`)}
+                  href={waMsg(p.label, p.datas, p.price)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="wa-btn-full"
+                  className="lenc-cta-btn"
                   style={{
-                    padding: '14px 24px', borderRadius: '999px',
-                    fontSize: '11px', fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase',
-                    background: p.featured ? '#8B6F47' : 'transparent',
-                    color: p.featured ? '#F5F0E8' : '#8B6F47',
-                    border: p.featured ? 'none' : '1px solid #8B6F47',
+                    display: 'block', textAlign: 'center', textDecoration: 'none',
+                    padding: '14px 24px',
+                    fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase',
+                    background: p.featured ? 'var(--rust)' : 'transparent',
+                    color: p.featured ? 'var(--canvas)' : 'var(--bark)',
+                    border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}`,
                   }}
                 >
-                  Reservar esta data
-                  <ArrowIcon />
+                  Reservar esta data →
                 </a>
               </div>
             ))}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
-            {[
-              { svg: <svg width="18" height="18" fill="none" stroke="#8B6F47" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>, title: '25% de sinal', desc: 'Para garantir sua vaga na turma escolhida' },
-              { svg: <svg width="18" height="18" fill="none" stroke="#8B6F47" strokeWidth="1.5" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>, title: 'Restante na viagem', desc: 'À vista ou parcelado em até 12x*' },
-              { svg: <svg width="18" height="18" fill="none" stroke="#8B6F47" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>, title: 'Cancelamento', desc: 'Até 30 dias: crédito de 12 meses. 29–15 dias: retenção de 50%' },
-            ].map(item => (
-              <div key={item.title} style={{ padding: '20px 22px', background: '#EDE7DB', borderRadius: '14px', border: '1px solid #DDD5C4', display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
-                <div style={{ marginTop: '1px', flexShrink: 0 }}>{item.svg}</div>
+          {/* política pagamento */}
+          <div
+            className="lenc-pol"
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}
+          >
+            {POLITICA_PAGAMENTO.map(item => (
+              <div key={item.title} style={{ padding: '20px 24px', background: 'var(--canvas)', border: '1px solid var(--line)', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                 <div>
-                  <div style={{ fontSize: '12px', fontWeight: 700, color: '#2C2016', marginBottom: '4px' }}>{item.title}</div>
-                  <div style={{ fontSize: '12px', color: '#A08060', lineHeight: 1.7 }}>{item.desc}</div>
+                  <div style={{ fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 700, color: 'var(--bark)', marginBottom: 4 }}>{item.title}</div>
+                  <div style={{ fontFamily: 'var(--font-serif)', fontSize: 13, color: 'var(--stone)', lineHeight: 1.6 }}>{item.desc}</div>
                 </div>
               </div>
             ))}
           </div>
-          <p style={{ fontSize: '11px', color: '#C4B89A', marginTop: '12px' }}>*Taxas de parcelamento por conta do cliente</p>
         </div>
       </section>
 
-      {/* ══════════════════ CTA FINAL — foto de fundo ══════════════════ */}
-      <section style={{ padding: '0 48px 96px' }}>
-        <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
-          <div style={{ position: 'relative', borderRadius: '24px', overflow: 'hidden', minHeight: '440px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <div style={{
-              position: 'absolute', inset: 0,
-              backgroundImage: 'url(/images/lencois/DJI_20250828175706_0461_D-Edit-2.jpg)',
-              backgroundSize: 'cover', backgroundPosition: 'center',
-              filter: 'brightness(.42) saturate(.75)',
-            }} />
-            <div style={{ position: 'absolute', inset: 0, background: 'rgba(44,32,22,.42)' }} />
-            <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '72px 40px' }}>
-              <h2 style={{ fontSize: 'clamp(2rem, 5vw, 4rem)', fontWeight: 300, color: '#F5F0E8', marginBottom: '6px', lineHeight: 1.05 }}>
-                Pronto para
-              </h2>
-              <div className="rn" style={{ fontSize: 'clamp(3.5rem, 8vw, 7rem)', color: '#C4A878', lineHeight: .9, marginBottom: '28px' }}>
-                atravessar?
-              </div>
-              <p style={{ fontSize: '14px', color: 'rgba(245,240,232,.6)', maxWidth: '400px', margin: '0 auto 44px', lineHeight: 1.85 }}>
-                Vagas limitadas a 10 pessoas por turma. Agosto 2026 — reserve com antecedência.
-              </p>
-              <a href={waGeral} target="_blank" rel="noopener noreferrer" className="wa-btn" style={{
-                background: '#C4A878', color: '#2C2016',
-                fontSize: '12px', fontWeight: 800, letterSpacing: '.15em', textTransform: 'uppercase',
-                padding: '18px 48px', borderRadius: '999px',
-              }}>
-                Falar no WhatsApp
-                <ArrowIcon />
-              </a>
-              <p style={{ marginTop: '24px', fontSize: '10px', color: 'rgba(245,240,232,.22)', letterSpacing: '.1em' }}>
-                Em parceria com @lencoisexperience · @livinglencois
-              </p>
-            </div>
-          </div>
+      {/* ── CTA FINAL ── */}
+      <section style={{ padding: '120px 56px', background: 'var(--forest)', color: 'var(--canvas)', textAlign: 'center' }}>
+        <div style={{ fontFamily: 'var(--font-hand)', fontSize: 42, color: 'var(--rust-soft)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 8 }}>bora?</div>
+        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(48px, 8vw, 88px)', letterSpacing: '-.04em', lineHeight: 0.92, margin: 0 }}>
+          Sua próxima<br />
+          <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>expedição</span>
+        </h2>
+        <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 20, color: 'var(--ashe)', marginTop: 24, maxWidth: '50ch', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
+          Vagas limitadas a 10 pessoas por turma. Agosto 2026 — reserve com antecedência.
+        </p>
+        <a
+          href={WA_GERAL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="lenc-cta-btn"
+          style={{
+            marginTop: 40, display: 'inline-block',
+            padding: '18px 40px',
+            background: 'var(--rust-soft)', color: 'var(--forest)',
+            fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 700, letterSpacing: '.24em', textTransform: 'uppercase',
+            textDecoration: 'none',
+          }}
+        >
+          Falar no WhatsApp →
+        </a>
+        <div style={{ marginTop: 28, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--ashe-dim)' }}>
+          Em parceria com @lencoisexperience · @livinglencois
         </div>
       </section>
 
-      {/* ══════════════════ GALERIA FINAL ══════════════════ */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '3px' }}>
-        {['/images/lencois/DSC02599.jpg', '/images/lencois/DSC01958.jpg', '/images/lencois/henrique_sesana2.jpg', '/images/lencois/henrique_sesana3.jpg'].map((src, i) => (
-          <div key={i} className="img-wrap" style={{ aspectRatio: '1', overflow: 'hidden' }}>
-            <img src={src} alt="" className="hover-scale" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+      {/* ── GALERIA ── */}
+      <div
+        className="lenc-four"
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 3 }}
+      >
+        {FOTOS_GALERIA.slice(8, 12).map((src, i) => (
+          <div key={i} className="lenc-img-wrap" style={{ aspectRatio: '1', overflow: 'hidden' }}>
+            <img
+              src={src}
+              alt=""
+              className="lenc-trip-img"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
           </div>
         ))}
       </div>
 
+      <SiteFooter dark={false} />
     </main>
   )
 }
