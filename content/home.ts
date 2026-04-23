@@ -55,20 +55,20 @@ export const BRANDS = [
 ]
 
 export const NAV_LINKS = [
-  { label: "Portfolio",   href: "/portfolio" },
-  { label: "Presets",     href: "/presets" },
-  { label: "Expedições",  href: "/expedicoes" },
-  { label: "Quadros",     href: "/quadros" },
-  { label: "Sobre",       href: "/sobre" },
-  { label: "Contacto",    href: "/contato" },
+  { label: "Portfolio",     href: "/portfolio" },
+  { label: "Presets & LUTs", href: "/presets" },
+  { label: "Expedições",    href: "/expedicoes" },
+  { label: "Quadros",       href: "/quadros" },
+  { label: "Sobre",         href: "/sobre" },
+  { label: "Contato",       href: "/contato" },
 ]
 
 export const FOOTER_NAV = [
-  { label: "Portfolio",   href: "/portfolio" },
-  { label: "Presets",     href: "/presets" },
-  { label: "Expedições",  href: "/expedicoes" },
-  { label: "Quadros",     href: "/quadros" },
-  { label: "Sobre",       href: "/sobre" },
+  { label: "Portfolio",     href: "/portfolio" },
+  { label: "Presets & LUTs", href: "/presets" },
+  { label: "Expedições",    href: "/expedicoes" },
+  { label: "Quadros",       href: "/quadros" },
+  { label: "Sobre",         href: "/sobre" },
 ]
 
 export const FOOTER_IMAGES = [

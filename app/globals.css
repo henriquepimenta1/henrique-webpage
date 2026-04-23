@@ -79,9 +79,9 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-inter, 'Inter', sans-serif);
+  background: var(--canvas);
+  color: var(--bark);
+  font-family: var(--font-ui);
   overflow-x: hidden;
   margin: 0;
 }
