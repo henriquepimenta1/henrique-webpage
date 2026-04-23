@@ -136,23 +136,21 @@ function BeforeAfter({
         }}
       />
 
-      {/* Before (RAW) — clipado pela posição do slider */}
-      <div style={{ position: "absolute", inset: 0, width: `${pos}%`, overflow: "hidden" }}>
-        <img
-          src={before}
-          alt="RAW antes do tratamento"
-          draggable={false}
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: `${100 / (pos / 100)}%`,
-            height: "100%",
-            objectFit: "cover",
-            display: "block",
-          }}
-        />
-      </div>
+      {/* Before (RAW) — mesmo tamanho do after, revelado por clipPath */}
+      <img
+        src={before}
+        alt="RAW antes do tratamento"
+        draggable={false}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          display: "block",
+          clipPath: `inset(0 ${100 - pos}% 0 0)`,
+        }}
+      />
 
       {/* Labels */}
       <div
