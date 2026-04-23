@@ -1,14 +1,10 @@
 // Fonte canônica dos dados de presets.
 // REGRA: nunca altere preços, nomes, descrições ou URLs sem aprovação explícita.
-// Discrepância de preço: a home exibe "R$59", a landing exibe "R$39,90 (50% off de R$79,90)".
-// Ambos preservados como estavam. Alinhar com o Henrique antes de qualquer alteração.
 
 export const CTA_URL = "https://pay.cakto.com.br/C4dmPFR"
 
-// Preço exibido na landing /presets
-export const PRESET_PRICE = "R$39,90"
+export const PRESET_PRICE          = "R$39,90"
 export const PRESET_PRICE_ORIGINAL = "R$79,90"
-export const PRESET_PRICE_HOME = "R$59" // exibido no card da home
 
 export interface Preset {
   key: string

@@ -33,7 +33,7 @@ export const HOME_CARDS = [
     title: "Outdoor",
     titleBold: "Cinematic",
     desc: "45 presets para Lightroom. Tons honestos, contraste limpo.",
-    cta: "R$59 — Ver Presets",
+    cta: "R$39,90 — Ver Presets",
     bg: "/images/desert-dunes.jpg",
     bgPosition: "center",
   },
