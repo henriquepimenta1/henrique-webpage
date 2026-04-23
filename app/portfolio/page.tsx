@@ -32,24 +32,24 @@ export const metadata = {
 
 export default function PortfolioPage() {
   return (
-    <div style={{ background: "#0E0C0A", color: "#E6DDD4", minHeight: "100vh" }}>
-      <SiteNav />
+    <div style={{ background: "var(--paper)", color: "var(--bark)", minHeight: "100vh" }}>
+      <SiteNav dark={false} />
 
       {/* ── PAGE HEADER ── */}
       <div className="pt-40 pb-12 px-8" style={{ maxWidth: 1280, margin: "0 auto" }}>
-        <p className="text-[10px] uppercase tracking-widest mb-2" style={{ color: "#60584E" }}>
+        <p className="font-mono text-[10px] uppercase tracking-widest mb-2" style={{ color: "var(--stone)" }}>
           Portfolio
         </p>
-        <h1 className="text-5xl font-light leading-tight" style={{ color: "#E6DDD4" }}>
-          Fotos &amp; <span className="font-semibold">Trabalhos</span>
+        <h1 className="text-5xl font-light leading-tight" style={{ color: "var(--bark)" }}>
+          Fotos &amp; <em className="font-serif not-italic font-normal" style={{ fontStyle: "italic" }}>Trabalhos</em>
         </h1>
-        <p className="text-sm mt-3 max-w-md leading-relaxed" style={{ color: "#746A62" }}>
+        <p className="text-sm mt-3 max-w-md leading-relaxed" style={{ color: "var(--stone)" }}>
           Lugares, luz e momentos que valeram a viagem. Fotografia outdoor, natureza e expedições pelo mundo.
         </p>
       </div>
 
       {/* ── STICKY SCROLL GALLERY ── */}
-      <section className="px-2" style={{ background: "#0E0C0A" }}>
+      <section className="px-2" style={{ background: "var(--paper)" }}>
         <div className="grid gap-2" style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
 
           {/* LEFT — scrolls normally */}
