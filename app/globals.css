@@ -5,12 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ── Design tokens — Field direction ───────────────────────────── */
+/* Nota: --font-ui/serif/mono/hand são definidas pelo next/font no <html>.   */
+/* Não redefinir aqui — causaria referência circular e anularia a variável.  */
 :root {
-  /* Fontes */
-  --font-ui:   var(--font-ui,   'Work Sans',    sans-serif);
-  --font-serif:var(--font-serif,'Newsreader',   serif);
-  --font-mono: var(--font-mono, 'IBM Plex Mono',monospace);
-  --font-hand: var(--font-hand, 'Reenie Beanie',cursive);
 
   /* Canvas (fundos claros) */
   --canvas:      #E8DFC9;

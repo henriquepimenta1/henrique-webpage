@@ -92,8 +92,7 @@ export default function LencoisPage() {
   return (
     <main style={{ background: '#F5F0E8', minHeight: '100vh', color: '#2C2016' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Reenie+Beanie&display=swap');
-        .rn { font-family: 'Reenie Beanie', cursive; }
+        .rn { font-family: var(--font-hand), cursive; }
         .hover-scale { transition: transform 600ms cubic-bezier(.4,0,.2,1); }
         .img-wrap:hover .hover-scale { transform: scale(1.04); }
         .pack-card { transition: transform 300ms ease, box-shadow 300ms ease; }
