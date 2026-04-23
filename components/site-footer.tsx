@@ -1,100 +1,52 @@
 import Link from "next/link";
+import { FOOTER_NAV, SITE_EMAIL } from "@/content/home";
 
-const NAV_LINKS = [
-  { label: "Portfolio",   href: "/portfolio" },
-  { label: "Presets",     href: "/presets" },
-  { label: "Expedições",  href: "/expedicoes" },
-  { label: "Sobre",       href: "/#sobre" },
-];
+export default function SiteFooter({ dark = false }: { dark?: boolean }) {
+  const bg     = dark ? "var(--forest-soft)" : "var(--canvas-deep)";
+  const fg     = dark ? "var(--canvas)"      : "var(--bark)";
+  const dim    = dark ? "rgba(232,223,201,.45)" : "rgba(42,33,26,.5)";
+  const border = dark ? "rgba(232,223,201,.14)" : "rgba(42,33,26,.14)";
 
-const SOCIAL_LINKS = ["Instagram", "Twitter", "Behance"];
-
-interface Props {
-  /** Show the 6-photo grid strip (home only) */
-  photoStrip?: string[];
-}
-
-export default function SiteFooter({ photoStrip }: Props) {
   return (
-    <footer className="py-16 px-8" style={{ borderTop: "1px solid #2B2420", background: "#0E0C0A" }}>
-      <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-        <div className="grid grid-cols-3 gap-12 mb-10">
-          <div>
-            <p className="text-[10px] uppercase tracking-[.2em] mb-5" style={{ color: "#4C4440" }}>
-              Páginas
-            </p>
-            <div className="space-y-2">
-              {NAV_LINKS.map((l) => (
-                <Link
-                  key={l.label}
-                  href={l.href}
-                  className="block text-sm transition-colors hover:text-[#E6DDD4]"
-                  style={{ color: "#887E76" }}
-                >
-                  {l.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-[.2em] mb-5" style={{ color: "#4C4440" }}>
-              Localização
-            </p>
-            <div className="space-y-1.5">
-              <p className="text-sm" style={{ color: "#887E76" }}>Disponível Mundialmente</p>
-              <a
-                href="mailto:management@henriq.eu"
-                className="block text-sm transition-colors hover:text-[#E6DDD4]"
-                style={{ color: "#887E76" }}
-              >
-                management@henriq.eu
-              </a>
-              <p className="text-sm" style={{ color: "#4C4440" }}>Chipre</p>
-            </div>
-          </div>
-          <div>
-            <p className="text-[10px] uppercase tracking-[.2em] mb-5" style={{ color: "#4C4440" }}>
-              Redes Sociais
-            </p>
-            <div className="space-y-2">
-              {SOCIAL_LINKS.map((l) => (
-                <a
-                  key={l}
-                  href="#"
-                  className="block text-sm transition-colors hover:text-[#E6DDD4] underline underline-offset-2"
-                  style={{ color: "#887E76", textDecorationColor: "#2B2420" }}
-                >
-                  {l}
-                </a>
-              ))}
-            </div>
-          </div>
+    <footer style={{ background:bg,color:fg,padding:"64px 56px 40px",
+      borderTop:`1px solid ${border}`,fontFamily:"var(--font-ui)" }}>
+      <div style={{ display:"grid",gridTemplateColumns:"2fr 1fr 1fr",gap:40,marginBottom:48,
+        flexWrap:"wrap" }}>
+
+        <div>
+          <p style={{ fontFamily:"var(--font-serif)",fontStyle:"italic",fontSize:26,
+            letterSpacing:"-.01em",lineHeight:1.25,maxWidth:"22ch",margin:"0 0 20px" }}>
+            Fotografia de campo, feita com os pés no chão.
+          </p>
+          <span style={{ fontFamily:"var(--font-hand)",fontSize:30,color:"var(--rust-soft)",
+            transform:"rotate(-2deg)",display:"inline-block" }}>— Henrique</span>
         </div>
 
-        {/* Optional photo strip */}
-        {photoStrip && (
-          <div className="grid grid-cols-6 gap-2 mb-10">
-            {photoStrip.map((src, i) => (
-              <div key={i} className="aspect-square rounded-lg overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={src}
-                  alt=""
-                  className="w-full h-full object-cover"
-                  style={{ objectPosition: i >= 4 ? "top" : "center" }}
-                />
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div
-          className="flex items-center justify-between pt-6"
-          style={{ borderTop: "1px solid #2B2420" }}
-        >
-          <p className="text-xs" style={{ color: "#4C4440" }}>@henriq.eu</p>
-          <p className="text-xs" style={{ color: "#4C4440" }}>henriq.eu</p>
+        <div>
+          <p style={{ fontFamily:"var(--font-mono)",fontSize:10,letterSpacing:".22em",
+            textTransform:"uppercase",color:dim,marginBottom:14,marginTop:0 }}>Navegar</p>
+          {FOOTER_NAV.map(l => (
+            <Link key={l.href} href={l.href} style={{ display:"block",fontSize:13,
+              lineHeight:2,color:fg,textDecoration:"none",opacity:.8 }}>{l.label}</Link>
+          ))}
         </div>
+
+        <div>
+          <p style={{ fontFamily:"var(--font-mono)",fontSize:10,letterSpacing:".22em",
+            textTransform:"uppercase",color:dim,marginBottom:14,marginTop:0 }}>Contato</p>
+          <a href={`mailto:${SITE_EMAIL}`} style={{ display:"block",fontSize:13,
+            lineHeight:2,color:fg,textDecoration:"none",opacity:.8 }}>{SITE_EMAIL}</a>
+          <p style={{ fontSize:13,lineHeight:2,opacity:.8,margin:0 }}>São Paulo · BR</p>
+          <p style={{ fontSize:13,lineHeight:2,opacity:.5,margin:0 }}>Atende worldwide · desde 2018</p>
+        </div>
+      </div>
+
+      <div style={{ paddingTop:24,borderTop:`1px solid ${border}`,display:"flex",
+        justifyContent:"space-between",alignItems:"center",
+        fontFamily:"var(--font-mono)",fontSize:10,letterSpacing:".15em",color:dim,
+        flexWrap:"wrap",gap:8 }}>
+        <span>© 2026 · Henrique Sesana Pimenta · Todos os direitos reservados</span>
+        <span>10°17′S &nbsp;76°54′W · alt 4 800 m</span>
       </div>
     </footer>
   );
