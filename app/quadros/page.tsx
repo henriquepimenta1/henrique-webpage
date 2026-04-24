@@ -7,12 +7,12 @@ import SiteFooter from '@/components/site-footer'
 // ─── TYPES ───────────────────────────────────────────────────────────────────
 
 type Tier = 'signature' | 'collectors' | 'open'
+type Acabamento = 'essential' | 'gallery' | 'museum'
 
 interface SizeOption {
   id: string
   label: string
-  price: string
-  priceNum: number
+  prices: Record<Acabamento, string>
 }
 
 interface Print {
@@ -24,7 +24,7 @@ interface Print {
   sizes: SizeOption[]
 }
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
+// ─── CONSTANTS ───────────────────────────────────────────────────────────────
 
 const TIER_META: Record<Tier, { label: string; limit: string; bg: string; color: string }> = {
   signature: { label: 'Signature Collection', limit: 'Edição limitada — 10 prints', bg: '#5C1E1E', color: '#F5EDD6' },
@@ -32,610 +32,528 @@ const TIER_META: Record<Tier, { label: string; limit: string; bg: string; color:
   open:       { label: 'Open Edition',         limit: 'Sem limite de tiragem',       bg: '#1A2E1A', color: '#B8D4B8' },
 }
 
+const ACABAMENTOS: Record<Acabamento, {
+  label: string
+  sub: string
+  papel: string
+  gramatura: string
+  composicao: string
+  durabilidade: string
+  moldura: string
+  vidro: string
+  passepartout: string
+  certificado: string
+  posicionamento: string
+  popular: boolean
+}> = {
+  essential: {
+    label: 'Essential',
+    sub: 'Qualidade profissional — porta de entrada fine art',
+    papel: 'Hahnemühle Photo Matte Fibre 200g',
+    gramatura: '200 g/m²',
+    composicao: 'Alfa-celulose premium',
+    durabilidade: '75+ anos',
+    moldura: 'Madeira laqueada, perfil 2cm',
+    vidro: 'Cristal 2mm',
+    passepartout: 'Simples, livre de ácido',
+    certificado: 'Assinado pelo artista',
+    posicionamento: 'Porta de entrada — qualidade profissional, papel de excelente custo-benefício',
+    popular: false,
+  },
+  gallery: {
+    label: 'Gallery',
+    sub: 'O padrão de galeria — papel 100% algodão, o que museus usam',
+    papel: 'Hahnemühle Photo Rag 308g',
+    gramatura: '308 g/m²',
+    composicao: '100% algodão',
+    durabilidade: '100+ anos',
+    moldura: 'Madeira maciça laqueada, perfil 3cm',
+    vidro: 'Antirreflexo 2mm',
+    passepartout: '5cm, livre de ácido',
+    certificado: 'Hahnemühle com holograma, numerado',
+    posicionamento: 'O padrão de galeria — papel 100% algodão, o que museus usam',
+    popular: true,
+  },
+  museum: {
+    label: 'Museum',
+    sub: 'O topo absoluto — para colecionadores e a peça definitiva',
+    papel: 'Hahnemühle Museum Etching 350g',
+    gramatura: '350 g/m²',
+    composicao: '100% algodão',
+    durabilidade: '100+ anos',
+    moldura: 'Madeira maciça premium, perfil 4cm',
+    vidro: 'Museológico antirreflexo + proteção UV',
+    passepartout: 'Duplo (branco + off-white), 5cm, livre de ácido',
+    certificado: 'Hahnemühle com holograma, numerado',
+    posicionamento: 'O topo absoluto — para colecionadores e quem quer a peça definitiva',
+    popular: false,
+  },
+}
+
+const FRAME_COLORS = [
+  { id: 'preta',   label: 'Preta' },
+  { id: 'branca',  label: 'Branca' },
+  { id: 'natural', label: 'Natural' },
+]
+
+const WA_NUM = '5511999999999'
+
+// ─── PRINTS DATA ─────────────────────────────────────────────────────────────
+
 const PRINTS: Print[] = [
-  // ── SIGNATURE ──────────────────────────────────────────────────────────────
+  // SIGNATURE
   {
-    id: 'camadas-beleza',
+    id: 'camadas-beleza', tier: 'signature',
     img: '/images/quadros/2 CAMADAS DE BELEZA-LENCOIS.jpg',
-    title: '2 Camadas de Beleza',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'signature',
+    title: '2 Camadas de Beleza', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.900', priceNum: 2900 },
-      { id: '80x120', label: '80×120 cm', price: 'R$ 4.900', priceNum: 4900 },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
+      { id: '80x120', label: '80×120 cm', prices: { essential: 'R$ 3.390', gallery: 'R$ 4.900', museum: 'R$ 6.490' } },
     ],
   },
   {
-    id: 'a-curva',
+    id: 'a-curva', tier: 'signature',
     img: '/images/quadros/A CURVA-LENCOIS.jpg',
-    title: 'A Curva',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'signature',
+    title: 'A Curva', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.900', priceNum: 2900 },
-      { id: '80x120', label: '80×120 cm', price: 'R$ 4.900', priceNum: 4900 },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
+      { id: '80x120', label: '80×120 cm', prices: { essential: 'R$ 3.390', gallery: 'R$ 4.900', museum: 'R$ 6.490' } },
     ],
   },
   {
-    id: 'reflexo-carhuacocha',
+    id: 'reflexo-carhuacocha', tier: 'signature',
     img: '/images/quadros/REFLEXO_CARHUACOCHA-HUAYHUASH.jpg',
-    title: 'Reflexo Carhuacocha',
-    loc: 'Huayhuash, Peru',
-    tier: 'signature',
+    title: 'Reflexo Carhuacocha', loc: 'Huayhuash, Peru',
     sizes: [
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.900', priceNum: 2900 },
-      { id: '80x120', label: '80×120 cm', price: 'R$ 4.900', priceNum: 4900 },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
+      { id: '80x120', label: '80×120 cm', prices: { essential: 'R$ 3.390', gallery: 'R$ 4.900', museum: 'R$ 6.490' } },
     ],
   },
   {
-    id: 'las-3-lagunas',
+    id: 'las-3-lagunas', tier: 'signature',
     img: '/images/quadros/LAS 3 LAGUNAS-HUAYHUASH.jpg',
-    title: 'Las 3 Lagunas',
-    loc: 'Huayhuash, Peru',
-    tier: 'signature',
+    title: 'Las 3 Lagunas', loc: 'Huayhuash, Peru',
     sizes: [
-      { id: '50x70',  label: '50×70 cm',  price: 'R$ 1.900', priceNum: 1900 },
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.900', priceNum: 2900 },
+      { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.290', gallery: 'R$ 1.900', museum: 'R$ 2.590' } },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
     ],
   },
   {
-    id: 'sol-toca-tudo',
+    id: 'sol-toca-tudo', tier: 'signature',
     img: '/images/quadros/O SOL TOCA TUDO_LENCOIS.jpg',
-    title: 'O Sol Toca Tudo',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'signature',
+    title: 'O Sol Toca Tudo', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.900', priceNum: 2900 },
-      { id: '80x120', label: '80×120 cm', price: 'R$ 4.900', priceNum: 4900 },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
+      { id: '80x120', label: '80×120 cm', prices: { essential: 'R$ 3.390', gallery: 'R$ 4.900', museum: 'R$ 6.490' } },
     ],
   },
 
-  // ── COLLECTORS ─────────────────────────────────────────────────────────────
+  // COLLECTORS
   {
-    id: 'caminhos-agua',
+    id: 'caminhos-agua', tier: 'collectors',
     img: '/images/quadros/CAMINHOS DA AGUA_VISTA-ZENITAL-LENCOIS.jpg',
-    title: 'Caminhos da Água',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'collectors',
+    title: 'Caminhos da Água', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '50x70',  label: '50×70 cm',  price: 'R$ 1.590', priceNum: 1590 },
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.390', priceNum: 2390 },
+      { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
     ],
   },
   {
-    id: 'el-passo',
+    id: 'el-passo', tier: 'collectors',
     img: '/images/quadros/EL_PASSO_SANTA_ROSA-HUAYHUASH.jpg',
-    title: 'El Passo Santa Rosa',
-    loc: 'Huayhuash, Peru',
-    tier: 'collectors',
+    title: 'El Passo Santa Rosa', loc: 'Huayhuash, Peru',
     sizes: [
-      { id: '50x70',  label: '50×70 cm',  price: 'R$ 1.590', priceNum: 1590 },
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.390', priceNum: 2390 },
+      { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
     ],
   },
   {
-    id: 'la-montana',
+    id: 'la-montana', tier: 'collectors',
     img: '/images/quadros/LA-MOTANA-VISTA-PICOMATEO.jpg',
-    title: 'La Montaña — Vista Pico Mateo',
-    loc: 'Huayhuash, Peru',
-    tier: 'collectors',
+    title: 'La Montaña — Vista Pico Mateo', loc: 'Huayhuash, Peru',
     sizes: [
-      { id: '50x70',  label: '50×70 cm',  price: 'R$ 1.590', priceNum: 1590 },
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.390', priceNum: 2390 },
+      { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
     ],
   },
   {
-    id: 'betania-paradisiaca',
+    id: 'betania-paradisiaca', tier: 'collectors',
     img: '/images/quadros/BETANIA PARADISIACA-LENCOIS.jpg',
-    title: 'Betânia Paradisíaca',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'collectors',
+    title: 'Betânia Paradisíaca', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '50x70',  label: '50×70 cm',  price: 'R$ 1.590', priceNum: 1590 },
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.390', priceNum: 2390 },
+      { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
     ],
   },
   {
-    id: 'primeiros-minutos',
+    id: 'primeiros-minutos', tier: 'collectors',
     img: '/images/quadros/OS PRIMEIROS MINUTOS DO SOL-LENCOIS.jpg',
-    title: 'Os Primeiros Minutos do Sol',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'collectors',
+    title: 'Os Primeiros Minutos do Sol', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '50x70',  label: '50×70 cm',  price: 'R$ 1.590', priceNum: 1590 },
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.390', priceNum: 2390 },
+      { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
     ],
   },
   {
-    id: 'camp-jahuacocha',
+    id: 'camp-jahuacocha', tier: 'collectors',
     img: '/images/quadros/CAMP-JAHUACOCHA-HUAYHUASH.jpg',
-    title: 'Camp Jahuacocha',
-    loc: 'Huayhuash, Peru',
-    tier: 'collectors',
+    title: 'Camp Jahuacocha', loc: 'Huayhuash, Peru',
     sizes: [
-      { id: '30x40',  label: '30×40 cm',  price: 'R$ 890',   priceNum: 890 },
-      { id: '50x70',  label: '50×70 cm',  price: 'R$ 1.590', priceNum: 1590 },
+      { id: '30x40',  label: '30×40 cm',  prices: { essential: 'R$ 490',   gallery: 'R$ 690',   museum: 'R$ 890' } },
+      { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
     ],
   },
   {
-    id: 'observando-infinito',
+    id: 'observando-infinito', tier: 'collectors',
     img: '/images/quadros/OBSERVANDO O INFINITO-LENCOIS.jpg',
-    title: 'Observando o Infinito',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'collectors',
+    title: 'Observando o Infinito', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '50x70',  label: '50×70 cm',  price: 'R$ 1.590', priceNum: 1590 },
-      { id: '60x90',  label: '60×90 cm',  price: 'R$ 2.390', priceNum: 2390 },
+      { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
+      { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
     ],
   },
 
-  // ── OPEN EDITION ───────────────────────────────────────────────────────────
+  // OPEN
   {
-    id: 'a-casa',
+    id: 'a-casa', tier: 'open',
     img: '/images/quadros/A CASA-LENCOIS.jpg',
-    title: 'A Casa',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'open',
+    title: 'A Casa', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '30x40', label: '30×40 cm', price: 'R$ 590', priceNum: 590 },
-      { id: '50x70', label: '50×70 cm', price: 'R$ 990', priceNum: 990 },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
     ],
   },
   {
-    id: 'a-despedida',
+    id: 'a-despedida', tier: 'open',
     img: '/images/quadros/A DESPEDIDA-LENCOIS.jpg',
-    title: 'A Despedida',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'open',
+    title: 'A Despedida', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '30x40', label: '30×40 cm', price: 'R$ 590', priceNum: 590 },
-      { id: '50x70', label: '50×70 cm', price: 'R$ 990', priceNum: 990 },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
     ],
   },
   {
-    id: 'marcas-passado',
+    id: 'marcas-passado', tier: 'open',
     img: '/images/quadros/MARCAS DO PASSADO-LENCOIS.jpg',
-    title: 'Marcas do Passado',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'open',
+    title: 'Marcas do Passado', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '30x40', label: '30×40 cm', price: 'R$ 590', priceNum: 590 },
-      { id: '50x70', label: '50×70 cm', price: 'R$ 990', priceNum: 990 },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
     ],
   },
   {
-    id: 'betania-fala',
+    id: 'betania-fala', tier: 'open',
     img: '/images/quadros/BETANIA FALA-LENCOIS.jpg',
-    title: 'Betânia Fala',
-    loc: 'Lençóis Maranhenses, MA',
-    tier: 'open',
+    title: 'Betânia Fala', loc: 'Lençóis Maranhenses, MA',
     sizes: [
-      { id: '30x40', label: '30×40 cm', price: 'R$ 590', priceNum: 590 },
-      { id: '50x70', label: '50×70 cm', price: 'R$ 990', priceNum: 990 },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
     ],
   },
   {
-    id: 'observadora-arara',
+    id: 'observadora-arara', tier: 'open',
     img: '/images/quadros/A-OBSERVADORA-ARARA-CANINDE-RONDONIA.jpg',
-    title: 'A Observadora — Arara-Canindé',
-    loc: 'Rondônia',
-    tier: 'open',
+    title: 'A Observadora — Arara-Canindé', loc: 'Rondônia',
     sizes: [
-      { id: '30x40', label: '30×40 cm', price: 'R$ 590', priceNum: 590 },
-      { id: '50x70', label: '50×70 cm', price: 'R$ 990', priceNum: 990 },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
     ],
   },
   {
-    id: 'acampamento-gashpapampa',
+    id: 'acampamento-gashpapampa', tier: 'open',
     img: '/images/quadros/ACAMPAMENTO_GASHPAPAMPA-HUAYHUASH.jpg',
-    title: 'Acampamento Gashpapampa',
-    loc: 'Huayhuash, Peru',
-    tier: 'open',
+    title: 'Acampamento Gashpapampa', loc: 'Huayhuash, Peru',
     sizes: [
-      { id: '30x40', label: '30×40 cm', price: 'R$ 590', priceNum: 590 },
-      { id: '50x70', label: '50×70 cm', price: 'R$ 990', priceNum: 990 },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
     ],
   },
 ]
 
-const MATERIALS = [
-  { id: 'photo-rag',  label: 'Fine Art — Photo Rag',  desc: 'Hahnemühle 308g · 100% algodão · fosco', tag: 'recomendado' },
-  { id: 'baryta',     label: 'Fine Art — Baryta',      desc: 'Hahnemühle 315g · semi-brilhante · cores vivas', tag: '' },
-  { id: 'canvas',     label: 'Canvas',                 desc: 'Tecido esticado em chassi de madeira · sem moldura', tag: '' },
+const FAQ_ITEMS = [
+  {
+    q: 'Qual a diferença entre os acabamentos Essential, Gallery e Museum?',
+    a: 'Os três acabamentos diferem no papel, moldura, vidro e certificado. O Essential usa Hahnemühle Photo Matte Fibre 200g (alfa-celulose, 75+ anos de durabilidade) com moldura perfil 2cm e vidro cristal. O Gallery usa Hahnemühle Photo Rag 308g (100% algodão, 100+ anos) com moldura maciça perfil 3cm, vidro antirreflexo e certificado holográfico. O Museum usa Hahnemühle Museum Etching 350g (100% algodão, textura artística) com moldura premium perfil 4cm, vidro museológico com proteção UV e passepartout duplo.',
+  },
+  {
+    q: 'Qual a diferença entre Edição Limitada e Open Edition?',
+    a: 'As tiragens Signature (10 prints) e Collectors (25 prints) são numeradas individualmente — quando esgotarem, não serão reeditadas. As Open Edition não têm limite de quantidade, mas são igualmente assinadas e impressas no mesmo nível de qualidade fine art.',
+  },
+  {
+    q: 'Posso escolher a cor da moldura?',
+    a: 'Sim. Todos os acabamentos oferecem moldura nas cores preta laqueada, branca laqueada ou madeira natural (carvalho). Informe sua preferência ao encomendar.',
+  },
+  {
+    q: 'Como funciona o envio?',
+    a: 'Cada quadro é embalado individualmente com espuma de polietileno e caixa dupla-onda reforçada. O frete é calculado conforme o CEP e informado no orçamento. Enviamos para todo o Brasil.',
+  },
+  {
+    q: 'As fotos são assinadas?',
+    a: 'Sim. Todas as obras são assinadas à mão. Os acabamentos Gallery e Museum incluem também o Certificado de Autenticidade Hahnemühle com holograma e numeração individual.',
+  },
+  {
+    q: 'Posso encomendar um tamanho diferente?',
+    a: 'Sim, sob consulta. Entre em contato via WhatsApp descrevendo o tamanho e preparamos um orçamento personalizado.',
+  },
+  {
+    q: 'Qual o prazo de produção e entrega?',
+    a: 'Produção: 10 a 15 dias úteis após confirmação do pagamento. Entrega: 3 a 7 dias úteis conforme a região. Prazo total estimado: 15 a 25 dias úteis.',
+  },
+  {
+    q: 'O que é papel 100% algodão?',
+    a: 'Papel 100% algodão (como o Hahnemühle Photo Rag e Museum Etching) é o padrão utilizado por museus e galerias de arte ao redor do mundo. Sua composição garante neutralidade química, estabilidade dimensional e durabilidade muito superior ao papel convencional (alfa-celulose), que é derivado de madeira. A diferença é visível: o papel algodão tem mais peso, textura e profundidade de cor.',
+  },
+  {
+    q: 'Vocês fazem Canvas (tela) também?',
+    a: 'Sim! Oferecemos também impressão em Canvas Fine Art (Canson Museum Art 310g) montado em chassi de madeira, sem necessidade de moldura ou vidro. Consulte valores pelo WhatsApp.',
+  },
 ]
 
-const FRAMES = [
-  { id: 'preta',   label: 'Moldura preta',    desc: 'Madeira maciça laqueada', extra: 'incluso' },
-  { id: 'branca',  label: 'Moldura branca',   desc: 'Madeira maciça laqueada', extra: 'incluso' },
-  { id: 'natural', label: 'Moldura natural',  desc: 'Madeira maciça carvalho', extra: 'incluso' },
-  { id: 'sem',     label: 'Sem moldura',      desc: 'Só a impressão, sem acabamento', extra: '' },
-]
-
-const WA_BASE = 'https://wa.me/5511999999999?text='
-
-// ─── COMPONENTS ──────────────────────────────────────────────────────────────
+// ─── SHARED COMPONENTS ───────────────────────────────────────────────────────
 
 function TierBadge({ tier }: { tier: Tier }) {
-  const meta = TIER_META[tier]
+  const m = TIER_META[tier]
   return (
-    <span style={{
-      display: 'inline-block',
-      padding: '4px 10px',
-      background: meta.bg,
-      color: meta.color,
-      fontFamily: 'var(--font-mono)',
-      fontSize: 9,
-      letterSpacing: '.2em',
-      textTransform: 'uppercase',
-      fontWeight: 600,
-    }}>
-      {meta.limit}
+    <span style={{ display: 'inline-block', padding: '4px 10px', background: m.bg, color: m.color, fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', fontWeight: 600 }}>
+      {m.limit}
     </span>
   )
 }
 
-function PrintCard({ p, onOpen }: { p: Print; onOpen: () => void }) {
-  const minPrice = p.sizes[0].price
+function PickerBtn({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
-    <article className="qcard" onClick={onOpen} style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', background: 'var(--canvas)', border: '1px solid var(--line)' }}>
-      {/* image area */}
+    <button
+      onClick={onClick}
+      style={{
+        padding: '8px 12px', border: `1px solid ${active ? 'var(--bark)' : 'var(--line)'}`,
+        background: active ? 'var(--bark)' : 'transparent',
+        color: active ? 'var(--canvas)' : 'var(--bark)',
+        cursor: 'pointer', fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 600,
+        transition: 'all .2s', letterSpacing: '-.01em',
+      }}
+    >
+      {children}
+    </button>
+  )
+}
+
+// ─── PRINT CARD ──────────────────────────────────────────────────────────────
+
+function PrintCard({ p, onOrder }: { p: Print; onOrder: (p: Print, sizeId: string, acabamento: Acabamento) => void }) {
+  const [sizeId, setSizeId] = useState(p.sizes[0].id)
+  const [acabamento, setAcabamento] = useState<Acabamento>('gallery')
+
+  const selectedSize = p.sizes.find(s => s.id === sizeId)!
+  const price = selectedSize.prices[acabamento]
+  const acabMeta = ACABAMENTOS[acabamento]
+
+  return (
+    <article className="qcard" style={{ display: 'flex', flexDirection: 'column', background: 'var(--canvas)', border: '1px solid var(--line)', cursor: 'default' }}>
+      {/* photo */}
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--canvas-deep)' }}>
-        <div style={{ position: 'absolute', top: 14, left: 14, zIndex: 2 }}>
+        <div style={{ position: 'absolute', top: 12, left: 12, zIndex: 2 }}>
           <TierBadge tier={p.tier} />
         </div>
-        <div style={{ padding: '24px 24px 28px', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 260 }}>
-          {/* simulated frame */}
-          <div className="qframe" style={{
-            background: '#1A1612',
-            padding: 10,
-            boxShadow: '0 12px 32px rgba(0,0,0,.35)',
-            width: '100%',
-            aspectRatio: '3/2',
-            transition: 'transform .6s cubic-bezier(.2,.7,.2,1)',
-          }}>
+        <div style={{ padding: '20px 20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="qframe" style={{ background: '#1A1612', padding: 8, boxShadow: '0 10px 28px rgba(0,0,0,.3)', width: '100%', aspectRatio: '3/2', transition: 'transform .6s cubic-bezier(.2,.7,.2,1)' }}>
             <div style={{ padding: 4, background: '#F0EBE0', height: '100%' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={p.img}
-                alt={p.title}
-                loading="lazy"
-                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-              />
+              <img src={p.img} alt={p.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             </div>
           </div>
         </div>
       </div>
 
-      {/* card body */}
-      <div style={{ padding: '18px 20px 22px', borderTop: '1px solid var(--line)', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 6 }}>
-          {p.loc}
+      {/* body */}
+      <div style={{ padding: '16px 18px 20px', display: 'flex', flexDirection: 'column', flex: 1, gap: 12 }}>
+        <div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 4 }}>{p.loc}</div>
+          <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 17, letterSpacing: '-.02em', lineHeight: 1.1, margin: 0, color: 'var(--bark)' }}>{p.title}</h3>
         </div>
-        <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 18, letterSpacing: '-.02em', lineHeight: 1.1, margin: 0, color: 'var(--bark)', flex: 1 }}>
-          {p.title}
-        </h3>
-        <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px dashed var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--stone)' }}>a partir de</div>
-            <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 20, letterSpacing: '-.02em', color: 'var(--bark)', marginTop: 2 }}>{minPrice}</div>
+
+        {/* size picker */}
+        <div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 6 }}>Tamanho</div>
+          <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+            {p.sizes.map(sz => (
+              <PickerBtn key={sz.id} active={sizeId === sz.id} onClick={() => setSizeId(sz.id)}>
+                {sz.label}
+              </PickerBtn>
+            ))}
           </div>
-          <span className="qcta" style={{ fontFamily: 'var(--font-ui)', fontSize: 10, fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--rust)', transition: 'transform .3s cubic-bezier(.2,.7,.2,1)' }}>
+        </div>
+
+        {/* acabamento picker */}
+        <div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 6 }}>Acabamento</div>
+          <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+            {(['essential', 'gallery', 'museum'] as Acabamento[]).map(a => (
+              <PickerBtn key={a} active={acabamento === a} onClick={() => setAcabamento(a)}>
+                {ACABAMENTOS[a].label}
+                {ACABAMENTOS[a].popular && <span style={{ marginLeft: 4, fontSize: 9, opacity: 0.7 }}>★</span>}
+              </PickerBtn>
+            ))}
+          </div>
+          <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 11, color: 'var(--stone)', marginTop: 5, lineHeight: 1.4 }}>
+            {acabMeta.papel}
+          </div>
+        </div>
+
+        {/* price + cta */}
+        <div style={{ marginTop: 'auto', paddingTop: 12, borderTop: '1px dashed var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--stone)' }}>valor</div>
+            <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 22, letterSpacing: '-.02em', color: 'var(--bark)' }}>{price}</div>
+          </div>
+          <button
+            className="qcta-btn"
+            onClick={() => onOrder(p, sizeId, acabamento)}
+            style={{ padding: '10px 18px', background: 'var(--bark)', color: 'var(--canvas)', border: 'none', fontFamily: 'var(--font-ui)', fontSize: 10, fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', cursor: 'pointer', transition: 'background .2s' }}
+          >
             Encomendar →
-          </span>
+          </button>
         </div>
       </div>
     </article>
   )
 }
 
-function TierSection({ tier, prints, onOpen }: { tier: Tier; prints: Print[]; onOpen: (p: Print) => void }) {
+// ─── TIER SECTION ────────────────────────────────────────────────────────────
+
+function TierSection({ tier, prints, onOrder }: { tier: Tier; prints: Print[]; onOrder: (p: Print, sizeId: string, a: Acabamento) => void }) {
   const meta = TIER_META[tier]
   return (
-    <section style={{ marginBottom: 80 }}>
-      {/* tier header */}
-      <div style={{ padding: '32px 0 28px', borderBottom: '1px solid var(--line)', marginBottom: 36, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+    <section style={{ marginBottom: 72 }}>
+      <div style={{ paddingBottom: 24, borderBottom: '1px solid var(--line)', marginBottom: 32, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
         <div>
           <TierBadge tier={tier} />
-          <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 32, letterSpacing: '-.03em', margin: '10px 0 0', color: 'var(--bark)' }}>
-            {meta.label}
-          </h2>
+          <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 30, letterSpacing: '-.03em', margin: '10px 0 0', color: 'var(--bark)' }}>{meta.label}</h2>
         </div>
-        <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 16, color: 'var(--stone)' }}>
-          {prints.length} obras disponíveis
-        </span>
+        <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 15, color: 'var(--stone)' }}>{prints.length} obras disponíveis</span>
       </div>
-
-      <div className="qgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 28 }}>
-        {prints.map(p => (
-          <PrintCard key={p.id} p={p} onOpen={() => onOpen(p)} />
-        ))}
+      <div className="qgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+        {prints.map(p => <PrintCard key={p.id} p={p} onOrder={onOrder} />)}
       </div>
     </section>
   )
 }
 
-// ─── MODAL ───────────────────────────────────────────────────────────────────
+// ─── ORDER MODAL ─────────────────────────────────────────────────────────────
 
-function OrderModal({ print, onClose }: { print: Print; onClose: () => void }) {
-  const [sizeId, setSizeId] = useState(print.sizes[0].id)
-  const [materialId, setMaterialId] = useState('photo-rag')
-  const [frameId, setFrameId] = useState('preta')
-  const [step, setStep] = useState<0 | 1 | 2>(0)
-  const [form, setForm] = useState({ nome: '', email: '', whatsapp: '', cidade: '', obs: '' })
+interface OrderState { print: Print; sizeId: string; acabamento: Acabamento }
+
+function OrderModal({ state, onClose }: { state: OrderState; onClose: () => void }) {
+  const { print, sizeId, acabamento } = state
+  const [frameColor, setFrameColor] = useState('preta')
+  const [step, setStep] = useState<0 | 1>(0)
+  const [form, setForm] = useState({ nome: '', whatsapp: '', cidade: '', obs: '' })
 
   const selectedSize = print.sizes.find(s => s.id === sizeId)!
-  const selectedMaterial = MATERIALS.find(m => m.id === materialId)!
-  const selectedFrame = FRAMES.find(f => f.id === frameId)!
-  const tierMeta = TIER_META[print.tier]
+  const price = selectedSize.prices[acabamento]
+  const acabMeta = ACABAMENTOS[acabamento]
+  const frameMeta = FRAME_COLORS.find(f => f.id === frameColor)!
 
-  function buildWaMessage() {
-    return encodeURIComponent(
+  function openWhatsApp() {
+    const msg = encodeURIComponent(
       `Olá! Tenho interesse em encomendar um quadro fine art.\n\n` +
       `*Obra:* ${print.title}\n` +
       `*Tamanho:* ${selectedSize.label}\n` +
-      `*Material:* ${selectedMaterial.label}\n` +
-      `*Moldura:* ${selectedFrame.label}\n` +
-      `*Valor:* ${selectedSize.price}\n\n` +
+      `*Acabamento:* ${acabMeta.label} — ${acabMeta.papel}\n` +
+      `*Moldura:* ${frameMeta.label}\n` +
+      `*Valor:* ${price}\n\n` +
       `*Nome:* ${form.nome}\n` +
+      `*WhatsApp:* ${form.whatsapp}\n` +
       `*Cidade:* ${form.cidade}\n` +
       (form.obs ? `*Obs:* ${form.obs}` : '')
     )
-  }
-
-  function handleSubmit() {
-    window.open(WA_BASE + buildWaMessage(), '_blank')
-    setStep(2)
+    window.open(`https://wa.me/${WA_NUM}?text=${msg}`, '_blank')
+    onClose()
   }
 
   return (
-    <div
-      onClick={onClose}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(10,10,10,.8)', backdropFilter: 'blur(10px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}
-    >
-      <div
-        onClick={e => e.stopPropagation()}
-        style={{ width: 1060, maxWidth: '100%', maxHeight: '92vh', background: 'var(--canvas)', color: 'var(--bark)', display: 'grid', gridTemplateColumns: '1.1fr 1fr', overflow: 'auto', position: 'relative' }}
-        className="qmodal"
-      >
-        {/* close */}
-        <button
-          onClick={onClose}
-          style={{ position: 'absolute', top: 18, right: 18, width: 36, height: 36, background: 'var(--bark)', color: 'var(--canvas)', border: 'none', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5, fontFamily: 'var(--font-ui)' }}
-        >×</button>
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(10,10,10,.82)', backdropFilter: 'blur(10px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div onClick={e => e.stopPropagation()} className="qmodal" style={{ width: 1020, maxWidth: '100%', maxHeight: '92vh', background: 'var(--canvas)', color: 'var(--bark)', display: 'grid', gridTemplateColumns: '1fr 1fr', overflow: 'auto', position: 'relative' }}>
 
-        {/* LEFT: photo preview */}
-        <div style={{ background: 'var(--canvas-deep)', padding: '48px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 24, minHeight: 480 }}>
-          <div style={{
-            background: frameId === 'branca' ? '#FFFFFF' : frameId === 'natural' ? '#C9B48A' : '#1A1612',
-            padding: 14,
-            boxShadow: '0 24px 60px rgba(0,0,0,.45)',
-            width: '85%',
-            aspectRatio: '3/2',
-            transition: 'background .4s',
-          }}>
-            <div style={{ padding: 8, background: '#F4EEE2', height: '100%' }}>
+        <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, width: 34, height: 34, background: 'var(--bark)', color: 'var(--canvas)', border: 'none', cursor: 'pointer', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 5 }}>×</button>
+
+        {/* LEFT: preview */}
+        <div style={{ background: 'var(--canvas-deep)', padding: '40px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20, minHeight: 460 }}>
+          <div style={{ background: frameColor === 'branca' ? '#FFF' : frameColor === 'natural' ? '#C9B48A' : '#1A1612', padding: 12, boxShadow: '0 20px 50px rgba(0,0,0,.4)', width: '82%', aspectRatio: '3/2', transition: 'background .3s' }}>
+            <div style={{ padding: 6, background: '#F4EEE2', height: '100%' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={print.img} alt={print.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             </div>
           </div>
-          <div style={{ fontFamily: 'var(--font-hand)', fontSize: 22, color: 'var(--stone)', transform: 'rotate(-2deg)' }}>
+          <div style={{ fontFamily: 'var(--font-hand)', fontSize: 20, color: 'var(--stone)', transform: 'rotate(-2deg)' }}>
             preview · {selectedSize.label}
           </div>
-          <div style={{ display: 'inline-block' }}>
-            <TierBadge tier={print.tier} />
-          </div>
+          <TierBadge tier={print.tier} />
         </div>
 
-        {/* RIGHT: form */}
-        <div style={{ padding: '40px 36px 36px', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+        {/* RIGHT */}
+        <div style={{ padding: '36px 32px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0 }}>
           {step === 0 && (
             <>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 10 }}>
-                {tierMeta.limit}
-              </div>
-              <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 28, letterSpacing: '-.03em', margin: 0, lineHeight: 1, color: 'var(--bark)' }}>
-                {print.title}
-              </h3>
-              <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 15, color: 'var(--stone)', marginTop: 6, marginBottom: 24 }}>
-                {print.loc}
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 8 }}>Confirmar encomenda</div>
+              <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 26, letterSpacing: '-.03em', margin: '0 0 4px', lineHeight: 1 }}>{print.title}</h3>
+              <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 14, color: 'var(--stone)', marginBottom: 22 }}>{print.loc}</div>
+
+              {/* summary */}
+              <div style={{ padding: '14px 16px', background: 'var(--canvas-deep)', border: '1px solid var(--line)', marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {[
+                  ['Tamanho', selectedSize.label],
+                  ['Acabamento', `${acabMeta.label} — ${acabMeta.papel}`],
+                  ['Durabilidade', acabMeta.durabilidade],
+                  ['Vidro', acabMeta.vidro],
+                ].map(([k, v]) => (
+                  <div key={k} style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--stone)' }}>{k}</span>
+                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: 13, color: 'var(--bark)', textAlign: 'right' }}>{v}</span>
+                  </div>
+                ))}
               </div>
 
-              {/* size picker */}
+              {/* frame color */}
               <div style={{ marginBottom: 20 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 10 }}>01 · Tamanho</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {print.sizes.map(sz => (
-                    <button
-                      key={sz.id}
-                      onClick={() => setSizeId(sz.id)}
-                      style={{
-                        padding: '12px 14px',
-                        border: `1px solid ${sizeId === sz.id ? 'var(--bark)' : 'var(--line)'}`,
-                        background: sizeId === sz.id ? 'var(--bark)' : 'transparent',
-                        color: sizeId === sz.id ? 'var(--canvas)' : 'var(--bark)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        fontFamily: 'var(--font-ui)',
-                        transition: 'all .2s',
-                        textAlign: 'left',
-                      }}
-                    >
-                      <span style={{ fontSize: 14, fontWeight: 600 }}>{sz.label}</span>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700 }}>{sz.price}</span>
-                    </button>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 8 }}>Cor da moldura</div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  {FRAME_COLORS.map(fc => (
+                    <PickerBtn key={fc.id} active={frameColor === fc.id} onClick={() => setFrameColor(fc.id)}>{fc.label}</PickerBtn>
                   ))}
                 </div>
               </div>
 
-              {/* material picker */}
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 10 }}>02 · Material de impressão</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {MATERIALS.map(m => (
-                    <button
-                      key={m.id}
-                      onClick={() => setMaterialId(m.id)}
-                      style={{
-                        padding: '10px 14px',
-                        border: `1px solid ${materialId === m.id ? 'var(--bark)' : 'var(--line)'}`,
-                        background: materialId === m.id ? 'var(--bark)' : 'transparent',
-                        color: materialId === m.id ? 'var(--canvas)' : 'var(--bark)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        fontFamily: 'var(--font-ui)',
-                        transition: 'all .2s',
-                        textAlign: 'left',
-                      }}
-                    >
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 600 }}>{m.label}</div>
-                        <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 11, opacity: 0.7, marginTop: 2 }}>{m.desc}</div>
-                      </div>
-                      {m.tag && (
-                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.15em', textTransform: 'uppercase', flexShrink: 0, opacity: 0.7 }}>{m.tag}</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
+              {/* price */}
+              <div style={{ padding: '16px 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)' }}>Total — inclui impressão + moldura + certificado</div>
+                <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 24, letterSpacing: '-.02em', color: 'var(--bark)', flexShrink: 0 }}>{price}</div>
               </div>
 
-              {/* frame picker */}
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 10 }}>03 · Moldura</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  {FRAMES.map(f => (
-                    <button
-                      key={f.id}
-                      onClick={() => setFrameId(f.id)}
-                      style={{
-                        padding: '10px 14px',
-                        border: `1px solid ${frameId === f.id ? 'var(--bark)' : 'var(--line)'}`,
-                        background: frameId === f.id ? 'var(--bark)' : 'transparent',
-                        color: frameId === f.id ? 'var(--canvas)' : 'var(--bark)',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        fontFamily: 'var(--font-ui)',
-                        transition: 'all .2s',
-                        textAlign: 'left',
-                      }}
-                    >
-                      <div>
-                        <div style={{ fontSize: 13, fontWeight: 600 }}>{f.label}</div>
-                        <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 11, opacity: 0.7, marginTop: 2 }}>{f.desc}</div>
-                      </div>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, flexShrink: 0, opacity: 0.6 }}>{f.extra}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ marginTop: 'auto', paddingTop: 20, borderTop: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)' }}>Valor total</div>
-                  <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 26, letterSpacing: '-.03em', color: 'var(--bark)', marginTop: 2 }}>
-                    {selectedSize.price}
-                  </div>
-                  <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 12, color: 'var(--stone)', marginTop: 2 }}>
-                    Inclui impressão + moldura + certificado
-                  </div>
-                </div>
-                <button
-                  onClick={() => setStep(1)}
-                  style={{ padding: '13px 22px', background: 'var(--bark)', color: 'var(--canvas)', border: 'none', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', cursor: 'pointer', whiteSpace: 'nowrap' }}
-                >
-                  Encomendar →
-                </button>
-              </div>
-            </>
-          )}
-
-          {step === 1 && (
-            <>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 10 }}>
-                Passo 2 de 2
-              </div>
-              <h3 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 28, letterSpacing: '-.03em', margin: '0 0 6px', color: 'var(--bark)' }}>
-                Seus dados
-              </h3>
-              <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 15, color: 'var(--stone)', margin: '0 0 20px', lineHeight: 1.5 }}>
-                Você não paga agora. Em até 24h envio orçamento com link de pagamento e prazo exato.
-              </p>
-
-              <div style={{ padding: '12px 16px', background: 'var(--canvas-deep)', border: '1px solid var(--line)', marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 14, color: 'var(--bark)' }}>{print.title}</div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--stone)', marginTop: 3 }}>
-                    {selectedSize.label} · {selectedMaterial.label} · {selectedFrame.label}
-                  </div>
-                </div>
-                <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 18, color: 'var(--bark)', flexShrink: 0 }}>{selectedSize.price}</span>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                {([
-                  ['Nome completo', 'text', 'nome', ''],
-                  ['Email', 'email', 'email', ''],
-                  ['WhatsApp', 'tel', 'whatsapp', '+55 11 9...'],
-                  ['Cidade de entrega', 'text', 'cidade', 'São Paulo, SP'],
-                ] as const).map(([label, type, field, ph]) => (
+              {/* form */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 20 }}>
+                {([['Nome', 'text', 'nome', ''], ['WhatsApp', 'tel', 'whatsapp', '+55 11 9...'], ['Cidade de entrega', 'text', 'cidade', 'São Paulo, SP']] as const).map(([label, type, field, ph]) => (
                   <div key={field}>
-                    <label style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', display: 'block', marginBottom: 7 }}>{label}</label>
-                    <input
-                      type={type}
-                      placeholder={ph}
-                      value={form[field]}
-                      onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}
-                      style={{ width: '100%', padding: '9px 0 7px', border: 'none', borderBottom: '1px solid var(--bark)', background: 'transparent', fontFamily: 'var(--font-serif)', fontSize: 16, outline: 'none', color: 'var(--bark)', boxSizing: 'border-box' }}
-                    />
+                    <label style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', display: 'block', marginBottom: 6 }}>{label}</label>
+                    <input type={type} placeholder={ph} value={form[field]} onChange={e => setForm(prev => ({ ...prev, [field]: e.target.value }))}
+                      style={{ width: '100%', padding: '8px 0 6px', border: 'none', borderBottom: '1px solid var(--bark)', background: 'transparent', fontFamily: 'var(--font-serif)', fontSize: 16, outline: 'none', color: 'var(--bark)', boxSizing: 'border-box' }} />
                   </div>
                 ))}
                 <div>
-                  <label style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', display: 'block', marginBottom: 7 }}>Observações (opcional)</label>
-                  <textarea
-                    placeholder="Presente, dedicatória, urgência..."
-                    value={form.obs}
-                    onChange={e => setForm(prev => ({ ...prev, obs: e.target.value }))}
-                    style={{ width: '100%', padding: '9px 0 7px', border: 'none', borderBottom: '1px solid var(--bark)', background: 'transparent', fontFamily: 'var(--font-serif)', fontSize: 15, outline: 'none', resize: 'none', minHeight: 56, color: 'var(--bark)', boxSizing: 'border-box' }}
-                  />
+                  <label style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', display: 'block', marginBottom: 6 }}>Observações (opcional)</label>
+                  <textarea placeholder="Presente, dedicatória, urgência..." value={form.obs} onChange={e => setForm(prev => ({ ...prev, obs: e.target.value }))}
+                    style={{ width: '100%', padding: '8px 0 6px', border: 'none', borderBottom: '1px solid var(--bark)', background: 'transparent', fontFamily: 'var(--font-serif)', fontSize: 14, outline: 'none', resize: 'none', minHeight: 50, color: 'var(--bark)', boxSizing: 'border-box' }} />
                 </div>
               </div>
 
-              <div style={{ marginTop: 24, display: 'flex', gap: 10 }}>
-                <button
-                  onClick={() => setStep(0)}
-                  style={{ padding: '12px 18px', border: '1px solid var(--bark)', color: 'var(--bark)', background: 'transparent', fontFamily: 'var(--font-ui)', fontSize: 10, fontWeight: 600, letterSpacing: '.15em', textTransform: 'uppercase', cursor: 'pointer' }}
-                >← Voltar</button>
-                <button
-                  onClick={handleSubmit}
-                  style={{ flex: 1, padding: '13px 20px', background: '#25D366', color: '#fff', border: 'none', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                  Enviar via WhatsApp
-                </button>
-              </div>
-            </>
-          )}
-
-          {step === 2 && (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px' }}>
-              <div style={{ fontFamily: 'var(--font-hand)', fontSize: 80, color: 'var(--rust)', lineHeight: 1, transform: 'rotate(-3deg)' }}>obrigado!</div>
-              <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 36, letterSpacing: '-.04em', marginTop: 20, lineHeight: 0.95, textTransform: 'uppercase', color: 'var(--bark)' }}>
-                Pedido enviado.
-              </div>
-              <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 16, color: 'var(--stone)', marginTop: 20, maxWidth: '34ch', lineHeight: 1.6 }}>
-                Você será redirecionado ao WhatsApp. Respondo em até 24h com todos os detalhes.
+              <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 13, color: 'var(--stone)', margin: '0 0 16px', lineHeight: 1.5 }}>
+                Você não paga agora — em até 24h envio orçamento com link de pagamento e prazo exato.
               </p>
-              <button
-                onClick={onClose}
-                style={{ marginTop: 32, padding: '13px 26px', border: '1px solid var(--bark)', color: 'var(--bark)', background: 'transparent', fontFamily: 'var(--font-ui)', fontSize: 10, fontWeight: 600, letterSpacing: '.15em', textTransform: 'uppercase', cursor: 'pointer' }}
-              >Fechar</button>
-            </div>
+
+              <button onClick={openWhatsApp} style={{ padding: '14px 20px', background: '#25D366', color: '#fff', border: 'none', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Finalizar via WhatsApp
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -643,38 +561,120 @@ function OrderModal({ print, onClose }: { print: Print; onClose: () => void }) {
   )
 }
 
-// ─── FAQ ─────────────────────────────────────────────────────────────────────
+// ─── ACABAMENTOS SECTION ─────────────────────────────────────────────────────
 
-const FAQ_ITEMS = [
-  { q: 'Qual a diferença entre Edição Limitada e Open Edition?', a: 'As Signature (10 prints) e Collectors (25 prints) são tiragens numeradas e certificadas individualmente — quando esgotarem, não serão reeditadas. As Open Edition não têm limite de quantidade, mas são igualmente assinadas e impressas no mesmo papel fine art.' },
-  { q: 'Posso escolher a cor da moldura?', a: 'Sim. Oferecemos moldura de madeira maciça nas opções: preta laqueada, branca laqueada ou madeira natural (carvalho). O preço inclui a moldura no acabamento escolhido.' },
-  { q: 'Como funciona o envio?', a: 'Cada quadro é embalado individualmente com espuma de polietileno e caixas dupla-onda reforçadas. O frete é calculado conforme o CEP e informado no orçamento. Enviamos para todo o Brasil.' },
-  { q: 'As fotos são assinadas?', a: 'Sim. Todas as obras incluem assinatura à mão e o Certificado de Autenticidade Hahnemühle — documento numerado com holograma que acompanha a obra como garantia de originalidade.' },
-  { q: 'Posso encomendar um tamanho diferente dos listados?', a: 'Sim, sob consulta. Entre em contato via WhatsApp ou e-mail descrevendo o tamanho desejado e preparamos um orçamento personalizado.' },
-  { q: 'Qual o prazo de produção e entrega?', a: 'Produção: 10 a 15 dias úteis após confirmação do pagamento. Entrega: 3 a 7 dias úteis dependendo da região. Prazo total estimado: 15 a 25 dias úteis.' },
-]
+function AcabamentosSection() {
+  return (
+    <section style={{ padding: '72px 56px', background: 'var(--canvas-deep)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 16 }}>Acabamentos disponíveis</div>
+      <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 40, letterSpacing: '-.03em', margin: '0 0 40px', lineHeight: 1 }}>
+        Escolha o nível de acabamento.<br />
+        <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)', fontSize: 36 }}>A foto é a mesma. O acabamento é seu.</span>
+      </h2>
+      <div className="acab-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+        {(['essential', 'gallery', 'museum'] as Acabamento[]).map(key => {
+          const a = ACABAMENTOS[key]
+          return (
+            <div key={key} style={{
+              padding: '28px 24px 32px',
+              border: a.popular ? '1px solid var(--rust-soft)' : '1px solid var(--line)',
+              background: a.popular ? 'rgba(var(--rust-rgb, 180,80,40),.04)' : 'transparent',
+              position: 'relative',
+            }}>
+              {a.popular && (
+                <div style={{ position: 'absolute', top: -1, right: 20, background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', padding: '4px 10px', fontWeight: 700 }}>
+                  Mais escolhido
+                </div>
+              )}
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 8 }}>{key}</div>
+              <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 28, letterSpacing: '-.02em', color: 'var(--bark)', marginBottom: 8 }}>{a.label}</div>
+              <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 14, color: 'var(--stone)', margin: '0 0 24px', lineHeight: 1.5 }}>{a.posicionamento}</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                {[
+                  ['Papel', `${a.papel}`],
+                  ['Gramatura', a.gramatura],
+                  ['Composição', a.composicao],
+                  ['Durabilidade', a.durabilidade],
+                  ['Moldura', a.moldura],
+                  ['Vidro', a.vidro],
+                  ['Passepartout', a.passepartout],
+                  ['Certificado', a.certificado],
+                ].map(([k, v]) => (
+                  <div key={k} style={{ padding: '9px 0', borderTop: '1px solid var(--line)', display: 'grid', gridTemplateColumns: '108px 1fr', gap: 10, alignItems: 'baseline' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--stone)' }}>{k}</span>
+                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: 13, color: 'var(--bark)', lineHeight: 1.35 }}>{v}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
+// ─── COMPARISON TABLE ────────────────────────────────────────────────────────
+
+function ComparisonTable() {
+  const rows: [string, string, string, string][] = [
+    ['Papel',          'Hahnemühle Photo Matte Fibre 200g', 'Hahnemühle Photo Rag 308g',      'Hahnemühle Museum Etching 350g'],
+    ['Composição',     'Alfa-celulose premium',             '100% algodão',                   '100% algodão'],
+    ['Gramatura',      '200 g/m²',                          '308 g/m²',                       '350 g/m²'],
+    ['Textura',        'Lisa, fosca',                       'Lisa, fosca',                    'Texturizada, artística'],
+    ['Durabilidade',   '75+ anos',                          '100+ anos',                      '100+ anos'],
+    ['Moldura',        'Laqueada, perfil 2cm',              'Maciça laqueada, perfil 3cm',    'Maciça premium, perfil 4cm'],
+    ['Vidro',          'Cristal 2mm',                       'Antirreflexo 2mm',               'Museológico + UV'],
+    ['Passepartout',   'Simples, livre de ácido',           '5cm, livre de ácido',            'Duplo, 5cm, livre de ácido'],
+    ['Certificado',    'Assinado pelo artista',             'Hahnemühle holográfico',         'Hahnemühle holográfico'],
+    ['Ideal para',     'Decoração com qualidade',           'Colecionadores e décor premium', 'Colecionadores e galerias'],
+  ]
+  return (
+    <section style={{ padding: '72px 56px', borderBottom: '1px solid var(--line)', overflowX: 'auto' }}>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 16 }}>Comparativo</div>
+      <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 40, letterSpacing: '-.03em', margin: '0 0 36px', lineHeight: 1 }}>Essential · Gallery · Museum</h2>
+      <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
+        <thead>
+          <tr>
+            <th style={{ padding: '10px 16px 10px 0', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', fontWeight: 500, borderBottom: '2px solid var(--line)' }}></th>
+            {(['essential', 'gallery', 'museum'] as Acabamento[]).map(k => (
+              <th key={k} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 14, color: 'var(--bark)', borderBottom: '2px solid var(--line)', borderLeft: '1px solid var(--line)' }}>
+                {ACABAMENTOS[k].label}
+                {ACABAMENTOS[k].popular && <span style={{ marginLeft: 8, fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--rust)', fontWeight: 600 }}>★ popular</span>}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(([label, essential, gallery, museum], i) => (
+            <tr key={label} style={{ background: i % 2 === 0 ? 'transparent' : 'var(--canvas-deep)' }}>
+              <td style={{ padding: '10px 16px 10px 0', fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--stone)', borderBottom: '1px solid var(--line)' }}>{label}</td>
+              {[essential, gallery, museum].map((v, j) => (
+                <td key={j} style={{ padding: '10px 16px', fontFamily: 'var(--font-serif)', fontSize: 13, color: 'var(--bark)', borderBottom: '1px solid var(--line)', borderLeft: '1px solid var(--line)', lineHeight: 1.4 }}>{v}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )
+}
+
+// ─── FAQ ─────────────────────────────────────────────────────────────────────
 
 function FaqAccordion() {
   const [open, setOpen] = useState<number | null>(null)
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+    <div>
       {FAQ_ITEMS.map((item, i) => (
         <div key={i} style={{ borderBottom: '1px solid var(--line)' }}>
-          <button
-            onClick={() => setOpen(open === i ? null : i)}
-            style={{
-              width: '100%', textAlign: 'left', padding: '20px 0', background: 'transparent', border: 'none', cursor: 'pointer',
-              display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16,
-              fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 16, letterSpacing: '-.01em', color: 'var(--bark)',
-            }}
-          >
+          <button onClick={() => setOpen(open === i ? null : i)}
+            style={{ width: '100%', textAlign: 'left', padding: '20px 0', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 15, letterSpacing: '-.01em', color: 'var(--bark)' }}>
             {item.q}
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 16, color: 'var(--stone)', flexShrink: 0, transform: open === i ? 'rotate(45deg)' : 'none', transition: 'transform .3s', display: 'block' }}>+</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 18, color: 'var(--stone)', flexShrink: 0, transform: open === i ? 'rotate(45deg)' : 'none', transition: 'transform .3s', display: 'block', lineHeight: 1 }}>+</span>
           </button>
           {open === i && (
-            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, lineHeight: 1.7, color: 'var(--stone)', margin: '0 0 20px', maxWidth: '68ch' }}>
-              {item.a}
-            </p>
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, lineHeight: 1.75, color: 'var(--stone)', margin: '0 0 20px', maxWidth: '70ch' }}>{item.a}</p>
           )}
         </div>
       ))}
@@ -685,117 +685,96 @@ function FaqAccordion() {
 // ─── PAGE ────────────────────────────────────────────────────────────────────
 
 export default function QuadrosPage() {
-  const [modal, setModal] = useState<Print | null>(null)
+  const [orderState, setOrderState] = useState<OrderState | null>(null)
 
   const byTier = (t: Tier) => PRINTS.filter(p => p.tier === t)
+
+  function handleOrder(p: Print, sizeId: string, acabamento: Acabamento) {
+    setOrderState({ print: p, sizeId, acabamento })
+  }
 
   return (
     <main style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)', minHeight: '100vh' }}>
       <style>{`
         .qcard { transition: transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s cubic-bezier(.2,.7,.2,1); }
-        .qcard:hover { transform: translateY(-5px); box-shadow: 0 24px 48px rgba(30,42,24,.12); }
-        .qcard:hover .qframe { transform: scale(1.03); }
-        .qcard:hover .qcta { transform: translateX(4px); }
-        @media(max-width:960px){ .qgrid { grid-template-columns: 1fr 1fr !important; gap: 20px !important; } }
-        @media(max-width:580px){ .qgrid { grid-template-columns: 1fr !important; } .qmodal { grid-template-columns: 1fr !important; } }
-        @media(max-width:720px){ .qmodal { grid-template-columns: 1fr !important; } }
+        .qcard:hover { transform: translateY(-4px); box-shadow: 0 20px 44px rgba(30,42,24,.1); }
+        .qcard:hover .qframe { transform: scale(1.04); }
+        .qcta-btn:hover { background: var(--rust) !important; }
+        @media(max-width:1060px){ .qgrid { grid-template-columns: 1fr 1fr !important; gap: 18px !important; } .acab-grid { grid-template-columns: 1fr !important; gap: 16px !important; } }
+        @media(max-width:620px){ .qgrid { grid-template-columns: 1fr !important; } .qmodal { grid-template-columns: 1fr !important; } }
+        @media(max-width:780px){ .qmodal { grid-template-columns: 1fr !important; } }
+        @media(max-width:700px){ .quad-hero { padding: 100px 24px 48px !important; } .quad-pad { padding: 40px 24px 60px !important; } }
       `}</style>
 
       <SiteNav dark={false} />
 
       {/* ── HERO ── */}
-      <header style={{ padding: '140px 56px 64px', borderBottom: '1px solid var(--line)', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 20, fontWeight: 500 }}>
+      <header className="quad-hero" style={{ padding: '140px 56px 64px', borderBottom: '1px solid var(--line)' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 20 }}>
           № 04 · Fine Art Prints · Assinados & Numerados
         </div>
         <h1 style={{ margin: 0, lineHeight: 0.9 }}>
-          <span style={{ fontFamily: 'var(--font-hand)', fontSize: 56, color: 'var(--rust)', transform: 'rotate(-2deg)', display: 'inline-block', letterSpacing: '.01em', marginBottom: 8 }}>
+          <span style={{ fontFamily: 'var(--font-hand)', fontSize: 54, color: 'var(--rust)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 6 }}>
             para a sua parede—
           </span>
           <br />
-          <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(72px, 14vw, 200px)', letterSpacing: '-.05em', lineHeight: 0.86, display: 'block', color: 'var(--bark)', textTransform: 'uppercase' }}>
+          <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(72px, 14vw, 200px)', letterSpacing: '-.05em', lineHeight: 0.86, display: 'block', textTransform: 'uppercase' }}>
             QUADROS.
           </span>
         </h1>
-        <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 20, color: 'var(--stone)', marginTop: 32, maxWidth: '54ch', lineHeight: 1.6 }}>
-          Impressão fine art em papel Hahnemühle Photo Rag 308g — 100% algodão. Cada obra é numerada, assinada à mão e acompanha certificado de autenticidade com selo holográfico.
+        <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 20, color: 'var(--stone)', marginTop: 32, maxWidth: '52ch', lineHeight: 1.65 }}>
+          Três níveis de acabamento. Dezoito obras. Uma impressão assinada à mão com certificado de autenticidade.
+          Produzida sob encomenda em laboratório fine art especializado.
         </p>
       </header>
 
-      {/* ── SOBRE OS PRINTS ── */}
-      <section style={{ padding: '72px 56px', background: 'var(--canvas-deep)', borderBottom: '1px solid var(--line)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'start', maxWidth: 1200 }}>
-          <div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 16 }}>O que você está comprando</div>
-            <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 40, letterSpacing: '-.03em', margin: '0 0 24px', lineHeight: 1 }}>
-              Qualidade de museu.<br />
-              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>Para a sua casa.</span>
-            </h2>
-            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 17, lineHeight: 1.75, color: 'var(--stone)' }}>
-              Cada quadro é produzido sob encomenda em laboratório fine art especializado, com materiais certificados que garantem durabilidade superior a 100 anos sem desbotamento.
-            </p>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {[
-              ['Papel', 'Hahnemühle Photo Rag 308g — 100% algodão, livre de ácido'],
-              ['Tinta', 'Pigmentada certificada — durabilidade superior a 100 anos'],
-              ['Moldura', 'Madeira maciça laqueada — preta, branca ou natural'],
-              ['Vidro', 'Antirreflexo 2mm — proteção sem comprometer a imagem'],
-              ['Passepartout', 'Livre de ácido — preserva a integridade da impressão'],
-              ['Certificado', 'Hahnemühle com holograma — numerado e assinado pelo artista'],
-            ].map(([k, v]) => (
-              <div key={k} style={{ padding: '16px 0', borderBottom: '1px solid var(--line)', display: 'grid', gridTemplateColumns: '140px 1fr', gap: 20, alignItems: 'baseline' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--stone)', fontWeight: 600 }}>{k}</div>
-                <div style={{ fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--bark)', lineHeight: 1.4 }}>{v}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── ACABAMENTOS ── */}
+      <AcabamentosSection />
 
-      {/* ── COLEÇÕES ── */}
-      <div style={{ padding: '72px 56px 32px' }}>
-        <TierSection tier="signature" prints={byTier('signature')} onOpen={setModal} />
-        <TierSection tier="collectors" prints={byTier('collectors')} onOpen={setModal} />
-        <TierSection tier="open" prints={byTier('open')} onOpen={setModal} />
+      {/* ── PRODUCTS ── */}
+      <div className="quad-pad" style={{ padding: '64px 56px 32px' }}>
+        <TierSection tier="signature" prints={byTier('signature')} onOrder={handleOrder} />
+        <TierSection tier="collectors" prints={byTier('collectors')} onOrder={handleOrder} />
+        <TierSection tier="open" prints={byTier('open')} onOrder={handleOrder} />
       </div>
 
+      {/* ── COMPARISON ── */}
+      <ComparisonTable />
+
       {/* ── COMO FUNCIONA ── */}
-      <section style={{ padding: '72px 56px', background: 'var(--canvas-deep)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+      <section style={{ padding: '72px 56px', background: 'var(--canvas-deep)', borderBottom: '1px solid var(--line)' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 16 }}>Processo</div>
-        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 40, letterSpacing: '-.03em', margin: '0 0 48px', lineHeight: 1 }}>
-          Como funciona
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 40 }}>
+        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 40, letterSpacing: '-.03em', margin: '0 0 48px', lineHeight: 1 }}>Como funciona</h2>
+        <div className="como-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 36 }}>
           {[
-            ['01', 'Escolha', 'Selecione a obra, o tamanho e a cor da moldura diretamente nesta página.'],
+            ['01', 'Escolha', 'Selecione a obra, o tamanho, o acabamento e a cor da moldura diretamente nesta página.'],
             ['02', 'Encomenda', 'Finalize pelo WhatsApp — sem pagamento agora. Em até 24h envio o orçamento completo.'],
             ['03', 'Produção', 'Impressão artesanal em laboratório fine art certificado. Prazo: 10 a 15 dias úteis.'],
             ['04', 'Entrega', 'Embalagem reforçada com espuma e caixa dupla-onda. Envio para todo o Brasil.'],
           ].map(([num, title, desc]) => (
             <div key={num}>
-              <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 72, letterSpacing: '-.05em', lineHeight: 0.9, color: 'var(--line)', marginBottom: 16 }}>{num}</div>
-              <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 18, letterSpacing: '-.01em', color: 'var(--bark)', marginBottom: 10 }}>{title}</div>
-              <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, lineHeight: 1.65, color: 'var(--stone)', margin: 0 }}>{desc}</p>
+              <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 68, letterSpacing: '-.05em', lineHeight: 0.9, color: 'var(--line)', marginBottom: 14 }}>{num}</div>
+              <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 17, color: 'var(--bark)', marginBottom: 8 }}>{title}</div>
+              <p style={{ fontFamily: 'var(--font-serif)', fontSize: 14, lineHeight: 1.65, color: 'var(--stone)', margin: 0 }}>{desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── CREDIBILIDADE ── */}
-      <section style={{ padding: '48px 56px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 48, flexWrap: 'wrap' }}>
+      <section style={{ padding: '40px 56px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 40, flexWrap: 'wrap' }}>
         {[
           ['Hahnemühle Certified', 'Papel e certificado autênticos'],
-          ['+100 anos', 'Durabilidade das tintas pigmentadas'],
-          ['Assinado & Numerado', 'Cada obra tem identidade única'],
-          ['Laboratório fine art', 'Impressão profissional especializada'],
+          ['100+ anos', 'Durabilidade das tintas pigmentadas'],
+          ['Assinado & Numerado', 'Cada obra com identidade única'],
+          ['Laboratório Fine Art', 'Impressão profissional especializada'],
         ].map(([title, desc]) => (
-          <div key={title} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{ width: 40, height: 40, background: 'var(--canvas-deep)', border: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <span style={{ fontFamily: 'var(--font-hand)', fontSize: 22, color: 'var(--rust)' }}>✓</span>
+          <div key={title} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ width: 36, height: 36, background: 'var(--canvas-deep)', border: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <span style={{ fontFamily: 'var(--font-hand)', fontSize: 20, color: 'var(--rust)' }}>✓</span>
             </div>
             <div>
-              <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13, letterSpacing: '-.01em', color: 'var(--bark)' }}>{title}</div>
+              <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13, color: 'var(--bark)' }}>{title}</div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--stone)', marginTop: 2 }}>{desc}</div>
             </div>
           </div>
@@ -803,35 +782,22 @@ export default function QuadrosPage() {
       </section>
 
       {/* ── FAQ ── */}
-      <section style={{ padding: '72px 56px 96px', maxWidth: 860 }}>
+      <section style={{ padding: '72px 56px 96px', maxWidth: 880 }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 16 }}>Dúvidas frequentes</div>
-        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 40, letterSpacing: '-.03em', margin: '0 0 40px', lineHeight: 1 }}>
-          FAQ
-        </h2>
+        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 40, letterSpacing: '-.03em', margin: '0 0 36px', lineHeight: 1 }}>FAQ</h2>
         <FaqAccordion />
       </section>
 
       {/* ── WA FLOAT ── */}
-      <a
-        href={WA_BASE + encodeURIComponent('Olá! Tenho interesse em um quadro fine art.')}
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{
-          position: 'fixed', bottom: 28, right: 28, zIndex: 100,
-          width: 56, height: 56, borderRadius: '50%', background: '#25D366',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(0,0,0,.2)',
-          transition: 'transform .3s, box-shadow .3s',
-        }}
-        className="wa-btn"
-        aria-label="Contato via WhatsApp"
-      >
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      <a href={`https://wa.me/${WA_NUM}?text=${encodeURIComponent('Olá! Tenho interesse em um quadro fine art.')}`} target="_blank" rel="noopener noreferrer"
+        style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 100, width: 54, height: 54, borderRadius: '50%', background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 24px rgba(0,0,0,.2)' }}
+        aria-label="Contato via WhatsApp">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
       </a>
 
       <SiteFooter dark={false} />
 
-      {modal && <OrderModal print={modal} onClose={() => setModal(null)} />}
+      {orderState && <OrderModal state={orderState} onClose={() => setOrderState(null)} />}
     </main>
   )
 }
