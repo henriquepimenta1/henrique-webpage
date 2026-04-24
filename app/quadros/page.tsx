@@ -115,7 +115,7 @@ const PRINTS: Print[] = [
   },
   {
     id: 'la-montana',
-    img: '/images/quadros/LA MOTANÃ-VISTA-PICOMATEO.jpg',
+    img: '/images/quadros/LA-MOTANA-VISTA-PICOMATEO.jpg',
     title: 'La Montaña — Vista Pico Mateo',
     loc: 'Huayhuash, Peru',
     tier: 'collectors',
@@ -216,7 +216,7 @@ const PRINTS: Print[] = [
   },
   {
     id: 'observadora-arara',
-    img: '/images/quadros/A-OBSERVADORA_ARARA-CANINDÉ-RONDONIA.jpg',
+    img: '/images/quadros/A-OBSERVADORA-ARARA-CANINDE-RONDONIA.jpg',
     title: 'A Observadora — Arara-Canindé',
     loc: 'Rondônia',
     tier: 'open',
@@ -238,10 +238,17 @@ const PRINTS: Print[] = [
   },
 ]
 
+const MATERIALS = [
+  { id: 'photo-rag',  label: 'Fine Art — Photo Rag',  desc: 'Hahnemühle 308g · 100% algodão · fosco', tag: 'recomendado' },
+  { id: 'baryta',     label: 'Fine Art — Baryta',      desc: 'Hahnemühle 315g · semi-brilhante · cores vivas', tag: '' },
+  { id: 'canvas',     label: 'Canvas',                 desc: 'Tecido esticado em chassi de madeira · sem moldura', tag: '' },
+]
+
 const FRAMES = [
   { id: 'preta',   label: 'Moldura preta',    desc: 'Madeira maciça laqueada', extra: 'incluso' },
   { id: 'branca',  label: 'Moldura branca',   desc: 'Madeira maciça laqueada', extra: 'incluso' },
   { id: 'natural', label: 'Moldura natural',  desc: 'Madeira maciça carvalho', extra: 'incluso' },
+  { id: 'sem',     label: 'Sem moldura',      desc: 'Só a impressão, sem acabamento', extra: '' },
 ]
 
 const WA_BASE = 'https://wa.me/5511999999999?text='
@@ -351,11 +358,13 @@ function TierSection({ tier, prints, onOpen }: { tier: Tier; prints: Print[]; on
 
 function OrderModal({ print, onClose }: { print: Print; onClose: () => void }) {
   const [sizeId, setSizeId] = useState(print.sizes[0].id)
+  const [materialId, setMaterialId] = useState('photo-rag')
   const [frameId, setFrameId] = useState('preta')
   const [step, setStep] = useState<0 | 1 | 2>(0)
   const [form, setForm] = useState({ nome: '', email: '', whatsapp: '', cidade: '', obs: '' })
 
   const selectedSize = print.sizes.find(s => s.id === sizeId)!
+  const selectedMaterial = MATERIALS.find(m => m.id === materialId)!
   const selectedFrame = FRAMES.find(f => f.id === frameId)!
   const tierMeta = TIER_META[print.tier]
 
@@ -364,6 +373,7 @@ function OrderModal({ print, onClose }: { print: Print; onClose: () => void }) {
       `Olá! Tenho interesse em encomendar um quadro fine art.\n\n` +
       `*Obra:* ${print.title}\n` +
       `*Tamanho:* ${selectedSize.label}\n` +
+      `*Material:* ${selectedMaterial.label}\n` +
       `*Moldura:* ${selectedFrame.label}\n` +
       `*Valor:* ${selectedSize.price}\n\n` +
       `*Nome:* ${form.nome}\n` +
@@ -459,9 +469,43 @@ function OrderModal({ print, onClose }: { print: Print; onClose: () => void }) {
                 </div>
               </div>
 
+              {/* material picker */}
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 10 }}>02 · Material de impressão</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {MATERIALS.map(m => (
+                    <button
+                      key={m.id}
+                      onClick={() => setMaterialId(m.id)}
+                      style={{
+                        padding: '10px 14px',
+                        border: `1px solid ${materialId === m.id ? 'var(--bark)' : 'var(--line)'}`,
+                        background: materialId === m.id ? 'var(--bark)' : 'transparent',
+                        color: materialId === m.id ? 'var(--canvas)' : 'var(--bark)',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        fontFamily: 'var(--font-ui)',
+                        transition: 'all .2s',
+                        textAlign: 'left',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontSize: 13, fontWeight: 600 }}>{m.label}</div>
+                        <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 11, opacity: 0.7, marginTop: 2 }}>{m.desc}</div>
+                      </div>
+                      {m.tag && (
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.15em', textTransform: 'uppercase', flexShrink: 0, opacity: 0.7 }}>{m.tag}</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* frame picker */}
               <div style={{ marginBottom: 24 }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 10 }}>02 · Moldura</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 10 }}>03 · Moldura</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {FRAMES.map(f => (
                     <button
@@ -527,7 +571,7 @@ function OrderModal({ print, onClose }: { print: Print; onClose: () => void }) {
                 <div>
                   <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 14, color: 'var(--bark)' }}>{print.title}</div>
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--stone)', marginTop: 3 }}>
-                    {selectedSize.label} · {selectedFrame.label}
+                    {selectedSize.label} · {selectedMaterial.label} · {selectedFrame.label}
                   </div>
                 </div>
                 <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 18, color: 'var(--bark)', flexShrink: 0 }}>{selectedSize.price}</span>
