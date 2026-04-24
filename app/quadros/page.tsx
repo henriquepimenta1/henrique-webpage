@@ -97,7 +97,7 @@ const FRAME_COLORS = [
   { id: 'natural', label: 'Natural' },
 ]
 
-const WA_NUM = '5511999999999'
+const WA_NUM = '5511988128064'
 
 // ─── PRINTS DATA ─────────────────────────────────────────────────────────────
 
@@ -200,7 +200,7 @@ const PRINTS: Print[] = [
     img: '/images/quadros/CAMP-JAHUACOCHA-HUAYHUASH.jpg',
     title: 'Camp Jahuacocha', loc: 'Huayhuash, Peru', ratio: '3/4',
     sizes: [
-      { id: '30x40',  label: '30×40 cm',  prices: { essential: 'R$ 490',   gallery: 'R$ 690',   museum: 'R$ 890' } },
+      { id: '30x40',  label: '30×40 cm',  prices: { essential: 'R$ 550',   gallery: 'R$ 890',   museum: 'R$ 1.090' } },
       { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
     ],
   },
@@ -220,8 +220,8 @@ const PRINTS: Print[] = [
     img: '/images/quadros/A CASA-LENCOIS.jpg',
     title: 'A Casa', loc: 'Lençóis Maranhenses, MA', ratio: '2/3',
     sizes: [
-      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
-      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 450', gallery: 'R$ 650', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 750', gallery: 'R$ 1.090', museum: 'R$ 1.390' } },
     ],
   },
   {
@@ -229,8 +229,8 @@ const PRINTS: Print[] = [
     img: '/images/quadros/A DESPEDIDA-LENCOIS.jpg',
     title: 'A Despedida', loc: 'Lençóis Maranhenses, MA', ratio: '3/2',
     sizes: [
-      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
-      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 450', gallery: 'R$ 650', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 750', gallery: 'R$ 1.090', museum: 'R$ 1.390' } },
     ],
   },
   {
@@ -238,8 +238,8 @@ const PRINTS: Print[] = [
     img: '/images/quadros/MARCAS DO PASSADO-LENCOIS.jpg',
     title: 'Marcas do Passado', loc: 'Lençóis Maranhenses, MA', ratio: '3/4',
     sizes: [
-      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
-      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 450', gallery: 'R$ 650', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 750', gallery: 'R$ 1.090', museum: 'R$ 1.390' } },
     ],
   },
   {
@@ -247,8 +247,8 @@ const PRINTS: Print[] = [
     img: '/images/quadros/BETANIA FALA-LENCOIS.jpg',
     title: 'Betânia Fala', loc: 'Lençóis Maranhenses, MA', ratio: '4/3',
     sizes: [
-      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
-      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 450', gallery: 'R$ 650', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 750', gallery: 'R$ 1.090', museum: 'R$ 1.390' } },
     ],
   },
   {
@@ -256,8 +256,8 @@ const PRINTS: Print[] = [
     img: '/images/quadros/A-OBSERVADORA-ARARA-CANINDE-RONDONIA.jpg',
     title: 'A Observadora — Arara-Canindé', loc: 'Rondônia', ratio: '3/4',
     sizes: [
-      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
-      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 450', gallery: 'R$ 650', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 750', gallery: 'R$ 1.090', museum: 'R$ 1.390' } },
     ],
   },
   {
@@ -265,8 +265,8 @@ const PRINTS: Print[] = [
     img: '/images/quadros/ACAMPAMENTO_GASHPAPAMPA-HUAYHUASH.jpg',
     title: 'Acampamento Gashpapampa', loc: 'Huayhuash, Peru', ratio: '4/3',
     sizes: [
-      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
-      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
+      { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 450', gallery: 'R$ 650', museum: 'R$ 790' } },
+      { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 750', gallery: 'R$ 1.090', museum: 'R$ 1.390' } },
     ],
   },
 ]
@@ -340,13 +340,20 @@ function PickerBtn({ active, onClick, children }: { active: boolean; onClick: ()
 
 // ─── PRINT CARD ──────────────────────────────────────────────────────────────
 
-function PrintCard({ p, onOrder }: { p: Print; onOrder: (p: Print, sizeId: string, acabamento: Acabamento) => void }) {
+function PrintCard({ p }: { p: Print }) {
   const [sizeId, setSizeId] = useState(p.sizes[0].id)
   const [acabamento, setAcabamento] = useState<Acabamento>('gallery')
 
   const selectedSize = p.sizes.find(s => s.id === sizeId)!
   const price = selectedSize.prices[acabamento]
   const acabMeta = ACABAMENTOS[acabamento]
+
+  function openWA() {
+    const msg = encodeURIComponent(
+      `Olá! Tenho interesse no quadro "${p.title}" em ${selectedSize.label} com acabamento ${acabMeta.label} (${price}).`
+    )
+    window.open(`https://wa.me/${WA_NUM}?text=${msg}`, '_blank')
+  }
 
   return (
     <article className="qcard" style={{ display: 'flex', flexDirection: 'column', background: 'var(--canvas)', border: '1px solid var(--line)', cursor: 'default' }}>
@@ -395,7 +402,7 @@ function PrintCard({ p, onOrder }: { p: Print; onOrder: (p: Print, sizeId: strin
               </PickerBtn>
             ))}
           </div>
-          <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 11, color: 'var(--stone)', marginTop: 5, lineHeight: 1.4 }}>
+          <div key={acabamento} style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 12, color: 'var(--stone)', marginTop: 6, lineHeight: 1.4 }}>
             {acabMeta.papel}
           </div>
         </div>
@@ -408,7 +415,7 @@ function PrintCard({ p, onOrder }: { p: Print; onOrder: (p: Print, sizeId: strin
           </div>
           <button
             className="qcta-btn"
-            onClick={() => onOrder(p, sizeId, acabamento)}
+            onClick={openWA}
             style={{ padding: '10px 18px', background: 'var(--bark)', color: 'var(--canvas)', border: 'none', fontFamily: 'var(--font-ui)', fontSize: 10, fontWeight: 700, letterSpacing: '.18em', textTransform: 'uppercase', cursor: 'pointer', transition: 'background .2s' }}
           >
             Encomendar →
@@ -421,19 +428,27 @@ function PrintCard({ p, onOrder }: { p: Print; onOrder: (p: Print, sizeId: strin
 
 // ─── TIER SECTION ────────────────────────────────────────────────────────────
 
-function TierSection({ tier, prints, onOrder }: { tier: Tier; prints: Print[]; onOrder: (p: Print, sizeId: string, a: Acabamento) => void }) {
+function TierSection({ tier, prints }: { tier: Tier; prints: Print[] }) {
   const meta = TIER_META[tier]
+  const subtitle = tier === 'open'
+    ? `${prints.length} obras disponíveis · a partir de R$ 450`
+    : `${prints.length} obras disponíveis`
   return (
     <section style={{ marginBottom: 72 }}>
       <div style={{ paddingBottom: 24, borderBottom: '1px solid var(--line)', marginBottom: 32, display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
         <div>
           <TierBadge tier={tier} />
           <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 30, letterSpacing: '-.03em', margin: '10px 0 0', color: 'var(--bark)' }}>{meta.label}</h2>
+          {tier === 'signature' && (
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.15em', textTransform: 'uppercase', color: 'var(--stone)', marginTop: 6 }}>
+              Preços reajustados a cada 20% da tiragem vendida
+            </div>
+          )}
         </div>
-        <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 15, color: 'var(--stone)' }}>{prints.length} obras disponíveis</span>
+        <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 15, color: 'var(--stone)' }}>{subtitle}</span>
       </div>
       <div className="qgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'start' }}>
-        {prints.map(p => <PrintCard key={p.id} p={p} onOrder={onOrder} />)}
+        {prints.map(p => <PrintCard key={p.id} p={p} />)}
       </div>
     </section>
   )
@@ -686,13 +701,7 @@ function FaqAccordion() {
 // ─── PAGE ────────────────────────────────────────────────────────────────────
 
 export default function QuadrosPage() {
-  const [orderState, setOrderState] = useState<OrderState | null>(null)
-
   const byTier = (t: Tier) => PRINTS.filter(p => p.tier === t)
-
-  function handleOrder(p: Print, sizeId: string, acabamento: Acabamento) {
-    setOrderState({ print: p, sizeId, acabamento })
-  }
 
   return (
     <main style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)', minHeight: '100vh' }}>
@@ -710,23 +719,27 @@ export default function QuadrosPage() {
       <SiteNav dark={false} />
 
       {/* ── HERO ── */}
-      <header className="quad-hero" style={{ padding: '140px 56px 64px', borderBottom: '1px solid var(--line)' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 20 }}>
-          № 04 · Fine Art Prints · Assinados & Numerados
+      <header style={{ position: 'relative', minHeight: '80vh', display: 'flex', alignItems: 'flex-end', overflow: 'hidden' }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/quadros/2 CAMADAS DE BELEZA-LENCOIS.jpg" alt="2 Camadas de Beleza — Lençóis Maranhenses" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.3) 60%, rgba(0,0,0,.1) 100%)' }} />
+        <div className="quad-hero" style={{ position: 'relative', zIndex: 2, padding: '0 56px 64px', width: '100%' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,.6)', marginBottom: 16 }}>
+            № 04 · Fine Art Prints · Assinados & Numerados
+          </div>
+          <h1 style={{ margin: 0, lineHeight: 0.9 }}>
+            <span style={{ fontFamily: 'var(--font-hand)', fontSize: 54, color: 'var(--rust)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 6 }}>
+              para a sua parede—
+            </span>
+            <br />
+            <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(72px, 14vw, 180px)', letterSpacing: '-.05em', lineHeight: 0.86, display: 'block', textTransform: 'uppercase', color: '#fff' }}>
+              QUADROS.
+            </span>
+          </h1>
+          <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,.75)', marginTop: 28, maxWidth: '52ch', lineHeight: 1.65 }}>
+            Três níveis de acabamento. Dezoito obras. Impressão assinada à mão com certificado de autenticidade.
+          </p>
         </div>
-        <h1 style={{ margin: 0, lineHeight: 0.9 }}>
-          <span style={{ fontFamily: 'var(--font-hand)', fontSize: 54, color: 'var(--rust)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 6 }}>
-            para a sua parede—
-          </span>
-          <br />
-          <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(72px, 14vw, 200px)', letterSpacing: '-.05em', lineHeight: 0.86, display: 'block', textTransform: 'uppercase' }}>
-            QUADROS.
-          </span>
-        </h1>
-        <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 20, color: 'var(--stone)', marginTop: 32, maxWidth: '52ch', lineHeight: 1.65 }}>
-          Três níveis de acabamento. Dezoito obras. Uma impressão assinada à mão com certificado de autenticidade.
-          Produzida sob encomenda em laboratório fine art especializado.
-        </p>
       </header>
 
       {/* ── ACABAMENTOS ── */}
@@ -734,9 +747,9 @@ export default function QuadrosPage() {
 
       {/* ── PRODUCTS ── */}
       <div className="quad-pad" style={{ padding: '64px 56px 32px' }}>
-        <TierSection tier="signature" prints={byTier('signature')} onOrder={handleOrder} />
-        <TierSection tier="collectors" prints={byTier('collectors')} onOrder={handleOrder} />
-        <TierSection tier="open" prints={byTier('open')} onOrder={handleOrder} />
+        <TierSection tier="signature" prints={byTier('signature')} />
+        <TierSection tier="collectors" prints={byTier('collectors')} />
+        <TierSection tier="open" prints={byTier('open')} />
       </div>
 
       {/* ── COMPARISON ── */}
@@ -798,7 +811,6 @@ export default function QuadrosPage() {
 
       <SiteFooter dark={false} />
 
-      {orderState && <OrderModal state={orderState} onClose={() => setOrderState(null)} />}
     </main>
   )
 }
