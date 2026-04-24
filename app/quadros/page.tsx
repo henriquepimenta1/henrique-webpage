@@ -21,6 +21,7 @@ interface Print {
   title: string
   loc: string
   tier: Tier
+  ratio: string
   sizes: SizeOption[]
 }
 
@@ -105,7 +106,7 @@ const PRINTS: Print[] = [
   {
     id: 'camadas-beleza', tier: 'signature',
     img: '/images/quadros/2 CAMADAS DE BELEZA-LENCOIS.jpg',
-    title: '2 Camadas de Beleza', loc: 'Lençóis Maranhenses, MA',
+    title: '2 Camadas de Beleza', loc: 'Lençóis Maranhenses, MA', ratio: '3/4',
     sizes: [
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
       { id: '80x120', label: '80×120 cm', prices: { essential: 'R$ 3.390', gallery: 'R$ 4.900', museum: 'R$ 6.490' } },
@@ -114,7 +115,7 @@ const PRINTS: Print[] = [
   {
     id: 'a-curva', tier: 'signature',
     img: '/images/quadros/A CURVA-LENCOIS.jpg',
-    title: 'A Curva', loc: 'Lençóis Maranhenses, MA',
+    title: 'A Curva', loc: 'Lençóis Maranhenses, MA', ratio: '4/3',
     sizes: [
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
       { id: '80x120', label: '80×120 cm', prices: { essential: 'R$ 3.390', gallery: 'R$ 4.900', museum: 'R$ 6.490' } },
@@ -123,7 +124,7 @@ const PRINTS: Print[] = [
   {
     id: 'reflexo-carhuacocha', tier: 'signature',
     img: '/images/quadros/REFLEXO_CARHUACOCHA-HUAYHUASH.jpg',
-    title: 'Reflexo Carhuacocha', loc: 'Huayhuash, Peru',
+    title: 'Reflexo Carhuacocha', loc: 'Huayhuash, Peru', ratio: '3/4',
     sizes: [
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
       { id: '80x120', label: '80×120 cm', prices: { essential: 'R$ 3.390', gallery: 'R$ 4.900', museum: 'R$ 6.490' } },
@@ -132,7 +133,7 @@ const PRINTS: Print[] = [
   {
     id: 'las-3-lagunas', tier: 'signature',
     img: '/images/quadros/LAS 3 LAGUNAS-HUAYHUASH.jpg',
-    title: 'Las 3 Lagunas', loc: 'Huayhuash, Peru',
+    title: 'Las 3 Lagunas', loc: 'Huayhuash, Peru', ratio: '4/3',
     sizes: [
       { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.290', gallery: 'R$ 1.900', museum: 'R$ 2.590' } },
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
@@ -141,7 +142,7 @@ const PRINTS: Print[] = [
   {
     id: 'sol-toca-tudo', tier: 'signature',
     img: '/images/quadros/O SOL TOCA TUDO_LENCOIS.jpg',
-    title: 'O Sol Toca Tudo', loc: 'Lençóis Maranhenses, MA',
+    title: 'O Sol Toca Tudo', loc: 'Lençóis Maranhenses, MA', ratio: '4/3',
     sizes: [
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
       { id: '80x120', label: '80×120 cm', prices: { essential: 'R$ 3.390', gallery: 'R$ 4.900', museum: 'R$ 6.490' } },
@@ -152,7 +153,7 @@ const PRINTS: Print[] = [
   {
     id: 'caminhos-agua', tier: 'collectors',
     img: '/images/quadros/CAMINHOS DA AGUA_VISTA-ZENITAL-LENCOIS.jpg',
-    title: 'Caminhos da Água', loc: 'Lençóis Maranhenses, MA',
+    title: 'Caminhos da Água', loc: 'Lençóis Maranhenses, MA', ratio: '4/3',
     sizes: [
       { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
@@ -161,7 +162,7 @@ const PRINTS: Print[] = [
   {
     id: 'el-passo', tier: 'collectors',
     img: '/images/quadros/EL_PASSO_SANTA_ROSA-HUAYHUASH.jpg',
-    title: 'El Passo Santa Rosa', loc: 'Huayhuash, Peru',
+    title: 'El Passo Santa Rosa', loc: 'Huayhuash, Peru', ratio: '4/3',
     sizes: [
       { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
@@ -170,7 +171,7 @@ const PRINTS: Print[] = [
   {
     id: 'la-montana', tier: 'collectors',
     img: '/images/quadros/LA-MOTANA-VISTA-PICOMATEO.jpg',
-    title: 'La Montaña — Vista Pico Mateo', loc: 'Huayhuash, Peru',
+    title: 'La Montaña — Vista Pico Mateo', loc: 'Huayhuash, Peru', ratio: '4/3',
     sizes: [
       { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
@@ -179,7 +180,7 @@ const PRINTS: Print[] = [
   {
     id: 'betania-paradisiaca', tier: 'collectors',
     img: '/images/quadros/BETANIA PARADISIACA-LENCOIS.jpg',
-    title: 'Betânia Paradisíaca', loc: 'Lençóis Maranhenses, MA',
+    title: 'Betânia Paradisíaca', loc: 'Lençóis Maranhenses, MA', ratio: '4/3',
     sizes: [
       { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
@@ -188,7 +189,7 @@ const PRINTS: Print[] = [
   {
     id: 'primeiros-minutos', tier: 'collectors',
     img: '/images/quadros/OS PRIMEIROS MINUTOS DO SOL-LENCOIS.jpg',
-    title: 'Os Primeiros Minutos do Sol', loc: 'Lençóis Maranhenses, MA',
+    title: 'Os Primeiros Minutos do Sol', loc: 'Lençóis Maranhenses, MA', ratio: '4/3',
     sizes: [
       { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
@@ -197,7 +198,7 @@ const PRINTS: Print[] = [
   {
     id: 'camp-jahuacocha', tier: 'collectors',
     img: '/images/quadros/CAMP-JAHUACOCHA-HUAYHUASH.jpg',
-    title: 'Camp Jahuacocha', loc: 'Huayhuash, Peru',
+    title: 'Camp Jahuacocha', loc: 'Huayhuash, Peru', ratio: '3/4',
     sizes: [
       { id: '30x40',  label: '30×40 cm',  prices: { essential: 'R$ 490',   gallery: 'R$ 690',   museum: 'R$ 890' } },
       { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
@@ -206,7 +207,7 @@ const PRINTS: Print[] = [
   {
     id: 'observando-infinito', tier: 'collectors',
     img: '/images/quadros/OBSERVANDO O INFINITO-LENCOIS.jpg',
-    title: 'Observando o Infinito', loc: 'Lençóis Maranhenses, MA',
+    title: 'Observando o Infinito', loc: 'Lençóis Maranhenses, MA', ratio: '3/2',
     sizes: [
       { id: '50x70',  label: '50×70 cm',  prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
       { id: '60x90',  label: '60×90 cm',  prices: { essential: 'R$ 1.590', gallery: 'R$ 2.390', museum: 'R$ 3.190' } },
@@ -217,7 +218,7 @@ const PRINTS: Print[] = [
   {
     id: 'a-casa', tier: 'open',
     img: '/images/quadros/A CASA-LENCOIS.jpg',
-    title: 'A Casa', loc: 'Lençóis Maranhenses, MA',
+    title: 'A Casa', loc: 'Lençóis Maranhenses, MA', ratio: '2/3',
     sizes: [
       { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
       { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
@@ -226,7 +227,7 @@ const PRINTS: Print[] = [
   {
     id: 'a-despedida', tier: 'open',
     img: '/images/quadros/A DESPEDIDA-LENCOIS.jpg',
-    title: 'A Despedida', loc: 'Lençóis Maranhenses, MA',
+    title: 'A Despedida', loc: 'Lençóis Maranhenses, MA', ratio: '3/2',
     sizes: [
       { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
       { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
@@ -235,7 +236,7 @@ const PRINTS: Print[] = [
   {
     id: 'marcas-passado', tier: 'open',
     img: '/images/quadros/MARCAS DO PASSADO-LENCOIS.jpg',
-    title: 'Marcas do Passado', loc: 'Lençóis Maranhenses, MA',
+    title: 'Marcas do Passado', loc: 'Lençóis Maranhenses, MA', ratio: '3/4',
     sizes: [
       { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
       { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
@@ -244,7 +245,7 @@ const PRINTS: Print[] = [
   {
     id: 'betania-fala', tier: 'open',
     img: '/images/quadros/BETANIA FALA-LENCOIS.jpg',
-    title: 'Betânia Fala', loc: 'Lençóis Maranhenses, MA',
+    title: 'Betânia Fala', loc: 'Lençóis Maranhenses, MA', ratio: '4/3',
     sizes: [
       { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
       { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
@@ -253,7 +254,7 @@ const PRINTS: Print[] = [
   {
     id: 'observadora-arara', tier: 'open',
     img: '/images/quadros/A-OBSERVADORA-ARARA-CANINDE-RONDONIA.jpg',
-    title: 'A Observadora — Arara-Canindé', loc: 'Rondônia',
+    title: 'A Observadora — Arara-Canindé', loc: 'Rondônia', ratio: '3/4',
     sizes: [
       { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
       { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
@@ -262,7 +263,7 @@ const PRINTS: Print[] = [
   {
     id: 'acampamento-gashpapampa', tier: 'open',
     img: '/images/quadros/ACAMPAMENTO_GASHPAPAMPA-HUAYHUASH.jpg',
-    title: 'Acampamento Gashpapampa', loc: 'Huayhuash, Peru',
+    title: 'Acampamento Gashpapampa', loc: 'Huayhuash, Peru', ratio: '4/3',
     sizes: [
       { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 390', gallery: 'R$ 590', museum: 'R$ 790' } },
       { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 690', gallery: 'R$ 990', museum: 'R$ 1.390' } },
@@ -355,7 +356,7 @@ function PrintCard({ p, onOrder }: { p: Print; onOrder: (p: Print, sizeId: strin
           <TierBadge tier={p.tier} />
         </div>
         <div style={{ padding: '20px 20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="qframe" style={{ background: '#1A1612', padding: 8, boxShadow: '0 10px 28px rgba(0,0,0,.3)', width: '100%', aspectRatio: '3/2', transition: 'transform .6s cubic-bezier(.2,.7,.2,1)' }}>
+          <div className="qframe" style={{ background: '#1A1612', padding: 8, boxShadow: '0 10px 28px rgba(0,0,0,.3)', width: '100%', aspectRatio: p.ratio, transition: 'transform .6s cubic-bezier(.2,.7,.2,1)' }}>
             <div style={{ padding: 4, background: '#F0EBE0', height: '100%' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={p.img} alt={p.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
@@ -431,7 +432,7 @@ function TierSection({ tier, prints, onOrder }: { tier: Tier; prints: Print[]; o
         </div>
         <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 15, color: 'var(--stone)' }}>{prints.length} obras disponíveis</span>
       </div>
-      <div className="qgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+      <div className="qgrid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, alignItems: 'start' }}>
         {prints.map(p => <PrintCard key={p.id} p={p} onOrder={onOrder} />)}
       </div>
     </section>
