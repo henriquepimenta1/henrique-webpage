@@ -87,9 +87,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/reel/DKXZmtdO2d9/",
     photos: [
-      { src: "/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-001.jpg", caption: "White Melton em campo — Travessia Marins × Itaguaré" },
-      { src: "/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-002.jpg", caption: "Tecido unifloc — reciclagem de garrafas PET" },
-      { src: "/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-003.jpg", caption: "Serra da Mantiqueira · altitude e conforto" },
+      { src: "/images/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-001.jpg", caption: "White Melton em campo — Travessia Marins × Itaguaré" },
+      { src: "/images/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-002.jpg", caption: "Tecido unifloc — reciclagem de garrafas PET" },
+      { src: "/images/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-003.jpg", caption: "Serra da Mantiqueira · altitude e conforto" },
     ],
   },
   {
@@ -104,9 +104,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/reel/C-iZ1ICPbjC/",
     photos: [
-      { src: "/work/AIUR/MOLETON_MELTON-ESCURO/MOLETON-MELTON-ESCURO-001.jpg", caption: "Colors Blue Melton — pôr do sol na Serra" },
-      { src: "/work/AIUR/MOLETON_MELTON-ESCURO/MOLETON-MELTON-ESCURO-002.jpg", caption: "Cores da natureza como paleta — Aiuruocan" },
-      { src: "/work/AIUR/MOLETON_MELTON-ESCURO/MOLETON-MELTON-ESCURO-003.jpg", caption: "Editorial de campo — luz natural" },
+      { src: "/images/work/AIUR/MOLETON_MELTON-ESCURO/MOLETON-MELTON-ESCURO-001.jpg", caption: "Colors Blue Melton — pôr do sol na Serra" },
+      { src: "/images/work/AIUR/MOLETON_MELTON-ESCURO/MOLETON-MELTON-ESCURO-002.jpg", caption: "Cores da natureza como paleta — Aiuruocan" },
+      { src: "/images/work/AIUR/MOLETON_MELTON-ESCURO/MOLETON-MELTON-ESCURO-003.jpg", caption: "Editorial de campo — luz natural" },
     ],
   },
   {
@@ -121,9 +121,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/reel/C6jOdhRL46t/",
     photos: [
-      { src: "/work/AIUR/T-SHIRT_AGULHAS-NEGRAS/T-SHIRT-AGULHAS-NEGRAS-001.jpg", caption: "Agulhas Negras Black — Pico das Agulhas Negras 2.791m" },
-      { src: "/work/AIUR/T-SHIRT_AGULHAS-NEGRAS/T-SHIRT-AGULHAS-NEGRAS-002.jpg", caption: "Formações rochosas do cume — Itatiaia, RJ" },
-      { src: "/work/AIUR/T-SHIRT_AGULHAS-NEGRAS/T-SHIRT-AGULHAS-NEGRAS-003.jpg", caption: "Algodão penteado 30.1 BCI — leveza em altitude" },
+      { src: "/images/work/AIUR/T-SHIRT_AGULHAS-NEGRAS/T-SHIRT-AGULHAS-NEGRAS-001.jpg", caption: "Agulhas Negras Black — Pico das Agulhas Negras 2.791m" },
+      { src: "/images/work/AIUR/T-SHIRT_AGULHAS-NEGRAS/T-SHIRT-AGULHAS-NEGRAS-002.jpg", caption: "Formações rochosas do cume — Itatiaia, RJ" },
+      { src: "/images/work/AIUR/T-SHIRT_AGULHAS-NEGRAS/T-SHIRT-AGULHAS-NEGRAS-003.jpg", caption: "Algodão penteado 30.1 BCI — leveza em altitude" },
     ],
   },
   {
@@ -138,9 +138,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/reel/DGJIBq-PhLC/",
     photos: [
-      { src: "/work/AIUR/T-SHIRT_FREE-RIDING-TEAM/T-SHIRT-FREE-RIDING-TEAM-001.jpg", caption: "Free Riding Team — Pico do Lopo, Extrema-MG" },
-      { src: "/work/AIUR/T-SHIRT_FREE-RIDING-TEAM/T-SHIRT-FREE-RIDING-TEAM-002.jpg", caption: "Algodão BCI penteado — conforto em montanha" },
-      { src: "/work/AIUR/T-SHIRT_FREE-RIDING-TEAM/T-SHIRT-FREE-RIDING-TEAM-003.jpg", caption: "Serra da Mantiqueira — vista panorâmica" },
+      { src: "/images/work/AIUR/T-SHIRT_FREE-RIDING-TEAM/T-SHIRT-FREE-RIDING-TEAM-001.jpg", caption: "Free Riding Team — Pico do Lopo, Extrema-MG" },
+      { src: "/images/work/AIUR/T-SHIRT_FREE-RIDING-TEAM/T-SHIRT-FREE-RIDING-TEAM-002.jpg", caption: "Algodão BCI penteado — conforto em montanha" },
+      { src: "/images/work/AIUR/T-SHIRT_FREE-RIDING-TEAM/T-SHIRT-FREE-RIDING-TEAM-003.jpg", caption: "Serra da Mantiqueira — vista panorâmica" },
     ],
   },
   {
@@ -155,9 +155,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/reel/C3LBa1oMmu6/",
     photos: [
-      { src: "/work/OBOTICARIO/OBOTICARIO-001.jpg", caption: "Arbo Puro — a essência da natureza ao alcance das mãos" },
-      { src: "/work/OBOTICARIO/OBOTICARIO-002.jpg", caption: "Rio Marcolino · Mata Atlântica, São Paulo" },
-      { src: "/work/OBOTICARIO/OBOTICARIO-003.jpg", caption: "92% ingredientes naturais · com refil · #ARboPuroComBoti" },
+      { src: "/images/work/OBOTICARIO/OBOTICARIO-001.jpg", caption: "Arbo Puro — a essência da natureza ao alcance das mãos" },
+      { src: "/images/work/OBOTICARIO/OBOTICARIO-002.jpg", caption: "Rio Marcolino · Mata Atlântica, São Paulo" },
+      { src: "/images/work/OBOTICARIO/OBOTICARIO-003.jpg", caption: "92% ingredientes naturais · com refil · #ARboPuroComBoti" },
     ],
   },
   {
@@ -173,9 +173,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/reel/DQC7JWfCYtD/",
     photos: [
-      { src: "/work/OMA-GEAR/OMA-GEAR-001.jpg", caption: "Kit Cozinha Ultra Leve — 149g no total" },
-      { src: "/work/OMA-GEAR/OMA-GEAR-002.jpg", caption: "Panela 600ml + Cone Caldera Inka + fogareiro ultracompacto" },
-      { src: "/work/OMA-GEAR/OMA-GEAR-003.jpg", caption: "Testado em campo — menos peso, mais liberdade" },
+      { src: "/images/work/OMA-GEAR/OMA-GEAR-001.jpg", caption: "Kit Cozinha Ultra Leve — 149g no total" },
+      { src: "/images/work/OMA-GEAR/OMA-GEAR-002.jpg", caption: "Panela 600ml + Cone Caldera Inka + fogareiro ultracompacto" },
+      { src: "/images/work/OMA-GEAR/OMA-GEAR-003.jpg", caption: "Testado em campo — menos peso, mais liberdade" },
     ],
   },
   {
@@ -192,8 +192,8 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/reel/DPSo5_iDSmY/",
     photos: [
-      { src: "/work/BRIGHTIN-STAR/BRIGHTIN-STAR-001.jpg", caption: "Brightin Star 16mm f/2.8 — review real, centro de São Paulo" },
-      { src: "/work/BRIGHTIN-STAR/BRIGHTIN-STAR-002.jpg", caption: "Sharpness, distorção mínima e bokeh — Sony A7 IV handheld" },
+      { src: "/images/work/BRIGHTIN-STAR/BRIGHTIN-STAR-001.jpg", caption: "Brightin Star 16mm f/2.8 — review real, centro de São Paulo" },
+      { src: "/images/work/BRIGHTIN-STAR/BRIGHTIN-STAR-002.jpg", caption: "Sharpness, distorção mínima e bokeh — Sony A7 IV handheld" },
     ],
   },
   {
@@ -208,9 +208,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/reel/DLXYsDvOG28/",
     photos: [
-      { src: "/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-001.jpg", caption: "Titan em terreno técnico — pedra, lama e trilha real" },
-      { src: "/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-002.jpg", caption: "Conteúdo cinematográfico de campo — #voudeVENTO" },
-      { src: "/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-003.jpg", caption: "Resistir, apoiar e seguir firme — a arte de fotografar o mundo" },
+      { src: "/images/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-001.jpg", caption: "Titan em terreno técnico — pedra, lama e trilha real" },
+      { src: "/images/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-002.jpg", caption: "Conteúdo cinematográfico de campo — #voudeVENTO" },
+      { src: "/images/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-003.jpg", caption: "Resistir, apoiar e seguir firme — a arte de fotografar o mundo" },
     ],
   },
   {
@@ -225,9 +225,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/reel/DM0lofXveIW/",
     photos: [
-      { src: "/work/BOTAS-VENTO/BOTA-FINISTERRE/BOTA-FINISTERRE-001.jpg", caption: "Finisterre Caqui — subida Paiolinho" },
-      { src: "/work/BOTAS-VENTO/BOTA-FINISTERRE/BOTA-FINISTERRE-002.jpg", caption: "Detalhe de produto em terreno exigente" },
-      { src: "/work/BOTAS-VENTO/BOTA-FINISTERRE/BOTA-FINISTERRE-003.jpg", caption: "Conforto comprovado em 90% de ascensão técnica" },
+      { src: "/images/work/BOTAS-VENTO/BOTA-FINISTERRE/BOTA-FINISTERRE-001.jpg", caption: "Finisterre Caqui — subida Paiolinho" },
+      { src: "/images/work/BOTAS-VENTO/BOTA-FINISTERRE/BOTA-FINISTERRE-002.jpg", caption: "Detalhe de produto em terreno exigente" },
+      { src: "/images/work/BOTAS-VENTO/BOTA-FINISTERRE/BOTA-FINISTERRE-003.jpg", caption: "Conforto comprovado em 90% de ascensão técnica" },
     ],
   },
   {
@@ -242,9 +242,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/p/DW7asyXDejY/?img_index=1",
     photos: [
-      { src: "/work/KNF-CONCEPT/KNF-CONCEPT-001.jpg", caption: "K&F Omni Series — fibra de carbono 1,64kg em campo" },
-      { src: "/work/KNF-CONCEPT/KNF-CONCEPT-002.jpg", caption: "Cabeça hidráulica FH03 — pan e tilt suave, suporta 5kg" },
-      { src: "/work/KNF-CONCEPT/KNF-CONCEPT-003.jpg", caption: "Review completo — Sony A7 IV + tripé profissional em trilha" },
+      { src: "/images/work/KNF-CONCEPT/KNF-CONCEPT-001.jpg", caption: "K&F Omni Series — fibra de carbono 1,64kg em campo" },
+      { src: "/images/work/KNF-CONCEPT/KNF-CONCEPT-002.jpg", caption: "Cabeça hidráulica FH03 — pan e tilt suave, suporta 5kg" },
+      { src: "/images/work/KNF-CONCEPT/KNF-CONCEPT-003.jpg", caption: "Review completo — Sony A7 IV + tripé profissional em trilha" },
     ],
   },
   {
@@ -260,9 +260,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/p/DM_DwNAJ306/?img_index=1",
     photos: [
-      { src: "/work/ALTO-ESTILO/ALTO-ESTILO-001.jpg", caption: "Mochila Ataque 40+5L — testada no Parque Nacional do Itatiaia" },
-      { src: "/work/ALTO-ESTILO/ALTO-ESTILO-002.jpg", caption: "Pochete Hidro adaptada para drone Air 3S + controle" },
-      { src: "/work/ALTO-ESTILO/ALTO-ESTILO-003.jpg", caption: "Cordura® 500D — 3 dias de camping e zero comprometimento" },
+      { src: "/images/work/ALTO-ESTILO/ALTO-ESTILO-001.jpg", caption: "Mochila Ataque 40+5L — testada no Parque Nacional do Itatiaia" },
+      { src: "/images/work/ALTO-ESTILO/ALTO-ESTILO-002.jpg", caption: "Pochete Hidro adaptada para drone Air 3S + controle" },
+      { src: "/images/work/ALTO-ESTILO/ALTO-ESTILO-003.jpg", caption: "Cordura® 500D — 3 dias de camping e zero comprometimento" },
     ],
   },
   {
@@ -278,9 +278,9 @@ const BRAND_WORKS: BrandWork[] = [
     ],
     postUrl: "https://www.instagram.com/reel/DEDKNgWOwRn/",
     photos: [
-      { src: "/work/GORRO-VANS/GORRO-VANS-001.jpg", caption: "Gorro Vans — Pico Mateo 5.150m, Cordilheira Blanca, Peru" },
-      { src: "/work/GORRO-VANS/GORRO-VANS-002.jpg", caption: "Conforto e estilo a mais de 5.000m de altitude" },
-      { src: "/work/GORRO-VANS/GORRO-VANS-003.jpg", caption: "Escalada em neve — frio real, proteção real" },
+      { src: "/images/work/GORRO-VANS/GORRO-VANS-001.jpg", caption: "Gorro Vans — Pico Mateo 5.150m, Cordilheira Blanca, Peru" },
+      { src: "/images/work/GORRO-VANS/GORRO-VANS-002.jpg", caption: "Conforto e estilo a mais de 5.000m de altitude" },
+      { src: "/images/work/GORRO-VANS/GORRO-VANS-003.jpg", caption: "Escalada em neve — frio real, proteção real" },
     ],
   },
 ];
