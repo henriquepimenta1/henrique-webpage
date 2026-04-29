@@ -443,69 +443,92 @@ function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () =
   return (
     <div
       onClick={onClose}
-      style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(10,8,7,.97)", backdropFilter: "blur(20px)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "24px" }}
+      style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(10,8,7,.97)", backdropFilter: "blur(20px)", overflowY: "auto", padding: "16px" }}
     >
       <style>{`
         @keyframes lb-in { from { opacity:0 } to { opacity:1 } }
         @keyframes lb-img { from { transform:scale(.97); opacity:0 } to { transform:scale(1); opacity:1 } }
-        .lb-wrap { animation: lb-in .18s ease; width:100%; max-width:1100px; display:flex; flex-direction:column; gap:0; }
+        .lb-wrap { animation: lb-in .18s ease; max-width: 1100px; margin: 0 auto; display: flex; flex-direction: column; min-height: 100%; justify-content: center; }
         .lb-img-anim { animation: lb-img .22s ease; }
-        @media(max-width:800px) { .lb-grid { grid-template-columns: 1fr !important; } }
+        .lb-grid { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+        .lb-thumbs { display: flex; gap: 6px; }
+        @media(max-width: 700px) {
+          .lb-grid { grid-template-columns: 1fr !important; }
+          .lb-thumbs { justify-content: center; }
+        }
       `}</style>
 
-      <div className="lb-wrap">
+      <div className="lb-wrap" onClick={(e) => e.stopPropagation()}>
+
         {/* Top bar */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid rgba(232,223,201,.08)" }}>
           <div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".28em", textTransform: "uppercase", color: "rgba(232,223,201,.3)", marginBottom: 4 }}>{work.type}</div>
-            <div style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 18, color: "#E6DDD4" }}>
+            <div style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 16, color: "#E6DDD4" }}>
               {work.brand} <span style={{ color: "#A6542B" }}>·</span> {work.product}
             </div>
           </div>
           <button
             onClick={onClose}
-            style={{ background: "none", border: "1px solid rgba(232,223,201,.2)", color: "rgba(232,223,201,.5)", cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", padding: "8px 16px", borderRadius: 2 }}
+            style={{ background: "none", border: "1px solid rgba(232,223,201,.2)", color: "rgba(232,223,201,.5)", cursor: "pointer", fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", padding: "8px 16px", borderRadius: 2, flexShrink: 0 }}
           >
             Fechar · ESC
           </button>
         </div>
 
-        {/* Grid: imagem + sidebar */}
-        <div className="lb-grid" onClick={(e) => e.stopPropagation()} style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 24, alignItems: "start" }}>
+        {/* Grid: foto esquerda + sidebar direita */}
+        <div className="lb-grid">
 
-          {/* Foto principal */}
-          <div className="lb-img-anim" key={idx} style={{ position: "relative", background: "#111", borderRadius: 2, overflow: "hidden", aspectRatio: "9/16", maxHeight: "68vh" }}>
-            <Image src={photo.src} alt={photo.caption} fill style={{ objectFit: "cover", objectPosition: "center" }} />
+          {/* Coluna esquerda: foto + caption + dots */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
 
-            {hasMultiple && (
-              <>
-                <button onClick={() => setIdx((i) => (i - 1 + work.photos.length) % work.photos.length)}
-                  style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(14,12,10,.75)", border: "1px solid rgba(232,223,201,.15)", color: "#E6DDD4", width: 36, height: 36, borderRadius: 2, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>←</button>
-                <button onClick={() => setIdx((i) => (i + 1) % work.photos.length)}
-                  style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "rgba(14,12,10,.75)", border: "1px solid rgba(232,223,201,.15)", color: "#E6DDD4", width: 36, height: 36, borderRadius: 2, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>→</button>
-                <div style={{ position: "absolute", bottom: 12, left: "50%", transform: "translateX(-50%)", display: "flex", gap: 6 }}>
-                  {work.photos.map((_, i) => (
-                    <button key={i} onClick={() => setIdx(i)}
-                      style={{ width: i === idx ? 20 : 6, height: 6, borderRadius: 3, background: i === idx ? "#A6542B" : "rgba(232,223,201,.35)", border: "none", cursor: "pointer", transition: "width .2s, background .2s", padding: 0 }} />
-                  ))}
-                </div>
-              </>
-            )}
+            {/* Foto preservando formato original */}
+            <div className="lb-img-anim" key={idx} style={{ position: "relative", background: "#0a0807", borderRadius: 2, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <img
+                src={photo.src}
+                alt={photo.caption}
+                style={{ display: "block", width: "100%", height: "auto", maxHeight: "65vh", objectFit: "contain" }}
+              />
 
-            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(to top, rgba(14,12,10,.9) 0%, transparent 100%)", padding: "32px 16px 40px", pointerEvents: "none" }}>
-              <div style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "rgba(232,223,201,.7)", lineHeight: 1.4 }}>{photo.caption}</div>
+              {/* Setas */}
+              {hasMultiple && (
+                <>
+                  <button onClick={() => setIdx((i) => (i - 1 + work.photos.length) % work.photos.length)}
+                    style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(14,12,10,.8)", border: "1px solid rgba(232,223,201,.15)", color: "#E6DDD4", width: 36, height: 36, borderRadius: 2, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>←</button>
+                  <button onClick={() => setIdx((i) => (i + 1) % work.photos.length)}
+                    style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", background: "rgba(14,12,10,.8)", border: "1px solid rgba(232,223,201,.15)", color: "#E6DDD4", width: 36, height: 36, borderRadius: 2, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2 }}>→</button>
+                </>
+              )}
             </div>
+
+            {/* Caption */}
+            <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "rgba(232,223,201,.45)", lineHeight: 1.4, margin: 0, textAlign: "center" }}>{photo.caption}</p>
+
+            {/* Dots + thumbnails */}
+            {hasMultiple && (
+              <div className="lb-thumbs">
+                {work.photos.map((p, i) => (
+                  <button key={i} onClick={() => setIdx(i)}
+                    style={{ flex: 1, maxWidth: 80, aspectRatio: "1", overflow: "hidden", borderRadius: 2, cursor: "pointer", padding: 0, border: i === idx ? "2px solid #A6542B" : "2px solid rgba(232,223,201,.1)", transition: "border-color .2s", background: "#111" }}>
+                    <img src={p.src} alt={p.caption} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Sidebar */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20, paddingTop: 4 }}>
+          {/* Sidebar direita */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+            {/* Descrição */}
             <div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.3)", marginBottom: 8 }}>Produto</div>
               <div style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 14, color: "#E6DDD4", marginBottom: 10 }}>{work.product}</div>
               <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "rgba(232,223,201,.55)", lineHeight: 1.65, margin: 0 }}>{work.description}</p>
             </div>
 
-            <div style={{ borderTop: "1px solid rgba(232,223,201,.08)", paddingTop: 18 }}>
+            {/* Métricas */}
+            <div style={{ borderTop: "1px solid rgba(232,223,201,.08)", paddingTop: 16 }}>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.3)", marginBottom: 12 }}>Métricas do post</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                 {work.stats.map((s) => (
@@ -517,30 +540,21 @@ function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () =
               </div>
             </div>
 
-            <a href={work.postUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}
+            {/* CTA Instagram */}
+            <a href={work.postUrl} target="_blank" rel="noopener noreferrer"
               style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#A6542B", color: "#E6DDD4", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", textDecoration: "none", padding: "14px 20px", borderRadius: 2, transition: "background .2s" }}
               onMouseEnter={(e) => (e.currentTarget.style.background = "#C2592B")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "#A6542B")}
             >
               Ver publicação no Instagram →
             </a>
-
-            {hasMultiple && (
-              <div style={{ display: "flex", gap: 6 }}>
-                {work.photos.map((p, i) => (
-                  <button key={i} onClick={() => setIdx(i)}
-                    style={{ flex: 1, aspectRatio: "1", position: "relative", overflow: "hidden", borderRadius: 2, cursor: "pointer", padding: 0, border: i === idx ? "2px solid #A6542B" : "2px solid transparent", transition: "border-color .2s" }}>
-                    <Image src={p.src} alt={p.caption} fill style={{ objectFit: "cover" }} />
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       </div>
     </div>
   );
 }
+
 
 /* ─── Brand Work Card ─── */
 function BrandWorkCard({ work, delay, onOpen }: { work: BrandWork; delay: number; onOpen: (work: BrandWork, idx: number) => void }) {
@@ -554,7 +568,7 @@ function BrandWorkCard({ work, delay, onOpen }: { work: BrandWork; delay: number
         style={{ position: "relative", overflow: "hidden", borderRadius: 2, cursor: "pointer", border: `1px solid ${hovered ? "rgba(166,84,43,.5)" : "rgba(232,223,201,.1)"}`, background: hovered ? "rgba(166,84,43,.04)" : "transparent", transition: "border-color .2s, background .2s, transform .25s", transform: hovered ? "translateY(-3px)" : "translateY(0)" }}
       >
         <div style={{ position: "relative", aspectRatio: "4/5", background: "#111", overflow: "hidden" }}>
-          <Image src={work.photos[0].src} alt={work.product} fill style={{ objectFit: "cover", objectPosition: "center", transform: hovered ? "scale(1.04)" : "scale(1)", transition: "transform .4s ease" }} />
+          <Image src={work.photos[0].src} alt={work.product} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", transform: hovered ? "scale(1.04)" : "scale(1)", transition: "transform .4s ease" }} />
           <div style={{ position: "absolute", inset: 0, background: hovered ? "rgba(14,12,10,.55)" : "rgba(14,12,10,.15)", transition: "background .25s", display: "flex", alignItems: "center", justifyContent: "center" }}>
             {hovered && (
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: "#E6DDD4", border: "1px solid rgba(232,223,201,.4)", padding: "8px 16px", borderRadius: 2 }}>
@@ -610,6 +624,8 @@ export default function MidiaKitPage() {
         .mk-section { padding: 100px 56px; border-bottom: 1px solid rgba(232,223,201,.08); }
         .mk-bio-grid { display: grid; grid-template-columns: 1fr 380px; gap: 64px; align-items: start; }
         .mk-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .mk-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .mk-traj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
         @media(max-width: 1100px) {
           .mk-destinations { grid-template-columns: repeat(3, 1fr) !important; }
           .mk-posts { grid-template-columns: repeat(2, 1fr) !important; }
@@ -623,19 +639,23 @@ export default function MidiaKitPage() {
           .mk-gear { grid-template-columns: repeat(2, 1fr) !important; }
           .mk-works { grid-template-columns: repeat(2, 1fr) !important; }
           .mk-section { padding: 72px 24px !important; }
+          .mk-two-col { grid-template-columns: 1fr !important; }
+          .mk-traj-grid { grid-template-columns: 1fr !important; }
+          .mk-bio-grid { gap: 32px !important; }
         }
         @media(max-width: 600px) {
-          .mk-posts { grid-template-columns: 1fr 1fr !important; }
+          .mk-posts { grid-template-columns: 1fr !important; }
           .mk-metrics { grid-template-columns: 1fr 1fr !important; }
           .mk-services { grid-template-columns: 1fr !important; }
-          .mk-destinations { grid-template-columns: 1fr !important; }
+          .mk-destinations { grid-template-columns: 1fr 1fr !important; }
           .mk-gear { grid-template-columns: 1fr 1fr !important; }
           .mk-works { grid-template-columns: 1fr 1fr !important; }
+          .mk-section { padding: 56px 20px !important; }
         }
       `}</style>
 
       {/* ── NAV ── */}
-      <header style={{ position: "fixed", top: 0, left: 0, right: 0, height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 40px", zIndex: 50, background: "rgba(14,12,10,.9)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(232,223,201,.08)" }}>
+      <header style={{ position: "fixed", top: 0, left: 0, right: 0, height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 clamp(16px, 4vw, 40px)", zIndex: 50, background: "rgba(14,12,10,.9)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(232,223,201,.08)" }}>
         <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
           <div style={{ width: 28, height: 28, border: "1.5px solid rgba(232,223,201,.7)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, fontWeight: 500, color: "rgba(232,223,201,.7)" }}>H</div>
         </Link>
@@ -644,7 +664,7 @@ export default function MidiaKitPage() {
       </header>
 
       {/* ════════ 1. HERO ════════ */}
-      <section ref={heroRef} style={{ position: "relative", minHeight: "100svh", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "0 56px 80px", overflow: "hidden" }}>
+      <section ref={heroRef} style={{ position: "relative", minHeight: "100svh", display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: "0 clamp(20px, 5vw, 56px) clamp(48px, 8vw, 80px)", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, zIndex: 0 }}>
           <Image
             src="/images/exp-huayhuash.jpg"
@@ -715,7 +735,7 @@ export default function MidiaKitPage() {
       <section className="mk-section" style={{ background: "rgba(166,84,43,.04)" }}>
         <FadeIn>
           <SectionLabel n="02" text="Estado de Presença" />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }} className="mk-two-col">
             <div>
               <h2 style={{ fontFamily: "var(--font-hand)", fontSize: "clamp(36px, 5vw, 64px)", color: "#E6DDD4", margin: "0 0 24px", lineHeight: 1.1, transform: "rotate(-1deg)", display: "inline-block" }}>Sentir o local através da imagem</h2>
               <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, lineHeight: 1.75, color: "rgba(232,223,201,.65)", margin: 0 }}>
@@ -894,7 +914,7 @@ export default function MidiaKitPage() {
       <section className="mk-section" style={{ background: "rgba(166,84,43,.03)" }}>
         <FadeIn>
           <SectionLabel n="09" text="Trajetória" />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40, alignItems: "start" }} className="mk-traj-grid">
             <div>
               <h2 style={{ fontFamily: "var(--font-hand)", fontSize: "clamp(40px, 6vw, 72px)", color: "#E6DDD4", margin: "0 0 24px", lineHeight: 1.05, transform: "rotate(-1.5deg)", display: "inline-block" }}>A conta está crescendo</h2>
               <p style={{ fontFamily: "var(--font-ui)", fontSize: 14, lineHeight: 1.75, color: "rgba(232,223,201,.65)", margin: "0 0 16px" }}>
@@ -925,7 +945,7 @@ export default function MidiaKitPage() {
       </section>
 
       {/* ════════ 11. CTA / CONTATO ════════ */}
-      <section style={{ padding: "120px 56px 100px", textAlign: "center" }}>
+      <section style={{ padding: "clamp(64px, 10vw, 120px) clamp(20px, 5vw, 56px) clamp(56px, 8vw, 100px)", textAlign: "center" }}>
         <FadeIn>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".28em", textTransform: "uppercase", color: "rgba(232,223,201,.35)", marginBottom: 32 }}>10 · Vamos trabalhar juntos</div>
           <h2 style={{ fontFamily: "var(--font-hand)", fontSize: "clamp(48px, 8vw, 96px)", color: "#E6DDD4", margin: "0 0 16px", transform: "rotate(-1.5deg)", display: "inline-block" }}>Vamos conversar</h2>
@@ -966,7 +986,7 @@ export default function MidiaKitPage() {
       </section>
 
       {/* ── FOOTER STRIP ── */}
-      <div style={{ padding: "24px 56px", borderTop: "1px solid rgba(232,223,201,.06)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+      <div style={{ padding: "24px clamp(20px, 5vw, 56px)", borderTop: "1px solid rgba(232,223,201,.06)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
         <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.2)" }}>Henrique Sesana · Media Kit 2026</span>
         <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.2)" }}>euhenriq.com.br</span>
       </div>
