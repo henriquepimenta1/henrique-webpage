@@ -64,27 +64,40 @@ export default function HomePage() {
       `}</style>
 
       {/* ── Topbar ── */}
-      <header style={{ position:"absolute",top:0,left:0,right:0,height:72,
-        display:"flex",alignItems:"center",justifyContent:"space-between",
-        padding:"0 40px",zIndex:20 }}>
+      <header style={{
+        position:"absolute",top:0,left:0,right:0,height:72,
+        display:"grid",gridTemplateColumns:"1fr auto 1fr",alignItems:"center",
+        padding:"0 40px",zIndex:20,
+        backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",
+        background:"rgba(30,42,24,.35)",
+        borderBottom:"1px solid rgba(232,223,201,.08)",
+      }}>
+        {/* Nav esquerda */}
+        <nav style={{ display:"flex",gap:28 }}>
+          <Link href="/portfolio"  className="hf-nav-link">Portfolio</Link>
+          <Link href="/presets"    className="hf-nav-link">Presets</Link>
+          <Link href="/expedicoes" className="hf-nav-link">Expedições</Link>
+        </nav>
 
-        {/* Logo */}
-        <div style={{ display:"flex",alignItems:"center",gap:10 }}>
-          <div style={{ width:34,height:34,border:"1.5px solid var(--canvas)",
+        {/* Centro — logo + nome */}
+        <Link href="/" style={{ display:"flex",alignItems:"center",gap:10,textDecoration:"none",color:"inherit" }}>
+          <div style={{ width:30,height:30,border:"1.5px solid var(--canvas)",
             display:"flex",alignItems:"center",justifyContent:"center",
-            fontFamily:"var(--font-serif)",fontStyle:"italic",fontSize:19,fontWeight:500 }}>
+            fontFamily:"var(--font-serif)",fontStyle:"italic",fontSize:17,fontWeight:500 }}>
             H
           </div>
-          <span className="hf-topbar-name" style={{ fontFamily:"var(--font-ui)",fontSize:12,
-            letterSpacing:".28em",textTransform:"uppercase",fontWeight:600 }}>
+          <span className="hf-topbar-name" style={{ fontFamily:"var(--font-ui)",fontSize:11,
+            letterSpacing:".28em",textTransform:"uppercase",fontWeight:600,color:"var(--canvas)" }}>
             {SITE_AUTHOR}
           </span>
-        </div>
+        </Link>
 
         {/* Nav direita */}
-        <nav style={{ display:"flex",gap:28 }}>
-          <Link href="/sobre"   className="hf-nav-link">Quem sou</Link>
-          <Link href="/contato" className="hf-nav-link">Contato</Link>
+        <nav style={{ display:"flex",gap:28,justifyContent:"flex-end" }}>
+          <Link href="/quadros"  className="hf-nav-link">Quadros</Link>
+          <Link href="/midiakit" className="hf-nav-link">Midiakit</Link>
+          <Link href="/sobre"    className="hf-nav-link">Sobre</Link>
+          <Link href="/contato"  className="hf-nav-link">Contato</Link>
         </nav>
       </header>
 

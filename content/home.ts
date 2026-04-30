@@ -59,6 +59,7 @@ export const NAV_LINKS = [
   { label: "Presets & LUTs", href: "/presets" },
   { label: "Expedições",    href: "/expedicoes" },
   { label: "Quadros",       href: "/quadros" },
+  { label: "Midiakit",      href: "/midiakit" },
   { label: "Sobre",         href: "/sobre" },
   { label: "Contato",       href: "/contato" },
 ]
