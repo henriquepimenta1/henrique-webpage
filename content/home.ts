@@ -23,7 +23,7 @@ export const HOME_CARDS = [
     titleBold: "Trabalhos",
     desc: "Imagens de lugares, luz e momentos que valeram a viagem.",
     cta: "Explorar",
-    bg: "/images/mountain-lake.jpg",
+    bg: "/images/portfolio/vista-do-picomateo.jpg",
     bgPosition: "center",
   },
   {
@@ -34,7 +34,7 @@ export const HOME_CARDS = [
     titleBold: "Cinematic",
     desc: "45 presets para Lightroom. Tons honestos, contraste limpo.",
     cta: "R$39,90 — Ver Presets",
-    bg: "/images/desert-dunes.jpg",
+    bg: "/images/portfolio/observador-itatiaia-chapada-da-lua.jpg",
     bgPosition: "center",
   },
   {
