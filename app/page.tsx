@@ -83,7 +83,7 @@ export default function HomePage() {
         <Link href="/" style={{ textDecoration:"none",color:"inherit",textAlign:"center" }}>
           <span style={{ fontFamily:"var(--font-hand)",fontSize:32,color:"var(--canvas)",
             letterSpacing:".02em",lineHeight:1 }}>
-            Henriq
+            Eu Henriq
           </span>
         </Link>
 

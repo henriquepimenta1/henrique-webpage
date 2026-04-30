@@ -14,13 +14,10 @@ export default function SiteNav({ dark = true }: { dark?: boolean }) {
       alignItems:"center",justifyContent:"space-between",padding:"0 40px",zIndex:30,
       background:bg,borderBottom:`1px solid ${border}` }}>
 
-      <Link href="/" style={{ display:"flex",alignItems:"center",gap:10,textDecoration:"none",flexShrink:0 }}>
-        <div style={{ width:32,height:32,border:`1.5px solid ${fg}`,display:"flex",
-          alignItems:"center",justifyContent:"center",fontFamily:"var(--font-serif)",
-          fontStyle:"italic",fontSize:18,fontWeight:500,color:fg }}>H</div>
-        <span style={{ fontFamily:"var(--font-ui)",fontSize:11,letterSpacing:".28em",
-          textTransform:"uppercase",fontWeight:600,color:fg,
-          display:"none" }} className="md-show">{SITE_AUTHOR}</span>
+      <Link href="/" style={{ textDecoration:"none",flexShrink:0 }}>
+        <span style={{ fontFamily:"var(--font-hand)",fontSize:28,color:fg,letterSpacing:".02em",lineHeight:1 }}>
+          Eu Henriq
+        </span>
       </Link>
 
       <nav className="site-nav-links" style={{ display:"flex",gap:24,fontFamily:"var(--font-ui)",fontSize:10.5,
