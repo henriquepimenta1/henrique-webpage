@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>henriq.eu — Henrique Sesana Pimenta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;0,500;1,300;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+<style>
+:root{
+  --canvas:#E8DFC9; --canvas-deep:#DCCFB0;
+  --forest:#1E2A18; --forest-soft:#2A3820;
+  --bark:#2A211A; --ink:#0B0A08; --paper:#F5F1E8;
+  --rust:#A6542B; --rust-soft:#C2803D;
+  --moss:#4A5838; --stone:#6D6353; --burnt:#C2592B; --sky:#6B8AA8;
+  --ashe:rgba(232,223,201,.7); --ashe-dim:rgba(232,223,201,.45);
+  --line:rgba(42,33,26,.18); --line-dark:rgba(232,223,201,.14);
+  --font-ui:'Work Sans',sans-serif;
+  --font-serif:'Newsreader',serif;
+  --font-mono:'IBM Plex Mono',monospace;
+  --font-hand:'Reenie Beanie',cursive;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--canvas);color:var(--bark);font-family:var(--font-ui);overflow-x:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:#0E0C0A}
+::-webkit-scrollbar-thumb{background:#3A3028;border-radius:3px}
+a{color:inherit}
+button{font-family:inherit}
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="app.jsx"></script>
+<script type="text/babel" src="midiakit.jsx"></script>
+</body>
+</html>
