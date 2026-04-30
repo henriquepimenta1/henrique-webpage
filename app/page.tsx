@@ -79,16 +79,11 @@ export default function HomePage() {
           <Link href="/expedicoes" className="hf-nav-link">Expedições</Link>
         </nav>
 
-        {/* Centro — logo + nome */}
-        <Link href="/" style={{ display:"flex",alignItems:"center",gap:10,textDecoration:"none",color:"inherit" }}>
-          <div style={{ width:30,height:30,border:"1.5px solid var(--canvas)",
-            display:"flex",alignItems:"center",justifyContent:"center",
-            fontFamily:"var(--font-serif)",fontStyle:"italic",fontSize:17,fontWeight:500 }}>
-            H
-          </div>
-          <span className="hf-topbar-name" style={{ fontFamily:"var(--font-ui)",fontSize:11,
-            letterSpacing:".28em",textTransform:"uppercase",fontWeight:600,color:"var(--canvas)" }}>
-            {SITE_AUTHOR}
+        {/* Centro — logo manuscrito */}
+        <Link href="/" style={{ textDecoration:"none",color:"inherit",textAlign:"center" }}>
+          <span style={{ fontFamily:"var(--font-hand)",fontSize:32,color:"var(--canvas)",
+            letterSpacing:".02em",lineHeight:1 }}>
+            Henriq
           </span>
         </Link>
 
