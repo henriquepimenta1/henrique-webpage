@@ -394,7 +394,7 @@ function CTAButton({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
 // PÁGINA
 // ─────────────────────────────────────────────────────────────────────────────
 export default function PresetsPage() {
-  const [activeKey, setActiveKey]   = useState<string>(SHOWCASE_KEYS[0]);
+  const [activeKey, setActiveKey]   = useState<string>("21-campo-seco");
   const [activeCat, setActiveCat]   = useState<string>("all");
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -422,7 +422,7 @@ export default function PresetsPage() {
   ];
 
   return (
-    <div style={{ background: "var(--canvas)", color: "var(--bark)", fontFamily: "var(--font-ui)" }}>
+    <div className="presets-lp" style={{ background: "var(--canvas)", color: "var(--bark)", fontFamily: "var(--font-ui)" }}>
 
       {/* Countdown banner fixo */}
       <CountdownBanner />
@@ -654,14 +654,14 @@ export default function PresetsPage() {
         <div style={{ maxWidth: 1360, margin: "0 auto" }}>
           <div style={{ marginBottom: 40, maxWidth: 720 }}>
             <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 56, fontWeight: 600, letterSpacing: "-.02em", lineHeight: 1, margin: 0 }}>
-              Do RAW ao{" "}
-              <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--rust-soft)" }}>tratado</span>. Um clique.
+              Névoa Suave —{" "}
+              <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--rust-soft)" }}>do RAW ao tratado</span>. Um clique.
             </h2>
             <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 18, color: "rgba(232,223,201,.78)", marginTop: 14, lineHeight: 1.55 }}>
               Os presets já carregam pontos de branco, shadows e HSL calibrados. Sem correção extra — funciona em RAW direto da câmera.
             </p>
           </div>
-          <BeforeAfter presetKey={activeKey} height={560} variant="section" />
+          <BeforeAfter presetKey="17-nevoa-suave" height={560} variant="section" />
           {activePreset && (
             <div style={{ marginTop: 20, display: "flex", alignItems: "center", gap: 16, fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "rgba(232,223,201,.7)" }}>
               <span>Exibindo:</span>
@@ -782,8 +782,72 @@ export default function PresetsPage() {
       <SiteFooter dark={false} />
 
       <style>{`
+        .presets-lp { --moss: #8B6534; }
+
         @media (max-width: 900px) {
           .hero-grid { grid-template-columns: 1fr !important; }
+        }
+
+        @media (max-width: 768px) {
+          /* Banner */
+          .presets-lp [style*="position: fixed"] {
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 8px 16px;
+            font-size: 11px;
+          }
+
+          /* Sections padding */
+          .presets-lp section {
+            padding: 56px 20px !important;
+          }
+
+          /* Hero copy */
+          .presets-lp section h1,
+          .presets-lp section h2 {
+            font-size: 36px !important;
+          }
+
+          /* Preset grid: 2 colunas no mobile */
+          .presets-lp [style*="repeat(4, 1fr)"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+
+          /* VS table */
+          .presets-lp [style*="repeat(3, 1fr)"] {
+            grid-template-columns: 1fr !important;
+          }
+
+          /* CTA buttons full width */
+          .presets-lp a[href*="cakto"] {
+            width: 100%;
+            text-align: center;
+            box-sizing: border-box;
+          }
+
+          /* Price display */
+          .presets-lp [style*="font-size: 96px"] {
+            font-size: 64px !important;
+          }
+
+          /* Seção demo ampliada: altura menor */
+          .presets-lp [style*="height: 560"] {
+            height: 280px !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .presets-lp section {
+            padding: 40px 16px !important;
+          }
+          .presets-lp section h1,
+          .presets-lp section h2 {
+            font-size: 28px !important;
+          }
+          .presets-lp [style*="repeat(4, 1fr)"],
+          .presets-lp [style*="repeat(2, 1fr)"] {
+            grid-template-columns: 1fr !important;
+          }
         }
       `}</style>
     </div>
