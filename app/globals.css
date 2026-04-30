@@ -221,6 +221,103 @@ body {
   --sidebar-ring:     oklch(0.556 0 0);
 }
 
+/* ── md-show helper ─────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .md-show { display: inline !important; }
+}
+
+/* ── Mobile — ≤ 767px ──────────────────────────────────────────── */
+@media (max-width: 767px) {
+
+  /* ── Nav global (SiteNav) ── */
+  .site-header { padding: 0 20px !important; }
+  .site-nav-links {
+    gap: 16px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-right: 4px;
+  }
+  .site-nav-links::-webkit-scrollbar { display: none; }
+  .nav-link-item { font-size: 9.5px !important; letter-spacing: .14em !important; }
+
+  /* ── Nav home (3-col grid → logo + links direita) ── */
+  .hf-topbar {
+    grid-template-columns: auto 1fr !important;
+    padding: 0 20px !important;
+  }
+  .hf-topbar nav:first-child { display: none !important; }
+  .hf-topbar nav:last-child { gap: 16px !important; font-size: 9.5px !important; }
+
+  /* ── Sobre ── */
+  .sob-hero  { flex-direction: column !important; gap: 32px !important; padding: 100px 24px 48px !important; }
+  .sob-left  { max-width: 100% !important; }
+  .sob-photo { width: 100% !important; max-width: 340px !important; margin: 0 auto !important; }
+  .sob-stats { flex-direction: row !important; flex-wrap: wrap !important; gap: 24px !important; }
+  .sob-bio   { padding: 40px 24px !important; }
+
+  /* ── Contato ── */
+  .cnt-inner      { padding: 100px 24px 60px !important; }
+  .cnt-name-row   { grid-template-columns: 1fr !important; gap: 24px !important; }
+
+  /* ── Presets hub ── */
+  .hub-hero  { padding: 100px 24px 40px !important; }
+  .hub-title { font-size: clamp(44px,11vw,72px) !important; }
+  .two-door  { grid-template-columns: 1fr !important; }
+  .door      { height: 420px !important; }
+  .hub-compare, .hub-doors, .hub-rail { padding-left: 24px !important; padding-right: 24px !important; }
+  .compare-grid  { grid-template-columns: 1fr 1fr !important; }
+  .rail          { grid-template-columns: repeat(2,1fr) !important; }
+
+  /* ── Presets foto/video ── */
+  .luts-hero       { padding: 100px 24px 40px !important; }
+  .luts-hero-title { font-size: clamp(44px,11vw,72px) !important; }
+  .lut-grid        { grid-template-columns: 1fr 1fr !important; gap: 16px !important; }
+  .luts-section    { padding: 40px 24px !important; }
+  .buy-grid        { grid-template-columns: 1fr !important; }
+  .compat-grid     { grid-template-columns: 1fr 1fr !important; }
+
+  /* ── Portfolio ── */
+  .port-row  { flex-wrap: wrap !important; }
+  .port-cell { min-width: calc(50% - 4px) !important; height: 180px !important; }
+
+  /* ── Expedições ── */
+  .hero-grid   { grid-template-columns: 1fr !important; }
+  .lenc-hero-pad { padding: 100px 24px 48px !important; }
+  .lenc-pad    { padding: 40px 24px !important; }
+  .lenc-two    { grid-template-columns: 1fr !important; gap: 24px !important; }
+  .lenc-four   { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .lenc-packs  { grid-template-columns: 1fr !important; gap: 20px !important; }
+  .lenc-day    { flex-direction: column !important; }
+  .lenc-day-img { width: 100% !important; height: 220px !important; }
+  .lenc-trip-img { height: 240px !important; }
+  .lenc-img-wrap { height: 260px !important; }
+  .lenc-cta-btn  { width: 100% !important; text-align: center; }
+
+  /* ── Quadros ── */
+  .quad-pad { padding: 40px 24px 60px !important; }
+  .qgrid    { grid-template-columns: 1fr 1fr !important; gap: 16px !important; }
+  .qcta-btn { width: 100% !important; text-align: center; }
+
+  /* ── Midiakit ── */
+  .mk-section    { padding: 60px 24px !important; }
+  .mk-two-col    { grid-template-columns: 1fr !important; gap: 32px !important; }
+  .mk-bio-grid   { grid-template-columns: 1fr !important; gap: 24px !important; }
+  .mk-metrics    { grid-template-columns: 1fr 1fr !important; gap: 16px !important; }
+  .mk-traj-grid  { grid-template-columns: 1fr !important; gap: 20px !important; }
+  .mk-works      { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .mk-photos     { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .mk-gear       { grid-template-columns: 1fr !important; }
+  .mk-services   { grid-template-columns: 1fr !important; gap: 16px !important; }
+  .mk-destinations { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .mk-posts      { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+
+  /* ── Lightbox / modal ── */
+  .lb-wrap   { padding: 16px !important; }
+  .lb-thumbs { gap: 6px !important; }
+  .lb-grid   { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
