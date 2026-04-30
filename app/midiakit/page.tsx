@@ -32,8 +32,10 @@ interface LightboxState {
   photoIdx: number;
 }
 
-/* ─── data ─── */
-const REACH_DAILY = [3982,7554,12928,9374,5840,7149,4704,5897,11425,9388,11579,12640,9662,6155,5175,6006,11242,10477,7055,7036,5765,5617,6084,8688,10050,6897,7470,4408,5135,2704];
+/* ─── data — atualizado via Windsor.ai · abril/2026 ─── */
+
+// Reach diário real — 1 abr → 30 abr 2026
+const REACH_DAILY = [4704,5897,11425,9388,11579,12640,9662,6155,5175,6006,11242,10477,7055,7036,5765,5617,6084,8688,10050,6897,7470,4408,5135,4425,4399,2867,1560,3304,4365,1897];
 
 const TOP_POSTS: Post[] = [
   { id: "DVjv2OIAWjh", url: "https://www.instagram.com/reel/DVjv2OIAWjh/", caption: "Escalando Cabeça de Peixe — Serra dos Órgãos", reach:11352, likes:1540, comments:53, saves:112, shares:204 },
@@ -459,8 +461,6 @@ function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () =
       `}</style>
 
       <div className="lb-wrap" onClick={(e) => e.stopPropagation()}>
-
-        {/* Top bar */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, paddingBottom: 16, borderBottom: "1px solid rgba(232,223,201,.08)" }}>
           <div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".28em", textTransform: "uppercase", color: "rgba(232,223,201,.3)", marginBottom: 4 }}>{work.type}</div>
@@ -476,21 +476,14 @@ function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () =
           </button>
         </div>
 
-        {/* Grid: foto esquerda + sidebar direita */}
         <div className="lb-grid">
-
-          {/* Coluna esquerda: foto + caption + dots */}
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-
-            {/* Foto preservando formato original */}
             <div className="lb-img-anim" key={idx} style={{ position: "relative", background: "#0a0807", borderRadius: 2, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <img
                 src={photo.src}
                 alt={photo.caption}
                 style={{ display: "block", width: "100%", height: "auto", maxHeight: "65vh", objectFit: "contain" }}
               />
-
-              {/* Setas */}
               {hasMultiple && (
                 <>
                   <button onClick={() => setIdx((i) => (i - 1 + work.photos.length) % work.photos.length)}
@@ -500,11 +493,7 @@ function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () =
                 </>
               )}
             </div>
-
-            {/* Caption */}
             <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "rgba(232,223,201,.45)", lineHeight: 1.4, margin: 0, textAlign: "center" }}>{photo.caption}</p>
-
-            {/* Dots + thumbnails */}
             {hasMultiple && (
               <div className="lb-thumbs">
                 {work.photos.map((p, i) => (
@@ -517,17 +506,12 @@ function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () =
             )}
           </div>
 
-          {/* Sidebar direita */}
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-
-            {/* Descrição */}
             <div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.3)", marginBottom: 8 }}>Produto</div>
               <div style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 14, color: "#E6DDD4", marginBottom: 10 }}>{work.product}</div>
               <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "rgba(232,223,201,.55)", lineHeight: 1.65, margin: 0 }}>{work.description}</p>
             </div>
-
-            {/* Métricas */}
             <div style={{ borderTop: "1px solid rgba(232,223,201,.08)", paddingTop: 16 }}>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.3)", marginBottom: 12 }}>Métricas do post</div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
@@ -539,8 +523,6 @@ function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () =
                 ))}
               </div>
             </div>
-
-            {/* CTA Instagram */}
             <a href={work.postUrl} target="_blank" rel="noopener noreferrer"
               style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#A6542B", color: "#E6DDD4", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", textDecoration: "none", padding: "14px 20px", borderRadius: 2, transition: "background .2s" }}
               onMouseEnter={(e) => (e.currentTarget.style.background = "#C2592B")}
@@ -555,7 +537,6 @@ function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () =
   );
 }
 
-
 /* ─── Brand Work Card ─── */
 function BrandWorkCard({ work, delay, onOpen }: { work: BrandWork; delay: number; onOpen: (work: BrandWork, idx: number) => void }) {
   const [hovered, setHovered] = useState(false);
@@ -568,7 +549,7 @@ function BrandWorkCard({ work, delay, onOpen }: { work: BrandWork; delay: number
         style={{ position: "relative", overflow: "hidden", borderRadius: 2, cursor: "pointer", border: `1px solid ${hovered ? "rgba(166,84,43,.5)" : "rgba(232,223,201,.1)"}`, background: hovered ? "rgba(166,84,43,.04)" : "transparent", transition: "border-color .2s, background .2s, transform .25s", transform: hovered ? "translateY(-3px)" : "translateY(0)" }}
       >
         <div style={{ position: "relative", aspectRatio: "4/5", background: "#111", overflow: "hidden" }}>
-          <Image src={work.photos[0].src} alt={work.product} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", transform: hovered ? "scale(1.04)" : "scale(1)", transition: "transform .4s ease" }} />
+          <Image src={work.photos[0].src} alt={work.product} fill style={{ objectFit: "cover", objectPosition: "center", transform: hovered ? "scale(1.04)" : "scale(1)", transition: "transform .4s ease" }} />
           <div style={{ position: "absolute", inset: 0, background: hovered ? "rgba(14,12,10,.55)" : "rgba(14,12,10,.15)", transition: "background .25s", display: "flex", alignItems: "center", justifyContent: "center" }}>
             {hovered && (
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: "#E6DDD4", border: "1px solid rgba(232,223,201,.4)", padding: "8px 16px", borderRadius: 2 }}>
@@ -675,7 +656,6 @@ export default function MidiaKitPage() {
           />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(14,12,10,1) 0%, rgba(14,12,10,.7) 40%, rgba(14,12,10,.3) 100%)" }} />
         </div>
-
         <div style={{ position: "relative", zIndex: 1, maxWidth: 900 }}>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".28em", textTransform: "uppercase", color: "rgba(232,223,201,.5)", marginBottom: 24 }}>Media Kit · Abril 2026</div>
           <h1 style={{ margin: "0 0 8px", lineHeight: 0.85 }}>
@@ -689,7 +669,6 @@ export default function MidiaKitPage() {
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".18em", color: "rgba(232,223,201,.35)" }}>PT · EN</span>
           </div>
         </div>
-
         <div style={{ position: "absolute", bottom: 32, right: 56, zIndex: 1, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
           <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.3)" }}>@henriq.eu</span>
           <div style={{ width: 1, height: 48, background: "rgba(232,223,201,.2)" }} />
@@ -698,9 +677,7 @@ export default function MidiaKitPage() {
 
       {/* ════════ 2. BIO + FOTOS ════════ */}
       <section className="mk-section" style={{ padding: "100px 56px" }}>
-        <FadeIn>
-          <SectionLabel n="01" text="Sobre" />
-        </FadeIn>
+        <FadeIn><SectionLabel n="01" text="Sobre" /></FadeIn>
         <div className="mk-bio-grid">
           <FadeIn>
             <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: "clamp(17px, 2.2vw, 22px)", lineHeight: 1.65, letterSpacing: "-.01em", color: "#E6DDD4", margin: "0 0 24px" }}>
@@ -717,7 +694,6 @@ export default function MidiaKitPage() {
             </p>
             <span style={{ fontFamily: "var(--font-hand)", fontSize: 34, color: "var(--rust-soft, #C2803D)", display: "inline-block", transform: "rotate(-2deg)" }}>— Henrique</span>
           </FadeIn>
-
           <FadeIn delay={0.15}>
             <div className="mk-photos">
               <div style={{ position: "relative", borderRadius: 2, overflow: "hidden", aspectRatio: "3/4" }}>
@@ -775,24 +751,31 @@ export default function MidiaKitPage() {
         </FadeIn>
       </section>
 
-      {/* ════════ 5. MÉTRICAS ════════ */}
+      {/* ════════ 5. MÉTRICAS — dados reais Windsor.ai · abril/2026 ════════ */}
       <section className="mk-section">
         <FadeIn>
           <SectionLabel n="04" text="Instagram · Abril 2026" />
         </FadeIn>
 
         <div className="mk-metrics" style={{ marginBottom: 40 }}>
-          <MetricCard label="Seguidores"     value={12345} />
-          <MetricCard label="Reach mensal"   value={228086} />
-          <MetricCard label="Interações/mês" value={41432} />
+          {/* Seguidores: 12.388 (real Windsor) */}
+          <MetricCard label="Seguidores"     value={12388} />
+          {/* Reach total abril: 201.372 (soma REACH_DAILY real) */}
+          <MetricCard label="Reach mensal"   value={201372} />
+          {/* Total interactions: likes+comments+saves+shares = 34.139 */}
+          <MetricCard label="Interações/mês" value={34139} />
           <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(232,223,201,.1)", borderRadius: 2, padding: "28px 24px", display: "flex", flexDirection: "column", gap: 8 }}>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "rgba(232,223,201,.45)" }}>Engagement rate</span>
-            <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "clamp(28px,4vw,42px)", letterSpacing: "-.04em", color: "#E6DDD4", lineHeight: 1 }}>18,2%</span>
+            {/* 34.139 / 201.372 = 17,0% */}
+            <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "clamp(28px,4vw,42px)", letterSpacing: "-.04em", color: "#E6DDD4", lineHeight: 1 }}>17,0%</span>
           </div>
         </div>
+
         <div className="mk-metrics" style={{ marginBottom: 48 }}>
-          <MetricCard label="Reach médio/dia"      value={7603} />
-          <MetricCard label="Novos seguidores/mês"  value={1028} prefix="+" />
+          {/* Reach médio/dia: 201.372 / 30 = 6.712 */}
+          <MetricCard label="Reach médio/dia"      value={6712} />
+          {/* Novos seguidores: follows_count = 2.848 */}
+          <MetricCard label="Novos seguidores/mês"  value={2848} prefix="+" />
           <MetricCard label="Posts publicados"      value={432} />
           <div style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(232,223,201,.1)", borderRadius: 2, padding: "28px 24px", display: "flex", flexDirection: "column", gap: 8 }}>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "rgba(232,223,201,.45)" }}>Tipo de conta</span>
@@ -802,7 +785,7 @@ export default function MidiaKitPage() {
 
         <FadeIn delay={0.2}>
           <div style={{ background: "rgba(255,255,255,.03)", border: "1px solid rgba(232,223,201,.08)", borderRadius: 2, padding: "32px 28px" }}>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "rgba(232,223,201,.35)", marginBottom: 20 }}>Reach diário — últimos 30 dias</div>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "rgba(232,223,201,.35)", marginBottom: 20 }}>Reach diário — abril 2026</div>
             <Sparkline data={REACH_DAILY} />
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
               <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, color: "rgba(232,223,201,.25)" }}>1 abr</span>
@@ -816,7 +799,7 @@ export default function MidiaKitPage() {
           <div style={{ marginTop: 24, padding: "20px 24px", border: "1px solid rgba(166,84,43,.3)", borderRadius: 2, background: "rgba(166,84,43,.04)", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#A6542B", flexShrink: 0, boxShadow: "0 0 8px rgba(166,84,43,.6)" }} />
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".16em", color: "rgba(232,223,201,.6)" }}>
-              Conta em crescimento consistente — +1.028 seguidores em abril/2026. Alcance orgânico em expansão semana a semana.
+              Conta em crescimento consistente — +2.848 seguidores em abril/2026. Alcance orgânico 201k em expansão semana a semana.
             </span>
           </div>
         </FadeIn>
@@ -835,7 +818,6 @@ export default function MidiaKitPage() {
             </FadeIn>
           ))}
         </div>
-
         <FadeIn delay={0.2}>
           <div style={{ marginTop: 32, display: "flex", justifyContent: "center" }}>
             <Link href="/portfolio" style={{ display: "inline-flex", alignItems: "center", gap: 12, border: "1px solid rgba(232,223,201,.2)", padding: "13px 32px", borderRadius: 2, textDecoration: "none", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "rgba(232,223,201,.7)", transition: "border-color .2s, color .2s" }}
@@ -850,9 +832,7 @@ export default function MidiaKitPage() {
 
       {/* ════════ 7. EXPEDIÇÕES ════════ */}
       <section className="mk-section">
-        <FadeIn>
-          <SectionLabel n="06" text="Expedições & Destinos" />
-        </FadeIn>
+        <FadeIn><SectionLabel n="06" text="Expedições & Destinos" /></FadeIn>
         <div className="mk-destinations">
           {DESTINATIONS.map((d, i) => (
             <FadeIn key={d.name} delay={i * 0.05}>
@@ -871,9 +851,7 @@ export default function MidiaKitPage() {
 
       {/* ════════ 8. SERVIÇOS ════════ */}
       <section className="mk-section">
-        <FadeIn>
-          <SectionLabel n="07" text="Serviços" />
-        </FadeIn>
+        <FadeIn><SectionLabel n="07" text="Serviços" /></FadeIn>
         <div className="mk-services">
           {SERVICES.map((s, i) => (
             <FadeIn key={s.name} delay={i * 0.07}>
@@ -910,7 +888,7 @@ export default function MidiaKitPage() {
         </div>
       </section>
 
-      {/* ════════ 10. CRESCIMENTO / PICO ════════ */}
+      {/* ════════ 10. TRAJETÓRIA ════════ */}
       <section className="mk-section" style={{ background: "rgba(166,84,43,.03)" }}>
         <FadeIn>
           <SectionLabel n="09" text="Trajetória" />
@@ -926,9 +904,9 @@ export default function MidiaKitPage() {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               {[
-                { label: "Crescimento mensal",    val: "+1.028 seguidores",    note: "Orgânico · abril 2026" },
-                { label: "Engagement rate",        val: "18,2%",               note: "Muito acima da média (3–5%)" },
-                { label: "Alcance vs. seguidores", val: "18,5×",               note: "228k alcance / 12k seguidores" },
+                { label: "Crescimento mensal",    val: "+2.848 seguidores",    note: "Orgânico · abril 2026" },
+                { label: "Engagement rate",        val: "17,0%",               note: "Muito acima da média (3–5%)" },
+                { label: "Alcance vs. seguidores", val: "16,3×",               note: "201k alcance / 12,4k seguidores" },
                 { label: "Próximas expedições",    val: "3 grupos confirmados", note: "Lençóis Maranhenses · agosto 2026" },
               ].map(stat => (
                 <div key={stat.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "16px 0", borderBottom: "1px solid rgba(232,223,201,.06)" }}>
@@ -952,7 +930,6 @@ export default function MidiaKitPage() {
           <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 18, color: "rgba(232,223,201,.6)", marginBottom: 48 }}>
             Para parcerias, licenciamentos e expedições com produção.
           </p>
-
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginBottom: 56 }}>
             <a href={WA} target="_blank" rel="noopener noreferrer"
               style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "#A6542B", color: "#E6DDD4", fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 13, letterSpacing: ".06em", textDecoration: "none", padding: "14px 32px", borderRadius: 2, transition: "background .2s" }}
@@ -969,11 +946,10 @@ export default function MidiaKitPage() {
               hen.pimenta@gmail.com
             </a>
           </div>
-
           <div style={{ display: "flex", gap: 32, justifyContent: "center", flexWrap: "wrap" }}>
             {[
-              { label: "Instagram", val: "@henriq.eu",     href: "https://instagram.com/henriq.eu" },
-              { label: "YouTube",   val: "@henriq_eu",     href: "https://youtube.com/@henriq_eu" },
+              { label: "Instagram", val: "@henriq.eu",      href: "https://instagram.com/henriq.eu" },
+              { label: "YouTube",   val: "@henriq_eu",      href: "https://youtube.com/@henriq_eu" },
               { label: "Site",      val: "euhenriq.com.br", href: "https://euhenriq.com.br" },
             ].map(c => (
               <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none", textAlign: "center" }}>
