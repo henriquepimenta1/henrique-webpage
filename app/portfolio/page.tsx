@@ -72,109 +72,372 @@ function buildRows(photos: Photo[], containerW: number, targetH: number, gap: nu
   return rows
 }
 
+// derive real counts
+const places = new Set(PHOTOS.map(p => p.place.split(',')[0].trim())).size
+const countries = new Set(PHOTOS.map(p => {
+  const last = p.place.split(',').pop()?.trim()
+  if (!last) return 'BR'
+  if (['Peru'].includes(last)) return 'PE'
+  return 'BR'
+})).size + 1 // +1 for the explicit country codes
+
 export const metadata = {
   title: 'Portfolio — henriq.eu',
   description: 'Lugares, luz e momentos que valeram a viagem.',
 }
 
 export default function PortfolioPage() {
-  const containerW = 1328 // 1440 - 56*2
-  const targetH = 400
-  const gap = 4
+  const containerW = 1328
+  const targetH = 420
+  const gap = 6
   const rows = buildRows(PHOTOS, containerW, targetH, gap)
 
   return (
     <main style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)' }}>
       <style>{`
-        .port-cell { cursor: zoom-in; overflow: hidden; flex-shrink: 0; }
-        .port-img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2,.7,.2,1); }
-        .port-cell:hover .port-img { transform: scale(1.04); }
-        .port-overlay { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(30,42,24,0) 50%, rgba(30,42,24,.82) 100%); opacity: 0; transition: opacity .4s cubic-bezier(.2,.7,.2,1); display: flex; align-items: flex-end; padding: 20px; }
-        .port-cell:hover .port-overlay { opacity: 1; }
-        .port-caption { transform: translateY(10px); opacity: 0; transition: transform .5s cubic-bezier(.2,.7,.2,1) .05s, opacity .4s; }
-        .port-cell:hover .port-caption { transform: translateY(0); opacity: 1; }
-        .port-chip { padding: 7px 14px; border: 1px solid var(--line); color: var(--stone); background: transparent; font-size: 11px; letter-spacing: .12em; cursor: pointer; font-family: var(--font-ui); }
-        .port-chip-on { background: var(--bark); color: var(--canvas); border-color: var(--bark); }
-        @media(max-width:900px){
-          .port-row { flex-wrap: wrap !important; }
-          .port-cell { width: calc(50% - 2px) !important; height: 240px !important; }
+        /* ── MOSAIC CELLS ── */
+        .port-cell {
+          cursor: zoom-in;
+          overflow: hidden;
+          flex-shrink: 0;
+          position: relative;
+          margin: 0;
         }
-        @media(max-width:560px){
-          .port-cell { width: 100% !important; height: 280px !important; }
+
+        .port-img {
+          display: block;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.5s cubic-bezier(.2,.8,.2,1);
+          will-change: transform;
+        }
+
+        /* hover only on real pointer devices */
+        @media (hover: hover) and (pointer: fine) {
+          .port-cell:hover .port-img {
+            transform: scale(1.05);
+          }
+          .port-cell:hover .port-overlay {
+            opacity: 1;
+          }
+          .port-cell:hover .port-caption {
+            transform: translateY(0);
+            opacity: 1;
+            filter: blur(0px);
+          }
+        }
+
+        /* ── OVERLAY — flat, no gradient noise ── */
+        .port-overlay {
+          position: absolute;
+          inset: 0;
+          background: rgba(18, 26, 14, 0.72);
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          display: flex;
+          align-items: flex-end;
+          padding: 18px;
+        }
+
+        /* ── CAPTION — Jakub enter: opacity + y + blur ── */
+        .port-caption {
+          transform: translateY(10px);
+          opacity: 0;
+          filter: blur(3px);
+          transition:
+            transform 0.4s cubic-bezier(.2,.8,.2,1) 0.04s,
+            opacity   0.35s ease 0.04s,
+            filter    0.35s ease 0.04s;
+        }
+
+        /* ── FILTERS — tipografia pura, sem chips ── */
+        .port-filter {
+          background: none;
+          border: none;
+          padding: 0;
+          font-family: var(--font-mono);
+          font-size: 10px;
+          letter-spacing: .18em;
+          text-transform: uppercase;
+          color: var(--stone);
+          cursor: pointer;
+          position: relative;
+          line-height: 1;
+        }
+
+        .port-filter::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 100%;
+          height: 1px;
+          background: var(--bark);
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.25s cubic-bezier(.2,.8,.2,1);
+        }
+
+        .port-filter:hover::after,
+        .port-filter-on::after {
+          transform: scaleX(1);
+        }
+
+        .port-filter-on {
+          color: var(--bark);
+        }
+
+        /* ── STAGGER ENTRANCE — rows fade in sequentially ── */
+        @keyframes port-row-in {
+          from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+          to   { opacity: 1; transform: translateY(0);    filter: blur(0px); }
+        }
+
+        .port-row {
+          animation: port-row-in 0.55s cubic-bezier(.2,.8,.2,1) both;
+        }
+
+        /* ── REDUCED MOTION — keep crossfade, kill spatial ── */
+        @media (prefers-reduced-motion: reduce) {
+          .port-row {
+            animation: none;
+          }
+          .port-img {
+            transition: none;
+          }
+          .port-caption {
+            transition: opacity 0.2s ease;
+            transform: none;
+            filter: none;
+          }
+          @media (hover: hover) and (pointer: fine) {
+            .port-cell:hover .port-caption {
+              transform: none;
+              filter: none;
+            }
+          }
+        }
+
+        /* ── MOBILE — Instagram 3-col feed ── */
+        @media (max-width: 768px) {
+          .port-mosaic {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            padding: 0 !important;
+          }
+
+          /* dissolve rows into the grid */
+          .port-row {
+            display: contents;
+            animation: none;
+          }
+
+          .port-cell {
+            width: auto !important;
+            height: 120px !important;
+            cursor: default;
+          }
+
+          /* no hover overlay on mobile feed */
+          .port-overlay {
+            display: none;
+          }
+
+          .port-img {
+            transition: none;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .port-cell {
+            height: 100px !important;
+          }
+        }
+
+        /* ── FOCUS STATES ── */
+        .port-cell:focus-visible {
+          outline: 2px solid var(--rust);
+          outline-offset: 2px;
+          z-index: 1;
+        }
+
+        .port-filter:focus-visible {
+          outline: 2px solid var(--rust);
+          outline-offset: 4px;
         }
       `}</style>
 
       <SiteNav dark={false} />
 
-      {/* ── HEADER ── */}
-      <header style={{ padding: '140px 56px 56px', borderBottom: '1px solid var(--line)', position: 'relative' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 16, fontWeight: 500 }}>
-          № 01 · Fotografia
+      {/* ── HEADER — editorial seco ── */}
+      <header style={{
+        padding: 'clamp(80px, 10vw, 120px) 56px 40px',
+        borderBottom: '1px solid var(--line)',
+        display: 'grid',
+        gridTemplateColumns: '1fr auto',
+        alignItems: 'end',
+        gap: '24px',
+      }}>
+        {/* left col */}
+        <div>
+          <div style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: 10,
+            letterSpacing: '.22em',
+            textTransform: 'uppercase',
+            color: 'var(--stone)',
+            marginBottom: 12,
+            fontWeight: 500,
+          }}>
+            № 01 · Fotografia
+          </div>
+
+          <h1 style={{ margin: 0, lineHeight: 0.88 }}>
+            <span style={{
+              fontFamily: 'var(--font-hand)',
+              fontSize: 'clamp(28px, 4vw, 44px)',
+              color: 'var(--rust)',
+              transform: 'rotate(-2deg)',
+              display: 'inline-block',
+              marginBottom: 4,
+              letterSpacing: '.01em',
+            }}>
+              o que eu vi
+            </span>
+            <br />
+            <span style={{
+              fontFamily: 'var(--font-ui)',
+              fontWeight: 700,
+              fontSize: 'clamp(56px, 10vw, 140px)',
+              letterSpacing: '-.05em',
+              lineHeight: 0.88,
+              display: 'block',
+              color: 'var(--bark)',
+            }}>
+              PORT—FOLIO.
+            </span>
+          </h1>
         </div>
-        <h1 style={{ margin: 0, lineHeight: 0.9 }}>
-          <span style={{ fontFamily: 'var(--font-hand)', fontSize: 64, color: 'var(--rust)', transform: 'rotate(-3deg)', display: 'inline-block', marginBottom: 4, letterSpacing: '.01em' }}>
-            o que eu vi
-          </span>
-          <br />
-          <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(80px, 14vw, 200px)', letterSpacing: '-.05em', lineHeight: 0.88, display: 'block', color: 'var(--bark)' }}>
-            PORT—
-          </span>
-          <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(80px, 14vw, 200px)', letterSpacing: '-.05em', lineHeight: 0.88, display: 'block', color: 'var(--bark)' }}>
-            FOLIO.
-          </span>
-        </h1>
-        <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 22, color: 'var(--stone)', marginTop: 28, maxWidth: '48ch', lineHeight: 1.5 }}>
-          Sete anos caminhando com câmera na mão. {PHOTOS.length * 9} frames que sobreviveram à edição lenta — o resto, o vento levou.
-        </p>
-        <div style={{ position: 'absolute', right: 56, top: 140, textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--stone)', letterSpacing: '.1em', lineHeight: 1.8 }}>
-          <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 56, color: 'var(--bark)', letterSpacing: '-.03em', lineHeight: 1, display: 'block', marginBottom: 8 }}>
-            135
+
+        {/* right col — metadata discreta */}
+        <div style={{
+          textAlign: 'right',
+          fontFamily: 'var(--font-mono)',
+          fontSize: 10,
+          color: 'var(--stone)',
+          letterSpacing: '.12em',
+          lineHeight: 2,
+          paddingBottom: 6,
+          whiteSpace: 'nowrap',
+        }}>
+          <span style={{
+            fontFamily: 'var(--font-ui)',
+            fontWeight: 700,
+            fontSize: 'clamp(32px, 4vw, 48px)',
+            color: 'var(--bark)',
+            letterSpacing: '-.03em',
+            lineHeight: 1,
+            display: 'block',
+            marginBottom: 6,
+          }}>
+            {PHOTOS.length}
           </span>
           frames publicados<br />
-          <span style={{ color: 'var(--rust)' }}>18 lugares · 4 países</span>
+          <span style={{ color: 'var(--rust)' }}>{places} lugares · 4 países</span>
         </div>
       </header>
 
-      {/* ── FILTERS ── */}
-      <div style={{ padding: '20px 56px', display: 'flex', gap: 8, alignItems: 'center', borderBottom: '1px solid var(--line)' }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginRight: 8 }}>Filtrar</span>
-        {[['Tudo', `${PHOTOS.length}`], ['Deserto', '34'], ['Montanha', '22'], ['Oceano', '18'], ['Floresta', '14'], ['Noturno', '10']].map(([label, n]) => (
-          <button key={label} className={`port-chip${label === 'Tudo' ? ' port-chip-on' : ''}`}>
-            {label} · {n}
+      {/* ── FILTERS — navegação tipográfica ── */}
+      <nav
+        aria-label="Filtrar portfolio"
+        style={{
+          padding: '16px 56px',
+          display: 'flex',
+          gap: 28,
+          alignItems: 'center',
+          borderBottom: '1px solid var(--line)',
+        }}
+      >
+        {['Tudo', 'Deserto', 'Montanha', 'Oceano', 'Floresta', 'Noturno'].map((label, i) => (
+          <button
+            key={label}
+            className={`port-filter${i === 0 ? ' port-filter-on' : ''}`}
+          >
+            {label}
           </button>
         ))}
-        <span style={{ marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--stone)', letterSpacing: '.12em', textTransform: 'uppercase' }}>
-          Ordenar · <span style={{ color: 'var(--bark)' }}>Aleatório</span>
-        </span>
-      </div>
+      </nav>
 
       {/* ── MOSAIC ── */}
-      <div style={{ padding: '6px 56px 0' }}>
+      <div className="port-mosaic" style={{ padding: '6px 56px 0' }}>
         {rows.map((row, ri) => {
           const rowAR = row.reduce((s, p) => s + p.ar, 0)
           const availableW = containerW - gap * (row.length - 1)
-          const rowH = Math.min(availableW / rowAR, 480)
+          const rowH = Math.min(availableW / rowAR, 500)
+
           return (
-            <div key={ri} className="port-row" style={{ display: 'flex', gap, marginBottom: gap }}>
+            <div
+              key={ri}
+              className="port-row"
+              style={{
+                display: 'flex',
+                gap,
+                marginBottom: gap,
+                // stagger by row index, cap at 8 rows to avoid long waits
+                animationDelay: `${Math.min(ri * 60, 480)}ms`,
+              }}
+            >
               {row.map((p, pi) => {
                 const w = rowH * p.ar
                 const num = String(ri * 8 + pi + 1).padStart(3, '0')
+
                 return (
                   <figure
                     key={pi}
                     className="port-cell"
-                    style={{ position: 'relative', margin: 0, width: w, height: rowH }}
+                    style={{ width: w, height: rowH }}
+                    tabIndex={0}
+                    role="img"
+                    aria-label={`${p.title} — ${p.place}, ${p.year}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.src} alt={p.title} className="port-img" loading={ri === 0 ? 'eager' : 'lazy'} />
-                    <div className="port-overlay">
+                    <img
+                      src={p.src}
+                      alt={p.title}
+                      className="port-img"
+                      loading={ri === 0 ? 'eager' : 'lazy'}
+                      decoding="async"
+                    />
+                    <div className="port-overlay" aria-hidden="true">
                       <div className="port-caption">
-                        <div style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 20, color: 'var(--canvas)', lineHeight: 1.1 }}>{p.title}</div>
-                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'rgba(232,223,201,.65)', letterSpacing: '.15em', marginTop: 5 }}>
+                        <div style={{
+                          fontFamily: 'var(--font-serif)',
+                          fontStyle: 'italic',
+                          fontSize: 17,
+                          color: 'var(--canvas)',
+                          lineHeight: 1.15,
+                        }}>
+                          {p.title}
+                        </div>
+                        <div style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: 9,
+                          color: 'rgba(232,223,201,.55)',
+                          letterSpacing: '.14em',
+                          marginTop: 5,
+                        }}>
                           № {num} · {p.place} · {p.year}
                         </div>
                         {p.coord && (
-                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'rgba(232,223,201,.4)', letterSpacing: '.12em', marginTop: 3 }}>
+                          <div style={{
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: 8,
+                            color: 'rgba(232,223,201,.3)',
+                            letterSpacing: '.12em',
+                            marginTop: 3,
+                          }}>
                             {p.coord}
                           </div>
                         )}
@@ -188,20 +451,18 @@ export default function PortfolioPage() {
         })}
       </div>
 
-      {/* ── LOAD MORE ── */}
-      <div style={{ padding: '56px 56px 80px', textAlign: 'center' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 20 }}>
-          Mostrando {PHOTOS.length} de {PHOTOS.length * 9}
-        </div>
-        <button style={{
-          display: 'inline-flex', alignItems: 'center', gap: 12,
-          padding: '14px 32px', border: '1px solid var(--bark)',
-          fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 600, letterSpacing: '.12em', textTransform: 'uppercase',
-          color: 'var(--bark)', background: 'transparent', cursor: 'pointer',
-        }}>
-          Carregar mais
-          <span style={{ fontFamily: 'var(--font-hand)', fontSize: 22, color: 'var(--rust)' }}>↓</span>
-        </button>
+      {/* ── FOOTER COUNTER — discreto ── */}
+      <div style={{
+        padding: '40px 56px 80px',
+        fontFamily: 'var(--font-mono)',
+        fontSize: 10,
+        letterSpacing: '.18em',
+        textTransform: 'uppercase',
+        color: 'var(--stone)',
+        borderTop: '1px solid var(--line)',
+        marginTop: 6,
+      }}>
+        {PHOTOS.length} frames · {places} lugares · 4 países · 2023—2025
       </div>
 
       <SiteFooter dark={false} />
