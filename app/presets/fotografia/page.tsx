@@ -10,6 +10,26 @@ import SiteNav from "@/components/nav";
 import SiteFooter from "@/components/site-footer";
 import { PRESETS, PRESET_CATS, ACCORDION_ITEMS, CTA_URL } from "@/content/presets";
 
+function imgPath(key: string, cat: string) {
+  return cat === "Aesthetic"
+    ? `/images/protagonista/${key}`
+    : `/images/presets/${key}`;
+}
+
+function useCols(): number {
+  const [cols, setCols] = useState(4);
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setCols(w >= 1024 ? 4 : w >= 900 ? 3 : w >= 600 ? 2 : 1);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  return cols;
+}
+
 const PRICE_VISTA   = "39";
 const PRICE_PARCEL  = "5,19";
 const PRICE_N       = "9";
@@ -110,8 +130,8 @@ function CountdownBanner() {
 // ─────────────────────────────────────────────────────────────────────────────
 // BeforeAfter slider
 // ─────────────────────────────────────────────────────────────────────────────
-function BeforeAfter({ presetKey, height = 640, variant = "hero" }: {
-  presetKey: string; height?: number; variant?: "hero" | "section";
+function BeforeAfter({ presetKey, cat = "", height = 640, variant = "hero" }: {
+  presetKey: string; cat?: string; height?: number; variant?: "hero" | "section";
 }) {
   const [pos, setPos] = useState(50);
   const wrap = useRef<HTMLDivElement>(null);
@@ -145,8 +165,8 @@ function BeforeAfter({ presetKey, height = 640, variant = "hero" }: {
     if (e.key === "ArrowRight") setPos(p => Math.min(98, p + 2));
   };
 
-  const after  = `/images/presets/${presetKey}.jpg`;
-  const before = `/images/presets/${presetKey}-before.jpg`;
+  const after  = `${imgPath(presetKey, cat)}.jpg`;
+  const before = `${imgPath(presetKey, cat)}-before.jpg`;
 
   return (
     <div
@@ -323,7 +343,7 @@ function PresetCard({ preset, isActive, onSelect }: { preset: { key: string; nam
   return (
     <button onClick={onSelect} onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} style={{ background: "var(--canvas)", border: isActive ? "2px solid var(--rust)" : "1px solid var(--line)", overflow: "hidden", cursor: "pointer", padding: 0, textAlign: "left", transform: hover ? "translateY(-4px)" : "translateY(0)", transition: "transform .3s cubic-bezier(.2,.7,.2,1), border-color .2s", position: "relative" }}>
       <div style={{ position: "relative", aspectRatio: "1/1", overflow: "hidden" }}>
-        <img src={`/images/presets/${preset.key}.jpg`} alt={preset.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform .6s cubic-bezier(.2,.7,.2,1)" }} />
+        <img src={`${imgPath(preset.key, preset.cat)}.jpg`} alt={preset.name} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block", transform: hover ? "scale(1.06)" : "scale(1)", transition: "transform .6s cubic-bezier(.2,.7,.2,1)" }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(30,42,24,.8) 0%, transparent 50%)", opacity: hover ? 1 : 0, transition: "opacity .3s", display: "flex", alignItems: "flex-end", padding: 14 }}>
           <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--canvas)", padding: "5px 10px", background: "var(--rust)" }}>Ver antes/depois →</span>
         </div>
@@ -440,7 +460,7 @@ export default function PresetsPage() {
 
           {/* Slider */}
           <div style={{ position: "relative" }}>
-            <BeforeAfter presetKey={activeKey} height={720} variant="hero" />
+            <BeforeAfter presetKey={activeKey} cat={activePreset?.cat ?? ""} height={720} variant="hero" />
             {/* Preset name overlay */}
             {activePreset && (
               <div style={{ position: "absolute", bottom: 56, left: 24, padding: "8px 14px", background: "rgba(14,12,10,.75)", backdropFilter: "blur(6px)", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.8)" }}>

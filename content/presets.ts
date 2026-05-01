@@ -55,25 +55,25 @@ export const PRESETS: Preset[] = [
   // Tom Laranja tem 6 no total — faltava o 6º no código original, preservado como 5
   // (provavelmente um preset sem imagem ainda; conta 6 nas tabs mas 5 no array)
 
-  // ── Aesthetic (18) ─────────────────────────────────────────────────────────
-  { key: "mountain-lake", cat: "Aesthetic", name: "Aesthetic — Explorador",             desc: "Look de explorador com tons naturais e contraste equilibrado." },
-  { key: "hiker",         cat: "Aesthetic", name: "Aesthetic — Verde Suave",            desc: "Verde delicado com sensação de frescura e calma." },
-  { key: "hiker",         cat: "Aesthetic", name: "Aesthetic — Caminhante",             desc: "Tons de trilha com terra e musgo, luz filtrada." },
-  { key: "mountain-lake", cat: "Aesthetic", name: "Aesthetic — Gelado",                desc: "Frio ártico com azuis pálidos e ar cristalino." },
-  { key: "mountain-lake", cat: "Aesthetic", name: "Aesthetic — Contador de Histórias",  desc: "Warm filmic com granulado e peso narrativo." },
-  { key: "desert-dunes",  cat: "Aesthetic", name: "Aesthetic — Campo Aberto",          desc: "Amplitude e luz aberta com tons dourados." },
-  { key: "desert-dunes",  cat: "Aesthetic", name: "Aesthetic — Liberdade",             desc: "Céu aberto, horizonte largo, luz limpa." },
-  { key: "mountain-lake", cat: "Aesthetic", name: "Aesthetic — Cinemático",            desc: "Drama clássico com contraste alto e paleta neutra." },
-  { key: "hiker",         cat: "Aesthetic", name: "Aesthetic — Verde Desbotado",       desc: "Verde esmaecido com sensação analógica." },
-  { key: "desert-dunes",  cat: "Aesthetic", name: "Aesthetic — Suavidade",             desc: "Paleta suave com altas luzes leves e sombras abertas." },
-  { key: "mineral",       cat: "Aesthetic", name: "Aesthetic — Intermediário",         desc: "Equilíbrio entre quente e frio, versátil." },
-  { key: "mineral",       cat: "Aesthetic", name: "Aesthetic — Sonhos",               desc: "Atmosfera etérea com highlights queimados." },
-  { key: "mineral",       cat: "Aesthetic", name: "Aesthetic — Nostalgia",            desc: "Filme analógico com warmth e granulado sutil." },
-  { key: "hiker",         cat: "Aesthetic", name: "Aesthetic — Montanha Cerrada",     desc: "Neblina de altitude com verdes densos e frios." },
-  { key: "mountain-lake", cat: "Aesthetic", name: "Aesthetic — Reflexo Ártico",       desc: "Reflexos azul-gelo com frieza etérea." },
-  { key: "desert-dunes",  cat: "Aesthetic", name: "Aesthetic — Resiliência",          desc: "Terra árida com luz resiliente e tons ocre." },
-  { key: "mineral",       cat: "Aesthetic", name: "Aesthetic — Duradouro",            desc: "Permanência com tons terrosos e sombras ricas." },
-  { key: "desert-dunes",  cat: "Aesthetic", name: "Aesthetic — Areia",               desc: "Areia e luz difusa, paleta mínima e quente." },
+  // ── Aesthetic / Protagonista (18) — imagens em /images/protagonista/ ────────
+  { key: "1-explorador",            cat: "Aesthetic", name: "Aesthetic — Explorador",            desc: "Look de explorador com tons naturais e contraste equilibrado." },
+  { key: "2-verdesuave",            cat: "Aesthetic", name: "Aesthetic — Verde Suave",           desc: "Verde delicado com sensação de frescura e calma." },
+  { key: "3-caminhante",            cat: "Aesthetic", name: "Aesthetic — Caminhante",            desc: "Tons de trilha com terra e musgo, luz filtrada." },
+  { key: "4-gelado",                cat: "Aesthetic", name: "Aesthetic — Gelado",               desc: "Frio ártico com azuis pálidos e ar cristalino." },
+  { key: "5-contador-de-historias", cat: "Aesthetic", name: "Aesthetic — Contador de Histórias", desc: "Warm filmic com granulado e peso narrativo." },
+  { key: "6-campo-aberto",          cat: "Aesthetic", name: "Aesthetic — Campo Aberto",         desc: "Amplitude e luz aberta com tons dourados." },
+  { key: "7-liberdade",             cat: "Aesthetic", name: "Aesthetic — Liberdade",            desc: "Céu aberto, horizonte largo, luz limpa." },
+  { key: "8-cinematico",            cat: "Aesthetic", name: "Aesthetic — Cinemático",           desc: "Drama clássico com contraste alto e paleta neutra." },
+  { key: "9-verde-desbotado",       cat: "Aesthetic", name: "Aesthetic — Verde Desbotado",      desc: "Verde esmaecido com sensação analógica." },
+  { key: "10-suavidade",            cat: "Aesthetic", name: "Aesthetic — Suavidade",            desc: "Paleta suave com altas luzes leves e sombras abertas." },
+  { key: "11-intermediario",        cat: "Aesthetic", name: "Aesthetic — Intermediário",        desc: "Equilíbrio entre quente e frio, versátil." },
+  { key: "12-sonhos",               cat: "Aesthetic", name: "Aesthetic — Sonhos",              desc: "Atmosfera etérea com highlights queimados." },
+  { key: "13-nostalgia",            cat: "Aesthetic", name: "Aesthetic — Nostalgia",           desc: "Filme analógico com warmth e granulado sutil." },
+  { key: "14-montanha-cerrada",     cat: "Aesthetic", name: "Aesthetic — Montanha Cerrada",    desc: "Neblina de altitude com verdes densos e frios." },
+  { key: "15-reflexo-artico",       cat: "Aesthetic", name: "Aesthetic — Reflexo Ártico",      desc: "Reflexos azul-gelo com frieza etérea." },
+  { key: "16-resiliencia",          cat: "Aesthetic", name: "Aesthetic — Resiliência",         desc: "Terra árida com luz resiliente e tons ocre." },
+  { key: "17-duradouro",            cat: "Aesthetic", name: "Aesthetic — Duradouro",           desc: "Permanência com tons terrosos e sombras ricas." },
+  { key: "18-areia",                cat: "Aesthetic", name: "Aesthetic — Areia",              desc: "Areia e luz difusa, paleta mínima e quente." },
 ]
 
 export const PRESET_CATS = [
