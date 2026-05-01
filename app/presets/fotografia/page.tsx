@@ -35,7 +35,11 @@ const FAQ_ITEMS = [
 ];
 
 // ─── BeforeAfter Slider ───────────────────────────────────────────────────────
-function BeforeAfter({ presetKey, height = 640 }: { presetKey: string; height?: number }) {
+function imgDir(cat: string) {
+  return cat === "Aesthetic" ? "/images/protagonista" : "/images/presets";
+}
+
+function BeforeAfter({ presetKey, cat = "", height = 640 }: { presetKey: string; cat?: string; height?: number }) {
   const [pos, setPos] = useState(50);
   const wrap = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
@@ -79,10 +83,10 @@ function BeforeAfter({ presetKey, height = 640 }: { presetKey: string; height?: 
       style={{ position: "relative", width: "100%", height, overflow: "hidden", cursor: "ew-resize", userSelect: "none", outline: "none", background: "#0e0c0a" }}
     >
       {/* After */}
-      <img src={`/images/presets/${presetKey}.jpg`} alt="Preset aplicado" draggable={false}
+      <img src={`${imgDir(cat)}/${presetKey}.jpg`} alt="Preset aplicado" draggable={false}
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", pointerEvents: "none" }} />
       {/* Before */}
-      <img src={`/images/presets/${presetKey}-before.jpg`} alt="RAW original" draggable={false}
+      <img src={`${imgDir(cat)}/${presetKey}-before.jpg`} alt="RAW original" draggable={false}
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", clipPath: `inset(0 ${100 - pos}% 0 0)`, pointerEvents: "none" }} />
 
       {/* Labels */}
@@ -122,11 +126,11 @@ function PresetCard({ preset, isActive, onSelect }: {
       <div className="preset-card__img-wrap">
         {/* before — left half */}
         <div style={{ position: "absolute", inset: 0, width: "50%", overflow: "hidden" }}>
-          <img src={`/images/presets/${preset.key}-before.jpg`} alt="" style={{ position: "absolute", left: 0, top: 0, width: "200%", height: "100%", objectFit: "cover", filter: "saturate(.5) brightness(.9)" }} />
+          <img src={`${imgDir(preset.cat)}/${preset.key}-before.jpg`} alt="" style={{ position: "absolute", left: 0, top: 0, width: "200%", height: "100%", objectFit: "cover", filter: "saturate(.5) brightness(.9)" }} />
         </div>
         {/* after — right half */}
         <div style={{ position: "absolute", inset: 0, left: "50%", width: "50%", overflow: "hidden" }}>
-          <img src={`/images/presets/${preset.key}.jpg`} alt="" style={{ position: "absolute", right: 0, top: 0, width: "200%", height: "100%", objectFit: "cover" }} />
+          <img src={`${imgDir(preset.cat)}/${preset.key}.jpg`} alt="" style={{ position: "absolute", right: 0, top: 0, width: "200%", height: "100%", objectFit: "cover" }} />
         </div>
         {/* divider */}
         <div style={{ position: "absolute", top: 0, bottom: 0, left: "50%", width: 1, background: "rgba(255,255,255,.5)", transform: "translateX(-.5px)", zIndex: 1 }} />
@@ -515,7 +519,7 @@ export default function PresetsPage() {
 
           {/* Slider */}
           <div style={{ position: "relative" }}>
-            <BeforeAfter presetKey={activeKey} height={680} />
+            <BeforeAfter presetKey={activeKey} cat={activePreset?.cat ?? ""} height={680} />
             {activePreset && (
               <div style={{ position: "absolute", bottom: 48, left: 20, padding: "6px 12px", background: "rgba(14,12,10,.72)", backdropFilter: "blur(6px)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.75)" }}>
                 {activePreset.name}
