@@ -41,7 +41,7 @@ const DOT_COLORS: Record<number, string> = {
   4: '#D4956A',
 }
 
-const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
+const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
 
 export default function LencoisMap() {
   return (

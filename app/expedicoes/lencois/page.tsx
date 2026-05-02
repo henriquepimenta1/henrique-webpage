@@ -128,7 +128,7 @@ const OUTROS_PACOTES = [
     id: 'intensiva',
     label: 'Travessia Intensiva',
     dias: '3 dias',
-    km: '~38km',
+    km: '35km',
     desc: 'Aventura concentrada para quem tem menos tempo. Fotografia profissional também inclusa.',
     price: null,
     cta: 'Consultar valores',
@@ -137,7 +137,7 @@ const OUTROS_PACOTES = [
     id: 'profunda',
     label: 'Travessia Profunda',
     dias: '5 dias',
-    km: '~65km',
+    km: '64km',
     desc: 'Imersão total com ritmo contemplativo. Fotografia profissional também inclusa. Vagas limitadas — apenas 1 grupo.',
     price: null,
     cta: 'Consultar valores',
@@ -153,8 +153,8 @@ const CANCELAMENTO = [
 
 /* ─── NOT / IS ─────────────────────────────────────────────────── */
 const NOT_IS = {
-  nao: ['Passeio de 2h', 'Tour de ônibus', 'Grupo de 40', 'Lagoas lotadas', 'Fotos clichês da internet', 'Turismo mais do mesmo'],
-  e:   ['4 dias de imersão completa', 'Caminhada consciente', 'Máximo 10 pessoas', 'Oásis secretos fora do roteiro', 'Fotógrafo profissional incluso', 'Transformação real'],
+  nao: ['Passeio de 2h', 'Tour de ônibus', 'Grupo de 40', 'Lagoas lotadas', 'Fotos clichês da internet', 'Cansaço', 'Turismo mais do mesmo'],
+  e:   ['4 dias de imersão completa', 'Caminhada consciente', 'Máximo 12 pessoas', 'Oásis secretos fora do roteiro', 'Fotógrafo profissional incluso', 'Transformação real'],
 }
 
 /* ══════════════════════════════════════════════════════════════════
