@@ -462,9 +462,9 @@ export default function LencoisPage() {
                   ))}
                 </div>
                 <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, lineHeight: 1.6, color: p.featured ? 'var(--ashe)' : 'var(--stone)', marginBottom: 28 }}>{p.desc}</p>
-                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(24px, 3.5vw, 36px)', fontWeight: 700, letterSpacing: '-.02em', color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 4 }}>R$ 3.899</div>
+                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(24px, 3.5vw, 36px)', fontWeight: 700, letterSpacing: '-.02em', color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 4 }}>{p.price}</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', color: p.featured ? 'var(--ashe-dim)' : 'var(--stone)', marginBottom: 28 }}>por pessoa · até 12x</div>
-                <a href={waMsg(p.label, p.datas, 'R$ 3.899')} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '14px 24px', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase', background: p.featured ? 'var(--rust)' : 'transparent', color: p.featured ? 'var(--canvas)' : 'var(--bark)', border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}` }}>
+                <a href={waMsg(p.label, p.datas, p.price)} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '14px 24px', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase', background: p.featured ? 'var(--rust)' : 'transparent', color: p.featured ? 'var(--canvas)' : 'var(--bark)', border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}` }}>
                   Reservar esta data →
                 </a>
               </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { Map, MapMarker, MarkerContent, MapRoute, MapControls } from '@/components/ui/map'
+import { Map, MapMarker, MarkerContent, MapRoute, MapControls, TERRAIN_STYLE } from '@/components/ui/map'
 
 /* ─── Coordenadas reais extraídas do GPX (Wikiloc) ──────────────
    Formato GeoJSON: [longitude, latitude]
@@ -41,7 +41,6 @@ const DOT_COLORS: Record<number, string> = {
   4: '#D4956A',
 }
 
-const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
 
 export default function LencoisMap() {
   return (
@@ -49,7 +48,7 @@ export default function LencoisMap() {
       <Map
         center={[-43.066, -2.5193]}
         zoom={10.2}
-        style={MAP_STYLE}
+        style={TERRAIN_STYLE}
         pitchWithRotate={false}
         dragRotate={false}
       >
