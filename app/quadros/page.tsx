@@ -31,23 +31,31 @@ const CUSTOM_SIZE: SizeOption = {
   custom: true,
 }
 
-const TIER_META: Record<Tier, { label: string; limit: string; bg: string; color: string; subtitle: string }> = {
-  signature: { label: 'Signature Collection', limit: 'Edição limitada — 10 prints', bg: '#5C1E1E', color: '#F5EDD6', subtitle: '6 obras disponíveis · a partir de R$ 1.900' },
-  collectors: { label: 'Collectors Edition',  limit: 'Edição limitada — 25 prints', bg: '#1A2B4A', color: '#C8D8F0', subtitle: '9 obras disponíveis · a partir de R$ 550' },
-  open:       { label: 'Open Edition',         limit: 'Sem limite de tiragem',       bg: '#1A2E1A', color: '#B8D4B8', subtitle: '7 obras disponíveis · a partir de R$ 450' },
+/*
+  TIER_COLORS — cores de produto (cada tier tem identidade visual própria).
+  São dados de apresentação, não tokens de sistema — não mover para globals.css.
+  Plano item 10·PROBLEMA1.
+*/
+const TIER_COLORS: Record<Tier, { bg: string; color: string }> = {
+  signature: { bg: '#5C1E1E', color: '#F5EDD6' },
+  collectors: { bg: '#1A2B4A', color: '#C8D8F0' },
+  open:       { bg: '#1A2E1A', color: '#B8D4B8' },
+}
+
+/* Cor de marca externa — não é token do design system */
+const WA_GREEN = '#25D366'
+
+const TIER_META: Record<Tier, { label: string; limit: string; subtitle: string }> = {
+  signature: { label: 'Signature Collection', limit: 'Edição limitada — 10 prints', subtitle: '6 obras disponíveis · a partir de R$ 1.900' },
+  collectors: { label: 'Collectors Edition',  limit: 'Edição limitada — 25 prints', subtitle: '9 obras disponíveis · a partir de R$ 550' },
+  open:       { label: 'Open Edition',         limit: 'Sem limite de tiragem',       subtitle: '7 obras disponíveis · a partir de R$ 450' },
 }
 
 const ACABAMENTOS: Record<Acabamento, { label: string; papel: string; gramatura: string; composicao: string; durabilidade: string; moldura: string; vidro: string; passepartout: string; certificado: string; posicionamento: string; popular: boolean }> = {
-  essential: { label: 'Essential', papel: 'Hahnemühle Photo Matte Fibre 200g', gramatura: '200 g/m²', composicao: 'Alfa-celulose premium', durabilidade: '75+ anos', moldura: 'Madeira laqueada, perfil 2cm', vidro: 'Cristal 2mm', passepartout: 'Simples, livre de ácido', certificado: 'Assinado pelo artista', posicionamento: 'Porta de entrada — qualidade profissional, papel de excelente custo-benefício', popular: false },
-  gallery:   { label: 'Gallery',   papel: 'Hahnemühle Photo Rag 308g',         gramatura: '308 g/m²', composicao: '100% algodão',          durabilidade: '100+ anos', moldura: 'Madeira maciça laqueada, perfil 3cm', vidro: 'Antirreflexo 2mm', passepartout: '5cm, livre de ácido', certificado: 'Hahnemühle com holograma, numerado', posicionamento: 'O padrão de galeria — papel 100% algodão, o que museus usam', popular: true },
-  museum:    { label: 'Museum',    papel: 'Hahnemühle Museum Etching 350g',    gramatura: '350 g/m²', composicao: '100% algodão',          durabilidade: '100+ anos', moldura: 'Madeira maciça premium, perfil 4cm', vidro: 'Museológico antirreflexo + UV', passepartout: 'Duplo (branco + off-white), 5cm', certificado: 'Hahnemühle com holograma, numerado', posicionamento: 'O topo absoluto — para colecionadores e quem quer a peça definitiva', popular: false },
+  essential: { label: 'Essential', papel: 'Hahnemühle Photo Matte Fibre 200g', gramatura: '200 g/m²', composicao: 'Alfa-celulose premium', durabilidade: '75+ anos',  moldura: 'Madeira laqueada, perfil 2cm',        vidro: 'Cristal 2mm',                    passepartout: 'Simples, livre de ácido',        certificado: 'Assinado pelo artista',             posicionamento: 'Porta de entrada — qualidade profissional, papel de excelente custo-benefício', popular: false },
+  gallery:   { label: 'Gallery',   papel: 'Hahnemühle Photo Rag 308g',         gramatura: '308 g/m²', composicao: '100% algodão',          durabilidade: '100+ anos', moldura: 'Madeira maciça laqueada, perfil 3cm', vidro: 'Antirreflexo 2mm',               passepartout: '5cm, livre de ácido',            certificado: 'Hahnemühle com holograma, numerado', posicionamento: 'O padrão de galeria — papel 100% algodão, o que museus usam',                 popular: true  },
+  museum:    { label: 'Museum',    papel: 'Hahnemühle Museum Etching 350g',    gramatura: '350 g/m²', composicao: '100% algodão',          durabilidade: '100+ anos', moldura: 'Madeira maciça premium, perfil 4cm',  vidro: 'Museológico antirreflexo + UV',  passepartout: 'Duplo (branco + off-white), 5cm', certificado: 'Hahnemühle com holograma, numerado', posicionamento: 'O topo absoluto — para colecionadores e quem quer a peça definitiva',          popular: false },
 }
-
-const FRAME_COLORS = [
-  { id: 'preta', label: 'Preta' },
-  { id: 'branca', label: 'Branca' },
-  { id: 'natural', label: 'Natural' },
-]
 
 const WA_NUM = '5511988128064'
 
@@ -62,53 +70,51 @@ const COL_50_60: SizeOption[] = [
   CUSTOM_SIZE,
 ]
 const OPEN_30_50: SizeOption[] = [
-  { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 450', gallery: 'R$ 650', museum: 'R$ 790' } },
-  { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 750', gallery: 'R$ 1.090', museum: 'R$ 1.390' } },
+  { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 450',  gallery: 'R$ 650',   museum: 'R$ 790'   } },
+  { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 750',  gallery: 'R$ 1.090', museum: 'R$ 1.390' } },
   CUSTOM_SIZE,
 ]
 
 const PRINTS: Print[] = [
   // SIGNATURE
-  { id: 'camadas-beleza',       tier: 'signature', ratio: '3/4', img: '/images/quadros/2 CAMADAS DE BELEZA-LENCOIS.jpg',                   title: '2 Camadas de Beleza',          loc: 'Lençóis Maranhenses, MA',           sizes: SIG_60_80 },
-  { id: 'a-curva',              tier: 'signature', ratio: '4/3', img: '/images/quadros/A CURVA-LENCOIS.jpg',                                title: 'A Curva',                      loc: 'Lençóis Maranhenses, MA',           sizes: SIG_60_80 },
-  { id: 'reflexo-carhuacocha', tier: 'signature', ratio: '3/4', img: '/images/quadros/REFLEXO_CARHUACOCHA-HUAYHUASH.jpg',                  title: 'Reflexo Carhuacocha',          loc: 'Huayhuash, Peru',                   sizes: SIG_60_80 },
-  {
-    id: 'las-3-lagunas', tier: 'signature', ratio: '4/3', img: '/images/quadros/LAS 3 LAGUNAS-HUAYHUASH.jpg', title: 'Las 3 Lagunas', loc: 'Huayhuash, Peru',
+  { id: 'camadas-beleza',      tier: 'signature', ratio: '3/4', img: '/images/quadros/2 CAMADAS DE BELEZA-LENCOIS.jpg',              title: '2 Camadas de Beleza',           loc: 'Lençóis Maranhenses, MA',        sizes: SIG_60_80 },
+  { id: 'a-curva',             tier: 'signature', ratio: '4/3', img: '/images/quadros/A CURVA-LENCOIS.jpg',                          title: 'A Curva',                       loc: 'Lençóis Maranhenses, MA',        sizes: SIG_60_80 },
+  { id: 'reflexo-carhuacocha', tier: 'signature', ratio: '3/4', img: '/images/quadros/REFLEXO_CARHUACOCHA-HUAYHUASH.jpg',            title: 'Reflexo Carhuacocha',           loc: 'Huayhuash, Peru',                sizes: SIG_60_80 },
+  { id: 'las-3-lagunas',       tier: 'signature', ratio: '4/3', img: '/images/quadros/LAS 3 LAGUNAS-HUAYHUASH.jpg',                  title: 'Las 3 Lagunas',                 loc: 'Huayhuash, Peru',
     sizes: [
       { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 1.290', gallery: 'R$ 1.900', museum: 'R$ 2.590' } },
       { id: '60x90', label: '60×90 cm', prices: { essential: 'R$ 1.990', gallery: 'R$ 2.900', museum: 'R$ 3.890' } },
       CUSTOM_SIZE,
     ],
   },
-  { id: 'sol-toca-tudo',        tier: 'signature', ratio: '4/3', img: '/images/quadros/O SOL TOCA TUDO_LENCOIS.jpg',                        title: 'O Sol Toca Tudo',              loc: 'Lençóis Maranhenses, MA',           sizes: SIG_60_80 },
-  { id: 'conexao-rios',         tier: 'signature', ratio: '4/3', img: '/images/quadros/CONEXAO_ENTRE_RIOS-PAKAAS-MAMORE-RONDONIA.jpg',      title: 'Conexão Entre Rios',           loc: 'Pakaas, Rio Mamoré — Rondônia',    sizes: SIG_60_80 },
+  { id: 'sol-toca-tudo',       tier: 'signature', ratio: '4/3', img: '/images/quadros/O SOL TOCA TUDO_LENCOIS.jpg',                  title: 'O Sol Toca Tudo',               loc: 'Lençóis Maranhenses, MA',        sizes: SIG_60_80 },
+  { id: 'conexao-rios',        tier: 'signature', ratio: '4/3', img: '/images/quadros/CONEXAO_ENTRE_RIOS-PAKAAS-MAMORE-RONDONIA.jpg', title: 'Conexão Entre Rios',           loc: 'Pakaas, Rio Mamoré — Rondônia', sizes: SIG_60_80 },
 
   // COLLECTORS
-  { id: 'caminhos-agua',        tier: 'collectors', ratio: '4/3', img: '/images/quadros/CAMINHOS DA AGUA_VISTA-ZENITAL-LENCOIS.jpg',         title: 'Caminhos da Água',             loc: 'Lençóis Maranhenses, MA',           sizes: COL_50_60 },
-  { id: 'el-passo',             tier: 'collectors', ratio: '4/3', img: '/images/quadros/EL_PASSO_SANTA_ROSA-HUAYHUASH.jpg',                  title: 'El Passo Santa Rosa',          loc: 'Huayhuash, Peru',                   sizes: COL_50_60 },
-  { id: 'la-montana',           tier: 'collectors', ratio: '4/3', img: '/images/quadros/LA-MOTANA-VISTA-PICOMATEO.jpg',                      title: 'La Montaña — Vista Pico Mateo', loc: 'Huayhuash, Peru',                  sizes: COL_50_60 },
-  { id: 'betania-paradisiaca',  tier: 'collectors', ratio: '4/3', img: '/images/quadros/BETANIA PARADISIACA-LENCOIS.jpg',                   title: 'Betânia Paradisíaca',          loc: 'Lençóis Maranhenses, MA',           sizes: COL_50_60 },
-  { id: 'primeiros-minutos',    tier: 'collectors', ratio: '4/3', img: '/images/quadros/OS PRIMEIROS MINUTOS DO SOL-LENCOIS.jpg',            title: 'Os Primeiros Minutos do Sol',  loc: 'Lençóis Maranhenses, MA',           sizes: COL_50_60 },
-  {
-    id: 'camp-jahuacocha', tier: 'collectors', ratio: '3/4', img: '/images/quadros/CAMP-JAHUACOCHA-HUAYHUASH.jpg', title: 'Camp Jahuacocha', loc: 'Huayhuash, Peru',
+  { id: 'caminhos-agua',       tier: 'collectors', ratio: '4/3', img: '/images/quadros/CAMINHOS DA AGUA_VISTA-ZENITAL-LENCOIS.jpg',  title: 'Caminhos da Água',              loc: 'Lençóis Maranhenses, MA',        sizes: COL_50_60 },
+  { id: 'el-passo',            tier: 'collectors', ratio: '4/3', img: '/images/quadros/EL_PASSO_SANTA_ROSA-HUAYHUASH.jpg',           title: 'El Passo Santa Rosa',           loc: 'Huayhuash, Peru',                sizes: COL_50_60 },
+  { id: 'la-montana',          tier: 'collectors', ratio: '4/3', img: '/images/quadros/LA-MOTANA-VISTA-PICOMATEO.jpg',               title: 'La Montaña — Vista Pico Mateo', loc: 'Huayhuash, Peru',                sizes: COL_50_60 },
+  { id: 'betania-paradisiaca', tier: 'collectors', ratio: '4/3', img: '/images/quadros/BETANIA PARADISIACA-LENCOIS.jpg',             title: 'Betânia Paradisíaca',           loc: 'Lençóis Maranhenses, MA',        sizes: COL_50_60 },
+  { id: 'primeiros-minutos',   tier: 'collectors', ratio: '4/3', img: '/images/quadros/OS PRIMEIROS MINUTOS DO SOL-LENCOIS.jpg',     title: 'Os Primeiros Minutos do Sol',   loc: 'Lençóis Maranhenses, MA',        sizes: COL_50_60 },
+  { id: 'camp-jahuacocha',     tier: 'collectors', ratio: '3/4', img: '/images/quadros/CAMP-JAHUACOCHA-HUAYHUASH.jpg',               title: 'Camp Jahuacocha',               loc: 'Huayhuash, Peru',
     sizes: [
       { id: '30x40', label: '30×40 cm', prices: { essential: 'R$ 550',   gallery: 'R$ 890',   museum: 'R$ 1.090' } },
       { id: '50x70', label: '50×70 cm', prices: { essential: 'R$ 1.090', gallery: 'R$ 1.590', museum: 'R$ 2.190' } },
       CUSTOM_SIZE,
     ],
   },
-  { id: 'observando-infinito',  tier: 'collectors', ratio: '3/2', img: '/images/quadros/OBSERVANDO O INFINITO-LENCOIS.jpg',                  title: 'Observando o Infinito',        loc: 'Lençóis Maranhenses, MA',           sizes: COL_50_60 },
-  { id: 'camadas-natureza',     tier: 'collectors', ratio: '8/5', img: '/images/quadros/CAMADAS_DA_NATUREZA-PAKAAS-MAMORE-RONDONIA.jpg',     title: 'Camadas da Natureza',          loc: 'Pakaas, Rio Mamoré — Rondônia',    sizes: COL_50_60 },
-  { id: 'encontro-rios',        tier: 'collectors', ratio: '3/2', img: '/images/quadros/ENCONTR_DOS_RIOS-PAKAAS-MAMORE-RONDONIA.jpg',        title: 'Encontro dos Rios',            loc: 'Pakaas, Rio Mamoré — Rondônia',    sizes: COL_50_60 },
+  { id: 'observando-infinito', tier: 'collectors', ratio: '3/2', img: '/images/quadros/OBSERVANDO O INFINITO-LENCOIS.jpg',           title: 'Observando o Infinito',         loc: 'Lençóis Maranhenses, MA',        sizes: COL_50_60 },
+  { id: 'camadas-natureza',    tier: 'collectors', ratio: '8/5', img: '/images/quadros/CAMADAS_DA_NATUREZA-PAKAAS-MAMORE-RONDONIA.jpg', title: 'Camadas da Natureza',         loc: 'Pakaas, Rio Mamoré — Rondônia', sizes: COL_50_60 },
+  { id: 'encontro-rios',       tier: 'collectors', ratio: '3/2', img: '/images/quadros/ENCONTR_DOS_RIOS-PAKAAS-MAMORE-RONDONIA.jpg', title: 'Encontro dos Rios',             loc: 'Pakaas, Rio Mamoré — Rondônia', sizes: COL_50_60 },
 
   // OPEN
-  { id: 'a-casa',               tier: 'open', ratio: '2/3', img: '/images/quadros/A CASA-LENCOIS.jpg',                                      title: 'A Casa',                       loc: 'Lençóis Maranhenses, MA',           sizes: OPEN_30_50 },
-  { id: 'a-despedida',          tier: 'open', ratio: '3/2', img: '/images/quadros/A DESPEDIDA-LENCOIS.jpg',                                  title: 'A Despedida',                  loc: 'Lençóis Maranhenses, MA',           sizes: OPEN_30_50 },
-  { id: 'marcas-passado',       tier: 'open', ratio: '3/4', img: '/images/quadros/MARCAS DO PASSADO-LENCOIS.jpg',                           title: 'Marcas do Passado',            loc: 'Lençóis Maranhenses, MA',           sizes: OPEN_30_50 },
-  { id: 'betania-fala',         tier: 'open', ratio: '4/3', img: '/images/quadros/BETANIA FALA-LENCOIS.jpg',                                title: 'Betânia Fala',                 loc: 'Lençóis Maranhenses, MA',           sizes: OPEN_30_50 },
-  { id: 'observadora-arara',    tier: 'open', ratio: '3/4', img: '/images/quadros/A-OBSERVADORA-ARARA-CANINDE-RONDONIA.jpg',                 title: 'A Observadora — Arara-Canindé', loc: 'Rondônia',                         sizes: OPEN_30_50 },
-  { id: 'gashpapampa',          tier: 'open', ratio: '4/3', img: '/images/quadros/ACAMPAMENTO_GASHPAPAMPA-HUAYHUASH.jpg',                   title: 'Acampamento Gashpapampa',      loc: 'Huayhuash, Peru',                   sizes: OPEN_30_50 },
-  { id: 'encontro-rios-2',      tier: 'open', ratio: '3/2', img: '/images/quadros/ENCONTR_DOS_RIOS-PAKAAS-MAMORE-RONDONIA2.jpg',            title: 'Encontro dos Rios II',         loc: 'Pakaas, Rio Mamoré — Rondônia',    sizes: OPEN_30_50 },
+  { id: 'a-casa',              tier: 'open', ratio: '2/3', img: '/images/quadros/A CASA-LENCOIS.jpg',                                title: 'A Casa',                        loc: 'Lençóis Maranhenses, MA',        sizes: OPEN_30_50 },
+  { id: 'a-despedida',         tier: 'open', ratio: '3/2', img: '/images/quadros/A DESPEDIDA-LENCOIS.jpg',                          title: 'A Despedida',                   loc: 'Lençóis Maranhenses, MA',        sizes: OPEN_30_50 },
+  { id: 'marcas-passado',      tier: 'open', ratio: '3/4', img: '/images/quadros/MARCAS DO PASSADO-LENCOIS.jpg',                    title: 'Marcas do Passado',             loc: 'Lençóis Maranhenses, MA',        sizes: OPEN_30_50 },
+  { id: 'betania-fala',        tier: 'open', ratio: '4/3', img: '/images/quadros/BETANIA FALA-LENCOIS.jpg',                         title: 'Betânia Fala',                  loc: 'Lençóis Maranhenses, MA',        sizes: OPEN_30_50 },
+  { id: 'observadora-arara',   tier: 'open', ratio: '3/4', img: '/images/quadros/A-OBSERVADORA-ARARA-CANINDE-RONDONIA.jpg',         title: 'A Observadora — Arara-Canindé', loc: 'Rondônia',                       sizes: OPEN_30_50 },
+  { id: 'gashpapampa',         tier: 'open', ratio: '4/3', img: '/images/quadros/ACAMPAMENTO_GASHPAPAMPA-HUAYHUASH.jpg',            title: 'Acampamento Gashpapampa',       loc: 'Huayhuash, Peru',                sizes: OPEN_30_50 },
+  { id: 'encontro-rios-2',     tier: 'open', ratio: '3/2', img: '/images/quadros/ENCONTR_DOS_RIOS-PAKAAS-MAMORE-RONDONIA2.jpg',     title: 'Encontro dos Rios II',          loc: 'Pakaas, Rio Mamoré — Rondônia', sizes: OPEN_30_50 },
 ]
 
 const FAQ_ITEMS = [
@@ -126,9 +132,10 @@ const FAQ_ITEMS = [
 // ─── COMPONENTS ──────────────────────────────────────────────────────────────
 
 function TierBadge({ tier }: { tier: Tier }) {
+  const c = TIER_COLORS[tier]
   const m = TIER_META[tier]
   return (
-    <span style={{ display: 'inline-block', padding: '4px 10px', background: m.bg, color: m.color, fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', fontWeight: 600 }}>
+    <span style={{ display: 'inline-block', padding: '4px 10px', background: c.bg, color: c.color, fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', fontWeight: 600 }}>
       {m.limit}
     </span>
   )
@@ -170,8 +177,13 @@ function PrintCard({ p }: { p: Print }) {
       <div style={{ position: 'relative', overflow: 'hidden', background: 'var(--canvas-deep)' }}>
         <div style={{ position: 'absolute', top: 12, left: 12, zIndex: 2 }}><TierBadge tier={p.tier} /></div>
         <div style={{ padding: '20px 20px 24px' }}>
-          <div className="qframe" style={{ background: '#1A1612', padding: 8, boxShadow: '0 10px 28px rgba(0,0,0,.3)', width: '100%', aspectRatio: p.ratio, transition: 'transform .6s cubic-bezier(.2,.7,.2,1)' }}>
-            <div style={{ padding: 4, background: '#F0EBE0', height: '100%' }}>
+          {/*
+            Frame da moldura: var(--ink) #0B0A08 — o mais próximo do tom quase-preto
+            original #1A1612. Inner mat: var(--paper) #F5F1E8 — equivalente ao #F0EBE0.
+            Plano item 10·PROBLEMA2.
+          */}
+          <div className="qframe" style={{ background: 'var(--ink)', padding: 8, boxShadow: '0 10px 28px rgba(0,0,0,.3)', width: '100%', aspectRatio: p.ratio, transition: 'transform .6s cubic-bezier(.2,.7,.2,1)' }}>
+            <div style={{ padding: 4, background: 'var(--paper)', height: '100%' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={p.img} alt={p.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
             </div>
@@ -265,7 +277,12 @@ function AcabamentosAccordion() {
             Conheça os acabamentos
           </div>
         </div>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 22, color: 'var(--stone)', transition: 'transform .3s', transform: open ? 'rotate(180deg)' : 'none', flexShrink: 0 }}>↓</span>
+        <span style={{
+          fontFamily: 'var(--font-mono)', fontSize: 22, color: 'var(--stone)', flexShrink: 0,
+          /* transform apenas */
+          transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+          transition: 'transform .3s',
+        }}>↓</span>
       </button>
 
       <div style={{ maxHeight: open ? 2000 : 0, overflow: 'hidden', transition: 'max-height .4s cubic-bezier(.4,0,.2,1)' }}>
@@ -299,21 +316,23 @@ function AcabamentosAccordion() {
 
 function ComparisonTable() {
   const rows: [string, string, string, string][] = [
-    ['Papel', 'Hahnemühle Photo Matte Fibre 200g', 'Hahnemühle Photo Rag 308g', 'Hahnemühle Museum Etching 350g'],
-    ['Composição', 'Alfa-celulose premium', '100% algodão', '100% algodão'],
-    ['Gramatura', '200 g/m²', '308 g/m²', '350 g/m²'],
-    ['Textura', 'Lisa, fosca', 'Lisa, fosca', 'Texturizada, artística'],
-    ['Durabilidade', '75+ anos', '100+ anos', '100+ anos'],
-    ['Moldura', 'Laqueada, perfil 2cm', 'Maciça laqueada, perfil 3cm', 'Maciça premium, perfil 4cm'],
-    ['Vidro', 'Cristal 2mm', 'Antirreflexo 2mm', 'Museológico + UV'],
-    ['Passepartout', 'Simples, livre de ácido', '5cm, livre de ácido', 'Duplo, 5cm, livre de ácido'],
-    ['Certificado', 'Assinado pelo artista', 'Hahnemühle holográfico', 'Hahnemühle holográfico'],
-    ['Ideal para', 'Decoração com qualidade', 'Colecionadores e décor premium', 'Colecionadores e galerias'],
+    ['Papel',        'Hahnemühle Photo Matte Fibre 200g', 'Hahnemühle Photo Rag 308g',      'Hahnemühle Museum Etching 350g'],
+    ['Composição',   'Alfa-celulose premium',              '100% algodão',                   '100% algodão'],
+    ['Gramatura',    '200 g/m²',                           '308 g/m²',                       '350 g/m²'],
+    ['Textura',      'Lisa, fosca',                        'Lisa, fosca',                    'Texturizada, artística'],
+    ['Durabilidade', '75+ anos',                           '100+ anos',                      '100+ anos'],
+    ['Moldura',      'Laqueada, perfil 2cm',               'Maciça laqueada, perfil 3cm',    'Maciça premium, perfil 4cm'],
+    ['Vidro',        'Cristal 2mm',                        'Antirreflexo 2mm',               'Museológico + UV'],
+    ['Passepartout', 'Simples, livre de ácido',            '5cm, livre de ácido',            'Duplo, 5cm, livre de ácido'],
+    ['Certificado',  'Assinado pelo artista',              'Hahnemühle holográfico',         'Hahnemühle holográfico'],
+    ['Ideal para',   'Decoração com qualidade',            'Colecionadores e décor premium', 'Colecionadores e galerias'],
   ]
   return (
     <section style={{ padding: '72px 56px', borderBottom: '1px solid var(--line)', overflowX: 'auto' }}>
       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 16 }}>Comparativo</div>
-      <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 40, letterSpacing: '-.03em', margin: '0 0 36px', lineHeight: 1 }}>Essential · Gallery · Museum</h2>
+      <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(28px, 3.5vw, 40px)', letterSpacing: '-.03em', margin: '0 0 36px', lineHeight: 1, color: 'var(--bark)' }}>
+        Essential · Gallery · Museum
+      </h2>
       <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 600 }}>
         <thead>
           <tr>
@@ -346,7 +365,12 @@ function FaqAccordion() {
         <div key={i} style={{ borderBottom: '1px solid var(--line)' }}>
           <button onClick={() => setOpen(open === i ? null : i)} style={{ width: '100%', textAlign: 'left', padding: '20px 0', background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 15, color: 'var(--bark)' }}>
             {item.q}
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 18, color: 'var(--stone)', flexShrink: 0, transform: open === i ? 'rotate(45deg)' : 'none', transition: 'transform .3s', display: 'block', lineHeight: 1 }}>+</span>
+            <span style={{
+              fontFamily: 'var(--font-mono)', fontSize: 18, color: 'var(--stone)', flexShrink: 0,
+              /* transform apenas */
+              transform: open === i ? 'rotate(45deg)' : 'rotate(0deg)',
+              transition: 'transform .3s', display: 'block', lineHeight: 1,
+            }}>+</span>
           </button>
           {open === i && <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, lineHeight: 1.75, color: 'var(--stone)', margin: '0 0 20px', maxWidth: '70ch' }}>{item.a}</p>}
         </div>
@@ -375,7 +399,8 @@ export default function QuadrosPage() {
       <header style={{ position: 'relative', minHeight: '80vh', display: 'flex', alignItems: 'flex-end', overflow: 'hidden' }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/images/quadros/2 CAMADAS DE BELEZA-LENCOIS.jpg" alt="2 Camadas de Beleza — Lençóis Maranhenses" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
-        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,.85) 0%, rgba(0,0,0,.3) 60%, rgba(0,0,0,.1) 100%)' }} />
+        {/* gradiente: rgba de var(--ink) #0B0A08 */}
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(11,10,8,.85) 0%, rgba(11,10,8,.3) 60%, rgba(11,10,8,.1) 100%)' }} />
         <div style={{ position: 'relative', zIndex: 2, padding: '0 56px 64px', width: '100%' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'rgba(255,255,255,.6)', marginBottom: 16 }}>
             № 04 · Fine Art Prints · Assinados & Numerados
@@ -383,7 +408,7 @@ export default function QuadrosPage() {
           <h1 style={{ margin: 0, lineHeight: 0.9 }}>
             <span style={{ fontFamily: 'var(--font-hand)', fontSize: 54, color: 'var(--rust)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 6 }}>para a sua parede—</span>
             <br />
-            <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(72px, 14vw, 180px)', letterSpacing: '-.05em', lineHeight: 0.86, display: 'block', textTransform: 'uppercase', color: '#fff' }}>QUADROS.</span>
+            <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(72px, 14vw, 180px)', letterSpacing: '-.05em', lineHeight: 0.86, display: 'block', textTransform: 'uppercase', color: 'var(--paper)' }}>QUADROS.</span>
           </h1>
           <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 18, color: 'rgba(255,255,255,.75)', marginTop: 28, maxWidth: '52ch', lineHeight: 1.65 }}>
             Três níveis de acabamento. 22 obras. Impressão assinada à mão com certificado de autenticidade.
@@ -407,10 +432,18 @@ export default function QuadrosPage() {
       {/* COMO FUNCIONA */}
       <section style={{ padding: '72px 56px', background: 'var(--canvas-deep)', borderBottom: '1px solid var(--line)' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 16 }}>Processo</div>
-        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 40, letterSpacing: '-.03em', margin: '0 0 48px', lineHeight: 1 }}>Como funciona</h2>
+        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(28px, 3.5vw, 40px)', letterSpacing: '-.03em', margin: '0 0 48px', lineHeight: 1, color: 'var(--bark)' }}>
+          Como funciona
+        </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 36 }}>
-          {[['01','Escolha','Selecione a obra, tamanho, acabamento e cor da moldura.'], ['02','Encomenda','Finalize pelo WhatsApp — sem pagamento agora. Orçamento em até 24h.'], ['03','Produção','Impressão artesanal em laboratório fine art. Prazo: 10–15 dias úteis.'], ['04','Entrega','Embalagem reforçada. Envio para todo o Brasil.']].map(([n,t,d]) => (
+          {[
+            ['01', 'Escolha',   'Selecione a obra, tamanho, acabamento e cor da moldura.'],
+            ['02', 'Encomenda', 'Finalize pelo WhatsApp — sem pagamento agora. Orçamento em até 24h.'],
+            ['03', 'Produção',  'Impressão artesanal em laboratório fine art. Prazo: 10–15 dias úteis.'],
+            ['04', 'Entrega',   'Embalagem reforçada. Envio para todo o Brasil.'],
+          ].map(([n, t, d]) => (
             <div key={n}>
+              {/* fontSize: 68 decorativo — não é heading semântico */}
               <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 68, letterSpacing: '-.05em', lineHeight: 0.9, color: 'var(--line)', marginBottom: 14 }}>{n}</div>
               <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 17, color: 'var(--bark)', marginBottom: 8 }}>{t}</div>
               <p style={{ fontFamily: 'var(--font-serif)', fontSize: 14, lineHeight: 1.65, color: 'var(--stone)', margin: 0 }}>{d}</p>
@@ -421,7 +454,12 @@ export default function QuadrosPage() {
 
       {/* CREDIBILIDADE */}
       <section style={{ padding: '40px 56px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 40, flexWrap: 'wrap' }}>
-        {[['Hahnemühle Certified','Papel e certificado autênticos'], ['100+ anos','Durabilidade das tintas pigmentadas'], ['Assinado & Numerado','Cada obra com identidade única'], ['Laboratório Fine Art','Impressão profissional especializada']].map(([t,d]) => (
+        {[
+          ['Hahnemühle Certified', 'Papel e certificado autênticos'],
+          ['100+ anos',            'Durabilidade das tintas pigmentadas'],
+          ['Assinado & Numerado',  'Cada obra com identidade única'],
+          ['Laboratório Fine Art', 'Impressão profissional especializada'],
+        ].map(([t, d]) => (
           <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <div style={{ width: 36, height: 36, background: 'var(--canvas-deep)', border: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <span style={{ fontFamily: 'var(--font-hand)', fontSize: 20, color: 'var(--rust)' }}>✓</span>
@@ -437,15 +475,20 @@ export default function QuadrosPage() {
       {/* FAQ */}
       <section style={{ padding: '72px 56px 96px', maxWidth: 880 }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 16 }}>Dúvidas frequentes</div>
-        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 40, letterSpacing: '-.03em', margin: '0 0 36px', lineHeight: 1 }}>FAQ</h2>
+        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(28px, 3.5vw, 40px)', letterSpacing: '-.03em', margin: '0 0 36px', lineHeight: 1, color: 'var(--bark)' }}>
+          FAQ
+        </h2>
         <FaqAccordion />
       </section>
 
-      {/* WA FLOAT */}
-      <a href={`https://wa.me/${WA_NUM}?text=${encodeURIComponent('Olá! Tenho interesse em um quadro fine art.')}`} target="_blank" rel="noopener noreferrer"
-        style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 100, width: 54, height: 54, borderRadius: '50%', background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 24px rgba(0,0,0,.2)' }}
+      {/* WA FLOAT — WA_GREEN é cor de marca externa, não token de sistema */}
+      <a href={`https://wa.me/${WA_NUM}?text=${encodeURIComponent('Olá! Tenho interesse em um quadro fine art.')}`}
+        target="_blank" rel="noopener noreferrer"
+        style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 100, width: 54, height: 54, borderRadius: '50%', background: WA_GREEN, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 24px rgba(0,0,0,.2)' }}
         aria-label="Contato via WhatsApp">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
       </a>
 
       <SiteFooter dark={false} />
