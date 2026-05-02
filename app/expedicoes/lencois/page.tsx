@@ -46,6 +46,7 @@ export default function LencoisPage() {
             backgroundSize: 'cover', backgroundPosition: 'center 30%',
           }}
         />
+        {/* gradiente: rgba de var(--forest) #1E2A18 */}
         <div style={{
           position: 'absolute', inset: 0,
           background: 'linear-gradient(180deg, rgba(30,42,24,.45) 0%, rgba(30,42,24,.05) 40%, rgba(30,42,24,.9) 100%)',
@@ -60,7 +61,6 @@ export default function LencoisPage() {
             color: 'var(--canvas)',
           }}
         >
-          {/* breadcrumb */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe)', fontWeight: 500 }}>
             <Link href="/expedicoes" style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
               <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" /></svg>
@@ -72,7 +72,6 @@ export default function LencoisPage() {
             <span style={{ color: 'var(--rust-soft)' }}>Agosto 2026</span>
           </div>
 
-          {/* title block */}
           <div>
             <div style={{ fontFamily: 'var(--font-hand)', fontSize: 44, color: 'var(--rust-soft)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 6 }}>
               deserto com lagoas, Via Láctea garantida—
@@ -83,7 +82,6 @@ export default function LencoisPage() {
             </h1>
           </div>
 
-          {/* bottom: lead + stats */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 40, flexWrap: 'wrap' }}>
             <p style={{ fontFamily: 'var(--font-serif)', fontSize: 20, fontStyle: 'italic', lineHeight: 1.5, maxWidth: '46ch', color: 'var(--canvas)', margin: 0 }}>
               Travessia a pé entre dunas brancas e lagoas de água doce — o parque que parece outro planeta, com fotografia profissional inclusa.
@@ -111,7 +109,7 @@ export default function LencoisPage() {
             Deserto branco<br />com lagoas<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>de safira.</span>
           </h2>
         </div>
-        <p style={{ fontFamily: 'var(--font-serif)', fontSize: 20, lineHeight: 1.55, color: '#3A3530', margin: 0 }}>
+        <p style={{ fontFamily: 'var(--font-serif)', fontSize: 20, lineHeight: 1.55, color: 'var(--stone)', margin: 0 }}>
           Os Lençóis Maranhenses são um dos lugares mais irreais do planeta — um deserto de dunas brancas que, entre janeiro e setembro, se preenche com lagoas de água doce cristalina. A travessia a pé conecta Atins a Santo Amaro pelos caminhos internos do parque, passando por comunidades que vivem isoladas há gerações. Não existe trilha marcada. Você segue guias locais, o vento e a cor da água.
         </p>
       </section>
@@ -121,7 +119,7 @@ export default function LencoisPage() {
         <div className="lenc-pad" style={{ padding: '96px 56px' }}>
           <div style={{ marginBottom: 56 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 02 · Roteiro</div>
-            <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 56, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
+            <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
               4 dias.<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>Cada um inesquecível.</span>
             </h2>
           </div>
@@ -138,13 +136,15 @@ export default function LencoisPage() {
                 alignItems: 'center',
               }}
             >
+              {/* fontSize: 72 decorativo — não é heading semântico */}
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 72, fontWeight: 500, letterSpacing: '-.04em', lineHeight: 1, color: 'var(--line)', userSelect: 'none' }}>
                 {dia.num}
               </div>
               <div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 4 }}>{dia.rota}</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--stone)', marginBottom: 16 }}>{dia.tempo}</div>
-                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, lineHeight: 1.65, color: '#3A3530', margin: '0 0 16px', maxWidth: '52ch' }}>{dia.desc}</p>
+                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, lineHeight: 1.65, color: 'var(--stone)', margin: '0 0 16px', maxWidth: '52ch' }}>{dia.desc}</p>
+                {/* rgba de var(--rust) #A6542B */}
                 <div style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8,
                   background: 'rgba(166,84,43,.08)', border: '1px solid rgba(166,84,43,.2)',
@@ -154,10 +154,7 @@ export default function LencoisPage() {
                   {dia.highlight}
                 </div>
               </div>
-              <div
-                className="lenc-img-wrap lenc-day-img"
-                style={{ overflow: 'hidden', aspectRatio: '4/3' }}
-              >
+              <div className="lenc-img-wrap lenc-day-img" style={{ overflow: 'hidden', aspectRatio: '4/3' }}>
                 <img
                   src={dia.img}
                   alt={`Dia ${dia.num}`}
@@ -185,15 +182,19 @@ export default function LencoisPage() {
         </div>
         <div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 03 · Diferencial</div>
-          <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 42, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.05, margin: '0 0 10px', color: 'var(--bark)' }}>
+          <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.05, margin: '0 0 10px', color: 'var(--bark)' }}>
             Fotografia<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>profissional inclusa.</span>
           </h2>
-          <p style={{ fontFamily: 'var(--font-serif)', fontSize: 18, lineHeight: 1.6, color: '#3A3530', marginBottom: 32 }}>
+          <p style={{ fontFamily: 'var(--font-serif)', fontSize: 18, lineHeight: 1.6, color: 'var(--stone)', marginBottom: 32 }}>
             Henrique (@henriq.eu) vai junto na travessia como fotógrafo e guia — você vive a experiência, a gente cuida das imagens. Cobertura completa: dunas ao nascer do sol, lagoas, momentos espontâneos, comunidades locais.
           </p>
           <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {['Fotógrafo profissional durante toda a travessia', 'Fotos tratadas profissionalmente — entregues em até 15 dias', 'Álbum digital com as melhores fotos do grupo'].map(item => (
-              <li key={item} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontFamily: 'var(--font-serif)', fontSize: 15, color: '#3A3530', lineHeight: 1.6 }}>
+            {[
+              'Fotógrafo profissional durante toda a travessia',
+              'Fotos tratadas profissionalmente — entregues em até 15 dias',
+              'Álbum digital com as melhores fotos do grupo',
+            ].map(item => (
+              <li key={item} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--stone)', lineHeight: 1.6 }}>
                 <span style={{ color: 'var(--moss)', fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>
                 {item}
               </li>
@@ -212,11 +213,7 @@ export default function LencoisPage() {
       </section>
 
       {/* ── INCLUÍDO / NÃO INCLUÍDO ── */}
-      <section
-        className="lenc-pad"
-        style={{ padding: '96px 56px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60 }}
-      >
-        {/* Incluído */}
+      <section className="lenc-pad" style={{ padding: '96px 56px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60 }}>
         <div style={{ background: 'var(--canvas-deep)', padding: 40, border: '1px solid var(--line)' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 18 }}>№ 04.a · Na mochila</div>
           <h3 style={{ fontFamily: 'var(--font-ui)', fontSize: 28, fontWeight: 600, letterSpacing: '-.01em', margin: '0 0 20px', color: 'var(--bark)' }}>
@@ -224,10 +221,7 @@ export default function LencoisPage() {
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {INCLUIDO.map(item => (
-              <div
-                key={item.title}
-                style={{ display: 'flex', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--line)', fontFamily: 'var(--font-serif)', fontSize: 15, color: '#3A3530', alignItems: 'flex-start' }}
-              >
+              <div key={item.title} style={{ display: 'flex', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--line)', fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--stone)', alignItems: 'flex-start' }}>
                 <span style={{ color: 'var(--moss)', fontWeight: 700, flexShrink: 0, marginTop: 2 }}>✓</span>
                 <div>
                   <strong style={{ fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 700, color: 'var(--bark)', display: 'block', marginBottom: 2 }}>{item.title}</strong>
@@ -238,7 +232,6 @@ export default function LencoisPage() {
           </div>
         </div>
 
-        {/* Não incluído */}
         <div style={{ padding: 40, border: '1px dashed var(--stone)' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 18 }}>№ 04.b · Por sua conta</div>
           <h3 style={{ fontFamily: 'var(--font-ui)', fontSize: 28, fontWeight: 600, letterSpacing: '-.01em', margin: '0 0 20px', color: 'var(--bark)' }}>
@@ -260,34 +253,25 @@ export default function LencoisPage() {
         <div className="lenc-pad" style={{ padding: '96px 56px' }}>
           <div style={{ marginBottom: 48 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 05 · Datas · Agosto 2026</div>
-            <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 56, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
+            <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
               Escolha seu <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>pacote.</span>
             </h2>
           </div>
 
-          <div
-            className="lenc-packs"
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, marginBottom: 32 }}
-          >
+          <div className="lenc-packs" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, marginBottom: 32 }}>
             {PACOTES.map(p => (
               <div
                 key={p.label}
                 className="lenc-pack"
                 style={{
-                  padding: '40px 32px',
-                  position: 'relative',
+                  padding: '40px 32px', position: 'relative',
                   background: p.featured ? 'var(--bark)' : 'var(--canvas)',
                   borderTop: p.featured ? '3px solid var(--rust)' : '3px solid transparent',
                   outline: p.featured ? '1px solid var(--rust)' : '1px solid var(--line)',
                 }}
               >
                 {p.featured && (
-                  <div style={{
-                    position: 'absolute', top: -13, left: 32,
-                    background: 'var(--rust)', color: 'var(--canvas)',
-                    fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase',
-                    padding: '5px 14px',
-                  }}>Mais popular</div>
+                  <div style={{ position: 'absolute', top: -13, left: 32, background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', padding: '5px 14px' }}>Mais popular</div>
                 )}
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: p.featured ? 'var(--rust-soft)' : 'var(--stone)', marginBottom: 8 }}>{p.label}</div>
                 <div style={{ fontFamily: 'var(--font-ui)', fontSize: 22, fontWeight: 700, color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 10 }}>{p.datas}</div>
@@ -301,8 +285,8 @@ export default function LencoisPage() {
                     }}>{v}</span>
                   ))}
                 </div>
-                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, lineHeight: 1.6, color: p.featured ? 'var(--ashe)' : '#3A3530', marginBottom: 28 }}>{p.desc}</p>
-                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 36, fontWeight: 700, letterSpacing: '-.02em', color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 4 }}>{p.price}</div>
+                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, lineHeight: 1.6, color: p.featured ? 'var(--ashe)' : 'var(--stone)', marginBottom: 28 }}>{p.desc}</p>
+                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(24px, 3.5vw, 36px)', fontWeight: 700, letterSpacing: '-.02em', color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 4 }}>{p.price}</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', color: p.featured ? 'var(--ashe-dim)' : 'var(--stone)', marginBottom: 28 }}>por pessoa · até 12x</div>
                 <a
                   href={waMsg(p.label, p.datas, p.price)}
@@ -324,11 +308,7 @@ export default function LencoisPage() {
             ))}
           </div>
 
-          {/* política pagamento */}
-          <div
-            className="lenc-pol"
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}
-          >
+          <div className="lenc-pol" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
             {POLITICA_PAGAMENTO.map(item => (
               <div key={item.title} style={{ padding: '20px 24px', background: 'var(--canvas)', border: '1px solid var(--line)', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
                 <div>
@@ -372,10 +352,7 @@ export default function LencoisPage() {
       </section>
 
       {/* ── GALERIA ── */}
-      <div
-        className="lenc-four"
-        style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 3 }}
-      >
+      <div className="lenc-four" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 3 }}>
         {FOTOS_GALERIA.slice(8, 12).map((src, i) => (
           <div key={i} className="lenc-img-wrap" style={{ aspectRatio: '1', overflow: 'hidden' }}>
             <img

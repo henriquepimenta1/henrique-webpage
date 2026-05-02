@@ -51,11 +51,10 @@ export default function ExpedicoesPage() {
       <SiteNav dark={true} />
 
       {/* ── HERO ── */}
-      <section style={{ position: "relative", height: 820, overflow: "hidden",
-        background: "var(--forest)" }}>
+      <section style={{ position: "relative", height: 820, overflow: "hidden", background: "var(--forest)" }}>
         <img src="/images/lencois/DJI_20250828174205_0403_D-HDR.jpg" alt="expedição"
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%",
-            objectFit: "cover" }} />
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+        {/* gradiente: rgba de var(--forest) #1E2A18 */}
         <div style={{ position: "absolute", inset: 0,
           background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.05) 40%, rgba(30,42,24,.85) 100%)" }} />
 
@@ -65,13 +64,13 @@ export default function ExpedicoesPage() {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 10,
               fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em",
-              textTransform: "uppercase", color: "rgba(232,223,201,.6)" }}>
+              textTransform: "uppercase",
+              /* rgba de var(--canvas) #E8DFC9 */
+              color: "rgba(232,223,201,.6)" }}>
               <span>№ 02</span>
-              <span style={{ width: 4, height: 4, borderRadius: "50%",
-                background: "var(--rust-soft)", display: "block" }} />
+              <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust-soft)", display: "block" }} />
               <span>Viagens guiadas de fotografia</span>
-              <span style={{ width: 4, height: 4, borderRadius: "50%",
-                background: "var(--rust-soft)", display: "block" }} />
+              <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust-soft)", display: "block" }} />
               <span style={{ color: "var(--rust-soft)" }}>Agenda 2026</span>
             </div>
             <div style={{ marginTop: 32 }}>
@@ -91,8 +90,7 @@ export default function ExpedicoesPage() {
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between",
-            alignItems: "flex-end", gap: 40 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 40 }}>
             <p style={{ fontFamily: "var(--font-serif)", fontSize: 21,
               fontStyle: "italic", lineHeight: 1.5, maxWidth: "46ch",
               color: "var(--canvas)", margin: 0 }}>
@@ -105,11 +103,11 @@ export default function ExpedicoesPage() {
                 { k: "Fotógrafos", v: "214+" },
               ].map(m => (
                 <div key={m.k}>
+                  {/* rgba de var(--canvas) #E8DFC9 */}
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: 9,
                     letterSpacing: ".22em", textTransform: "uppercase",
                     color: "rgba(232,223,201,.45)", marginBottom: 6 }}>{m.k}</div>
-                  <div style={{ fontFamily: "var(--font-ui)", fontSize: 20,
-                    fontWeight: 600 }}>{m.v}</div>
+                  <div style={{ fontFamily: "var(--font-ui)", fontSize: 20, fontWeight: 600 }}>{m.v}</div>
                 </div>
               ))}
             </div>
@@ -126,14 +124,13 @@ export default function ExpedicoesPage() {
             color: "var(--rust)", marginBottom: 14 }}>№ 01 · Como é</div>
           <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 32, fontWeight: 600,
             letterSpacing: "-.02em", lineHeight: 1.1, margin: 0 }}>
-            Aulas de campo,{" "}
-            <br />não{" "}
+            Aulas de campo,{" "}<br />não{" "}
             <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
               fontWeight: 400, color: "var(--moss)" }}>aulas de slide.</span>
           </h2>
         </div>
         <p style={{ fontFamily: "var(--font-serif)", fontSize: 20, lineHeight: 1.55,
-          color: "#3A3530", margin: 0 }}>
+          color: "var(--stone)", margin: 0 }}>
           Não é workshop. Não é tour. É expedição de fotografia — itinerário pensado pela luz, tempo pra esperar a foto acontecer, e alguém ao seu lado pra te ajudar a ler o que está na frente. Em três anos na Huayhuash, aprendi que a coisa mais valiosa que posso oferecer é{" "}
           <em>o tempo certo no lugar certo</em>.
         </p>
@@ -141,13 +138,12 @@ export default function ExpedicoesPage() {
 
       {/* ── TRIPS ── */}
       <section style={{ padding: "96px 56px" }}>
-        <div style={{ marginBottom: 56, display: "flex", justifyContent: "space-between",
-          alignItems: "flex-end" }}>
+        <div style={{ marginBottom: 56, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
               letterSpacing: ".22em", textTransform: "uppercase",
               color: "var(--rust)", marginBottom: 12 }}>№ 02 · Agenda 2026</div>
-            <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 56, fontWeight: 600,
+            <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 600,
               letterSpacing: "-.02em", lineHeight: 1, margin: 0 }}>
               Dois{" "}
               <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
@@ -155,7 +151,7 @@ export default function ExpedicoesPage() {
             </h2>
           </div>
           <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-            fontSize: 17, color: "#3A3530", maxWidth: "36ch",
+            fontSize: 17, color: "var(--stone)", maxWidth: "36ch",
             lineHeight: 1.5, margin: 0 }}>
             Pouco, bem feito. Cada viagem é desenhada por mim, sem operação de terceiros no meio.
           </p>
@@ -167,20 +163,19 @@ export default function ExpedicoesPage() {
       </section>
 
       {/* ── COMO FUNCIONA ── */}
-      <section style={{ padding: "96px 56px", background: "var(--forest)",
-        color: "var(--canvas)" }}>
+      <section style={{ padding: "96px 56px", background: "var(--forest)", color: "var(--canvas)" }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
           letterSpacing: ".22em", textTransform: "uppercase",
           color: "var(--rust-soft)", marginBottom: 14 }}>
           № 03 · Como funciona
         </div>
-        <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 48, fontWeight: 600,
-          letterSpacing: "-.02em", lineHeight: 1, margin: 0, marginBottom: 12 }}>
-          Quatro passos,{" "}
-          <br />do email ao{" "}
+        <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 600,
+          letterSpacing: "-.02em", lineHeight: 1, margin: "0 0 12px" }}>
+          Quatro passos,{" "}<br />do email ao{" "}
           <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
             fontWeight: 400, color: "var(--rust-soft)" }}>cume</span>.
         </h2>
+        {/* rgba de var(--canvas) #E8DFC9 */}
         <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
           fontSize: 18, color: "rgba(232,223,201,.7)", maxWidth: "54ch",
           marginBottom: 56, lineHeight: 1.5 }}>
@@ -188,12 +183,12 @@ export default function ExpedicoesPage() {
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
           {[
-            { n: "01", t: "Conversa",  d: "Você escreve, eu respondo em 48h com um papo por vídeo pra entender sua experiência e expectativa." },
-            { n: "02", t: "Reserva",   d: "Sinal de 30% garante a vaga. O restante em até 60 dias antes da saída, sem juros." },
-            { n: "03", t: "Preparo",   d: "Um mês antes mando o kit completo: lista de equipamento, preparo físico, briefing fotográfico." },
-            { n: "04", t: "Campo",     d: "Encontro na cidade-base, expedição, e álbum digital pós-viagem com as melhores fotos do grupo." },
+            { n: "01", t: "Conversa", d: "Você escreve, eu respondo em 48h com um papo por vídeo pra entender sua experiência e expectativa." },
+            { n: "02", t: "Reserva",  d: "Sinal de 30% garante a vaga. O restante em até 60 dias antes da saída, sem juros." },
+            { n: "03", t: "Preparo",  d: "Um mês antes mando o kit completo: lista de equipamento, preparo físico, briefing fotográfico." },
+            { n: "04", t: "Campo",    d: "Encontro na cidade-base, expedição, e álbum digital pós-viagem com as melhores fotos do grupo." },
           ].map(st => (
-            <div key={st.n} style={{ borderTop: "1px solid rgba(232,223,201,.14)", paddingTop: 20 }}>
+            <div key={st.n} style={{ borderTop: "1px solid var(--line-dark)", paddingTop: 20 }}>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 11,
                 letterSpacing: ".22em", color: "var(--rust-soft)", marginBottom: 10 }}>
                 № {st.n}
@@ -202,6 +197,7 @@ export default function ExpedicoesPage() {
                 fontWeight: 600, letterSpacing: "-.01em", marginBottom: 8 }}>
                 {st.t}
               </div>
+              {/* rgba de var(--canvas) #E8DFC9 */}
               <div style={{ fontFamily: "var(--font-serif)", fontSize: 14,
                 lineHeight: 1.55, color: "rgba(232,223,201,.7)" }}>
                 {st.d}
@@ -212,10 +208,8 @@ export default function ExpedicoesPage() {
       </section>
 
       {/* ── INCLUSO / NÃO INCLUSO ── */}
-      <section style={{ padding: "96px 56px", display: "grid",
-        gridTemplateColumns: "1fr 1fr", gap: 40 }}>
-        <div style={{ background: "var(--canvas-deep)", padding: 40,
-          border: "1px solid var(--line)" }}>
+      <section style={{ padding: "96px 56px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
+        <div style={{ background: "var(--canvas-deep)", padding: 40, border: "1px solid var(--line)" }}>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
             letterSpacing: ".22em", textTransform: "uppercase",
             color: "var(--stone)", marginBottom: 14 }}>
@@ -224,16 +218,20 @@ export default function ExpedicoesPage() {
           <h3 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 600,
             letterSpacing: "-.01em", margin: "0 0 20px" }}>
             O que está{" "}
-            <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-              fontWeight: 400 }}>incluso</span>.
+            <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400 }}>incluso</span>.
           </h3>
-          {["Acomodação em lodge ou camping premium", "Todas as refeições durante a expedição",
-            "Guia local + transfers dentro do destino", "Mentoria fotográfica 1:1 em campo",
-            "Edição conjunta pós-viagem", "Álbum digital com melhores fotos do grupo",
-            "Seguro viagem com cobertura outdoor"].map(item => (
+          {[
+            "Acomodação em lodge ou camping premium",
+            "Todas as refeições durante a expedição",
+            "Guia local + transfers dentro do destino",
+            "Mentoria fotográfica 1:1 em campo",
+            "Edição conjunta pós-viagem",
+            "Álbum digital com melhores fotos do grupo",
+            "Seguro viagem com cobertura outdoor",
+          ].map(item => (
             <div key={item} style={{ display: "flex", gap: 12, padding: "10px 0",
               borderBottom: "1px solid var(--line)", fontFamily: "var(--font-serif)",
-              fontSize: 15, color: "#3A3530" }}>
+              fontSize: 15, color: "var(--stone)" }}>
               <span style={{ color: "var(--moss)", fontWeight: 600 }}>✓</span>
               {item}
             </div>
@@ -248,12 +246,15 @@ export default function ExpedicoesPage() {
           <h3 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 600,
             letterSpacing: "-.01em", margin: "0 0 20px" }}>
             O que{" "}
-            <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-              fontWeight: 400 }}>não</span> está.
+            <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400 }}>não</span> está.
           </h3>
-          {["Passagem aérea até a cidade-base", "Equipamento fotográfico",
-            "Vistos e documentação internacional", "Bebidas e extras pessoais",
-            "Gorjetas para guias locais (sugeridas)"].map(item => (
+          {[
+            "Passagem aérea até a cidade-base",
+            "Equipamento fotográfico",
+            "Vistos e documentação internacional",
+            "Bebidas e extras pessoais",
+            "Gorjetas para guias locais (sugeridas)",
+          ].map(item => (
             <div key={item} style={{ display: "flex", gap: 12, padding: "10px 0",
               borderBottom: "1px solid var(--line)", fontFamily: "var(--font-serif)",
               fontSize: 15, color: "var(--stone)" }}>
@@ -272,13 +273,14 @@ export default function ExpedicoesPage() {
           display: "inline-block", marginBottom: 8 }}>
           bora?
         </div>
-        <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 80, fontWeight: 700,
+        <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(48px, 8vw, 80px)", fontWeight: 700,
           letterSpacing: "-.04em", lineHeight: 0.92, margin: 0 }}>
           Sua próxima
           <br />
           <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
             fontWeight: 400, color: "var(--rust-soft)" }}>expedição</span>
         </h2>
+        {/* rgba de var(--canvas) #E8DFC9 */}
         <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
           fontSize: 20, color: "rgba(232,223,201,.7)", marginTop: 24,
           maxWidth: "50ch", marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>
@@ -288,8 +290,7 @@ export default function ExpedicoesPage() {
           style={{ marginTop: 40, display: "inline-block", padding: "18px 40px",
             background: "var(--rust-soft)", color: "var(--forest)",
             fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700,
-            letterSpacing: ".24em", textTransform: "uppercase",
-            textDecoration: "none" }}>
+            letterSpacing: ".24em", textTransform: "uppercase", textDecoration: "none" }}>
           Escrever pra Henrique →
         </a>
       </section>
@@ -304,14 +305,13 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
   const imgCol = (
     <div style={{ position: "relative", overflow: "hidden", minHeight: 560 }}>
       <img src={trip.hero} alt={trip.name}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%",
-          objectFit: "cover" }} />
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
       <div style={{ position: "absolute", top: 24, left: 24,
         background: "var(--canvas)", color: "var(--bark)",
-        padding: "6px 14px", fontFamily: "var(--font-mono)",
-        fontSize: 10, letterSpacing: ".22em" }}>
+        padding: "6px 14px", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em" }}>
         Expedição № {trip.id}
       </div>
+      {/* fontSize: 72 decorativo — não é heading semântico */}
       <div style={{ position: "absolute", bottom: 24, right: 24,
         color: "var(--canvas)", fontFamily: "var(--font-mono)",
         fontSize: 72, fontWeight: 500, letterSpacing: "-.04em",
@@ -329,8 +329,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
         <div style={{ display: "flex", justifyContent: "space-between",
           alignItems: "flex-start", marginBottom: 24 }}>
           <span style={{ fontFamily: "var(--font-mono)", fontSize: 10,
-            letterSpacing: ".22em", textTransform: "uppercase",
-            color: "var(--stone)" }}>
+            letterSpacing: ".22em", textTransform: "uppercase", color: "var(--stone)" }}>
             {trip.country} · {trip.when}
           </span>
           <span style={{ padding: "4px 10px",
@@ -343,9 +342,8 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
           </span>
         </div>
 
-        <h3 style={{ fontFamily: "var(--font-ui)", fontSize: 48, fontWeight: 700,
-          letterSpacing: "-.03em", lineHeight: 0.95, color: "var(--bark)",
-          margin: 0 }}>
+        <h3 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 700,
+          letterSpacing: "-.03em", lineHeight: 0.95, color: "var(--bark)", margin: 0 }}>
           {trip.name}
         </h3>
         <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
@@ -353,13 +351,12 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
           {trip.kicker}
         </div>
         <p style={{ fontFamily: "var(--font-serif)", fontSize: 16,
-          lineHeight: 1.6, color: "#3A3530", margin: 0 }}>
+          lineHeight: 1.6, color: "var(--stone)", margin: 0 }}>
           {trip.desc}
         </p>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 20, marginTop: 28, paddingTop: 24,
-          borderTop: "1px solid var(--line)" }}>
+          gap: 20, marginTop: 28, paddingTop: 24, borderTop: "1px solid var(--line)" }}>
           {[
             { k: "Dias",      v: String(trip.days) },
             { k: "Altitude",  v: trip.alt },
@@ -377,8 +374,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
         </div>
       </div>
 
-      <div style={{ marginTop: 28, paddingTop: 20,
-        borderTop: "1px solid var(--line)",
+      <div style={{ marginTop: 28, paddingTop: 20, borderTop: "1px solid var(--line)",
         display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 9,
