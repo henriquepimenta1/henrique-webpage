@@ -14,128 +14,10 @@ import {
   WA_GERAL,
   waMsg,
 } from '@/content/lencois'
-
-/* ─── Mapa do roteiro ─────────────────────────────────────────── */
-const ROUTE_POINTS = [
-  { id: 'atins',     label: 'Atins',              x: 88,  y: 38, dia: null,  desc: 'Ponto de chegada de barco' },
-  { id: 'bandeira',  label: 'Bandeira',            x: 73,  y: 44, dia: null,  desc: 'Início do trekking' },
-  { id: 'baixa',     label: 'Baixa Grande',        x: 57,  y: 50, dia: 1,     desc: '9km · 3h · Primeiro oásis + céu estrelado' },
-  { id: 'queimada',  label: 'Queimada dos Britos', x: 42,  y: 44, dia: 2,     desc: '10km · 5h · Nascer do sol 5h + Travessia Rio Negro + lagoas cristalinas' },
-  { id: 'betania',   label: 'Betânia',             x: 26,  y: 52, dia: 3,     desc: '18km · 6h · Saída 3h · Lagoas mais espetaculares da região' },
-  { id: 'stamaro',   label: 'Santo Amaro',         x: 10,  y: 42, dia: 4,     desc: '15km · 4h · Início 7h · Cenários épicos + chegada triunfal 11h' },
-]
-
+import LencoisMap from '@/components/lencois-map'
 const DIA_COLORS = ['', 'var(--rust)', '#6FA3D8', '#4A5838', 'var(--rust-soft)']
-const DIA_LABELS = ['', 'Dia 1', 'Dia 2', 'Dia 3', 'Dia 4']
 
-function RouteSVG() {
-  const [active, setActive] = useState<string | null>(null)
-  const activePoint = ROUTE_POINTS.find(p => p.id === active)
 
-  const pathD = ROUTE_POINTS.map((p, i) =>
-    `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`
-  ).join(' ')
-
-  /* Segmentos coloridos por dia */
-  const segments = [
-    { from: ROUTE_POINTS[0], to: ROUTE_POINTS[1], color: 'rgba(232,223,201,.3)' },
-    { from: ROUTE_POINTS[1], to: ROUTE_POINTS[2], color: DIA_COLORS[1] },
-    { from: ROUTE_POINTS[2], to: ROUTE_POINTS[3], color: DIA_COLORS[2] },
-    { from: ROUTE_POINTS[3], to: ROUTE_POINTS[4], color: DIA_COLORS[3] },
-    { from: ROUTE_POINTS[4], to: ROUTE_POINTS[5], color: DIA_COLORS[4] },
-  ]
-
-  return (
-    <div style={{ position: 'relative', background: 'var(--forest-soft)', border: '1px solid var(--line-dark)', borderRadius: 2, overflow: 'hidden' }}>
-      {/* Fundo texturizado de dunas */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/images/lencois/DJI_20250828174205_0403_D-HDR.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: .18 }} />
-
-      <svg viewBox="0 0 100 80" style={{ width: '100%', display: 'block', position: 'relative', zIndex: 1 }}>
-        {/* Grid sutil */}
-        {[20, 40, 60, 80].map(x => (
-          <line key={x} x1={x} y1={0} x2={x} y2={80} stroke="rgba(232,223,201,.04)" strokeWidth=".3" />
-        ))}
-
-        {/* Trilha base */}
-        <polyline points={ROUTE_POINTS.map(p => `${p.x},${p.y}`).join(' ')} fill="none" stroke="rgba(232,223,201,.08)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-
-        {/* Segmentos por dia */}
-        {segments.map((seg, i) => (
-          <line key={i}
-            x1={seg.from.x} y1={seg.from.y}
-            x2={seg.to.x}   y2={seg.to.y}
-            stroke={seg.color} strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeDasharray={i === 0 ? "1,1" : undefined}
-            opacity={.85}
-          />
-        ))}
-
-        {/* Pontos */}
-        {ROUTE_POINTS.map(p => (
-          <g key={p.id} style={{ cursor: 'pointer' }} onClick={() => setActive(active === p.id ? null : p.id)}>
-            <circle cx={p.x} cy={p.y} r={3.5} fill="transparent" />
-            <circle
-              cx={p.x} cy={p.y}
-              r={active === p.id ? 3 : 2}
-              fill={p.dia ? DIA_COLORS[p.dia] : 'rgba(232,223,201,.4)'}
-              stroke={active === p.id ? 'var(--canvas)' : 'transparent'}
-              strokeWidth=".5"
-              style={{ transition: 'r .2s, fill .2s' }}
-            />
-            {/* Label */}
-            <text
-              x={p.x} y={p.y - 3.5}
-              textAnchor="middle"
-              fontSize="3"
-              fill="rgba(232,223,201,.7)"
-              fontFamily="var(--font-mono)"
-              letterSpacing=".03em"
-            >
-              {p.label}
-            </text>
-            {p.dia && (
-              <text x={p.x} y={p.y + 5.5} textAnchor="middle" fontSize="2.4" fill={DIA_COLORS[p.dia]} fontFamily="var(--font-mono)" fontWeight="700">
-                {DIA_LABELS[p.dia]}
-              </text>
-            )}
-          </g>
-        ))}
-
-        {/* Direção */}
-        <text x={95} y={34} textAnchor="end" fontSize="2.5" fill="rgba(232,223,201,.3)" fontFamily="var(--font-mono)">Atins</text>
-        <text x={5}  y={38} textAnchor="start" fontSize="2.5" fill="rgba(232,223,201,.3)" fontFamily="var(--font-mono)">Santo Amaro</text>
-      </svg>
-
-      {/* Legenda */}
-      <div style={{ position: 'relative', zIndex: 1, padding: '12px 20px', display: 'flex', gap: 20, flexWrap: 'wrap', borderTop: '1px solid var(--line-dark)' }}>
-        {[1,2,3,4].map(d => (
-          <div key={d} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 20, height: 2, background: DIA_COLORS[d], borderRadius: 1 }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.16em', color: 'var(--ashe-dim)', textTransform: 'uppercase' }}>{DIA_LABELS[d]}</span>
-          </div>
-        ))}
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', color: 'var(--ashe-dim)', marginLeft: 'auto' }}>Clique nos pontos para detalhes</span>
-      </div>
-
-      {/* Tooltip */}
-      {activePoint && (
-        <div style={{
-          position: 'absolute', bottom: 52, left: '50%', transform: 'translateX(-50%)',
-          background: 'var(--forest)', border: '1px solid var(--line-dark)',
-          padding: '12px 18px', maxWidth: 280, zIndex: 10,
-          /* transform apenas — sem layout props */
-        }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.2em', textTransform: 'uppercase', color: activePoint.dia ? DIA_COLORS[activePoint.dia] : 'var(--ashe-dim)', marginBottom: 4 }}>
-            {activePoint.dia ? DIA_LABELS[activePoint.dia] : 'Ponto de partida'}
-          </div>
-          <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 13, color: 'var(--canvas)', marginBottom: 4 }}>{activePoint.label}</div>
-          <div style={{ fontFamily: 'var(--font-serif)', fontSize: 12, color: 'var(--ashe-dim)', lineHeight: 1.5 }}>{activePoint.desc}</div>
-        </div>
-      )}
-    </div>
-  )
-}
 
 /* ─── Checklist de equipamentos ────────────────────────────────── */
 const GEAR_GROUPS = [
@@ -409,7 +291,7 @@ export default function LencoisPage() {
               <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>4 dias, 4 cores.</span>
             </h2>
           </div>
-          <RouteSVG />
+          <LencoisMap />
         </div>
       </section>
 
