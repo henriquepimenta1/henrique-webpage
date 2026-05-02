@@ -18,18 +18,18 @@ const DIA4_COORDS: [number, number][] = [[-43.18933,-2.54057],[-43.18995,-2.5398
 
 /* Waypoints: ponto inicial e final de cada dia */
 const WAYPOINTS = [
-  { id: 'atins',    lon: -42.88649, lat: -2.51442, label: 'Atins',            dia: 0 },
-  { id: 'baixa',    lon: -42.98452, lat: -2.52298, label: 'Baixa Grande',     dia: 1 },
+  { id: 'atins',    lon: -42.88649, lat: -2.51442, label: 'Atins',               dia: 0 },
+  { id: 'baixa',    lon: -42.98452, lat: -2.52298, label: 'Baixa Grande',        dia: 1 },
   { id: 'queimada', lon: -43.06224, lat: -2.5062,  label: 'Queimada dos Britos', dia: 2 },
-  { id: 'betania',  lon: -43.18214, lat: -2.54223, label: 'Betânia',          dia: 3 },
-  { id: 'stamaro',  lon: -43.245,   lat: -2.50382, label: 'Santo Amaro',      dia: 4 },
+  { id: 'betania',  lon: -43.18214, lat: -2.54223, label: 'Betânia',             dia: 3 },
+  { id: 'stamaro',  lon: -43.245,   lat: -2.50382, label: 'Santo Amaro',         dia: 4 },
 ]
 
 /* Cores alinhadas com DIA_COLORS da página */
 const CORES = {
   1: '#A6542B', // --rust
   2: '#6FA3D8', // azul
-  3: '#4A5838', // --forest-soft
+  3: '#4A5838', // --moss
   4: '#D4956A', // --rust-soft
 }
 
@@ -41,9 +41,7 @@ const DOT_COLORS: Record<number, string> = {
   4: '#D4956A',
 }
 
-/* Estilo do mapa: tom de terra/areia para combinar com --forest */
-const MAP_STYLE_LIGHT = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json'
-const MAP_STYLE_DARK  = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
+const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json'
 
 export default function LencoisMap() {
   return (
@@ -51,20 +49,15 @@ export default function LencoisMap() {
       <Map
         center={[-43.066, -2.5193]}
         zoom={10.2}
-        style={MAP_STYLE_DARK}
-        pitchWithRotate={false as never}
-        dragRotate={false as never}
+        style={MAP_STYLE}
+        pitchWithRotate={false}
+        dragRotate={false}
       >
-        {/* Trilha dia 1 — rust */}
         <MapRoute coordinates={DIA1_COORDS} color={CORES[1]} width={3} opacity={0.9} />
-        {/* Trilha dia 2 — azul */}
         <MapRoute coordinates={DIA2_COORDS} color={CORES[2]} width={3} opacity={0.9} />
-        {/* Trilha dia 3 — forest */}
         <MapRoute coordinates={DIA3_COORDS} color={CORES[3]} width={3} opacity={0.9} />
-        {/* Trilha dia 4 — rust-soft */}
         <MapRoute coordinates={DIA4_COORDS} color={CORES[4]} width={3} opacity={0.9} />
 
-        {/* Waypoints */}
         {WAYPOINTS.map((wp) => (
           <MapMarker key={wp.id} longitude={wp.lon} latitude={wp.lat}>
             <MarkerContent>
@@ -115,7 +108,7 @@ export default function LencoisMap() {
             <span style={{
               fontFamily: 'var(--font-mono)', fontSize: 9,
               letterSpacing: '.16em', textTransform: 'uppercase',
-              color: 'var(--ashe-dim)',
+              color: 'var(--canvas)',
             }}>Dia {d}</span>
           </div>
         ))}
