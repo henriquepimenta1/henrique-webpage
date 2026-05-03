@@ -52,10 +52,8 @@ export const PRESETS: Preset[] = [
   { key: "22-poente",              cat: "Tom Laranja", name: "Tom Laranja — Poente",              desc: "Pôr do sol intenso com laranja-vermelho saturado." },
   { key: "23-plantacoes",          cat: "Tom Laranja", name: "Tom Laranja — Plantações",          desc: "Campos dourados com luz de tarde quente." },
   { key: "24-orla",                cat: "Tom Laranja", name: "Tom Laranja — Orla",                desc: "Linha de costa com laranjas e areia dourada." },
-  // Tom Laranja tem 6 no total — faltava o 6º no código original, preservado como 5
-  // (provavelmente um preset sem imagem ainda; conta 6 nas tabs mas 5 no array)
 
-  // ── Aesthetic / Protagonista (18) — imagens em /images/protagonista/ ────────
+  // ── Aesthetic / Protagonista (18) ───────────────────────────────────────────
   { key: "1-explorador",            cat: "Aesthetic", name: "Aesthetic — Explorador",            desc: "Look de explorador com tons naturais e contraste equilibrado." },
   { key: "2-verdesuave",            cat: "Aesthetic", name: "Aesthetic — Verde Suave",           desc: "Verde delicado com sensação de frescura e calma." },
   { key: "3-caminhante",            cat: "Aesthetic", name: "Aesthetic — Caminhante",            desc: "Tons de trilha com terra e musgo, luz filtrada." },
@@ -98,6 +96,6 @@ export const ACCORDION_ITEMS = [
   },
   {
     title: "Política de Reembolso",
-    body: "Por se tratar de conteúdo digital, não oferecemos reembolso após download. Se tiver dúvidas antes de comprar, envie um e-mail para management@henriq.eu.",
+    body: "Por se tratar de conteúdo digital, não oferecemos reembolso após download. Se tiver dúvidas antes de comprar, envie um e-mail para contato@euhenriq.com.",
   },
 ]

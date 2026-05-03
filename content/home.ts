@@ -2,7 +2,7 @@
 // REGRA: nunca altere nome, e-mail, stats ou URLs sem aprovação.
 
 export const SITE_AUTHOR = "Henrique Sesana Pimenta"
-export const SITE_EMAIL  = "management@henriq.eu"
+export const SITE_EMAIL  = "contato@euhenriq.com"
 export const SITE_HANDLE = "@henriq.eu"
 export const SITE_BASE   = "Chipre — Disponível Mundialmente"
 
