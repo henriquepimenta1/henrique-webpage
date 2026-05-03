@@ -191,7 +191,6 @@ function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
   const { ref, visible } = useVisible(0.15);
   return (
     <div ref={ref} style={{
-      /* transform + opacity apenas — sem width/height/padding */
       opacity: visible ? 1 : 0,
       transform: visible ? "translateY(0)" : "translateY(24px)",
       transition: `opacity .65s ${delay}s, transform .65s ${delay}s`,
@@ -278,8 +277,9 @@ function PostCard({ post }: { post: Post }) {
       style={{
         position: "relative", overflow: "hidden", borderRadius: 2,
         background: "var(--forest)", border: "1px solid var(--line-dark)",
-        height: 480, cursor: "pointer",
-        /* transform+opacity — sem layout props */
+        /* mobile: altura auto para não quebrar em telas pequenas */
+        height: "clamp(320px, 50vw, 480px)",
+        cursor: "pointer",
         transition: "transform .25s, box-shadow .25s",
         transform: hovered ? "translateY(-4px)" : "translateY(0)",
         boxShadow: hovered ? "0 12px 40px rgba(0,0,0,.5)" : "0 2px 12px rgba(0,0,0,.3)",
@@ -290,7 +290,6 @@ function PostCard({ post }: { post: Post }) {
         scrolling="no" allowFullScreen loading="lazy" />
       <div style={{
         position: "absolute", inset: 0,
-        /* overlay de var(--forest) */
         background: hovered ? "rgba(30,42,24,.9)" : "transparent",
         display: "flex", flexDirection: "column", justifyContent: "flex-end",
         padding: 16, gap: 8,
@@ -330,7 +329,6 @@ function BrandWorkCard({ work, delay, onOpen }: { work: BrandWork; delay: number
           overflow: "hidden", borderRadius: 2, cursor: "pointer",
           border: `1px solid ${hovered ? "rgba(166,84,43,.5)" : "var(--line-dark)"}`,
           background: hovered ? "rgba(166,84,43,.04)" : "transparent",
-          /* transform+opacity */
           transition: "border-color .2s, background .2s, transform .25s",
           transform: hovered ? "translateY(-3px)" : "translateY(0)",
         }}
@@ -338,13 +336,11 @@ function BrandWorkCard({ work, delay, onOpen }: { work: BrandWork; delay: number
         <div style={{ position: "relative", aspectRatio: "4/5", background: "var(--forest-soft)", overflow: "hidden" }}>
           <Image src={work.photos[0].src} alt={work.product} fill
             style={{ objectFit: "cover", objectPosition: "center",
-              /* transform apenas — sem scale de layout */
               transform: hovered ? "scale(1.04)" : "scale(1)",
               transition: "transform .4s ease",
             }} />
           <div style={{
             position: "absolute", inset: 0,
-            /* overlay de var(--forest) */
             background: hovered ? "rgba(30,42,24,.55)" : "rgba(30,42,24,.15)",
             transition: "background .25s",
             display: "flex", alignItems: "center", justifyContent: "center",
@@ -356,7 +352,7 @@ function BrandWorkCard({ work, delay, onOpen }: { work: BrandWork; delay: number
             )}
           </div>
           {work.photos.length > 1 && (
-            <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(30,42,24,.8)" /* overlay forest */, fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".14em", color: "var(--ashe)", padding: "4px 8px", borderRadius: 2 }}>
+            <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(30,42,24,.8)", fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".14em", color: "var(--ashe)", padding: "4px 8px", borderRadius: 2 }}>
               {work.photos.length} fotos
             </div>
           )}
@@ -395,7 +391,7 @@ function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () =
   }, []);
 
   return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(11,10,8,.97)" /* rgba de var(--ink) */, backdropFilter: "blur(20px)", overflowY: "auto", padding: 16 }}>
+    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(11,10,8,.97)", backdropFilter: "blur(20px)", overflowY: "auto", padding: 16 }}>
       <style>{`
         @keyframes lb-in  { from { opacity:0 } to { opacity:1 } }
         @keyframes lb-img { from { transform:scale(.97);opacity:0 } to { transform:scale(1);opacity:1 } }
@@ -424,9 +420,9 @@ function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () =
               <img src={photo.src} alt={photo.caption} style={{ display:"block", width:"100%", height:"auto", maxHeight:"65vh", objectFit:"contain" }} />
               {multi && <>
                 <button onClick={() => setIdx(i => (i - 1 + work.photos.length) % work.photos.length)}
-                  style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", background:"rgba(30,42,24,.8)" /* overlay forest */, border:"1px solid var(--line-dark)", color:"var(--canvas)", width:36, height:36, borderRadius:2, cursor:"pointer", fontSize:14, display:"flex", alignItems:"center", justifyContent:"center", zIndex:2 }}>←</button>
+                  style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", background:"rgba(30,42,24,.8)", border:"1px solid var(--line-dark)", color:"var(--canvas)", width:36, height:36, borderRadius:2, cursor:"pointer", fontSize:14, display:"flex", alignItems:"center", justifyContent:"center", zIndex:2 }}>←</button>
                 <button onClick={() => setIdx(i => (i + 1) % work.photos.length)}
-                  style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"rgba(30,42,24,.8)" /* overlay forest */, border:"1px solid var(--line-dark)", color:"var(--canvas)", width:36, height:36, borderRadius:2, cursor:"pointer", fontSize:14, display:"flex", alignItems:"center", justifyContent:"center", zIndex:2 }}>→</button>
+                  style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"rgba(30,42,24,.8)", border:"1px solid var(--line-dark)", color:"var(--canvas)", width:36, height:36, borderRadius:2, cursor:"pointer", fontSize:14, display:"flex", alignItems:"center", justifyContent:"center", zIndex:2 }}>→</button>
               </>}
             </div>
             <p style={{ fontFamily:"var(--font-ui)", fontSize:12, color:"var(--ashe-dim)", lineHeight:1.4, margin:0, textAlign:"center" }}>{photo.caption}</p>
@@ -491,10 +487,6 @@ export default function MidiaKitPage() {
 
   return (
     <main style={{ background: "var(--forest)", color: "var(--canvas)", fontFamily: "var(--font-ui)", overflowX: "hidden" }}>
-      {/*
-        NOTA: token '#10008' mencionado no plano não foi encontrado neste arquivo.
-        Verificar outros arquivos do projeto (ex: componentes, layout.tsx).
-      */}
       <style>{`
         .mk-section      { padding: 100px 56px; border-bottom: 1px solid rgba(232,223,201,.08); }
         .mk-metrics      { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
@@ -507,6 +499,13 @@ export default function MidiaKitPage() {
         .mk-two-col      { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
         .mk-traj-grid    { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
         .mk-posts        { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+
+        /* ── NAV mobile: esconde label central, mantém logo + botão ── */
+        @media(max-width:600px){
+          .mk-nav-label { display: none !important; }
+          .mk-nav-btn   { font-size: 8px !important; padding: 5px 10px !important; }
+        }
+
         @media(max-width:1100px){
           .mk-destinations { grid-template-columns:repeat(3,1fr)!important; }
           .mk-posts        { grid-template-columns:repeat(2,1fr)!important; }
@@ -530,24 +529,34 @@ export default function MidiaKitPage() {
           .mk-gear     { grid-template-columns:1fr 1fr!important; }
           .mk-works    { grid-template-columns:1fr 1fr!important; }
           .mk-section  { padding:56px 20px!important; }
+          /* hero: padding-top compensa nav fixo */
+          .mk-hero-section { padding-top: 80px !important; }
+          /* CTA: email não overflow */
+          .mk-cta-email { font-size: 11px !important; word-break: break-all; }
+          /* trajetória: gap menor em coluna */
+          .mk-traj-grid { gap: 24px !important; }
+          /* fotos bio: coluna única em telas muito pequenas */
+          .mk-photos { grid-template-columns: 1fr !important; }
+          /* posts: 1 coluna já definido acima, altura responsiva via clamp no componente */
         }
       `}</style>
 
       {/* ── NAV ── */}
-      <header style={{ position:"fixed", top:0, left:0, right:0, height:60, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 clamp(16px,4vw,40px)", zIndex:50, background:"rgba(30,42,24,.9)" /* overlay forest */, backdropFilter:"blur(12px)", borderBottom:"1px solid var(--line-dark)" }}>
+      <header style={{ position:"fixed", top:0, left:0, right:0, height:60, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 clamp(16px,4vw,40px)", zIndex:50, background:"rgba(30,42,24,.9)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--line-dark)" }}>
         <Link href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none" }}>
           <div style={{ width:28, height:28, border:"1.5px solid var(--ashe)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"var(--font-serif)", fontStyle:"italic", fontSize:16, fontWeight:500, color:"var(--ashe)" }}>H</div>
         </Link>
-        <span style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".28em", textTransform:"uppercase", color:"var(--ashe-dim)" }}>Media Kit · 2026</span>
-        <a href={WA} target="_blank" rel="noopener noreferrer" style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".2em", textTransform:"uppercase", color:"var(--rust)", textDecoration:"none", border:"1px solid rgba(166,84,43,.4)", padding:"6px 14px" }}>Contato</a>
+        {/* label central — some em mobile <600px */}
+        <span className="mk-nav-label" style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".28em", textTransform:"uppercase", color:"var(--ashe-dim)" }}>Media Kit · 2026</span>
+        <a href={WA} target="_blank" rel="noopener noreferrer" className="mk-nav-btn" style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".2em", textTransform:"uppercase", color:"var(--rust)", textDecoration:"none", border:"1px solid rgba(166,84,43,.4)", padding:"6px 14px" }}>Contato</a>
       </header>
 
       {/* ════════ 1. HERO ════════ */}
-      <section ref={heroRef} style={{ position:"relative", minHeight:"100svh", display:"flex", flexDirection:"column", justifyContent:"flex-end", padding:"0 clamp(20px,5vw,56px) clamp(48px,8vw,80px)", overflow:"hidden" }}>
+      {/* paddingTop: 60px compensa nav fixo */}
+      <section className="mk-hero-section" ref={heroRef} style={{ position:"relative", minHeight:"100svh", display:"flex", flexDirection:"column", justifyContent:"flex-end", padding:"60px clamp(20px,5vw,56px) clamp(48px,8vw,80px)", overflow:"hidden" }}>
         <div style={{ position:"absolute", inset:0, zIndex:0 }}>
           <Image src="/images/exp-huayhuash.jpg" alt="Expedição nos Andes" fill priority
             style={{ objectFit:"cover", objectPosition:"center", transform:`translateY(${scrollY * 0.25}px)`, transition:"transform 0s linear" }} />
-          {/* gradiente: rgba de var(--ink) #0B0A08 */}
           <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(11,10,8,1) 0%, rgba(11,10,8,.7) 40%, rgba(11,10,8,.3) 100%)" }} />
         </div>
         <div style={{ position:"relative", zIndex:1, maxWidth:900 }}>
@@ -617,10 +626,6 @@ export default function MidiaKitPage() {
                 { title:"Relatos pessoais como narrativa",     desc:"Cada expedição tem uma história humana. Não documento apenas o visual — documento a jornada, o cansaço, a recompensa." },
                 { title:"Presença como método",                desc:"Aprofundo meu olhar através de referências do cinema contemplativo, da arte minimalista e do design orgânico." },
               ].map(item => (
-                /*
-                  CORREÇÃO impeccable BAN 1: border-left removido.
-                  Substituído por background tint no container inteiro.
-                */
                 <div key={item.title} style={{ background:"rgba(166,84,43,.06)", borderRadius:2, padding:"16px 20px" }}>
                   <div style={{ fontFamily:"var(--font-ui)", fontWeight:600, fontSize:13, color:"var(--canvas)", marginBottom:6 }}>{item.title}</div>
                   <div style={{ fontFamily:"var(--font-ui)", fontSize:12, lineHeight:1.6, color:"var(--ashe-dim)" }}>{item.desc}</div>
@@ -809,12 +814,13 @@ export default function MidiaKitPage() {
             >
               WhatsApp — +55 11 98812-8064
             </a>
-            <a href="mailto:hen.pimenta@gmail.com"
+            {/* EMAIL CORRIGIDO — contato@euhenriq.com */}
+            <a href="mailto:contato@euhenriq.com" className="mk-cta-email"
               style={{ display:"inline-flex", alignItems:"center", gap:10, border:"1px solid rgba(232,223,201,.25)", color:"var(--canvas)", fontFamily:"var(--font-ui)", fontSize:13, textDecoration:"none", padding:"14px 32px", borderRadius:2, transition:"border-color .2s" }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(166,84,43,.7)")}
               onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(232,223,201,.25)")}
             >
-              hen.pimenta@gmail.com
+              contato@euhenriq.com
             </a>
           </div>
           <div style={{ display:"flex", gap:32, justifyContent:"center", flexWrap:"wrap" }}>

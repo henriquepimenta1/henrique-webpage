@@ -40,9 +40,9 @@ export default function SobrePage() {
           style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 20, color: 'var(--canvas)', textDecoration: 'none', borderBottom: '1px solid var(--rust)', paddingBottom: 2 }}>
           @henriq.eu
         </a>
-        <a href="mailto:hen.pimenta@gmail.com"
+        <a href="mailto:contato@euhenriq.com"
           style={{ fontFamily: 'var(--font-ui)', fontSize: 13, color: 'rgba(255,255,255,.5)', textDecoration: 'none' }}>
-          hen.pimenta@gmail.com
+          contato@euhenriq.com
         </a>
         <a href="https://wa.me/5511988128064" target="_blank" rel="noopener noreferrer"
           style={{ fontFamily: 'var(--font-ui)', fontSize: 13, color: 'rgba(255,255,255,.5)', textDecoration: 'none' }}>
