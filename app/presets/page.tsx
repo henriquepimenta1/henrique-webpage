@@ -12,13 +12,46 @@ export default function PresetsHubPage() {
   return (
     <main style={{ background: "var(--canvas)", color: "var(--bark)", fontFamily: "var(--font-ui)", minHeight: "100vh" }}>
       <style>{`
-        .door-img { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
-        .door:hover .door-img { transform: scale(1.06); }
-        .door-cta-arrow { transition: transform .3s cubic-bezier(.2,.7,.2,1); }
+        .door-img { transition: transform .65s cubic-bezier(.2,.7,.2,1); }
+        .door:hover .door-img { transform: scale(1.04); }
+        .door-cta-arrow { transition: transform .3s cubic-bezier(.2,.7,.2,1), opacity .3s; }
         .door:hover .door-cta-arrow { transform: translateX(6px); }
         .compare-item { overflow: hidden; }
-        .compare-img { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
-        .compare-item:hover .compare-img { transform: scale(1.05); }
+        .compare-img { transition: transform .65s cubic-bezier(.2,.7,.2,1); }
+        .compare-item:hover .compare-img { transform: scale(1.04); }
+        .compare-item:hover .compare-label { transform: translateY(-3px); opacity: 1; }
+        .compare-label { transition: transform .3s cubic-bezier(.2,.7,.2,1), opacity .3s; opacity: .75; }
+
+        /* Video hero */
+        .hub-video-bg {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          filter: blur(3px) brightness(.55) saturate(.85);
+          transform: scale(1.04); /* evita bordas brancas do blur */
+          z-index: 0;
+        }
+        .hub-hero-inner {
+          position: relative;
+          z-index: 1;
+        }
+
+        /* Rail items stagger */
+        .rail-item {
+          opacity: 0;
+          transform: translateY(10px);
+          animation: railIn .5s cubic-bezier(.2,.7,.2,1) forwards;
+        }
+        .rail-item:nth-child(1) { animation-delay: .05s; }
+        .rail-item:nth-child(2) { animation-delay: .12s; }
+        .rail-item:nth-child(3) { animation-delay: .19s; }
+        .rail-item:nth-child(4) { animation-delay: .26s; }
+        @keyframes railIn {
+          to { opacity: 1; transform: translateY(0); }
+        }
+
         @media(max-width:900px){
           .two-door { grid-template-columns: 1fr !important; }
           .door { height: 480px !important; }
@@ -28,45 +61,114 @@ export default function PresetsHubPage() {
         }
         @media(max-width:560px){
           .compare-grid { grid-template-columns: 1fr !important; }
-          .hub-hero { padding: 100px 24px 48px !important; }
+          .hub-hero { padding: 100px 24px 64px !important; }
           .hub-rail, .hub-compare, .hub-doors { padding-left: 24px !important; padding-right: 24px !important; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .door-img, .compare-img, .door-cta-arrow, .compare-label, .rail-item {
+            transition: none !important;
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+          }
         }
       `}</style>
 
       <SiteNav dark={false} />
 
-      {/* ── EYEBROW ── */}
-      <div style={{ padding: "100px 56px 0", display: "flex", alignItems: "center", gap: 10, fontFamily: "var(--font-ui)", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--stone)", fontWeight: 500 }}>
-        <span>№ 03</span>
-        <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust)", display: "inline-block" }} />
-        <span>Cor · tratamento</span>
-        <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust)", display: "inline-block" }} />
-        <span style={{ color: "var(--rust)" }}>Desde 2022</span>
-      </div>
+      {/* ── HERO COM VÍDEO ── */}
+      <div
+        className="hub-hero"
+        style={{
+          padding: "120px 56px 80px",
+          position: "relative",
+          overflow: "hidden",
+          background: "var(--forest)", // fallback
+        }}
+      >
+        {/* Vídeo de fundo */}
+        <video
+          className="hub-video-bg"
+          autoPlay
+          loop
+          muted
+          playsInline
+          aria-hidden="true"
+        >
+          <source src="/videos/VIDEO-HERO2-web.mp4" type="video/mp4" />
+        </video>
 
-      {/* ── HERO ── */}
-      <div className="hub-hero" style={{ padding: "28px 56px 64px", position: "relative" }}>
-        <div style={{ fontFamily: "var(--font-hand)", fontSize: 38, color: "var(--rust)", transform: "rotate(-2deg)", display: "inline-block", marginBottom: 6, letterSpacing: ".01em" }}>
-          a mesma cor que eu uso—
+        {/* Gradiente sobre o vídeo para legibilidade */}
+        <div style={{
+          position: "absolute", inset: 0, zIndex: 0,
+          background: "linear-gradient(180deg, rgba(14,12,10,.3) 0%, rgba(14,12,10,.15) 50%, rgba(14,12,10,.6) 100%)",
+        }} />
+
+        <div className="hub-hero-inner">
+          {/* Eyebrow */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: 10,
+            fontFamily: "var(--font-ui)", fontSize: 10, letterSpacing: ".22em",
+            textTransform: "uppercase", color: "rgba(232,223,201,.6)", fontWeight: 500,
+            marginBottom: 20,
+          }}>
+            <span>№ 03</span>
+            <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust)", display: "inline-block" }} />
+            <span>Cor · tratamento</span>
+            <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust)", display: "inline-block" }} />
+            <span style={{ color: "var(--rust)" }}>Desde 2022</span>
+          </div>
+
+          <div style={{
+            fontFamily: "var(--font-hand)", fontSize: 38, color: "var(--rust-soft)",
+            transform: "rotate(-2deg)", display: "inline-block", marginBottom: 6, letterSpacing: ".01em",
+          }}>
+            a mesma cor que eu uso—
+          </div>
+
+          <h1
+            className="hub-title"
+            style={{
+              fontFamily: "var(--font-ui)", fontWeight: 700,
+              fontSize: "clamp(52px,7vw,84px)", letterSpacing: "-.03em",
+              lineHeight: 0.95, margin: 0, color: "var(--canvas)",
+            }}
+          >
+            Presets & LUTs<br />
+            <span style={{
+              fontFamily: "var(--font-serif)", fontStyle: "italic",
+              fontWeight: 400, color: "var(--rust-soft)",
+            }}>
+              saídos das minhas fotos
+            </span>
+          </h1>
+
+          <p style={{
+            fontFamily: "var(--font-serif)", fontWeight: 400, fontSize: 19,
+            lineHeight: 1.5, color: "rgba(232,223,201,.8)", marginTop: 28, maxWidth: "58ch",
+          }}>
+            O mesmo tratamento que aplico no meu próprio portfólio, agora no seu Lightroom e no seu Premiere. Dois pacotes separados — escolha o que cabe no seu fluxo.
+          </p>
         </div>
-        <h1 className="hub-title" style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 84, letterSpacing: "-.03em", lineHeight: 0.95, margin: 0, color: "var(--bark)" }}>
-          Presets & LUTs<br />
-          <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--moss)" }}>saídos das minhas fotos</span>
-        </h1>
-        <p style={{ fontFamily: "var(--font-serif)", fontWeight: 400, fontSize: 19, lineHeight: 1.5, color: "#3A3530", marginTop: 28, maxWidth: "58ch" }}>
-          O mesmo tratamento que aplico no meu próprio portfólio, agora no seu Lightroom e no seu Premiere. Dois pacotes separados — escolha o que cabe no seu fluxo.
-        </p>
       </div>
 
       {/* ── RAIL TÉCNICO ── */}
-      <div className="hub-rail rail" style={{ padding: "40px 56px", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 40 }}>
+      <div
+        className="hub-rail rail"
+        style={{
+          padding: "40px 56px",
+          borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)",
+          display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 40,
+        }}
+      >
         {[
           { k: "Compatibilidade", v: "Lightroom · Photoshop · Camera Raw" },
-          { k: "Formato",          v: ".xmp · .dng · .cube · .3dl" },
-          { k: "Licença",          v: "Pessoal + comercial" },
-          { k: "Atualizações",     v: "Vitalícias, sem custo" },
+          { k: "Formato",         v: ".xmp · .dng · .cube · .3dl" },
+          { k: "Licença",         v: "Pessoal + comercial" },
+          { k: "Atualizações",    v: "Vitalícias, sem custo" },
         ].map(({ k, v }) => (
-          <div key={k}>
+          <div key={k} className="rail-item">
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--stone)", marginBottom: 6 }}>{k}</div>
             <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 19, color: "var(--bark)" }}>{v}</div>
           </div>
@@ -74,7 +176,10 @@ export default function PresetsHubPage() {
       </div>
 
       {/* ── DUAS PORTAS ── */}
-      <div className="hub-doors two-door" style={{ padding: "56px 56px 96px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+      <div
+        className="hub-doors two-door"
+        style={{ padding: "56px 56px 96px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}
+      >
 
         {/* Porta 1 · Presets */}
         <Link href="/presets/fotografia" style={{ textDecoration: "none" }}>
@@ -104,7 +209,7 @@ export default function PresetsHubPage() {
                   Outdoor Cinematic<br />Presets
                 </h2>
                 <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
-                  <span>54 presets · R$ 249</span>
+                  <span>45 presets · R$39,90</span>
                   <span className="door-cta-arrow" style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 22, fontWeight: 400 }}>→</span>
                 </div>
               </div>
@@ -112,7 +217,7 @@ export default function PresetsHubPage() {
           </div>
         </Link>
 
-        {/* Porta 2 · LUTs (Em breve) */}
+        {/* Porta 2 · LUTs */}
         <Link href="/presets/video" style={{ textDecoration: "none" }}>
           <div
             className="door"
@@ -131,7 +236,6 @@ export default function PresetsHubPage() {
             />
             <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.15) 40%, rgba(30,42,24,.9) 100%)" }} />
 
-            {/* Badge em breve */}
             <div style={{ position: "absolute", top: 32, right: 32, zIndex: 3, padding: "6px 14px", background: "var(--rust)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--canvas)" }}>
               Em breve
             </div>
@@ -147,7 +251,7 @@ export default function PresetsHubPage() {
                   Outdoor Cinematic<br />LUTs
                 </h2>
                 <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
-                  <span>12 LUTs · R$ 299</span>
+                  <span>12 LUTs · R$37,90</span>
                   <span className="door-cta-arrow" style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 22, fontWeight: 400 }}>→</span>
                 </div>
               </div>
@@ -166,17 +270,20 @@ export default function PresetsHubPage() {
         </p>
         <div className="compare-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
           {[
-            { img: "/images/portfolio/acapamento-janca-huayhuash.jpg",    lbl: "Portfolio · Andes" },
+            { img: "/images/portfolio/acapamento-janca-huayhuash.jpg",        lbl: "Portfolio · Andes" },
             { img: "/images/portfolio/laguna-acampamento-janca-huayhuash.jpg", lbl: "Campo · Huayhuash" },
-            { img: "/images/portfolio/lencois-silhueta-pordosol.jpg",     lbl: "Lençóis · Pôr do sol" },
-            { img: "/images/portfolio/vista-para-montanhas-itatiaia.jpg", lbl: "Itatiaia · Amanhecer" },
+            { img: "/images/portfolio/lencois-silhueta-pordosol.jpg",          lbl: "Lençóis · Pôr do sol" },
+            { img: "/images/portfolio/vista-para-montanhas-itatiaia.jpg",      lbl: "Itatiaia · Amanhecer" },
           ].map(({ img, lbl }) => (
             <div key={lbl} className="compare-item" style={{ aspectRatio: "3/4", position: "relative" }}>
               <div
                 className="compare-img"
                 style={{ position: "absolute", inset: 0, backgroundImage: `url(${img})`, backgroundSize: "cover", backgroundPosition: "center" }}
               />
-              <div style={{ position: "absolute", bottom: 10, left: 10, fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".15em", color: "var(--canvas)", background: "rgba(30,42,24,.75)", padding: "3px 8px" }}>
+              <div
+                className="compare-label"
+                style={{ position: "absolute", bottom: 10, left: 10, fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".15em", color: "var(--canvas)", background: "rgba(30,42,24,.75)", padding: "3px 8px" }}
+              >
                 {lbl}
               </div>
             </div>
