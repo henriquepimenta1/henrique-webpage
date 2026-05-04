@@ -90,7 +90,7 @@ function CountdownBanner() {
 }
 
 // ─── BeforeAfter ─────────────────────────────────────────────────────────────
-function BeforeAfter({ presetKey, height = 640, variant = "hero" }: {
+function BeforeAfter({ presetKey, height = 560, variant = "hero" }: {
   presetKey: string; height?: number; variant?: "hero" | "section";
 }) {
   const [pos, setPos] = useState(50);
@@ -106,23 +106,30 @@ function BeforeAfter({ presetKey, height = 640, variant = "hero" }: {
 
   useEffect(() => {
     const mm = (e: MouseEvent) => { if (dragging.current) move(e.clientX); };
-    const tm = (e: TouchEvent) => {
-      if (dragging.current && e.touches[0]) {
-        e.preventDefault(); // trava scroll da página durante drag
-        move(e.touches[0].clientX);
-      }
-    };
     const mu = () => { dragging.current = false; };
     window.addEventListener("mousemove", mm);
     window.addEventListener("mouseup", mu);
-    window.addEventListener("touchmove", tm, { passive: false }); // passive:false para preventDefault funcionar
     window.addEventListener("touchend", mu);
     return () => {
       window.removeEventListener("mousemove", mm);
       window.removeEventListener("mouseup", mu);
-      window.removeEventListener("touchmove", tm);
       window.removeEventListener("touchend", mu);
     };
+  }, [move]);
+
+  // touchmove apenas no elemento — não bloqueia scroll da página
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el) return;
+    const onTouchMove = (e: TouchEvent) => {
+      if (!dragging.current) return;
+      if (e.touches[0]) {
+        e.preventDefault();
+        move(e.touches[0].clientX);
+      }
+    };
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    return () => el.removeEventListener("touchmove", onTouchMove);
   }, [move]);
 
   const onKey = (e: React.KeyboardEvent) => {
@@ -150,7 +157,7 @@ function BeforeAfter({ presetKey, height = 640, variant = "hero" }: {
         position: "relative", width: "100%", height,
         overflow: "hidden", cursor: "ew-resize", userSelect: "none",
         background: "var(--forest)", outline: "none",
-        // trava scroll horizontal da página, permite vertical fora do drag
+        // permite scroll vertical fora do componente; só bloqueia quando dragging (via listener no elemento)
         touchAction: "pan-y",
       }}
     >
@@ -185,7 +192,6 @@ function TestimonialsSlider() {
     return () => clearInterval(id);
   }, [total]);
 
-  // Touch swipe — trava scroll horizontal
   const onTouchStart = (e: React.TouchEvent) => {
     startX.current = e.touches[0].clientX;
     isDragging.current = true;
@@ -194,7 +200,6 @@ function TestimonialsSlider() {
   const onTouchMove = useCallback((e: TouchEvent) => {
     if (!isDragging.current) return;
     const dx = e.touches[0].clientX - startX.current;
-    // Se movimento horizontal dominante, previne scroll da página
     if (Math.abs(dx) > 8) e.preventDefault();
   }, []);
 
@@ -259,7 +264,6 @@ function TestimonialsSlider() {
         </div>
       </div>
 
-      {/* Dots + arrows */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 14, padding: "0 4px" }}>
         <div style={{ display: "flex", gap: 6 }}>
           {TESTIMONIALS.map((_, i) => (
@@ -427,13 +431,17 @@ export default function PresetsPage() {
       {/* ══ 1. HERO ══════════════════════════════════════════════════════════ */}
       <section ref={heroRef} style={{ background: "var(--forest)", color: "var(--canvas)" }}>
         {/* Mobile: stack vertical. Desktop: grid 1.4fr 1fr */}
-        <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", minHeight: 680 }}>
+        <div className="hero-grid" style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", minHeight: 560 }}>
 
-          {/* Slider */}
-          <div style={{ position: "relative" }}>
-            <BeforeAfter presetKey={activeKey} height={680} variant="hero" />
+          {/* Slider — com padding lateral para respirar */}
+          <div style={{ position: "relative", padding: "24px 0 24px 24px" }}>
+            <BeforeAfter
+              presetKey={activeKey}
+              height={512}
+              variant="hero"
+            />
             {activePreset && (
-              <div style={{ position: "absolute", bottom: 52, left: 20, padding: "6px 12px", background: "rgba(14,12,10,.75)", backdropFilter: "blur(6px)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.8)" }}>
+              <div style={{ position: "absolute", bottom: 44, left: 44, padding: "6px 12px", background: "rgba(14,12,10,.75)", backdropFilter: "blur(6px)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.8)" }}>
                 {activePreset.name}
               </div>
             )}
@@ -638,7 +646,6 @@ export default function PresetsPage() {
               A coleção{" "}
               <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--moss)" }}>completa</span>.
             </h2>
-            {/* Filtros com scroll horizontal em mobile */}
             <div className="filter-scroll" style={{ display: "flex", gap: 8, flexWrap: "nowrap", overflowX: "auto", paddingBottom: 4, WebkitOverflowScrolling: "touch" as any }}>
               <FilterPill label={`Todos · ${PRESETS.length}`} active={activeCat === "all"} onClick={() => selectCategory("all")} />
               {PRESET_CATS.map(cat => (
@@ -769,6 +776,8 @@ export default function PresetsPage() {
           .filter-scroll    { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
           .filter-scroll::-webkit-scrollbar { display: none; }
           .vs-table         { font-size: 12px; }
+          /* Hero mobile: remove padding lateral do slider, empilha */
+          .hero-grid > div:first-child { padding: 16px 16px 0 !important; }
         }
 
         /* ── Preset card transition (hover only on desktop) ── */
