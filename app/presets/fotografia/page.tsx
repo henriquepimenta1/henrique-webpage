@@ -54,21 +54,45 @@ const TESTIMONIALS = [
 ];
 
 // ─── Countdown ───────────────────────────────────────────────────────────────
-function useCountdown(minutes = 15) {
-  const total = minutes * 60;
-  const [secs, setSecs] = useState(total);
+const COUNTDOWN_KEY = "presets_cta_deadline";
+const COUNTDOWN_MINS = 15;
+
+function useCountdown() {
+  const getOrSetDeadline = () => {
+    if (typeof window === "undefined") return Date.now() + COUNTDOWN_MINS * 60 * 1000;
+    const stored = sessionStorage.getItem(COUNTDOWN_KEY);
+    if (stored) return Number(stored);
+    const deadline = Date.now() + COUNTDOWN_MINS * 60 * 1000;
+    sessionStorage.setItem(COUNTDOWN_KEY, String(deadline));
+    return deadline;
+  };
+
+  const [secs, setSecs] = useState(() => {
+    const deadline = getOrSetDeadline();
+    return Math.max(0, Math.floor((deadline - Date.now()) / 1000));
+  });
+
   useEffect(() => {
-    const id = setInterval(() => setSecs(s => s <= 1 ? total : s - 1), 1000);
+    const deadline = getOrSetDeadline();
+    const id = setInterval(() => {
+      const remaining = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
+      setSecs(remaining);
+      if (remaining === 0) clearInterval(id);
+    }, 1000);
     return () => clearInterval(id);
-  }, [total]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return {
     m: String(Math.floor(secs / 60)).padStart(2, "0"),
     s: String(secs % 60).padStart(2, "0"),
+    expired: secs === 0,
   };
 }
 
 function CountdownBanner() {
-  const { m, s } = useCountdown(15);
+  const { m, s, expired } = useCountdown();
+  if (expired) return null;
   return (
     <div style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
@@ -424,8 +448,15 @@ export default function PresetsPage() {
 
       <CountdownBanner />
 
-      <div style={{ paddingTop: 40 }}>
-        <SiteNav dark={false} />
+      {/* Nav minimalista — só logo, sem links que tiram do funil */}
+      <div style={{ paddingTop: 40, position: "relative", zIndex: 30 }}>
+        <header style={{ height: 72, display: "flex", alignItems: "center", padding: "0 40px", background: "transparent", borderBottom: "1px solid rgba(42,33,26,.1)" }}>
+          <a href="/" style={{ textDecoration: "none" }}>
+            <span style={{ fontFamily: "var(--font-hand)", fontSize: 28, color: "var(--bark)", letterSpacing: ".02em", lineHeight: 1 }}>
+              Eu Henriq
+            </span>
+          </a>
+        </header>
       </div>
 
       {/* ══ 1. HERO ══════════════════════════════════════════════════════════ */}
