@@ -638,6 +638,23 @@ export default function PresetsPage() {
         </div>
       </section>
 
+      {/* ══ 7b. DEMO AESTHETIC ═══════════════════════════════════════════════ */}
+      <section className="section-pad" style={{ padding: "80px 48px", background: "var(--canvas)", borderTop: "1px solid var(--line)" }}>
+        <div style={{ maxWidth: 1360, margin: "0 auto" }}>
+          <div style={{ marginBottom: 32, maxWidth: 680 }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".24em", textTransform: "uppercase", color: "var(--stone)", marginBottom: 12 }}>Aesthetic Pack</div>
+            <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(32px,4vw,52px)", fontWeight: 600, letterSpacing: "-.02em", lineHeight: 1, margin: 0, color: "var(--bark)" }}>
+              Cinemático —{" "}
+              <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--rust)" }}>do RAW ao tratado</span>. Um clique.
+            </h2>
+            <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "#3A3530", marginTop: 12, lineHeight: 1.55 }}>
+              Drama clássico com contraste alto e paleta neutra — funciona em qualquer luz de campo.
+            </p>
+          </div>
+          <BeforeAfter presetKey="8-cinematico" height={480} variant="section" />
+        </div>
+      </section>
+
       {/* ══ 8. COLEÇÃO COMPLETA ══════════════════════════════════════════════ */}
       <section className="section-pad" style={{ padding: "80px 48px", background: "var(--canvas-deep)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
         <div style={{ maxWidth: 1360, margin: "0 auto" }}>
