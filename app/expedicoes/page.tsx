@@ -27,6 +27,24 @@ const trips = [
   },
   {
     id: "02",
+    slug: "rondonia",
+    href: "/expedicoes/rondonia",
+    name: "Explore Rondônia",
+    country: "Brasil · RO",
+    when: "2026",
+    days: 5,
+    alt: "Pakaás",
+    km: 0,
+    level: "Iniciante",
+    status: "Em formação",
+    available: true,
+    preco: "Lista de interesse",
+    hero: "/images/portfolio/hotel-pakaas-ronodonia-riomamore-riopakaas.jpg",
+    kicker: "Amazônia onde quase ninguém vai.",
+    desc: "Cinco dias fotografando o Rio Mamoré, o Forte Príncipe da Beira, aldeias ribeirinhas e a mata amazônica — na fronteira entre Brasil e Bolívia. Base no Hotel Pakaás. Datas em definição.",
+  },
+  {
+    id: "03",
     slug: "huayhuash",
     href: "/expedicoes/lencois",
     name: "Cordillera Huayhuash",
@@ -145,7 +163,7 @@ export default function ExpedicoesPage() {
               color: "var(--rust)", marginBottom: 12 }}>№ 02 · Agenda 2026</div>
             <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 600,
               letterSpacing: "-.02em", lineHeight: 1, margin: 0 }}>
-              Dois{" "}
+              Três{" "}
               <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
                 fontWeight: 400, color: "var(--moss)" }}>destinos</span>.
             </h2>
@@ -360,7 +378,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
           {[
             { k: "Dias",      v: String(trip.days) },
             { k: "Altitude",  v: trip.alt },
-            { k: "Caminhada", v: `${trip.km} km` },
+            { k: "Caminhada", v: trip.km > 0 ? `${trip.km} km` : "Barco · trilhas" },
             { k: "Nível",     v: trip.level },
           ].map(s => (
             <div key={s.k}>
@@ -393,7 +411,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
               color: "var(--canvas)", fontFamily: "var(--font-ui)",
               fontSize: 11, fontWeight: 700, letterSpacing: ".22em",
               textTransform: "uppercase", textDecoration: "none" }}>
-            Ver detalhes →
+            {trip.slug === "rondonia" ? "Quero saber mais →" : "Ver detalhes →"}
           </Link>
         ) : (
           <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
