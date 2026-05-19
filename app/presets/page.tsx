@@ -1,21 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import SiteNav from "@/components/nav";
 import SiteFooter from "@/components/site-footer";
 
 export default function PresetsHubPage() {
-  const [hoverA, setHoverA] = useState(false);
-  const [hoverB, setHoverB] = useState(false);
-
   return (
     <main style={{ background: "var(--canvas)", color: "var(--bark)", fontFamily: "var(--font-ui)", minHeight: "100vh" }}>
       <style>{`
         .door-img { transition: transform .65s cubic-bezier(.2,.7,.2,1); }
-        .door:hover .door-img { transform: scale(1.04); }
+        .door-active:hover .door-img { transform: scale(1.04); }
         .door-cta-arrow { transition: transform .3s cubic-bezier(.2,.7,.2,1), opacity .3s; }
-        .door:hover .door-cta-arrow { transform: translateX(6px); }
+        .door-active:hover .door-cta-arrow { transform: translateX(6px); }
         .compare-item { overflow: hidden; }
         .compare-img { transition: transform .65s cubic-bezier(.2,.7,.2,1); }
         .compare-item:hover .compare-img { transform: scale(1.04); }
@@ -181,13 +177,11 @@ export default function PresetsHubPage() {
         style={{ padding: "56px 56px 96px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}
       >
 
-        {/* Porta 1 · Presets */}
+        {/* Porta 1 · Presets — ATIVA */}
         <Link href="/presets/fotografia" style={{ textDecoration: "none" }}>
           <div
-            className="door"
+            className="door door-active"
             style={{ position: "relative", height: 540, overflow: "hidden", cursor: "pointer", background: "var(--forest)" }}
-            onMouseEnter={() => setHoverA(true)}
-            onMouseLeave={() => setHoverA(false)}
           >
             <div
               className="door-img"
@@ -217,47 +211,42 @@ export default function PresetsHubPage() {
           </div>
         </Link>
 
-        {/* Porta 2 · LUTs */}
-        <Link href="/presets/video" style={{ textDecoration: "none" }}>
+        {/* Porta 2 · LUTs — DESABILITADA */}
+        <div
+          className="door"
+          style={{ position: "relative", height: 540, overflow: "hidden", cursor: "default", background: "var(--forest)" }}
+        >
           <div
-            className="door"
-            style={{ position: "relative", height: 540, overflow: "hidden", cursor: "pointer", background: "var(--forest)" }}
-            onMouseEnter={() => setHoverB(true)}
-            onMouseLeave={() => setHoverB(false)}
-          >
-            <div
-              className="door-img"
-              style={{
-                position: "absolute", inset: 0,
-                backgroundImage: "url(/images/portfolio/as3lagunas-huayhuash.jpg)",
-                backgroundSize: "cover", backgroundPosition: "center",
-                filter: "brightness(.85)",
-              }}
-            />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.15) 40%, rgba(30,42,24,.9) 100%)" }} />
+            className="door-img"
+            style={{
+              position: "absolute", inset: 0,
+              backgroundImage: "url(/images/portfolio/as3lagunas-huayhuash.jpg)",
+              backgroundSize: "cover", backgroundPosition: "center",
+              filter: "brightness(.85)",
+            }}
+          />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.15) 40%, rgba(30,42,24,.9) 100%)" }} />
 
-            <div style={{ position: "absolute", top: 32, right: 32, zIndex: 3, padding: "6px 14px", background: "var(--rust)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--canvas)" }}>
-              Em breve
+          <div style={{ position: "absolute", top: 32, right: 32, zIndex: 3, padding: "6px 14px", background: "var(--rust)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--canvas)" }}>
+            Em breve
+          </div>
+
+          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "32px 32px 36px", zIndex: 2, color: "var(--canvas)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div style={{ padding: "5px 10px", border: "1px solid rgba(232,223,201,.5)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase" }}>.cube · .3dl</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 02 / 02</div>
             </div>
-
-            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "32px 32px 36px", zIndex: 2, color: "var(--canvas)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div style={{ padding: "5px 10px", border: "1px solid rgba(232,223,201,.5)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase" }}>.cube · .3dl</div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 02 / 02</div>
-              </div>
-              <div>
-                <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "var(--ashe)", marginBottom: 12 }}>Para vídeo · Premiere · DaVinci · FCP</div>
-                <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 44, letterSpacing: "-.02em", lineHeight: 1, margin: 0, marginBottom: 4 }}>
-                  Outdoor Cinematic<br />LUTs
-                </h2>
-                <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
-                  <span>12 LUTs · R$37,90</span>
-                  <span className="door-cta-arrow" style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 22, fontWeight: 400 }}>→</span>
-                </div>
+            <div>
+              <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "var(--ashe)", marginBottom: 12 }}>Para vídeo · Premiere · DaVinci · FCP</div>
+              <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 44, letterSpacing: "-.02em", lineHeight: 1, margin: 0, marginBottom: 4 }}>
+                Outdoor Cinematic<br />LUTs
+              </h2>
+              <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
+                <span>Em desenvolvimento</span>
               </div>
             </div>
           </div>
-        </Link>
+        </div>
       </div>
 
       {/* ── A MESMA PALETA ── */}
