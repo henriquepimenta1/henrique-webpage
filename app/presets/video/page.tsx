@@ -6,12 +6,22 @@ import SiteNav from "@/components/nav";
 import SiteFooter from "@/components/site-footer";
 
 const LUTS = [
-  { id: "01", name: "Cordillera",    kicker: "Montanha · amber + teal",   img: "/images/portfolio/acapamento-janca-huayhuash.jpg" },
-  { id: "02", name: "Dunefield",     kicker: "Desertos · warm haze",       img: "/images/portfolio/lencois-silhueta-pordosol-drone.jpg" },
-  { id: "03", name: "High Latitude", kicker: "Tons frios · glaciar",        img: "/images/portfolio/as3lagunas-huayhuash.jpg" },
-  { id: "04", name: "Vale Escuro",   kicker: "Mata · verde úmido",          img: "/images/portfolio/cachoeira-dos-macacaquinhos-rondonia.jpg" },
-  { id: "05", name: "Golden Hour",   kicker: "Pôr do sol · warm matte",    img: "/images/portfolio/lencois-silhueta-pordosol.jpg" },
-  { id: "06", name: "Night Sky",     kicker: "Astrofoto · deep blue",       img: "/images/portfolio/via-lactea-lencois1.jpg" },
+  { id: "01", name: "Creeper Shade",    kicker: "Sombra densa · mata fechada",   img: "/images/portfolio/cachoeira-dos-macacaquinhos-rondonia.jpg" },
+  { id: "02", name: "Enchanted Light",  kicker: "Luz mágica · raios filtrados",   img: "/images/portfolio/caminho-para-laguna69-peru.jpg" },
+  { id: "03", name: "Faded Future",     kicker: "Desbotado · futuro suspenso",    img: "/images/portfolio/lencois-silhueta-pordosol-drone.jpg" },
+  { id: "04", name: "Force of Nature",  kicker: "Montanha imponente · força",     img: "/images/portfolio/pico-parana-visto-do-topo-serradoibitiraquire.jpg" },
+  { id: "05", name: "Lost Gold Tone",   kicker: "Dourado nostálgico · hora dourada", img: "/images/portfolio/lencois-silhueta-pordosol.jpg" },
+  { id: "06", name: "Mystic Blue",      kicker: "Azul místico · altitude fria",   img: "/images/portfolio/as3lagunas-huayhuash.jpg" },
+  { id: "07", name: "Netherworld Vibe", kicker: "Submundo · caverna profunda",    img: "/images/portfolio/caverna-do-diabo-petar-eldorado-SP.jpg" },
+  { id: "08", name: "Neverland Dream",  kicker: "Sonho · paisagem irreal",         img: "/images/portfolio/lagoa-lencois-drone.jpg" },
+  { id: "09", name: "Overlook Glow",    kicker: "Mirante · brilho do topo",        img: "/images/portfolio/vista-do-picomateo.jpg" },
+  { id: "10", name: "Restless Light",   kicker: "Luz inquieta · amanhecer",        img: "/images/portfolio/nascer-do-sol-mantiqueira-marinsxitaguaré.jpg" },
+  { id: "11", name: "Tall Tale Glow",   kicker: "Épico · acampamento alto",        img: "/images/portfolio/acapamento-janca-huayhuash.jpg" },
+  { id: "12", name: "Time Drift",       kicker: "Tempo suspenso · noite estrelada", img: "/images/portfolio/via-lactea-lencois-baixa-grande.jpg" },
+  { id: "13", name: "Tiny Terror Tone", kicker: "Tensão · escalada exposta",       img: "/images/portfolio/escalada-cabeca-depeixe.jpg" },
+  { id: "14", name: "Toon Noir",        kicker: "Contraste alto · noir gráfico",   img: "/images/portfolio/observador-itatiaia-chapada-da-lua.jpg" },
+  { id: "15", name: "Urban Myth",       kicker: "Mítico · lenda viva",              img: "/images/portfolio/arara-canindé-rondonia.jpg" },
+  { id: "16", name: "Winter's Glow",    kicker: "Brilho frio · glaciar",            img: "/images/portfolio/cordilheira-blanca-caminho-ate-laguna69-peru.jpg" },
 ];
 
 export default function LutsPage() {
@@ -59,7 +69,7 @@ export default function LutsPage() {
         {/* Badge em breve */}
         <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "6px 16px", border: "1px solid var(--rust-soft)", marginBottom: 20 }}>
           <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--rust-soft)", display: "inline-block", animation: "pulse 2s infinite" }} />
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--rust-soft)" }}>Em breve · lançamento em 2025</span>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--rust-soft)" }}>Em breve · lançamento em 2026</span>
         </div>
         <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }`}</style>
 
@@ -70,8 +80,11 @@ export default function LutsPage() {
           Outdoor Cinematic<br />
           <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--rust-soft)" }}>LUTs</span>
         </h1>
-        <p style={{ fontFamily: "var(--font-serif)", fontWeight: 400, fontSize: 21, lineHeight: 1.5, color: "var(--ashe)", marginTop: 28, maxWidth: "58ch" }}>
-          12 LUTs 3D no formato .cube, para Premiere, DaVinci Resolve, Final Cut e praticamente qualquer software de edição. Feitos pra footage outdoor — LOG, Rec.709, S-Log3, D-Log, V-Log.
+        <p style={{ fontFamily: "var(--font-serif)", fontWeight: 400, fontSize: 21, lineHeight: 1.5, color: "var(--ashe)", marginTop: 28, maxWidth: "60ch" }}>
+          16 LUTs cinematográficos construídos em condições reais de campo — dunas, montanhas, neblina, luz de floresta, sol duro, amanheceres frios e entardeceres incandescentes. Cor que existe no mundo, não saturação artificial.
+        </p>
+        <p style={{ fontFamily: "var(--font-serif)", fontWeight: 400, fontSize: 17, lineHeight: 1.6, color: "var(--ashe-dim)", marginTop: 18, maxWidth: "60ch" }}>
+          Sem tons plásticos. Sem saturação forçada. Cor honesta, contraste natural, atmosfera de cinema que faz a imagem respirar.
         </p>
       </div>
 
@@ -103,8 +116,8 @@ export default function LutsPage() {
         {[
           { k: "Formato",    v: ".cube", vit: " + .3dl" },
           { k: "Resolução",  v: "33×",  vit: " · 3D LUT" },
-          { k: "Entrada",    v: "LOG",   vit: " + Rec.709" },
-          { k: "Câmeras",    v: "Sony · Canon", vit: " · BMD · DJI" },
+          { k: "Total",      v: "16 LUTs",   vit: " · standard" },
+          { k: "Perfis",     v: "S-Log · D-Log", vit: " · GoPro Log · Rec.709" },
           { k: "Software",   v: "Premiere · DaVinci", vit: " · FCP · AE" },
         ].map(({ k, v, vit }) => (
           <div key={k}>
@@ -120,13 +133,13 @@ export default function LutsPage() {
       <div className="luts-section" style={{ padding: "96px 56px" }}>
         <div style={{ marginBottom: 56, display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 24 }}>
           <div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--rust-soft)", marginBottom: 12 }}>№ 01 · As doze LUTs</div>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--rust-soft)", marginBottom: 12 }}>№ 01 · As dezesseis LUTs</div>
             <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 56, letterSpacing: "-.02em", lineHeight: 1, margin: 0 }}>
-              Uma para cada <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--rust-soft)" }}>terreno</span>.
+              Uma para cada <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--rust-soft)" }}>clima</span>.
             </h2>
           </div>
           <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 17, color: "var(--ashe)", maxWidth: "44ch", lineHeight: 1.5, margin: 0 }}>
-            Nomeadas pelo ambiente em que foram desenhadas. Use a que combina com a luz que você está filmando.
+            Cada LUT foi desenhada para uma emoção e uma temperatura específicas. Do quente nostálgico ao frio dramático — diferentes climas, mesma intenção: respirar como cinema.
           </p>
         </div>
         <div className="lut-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
@@ -136,19 +149,11 @@ export default function LutsPage() {
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(30,42,24,0) 40%, rgba(30,42,24,.85) 100%)" }} />
               <div style={{ position: "absolute", top: 16, left: 16, right: 16, display: "flex", justifyContent: "space-between", zIndex: 2 }}>
                 <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--canvas)", padding: "4px 10px", border: "1px solid rgba(232,223,201,.5)" }}>.cube</div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--ashe)", letterSpacing: ".22em" }}>№ {l.id} / 12</div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--ashe)", letterSpacing: ".22em" }}>№ {l.id} / 16</div>
               </div>
               <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: 24, color: "var(--canvas)", zIndex: 2 }}>
-                <div style={{ fontFamily: "var(--font-ui)", fontSize: 30, fontWeight: 600, letterSpacing: "-.02em", lineHeight: 1 }}>{l.name}</div>
+                <div style={{ fontFamily: "var(--font-ui)", fontSize: 26, fontWeight: 600, letterSpacing: "-.02em", lineHeight: 1.05 }}>{l.name}</div>
                 <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 14, color: "var(--ashe)", marginTop: 6 }}>{l.kicker}</div>
-              </div>
-            </div>
-          ))}
-          {/* Placeholder 7-12 */}
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={`ph-${i}`} style={{ position: "relative", aspectRatio: "16/10", background: "rgba(255,255,255,.04)", border: "1px solid var(--line-dark)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe-dim)", textTransform: "uppercase" }}>
-                № {String(7 + i).padStart(2, "0")} / 12 · Em produção
               </div>
             </div>
           ))}
@@ -164,7 +169,7 @@ export default function LutsPage() {
           Funciona em <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", color: "var(--rust-soft)", fontWeight: 400 }}>tudo</span>.
         </h3>
         <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 15, color: "var(--ashe)", textAlign: "center", marginBottom: 40 }}>
-          Testado nas principais suítes de edição — .cube é padrão aberto.
+          Testado nas principais suítes de edição — .cube é padrão aberto. Câmeras, drones e action cams.
         </p>
         <div className="compat-grid" style={{ display: "flex", justifyContent: "space-around", alignItems: "center", gap: 32, flexWrap: "wrap" }}>
           {["Premiere Pro", "DaVinci Resolve", "Final Cut Pro", "After Effects", "Sony Vegas", "FilmConvert"].map((sw) => (
@@ -183,7 +188,7 @@ export default function LutsPage() {
             Cor de<br /><span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--moss)" }}>cinema</span><br />em um clique.
           </h2>
           <p style={{ fontFamily: "var(--font-serif)", fontSize: 18, color: "#3A3530", maxWidth: "38ch", lineHeight: 1.55, margin: 0 }}>
-            Estou finalizando os 12 LUTs. Deixa seu email — você recebe na hora do lançamento com 20% de desconto exclusivo.
+            Estou finalizando os 16 LUTs. Deixa seu email — você recebe na hora do lançamento com 20% de desconto exclusivo.
           </p>
         </div>
 
@@ -192,14 +197,14 @@ export default function LutsPage() {
             Outdoor Cinematic LUTs
           </div>
           <div style={{ fontFamily: "var(--font-ui)", fontSize: 72, fontWeight: 700, letterSpacing: "-.03em", color: "var(--bark)", lineHeight: 1, marginBottom: 4 }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--stone)" }}>R$</span> 299
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 22, color: "var(--stone)" }}>R$</span> 37,90
           </div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 12, color: "var(--stone)", marginBottom: 28 }}>
-            ou 6× de R$ 54,80 sem juros · Pix 10% off
+            à vista · ou em até 9× sem juros · Pix com desconto
           </div>
 
           <div style={{ borderTop: "1px solid var(--line)", paddingTop: 20, marginBottom: 28 }}>
-            {["12 LUTs 3D em .cube", "Compatível com todo editor", "PDF de instalação + videoaula 36min", "Para LOG e Rec.709", "Licença pessoal e comercial", "20% off para lista de espera"].map((item) => (
+            {["16 LUTs 3D em .cube", "Compatível com todo editor", "PDF de instalação + videoaula 36min", "Para S-Log, D-Log, GoPro Log e Rec.709", "Licença pessoal e comercial", "20% off para lista de espera"].map((item) => (
               <div key={item} style={{ display: "flex", gap: 12, padding: "8px 0", fontFamily: "var(--font-serif)", fontSize: 15, color: "#3A3530" }}>
                 <span style={{ color: "var(--moss)", fontWeight: 600 }}>✓</span>
                 <span>{item}</span>
