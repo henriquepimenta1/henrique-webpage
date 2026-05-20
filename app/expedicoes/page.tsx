@@ -65,25 +65,95 @@ const trips = [
 
 export default function ExpedicoesPage() {
   return (
-    <div style={{ background: "var(--canvas)", color: "var(--bark)", fontFamily: "var(--font-ui)" }}>
+    <div style={{ background: "var(--canvas)", color: "var(--bark)", fontFamily: "var(--font-ui)", overflowX: "hidden" }}>
+      <style>{`
+        /* ── Mobile responsivo ── */
+        @media(max-width: 900px) {
+          .exp-hero            { height: auto !important; min-height: 100vh !important; }
+          .exp-hero-pad        { padding: 100px 24px 40px !important; }
+          .exp-hero-title      { font-size: clamp(48px, 12vw, 80px) !important; }
+          .exp-hero-bottom     { flex-direction: column !important; align-items: flex-start !important; gap: 28px !important; }
+          .exp-hero-stats      { grid-template-columns: 1fr !important; gap: 14px !important; }
+          .exp-hero-stat-row   { display: flex !important; justify-content: space-between !important; align-items: baseline !important; gap: 12px; border-bottom: 1px solid rgba(232,223,201,.15); padding-bottom: 10px; }
+          .exp-hero-stat-row .stat-k { margin-bottom: 0 !important; }
+
+          .exp-intro           { padding: 56px 24px !important; grid-template-columns: 1fr !important; gap: 24px !important; }
+
+          .exp-trips-section   { padding: 56px 24px !important; }
+          .exp-trips-header    { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; margin-bottom: 32px !important; }
+
+          /* TripCard mobile: imagem em cima, body embaixo (sempre, independente do flip) */
+          .exp-trip-card       { grid-template-columns: 1fr !important; }
+          .exp-trip-card .img-col { order: 1 !important; min-height: 280px !important; }
+          .exp-trip-card .body-col { order: 2 !important; padding: 28px 24px 32px !important; border-top: none !important; }
+          .exp-trip-num-bg     { font-size: 56px !important; }
+          .exp-trip-stats      { grid-template-columns: 1fr 1fr !important; gap: 16px !important; }
+          .exp-trip-footer     { flex-direction: column !important; align-items: stretch !important; gap: 16px !important; }
+          .exp-trip-footer-cta { width: 100% !important; text-align: center !important; }
+          .exp-trip-name       { font-size: clamp(28px, 8vw, 40px) !important; }
+
+          .exp-howto           { padding: 56px 24px !important; }
+          .exp-howto-grid      { grid-template-columns: 1fr 1fr !important; gap: 20px !important; }
+
+          .exp-included        { padding: 56px 24px !important; grid-template-columns: 1fr !important; gap: 24px !important; }
+          .exp-included > div  { padding: 28px 24px !important; }
+
+          .exp-cta-final       { padding: 72px 24px !important; }
+        }
+
+        /* ── iPhone 375-414px (foco principal) ── */
+        @media(max-width: 480px) {
+          .exp-hero-pad        { padding: 96px 20px 32px !important; }
+          .exp-hero-eyebrow    { font-size: 9px !important; letter-spacing: .18em !important; flex-wrap: wrap !important; gap: 6px !important; }
+          .exp-hero-handw      { font-size: 32px !important; }
+          .exp-hero-pitch      { font-size: 17px !important; max-width: 100% !important; }
+
+          .exp-intro           { padding: 48px 20px !important; }
+          .exp-intro h2        { font-size: 26px !important; }
+          .exp-intro p         { font-size: 16px !important; }
+
+          .exp-trips-section   { padding: 48px 20px !important; }
+          .exp-trips-header h2 { font-size: 36px !important; }
+
+          .exp-trip-card .body-col { padding: 24px 20px 28px !important; }
+          .exp-trip-card .img-col  { min-height: 240px !important; }
+
+          .exp-howto           { padding: 48px 20px !important; }
+          .exp-howto-grid      { grid-template-columns: 1fr !important; gap: 24px !important; }
+
+          .exp-included        { padding: 48px 20px !important; }
+          .exp-included > div  { padding: 24px 20px !important; }
+          .exp-included h3     { font-size: 24px !important; }
+
+          .exp-cta-final       { padding: 64px 20px !important; }
+          .exp-cta-final h2    { font-size: clamp(44px, 12vw, 60px) !important; }
+          .exp-cta-final-btn   { padding: 16px 28px !important; font-size: 11px !important; letter-spacing: .18em !important; }
+        }
+
+        /* ── Mobile pequeno (320-360px) ── */
+        @media(max-width: 360px) {
+          .exp-trip-stats      { grid-template-columns: 1fr !important; }
+          .exp-trip-stats > div { display: flex !important; justify-content: space-between !important; align-items: baseline !important; gap: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+          .exp-trip-stats > div .stat-k { margin-bottom: 0 !important; }
+        }
+      `}</style>
+
       <SiteNav dark={true} />
 
       {/* ── HERO ── */}
-      <section style={{ position: "relative", height: 820, overflow: "hidden", background: "var(--forest)" }}>
+      <section className="exp-hero" style={{ position: "relative", height: 820, overflow: "hidden", background: "var(--forest)" }}>
         <img src="/images/lencois/DJI_20250828174205_0403_D-HDR.jpg" alt="expedição"
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-        {/* gradiente: rgba de var(--forest) #1E2A18 */}
         <div style={{ position: "absolute", inset: 0,
           background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.05) 40%, rgba(30,42,24,.85) 100%)" }} />
 
-        <div style={{ position: "absolute", inset: 0, padding: "140px 56px 48px",
+        <div className="exp-hero-pad" style={{ position: "absolute", inset: 0, padding: "140px 56px 48px",
           display: "flex", flexDirection: "column", justifyContent: "space-between",
           color: "var(--canvas)", zIndex: 2 }}>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 10,
+            <div className="exp-hero-eyebrow" style={{ display: "flex", alignItems: "center", gap: 10,
               fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em",
               textTransform: "uppercase",
-              /* rgba de var(--canvas) #E8DFC9 */
               color: "rgba(232,223,201,.6)" }}>
               <span>№ 02</span>
               <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust-soft)", display: "block" }} />
@@ -92,12 +162,12 @@ export default function ExpedicoesPage() {
               <span style={{ color: "var(--rust-soft)" }}>Agenda 2026</span>
             </div>
             <div style={{ marginTop: 32 }}>
-              <div style={{ fontFamily: "var(--font-hand)", fontSize: 42,
+              <div className="exp-hero-handw" style={{ fontFamily: "var(--font-hand)", fontSize: 42,
                 color: "var(--rust-soft)", transform: "rotate(-2deg)",
                 display: "inline-block", marginBottom: 4 }}>
                 andar devagar, ver mais—
               </div>
-              <h1 style={{ fontFamily: "var(--font-ui)", fontWeight: 700,
+              <h1 className="exp-hero-title" style={{ fontFamily: "var(--font-ui)", fontWeight: 700,
                 fontSize: "clamp(72px, 9vw, 140px)", letterSpacing: "-.04em",
                 lineHeight: 0.9, margin: 0 }}>
                 Expedições
@@ -108,21 +178,20 @@ export default function ExpedicoesPage() {
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 40 }}>
-            <p style={{ fontFamily: "var(--font-serif)", fontSize: 21,
+          <div className="exp-hero-bottom" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 40 }}>
+            <p className="exp-hero-pitch" style={{ fontFamily: "var(--font-serif)", fontSize: 21,
               fontStyle: "italic", lineHeight: 1.5, maxWidth: "46ch",
               color: "var(--canvas)", margin: 0 }}>
               Grupos pequenos, nunca mais de 10 pessoas. Itinerários que priorizam a luz, não o ticket de atração.
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, auto)", gap: 32 }}>
+            <div className="exp-hero-stats" style={{ display: "grid", gridTemplateColumns: "repeat(3, auto)", gap: 32 }}>
               {[
                 { k: "Desde",      v: "2019" },
                 { k: "Expedições", v: "18 destinos" },
                 { k: "Fotógrafos", v: "214+" },
               ].map(m => (
-                <div key={m.k}>
-                  {/* rgba de var(--canvas) #E8DFC9 */}
-                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 9,
+                <div key={m.k} className="exp-hero-stat-row">
+                  <div className="stat-k" style={{ fontFamily: "var(--font-mono)", fontSize: 9,
                     letterSpacing: ".22em", textTransform: "uppercase",
                     color: "rgba(232,223,201,.45)", marginBottom: 6 }}>{m.k}</div>
                   <div style={{ fontFamily: "var(--font-ui)", fontSize: 20, fontWeight: 600 }}>{m.v}</div>
@@ -134,7 +203,7 @@ export default function ExpedicoesPage() {
       </section>
 
       {/* ── INTRO ── */}
-      <section style={{ padding: "72px 56px", borderBottom: "1px solid var(--line)",
+      <section className="exp-intro" style={{ padding: "72px 56px", borderBottom: "1px solid var(--line)",
         display: "grid", gridTemplateColumns: "1fr 2fr", gap: 80, alignItems: "start" }}>
         <div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
@@ -155,8 +224,8 @@ export default function ExpedicoesPage() {
       </section>
 
       {/* ── TRIPS ── */}
-      <section style={{ padding: "96px 56px" }}>
-        <div style={{ marginBottom: 56, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+      <section className="exp-trips-section" style={{ padding: "96px 56px" }}>
+        <div className="exp-trips-header" style={{ marginBottom: 56, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
               letterSpacing: ".22em", textTransform: "uppercase",
@@ -181,7 +250,7 @@ export default function ExpedicoesPage() {
       </section>
 
       {/* ── COMO FUNCIONA ── */}
-      <section style={{ padding: "96px 56px", background: "var(--forest)", color: "var(--canvas)" }}>
+      <section className="exp-howto" style={{ padding: "96px 56px", background: "var(--forest)", color: "var(--canvas)" }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
           letterSpacing: ".22em", textTransform: "uppercase",
           color: "var(--rust-soft)", marginBottom: 14 }}>
@@ -193,13 +262,12 @@ export default function ExpedicoesPage() {
           <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
             fontWeight: 400, color: "var(--rust-soft)" }}>cume</span>.
         </h2>
-        {/* rgba de var(--canvas) #E8DFC9 */}
         <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
           fontSize: 18, color: "rgba(232,223,201,.7)", maxWidth: "54ch",
           marginBottom: 56, lineHeight: 1.5 }}>
           Sem mistério. O processo é simples, direto, e você nunca fica sem resposta.
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
+        <div className="exp-howto-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
           {[
             { n: "01", t: "Conversa", d: "Você escreve, eu respondo em 48h com um papo por vídeo pra entender sua experiência e expectativa." },
             { n: "02", t: "Reserva",  d: "Sinal de 30% garante a vaga. O restante em até 60 dias antes da saída, sem juros." },
@@ -215,7 +283,6 @@ export default function ExpedicoesPage() {
                 fontWeight: 600, letterSpacing: "-.01em", marginBottom: 8 }}>
                 {st.t}
               </div>
-              {/* rgba de var(--canvas) #E8DFC9 */}
               <div style={{ fontFamily: "var(--font-serif)", fontSize: 14,
                 lineHeight: 1.55, color: "rgba(232,223,201,.7)" }}>
                 {st.d}
@@ -226,7 +293,7 @@ export default function ExpedicoesPage() {
       </section>
 
       {/* ── INCLUSO / NÃO INCLUSO ── */}
-      <section style={{ padding: "96px 56px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
+      <section className="exp-included" style={{ padding: "96px 56px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
         <div style={{ background: "var(--canvas-deep)", padding: 40, border: "1px solid var(--line)" }}>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
             letterSpacing: ".22em", textTransform: "uppercase",
@@ -250,7 +317,7 @@ export default function ExpedicoesPage() {
             <div key={item} style={{ display: "flex", gap: 12, padding: "10px 0",
               borderBottom: "1px solid var(--line)", fontFamily: "var(--font-serif)",
               fontSize: 15, color: "var(--stone)" }}>
-              <span style={{ color: "var(--moss)", fontWeight: 600 }}>✓</span>
+              <span style={{ color: "var(--moss)", fontWeight: 600, flexShrink: 0 }}>✓</span>
               {item}
             </div>
           ))}
@@ -276,7 +343,7 @@ export default function ExpedicoesPage() {
             <div key={item} style={{ display: "flex", gap: 12, padding: "10px 0",
               borderBottom: "1px solid var(--line)", fontFamily: "var(--font-serif)",
               fontSize: 15, color: "var(--stone)" }}>
-              <span>—</span>
+              <span style={{ flexShrink: 0 }}>—</span>
               {item}
             </div>
           ))}
@@ -284,7 +351,7 @@ export default function ExpedicoesPage() {
       </section>
 
       {/* ── CTA FINAL ── */}
-      <section style={{ padding: "120px 56px", background: "var(--forest)",
+      <section className="exp-cta-final" style={{ padding: "120px 56px", background: "var(--forest)",
         color: "var(--canvas)", textAlign: "center" }}>
         <div style={{ fontFamily: "var(--font-hand)", fontSize: 38,
           color: "var(--rust-soft)", transform: "rotate(-2deg)",
@@ -298,13 +365,13 @@ export default function ExpedicoesPage() {
           <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
             fontWeight: 400, color: "var(--rust-soft)" }}>expedição</span>
         </h2>
-        {/* rgba de var(--canvas) #E8DFC9 */}
         <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
           fontSize: 20, color: "rgba(232,223,201,.7)", marginTop: 24,
           maxWidth: "50ch", marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>
           Grupo pequeno, vaga garantida. Reserve antes da próxima janela de luz fechar.
         </p>
         <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
+          className="exp-cta-final-btn"
           style={{ marginTop: 40, display: "inline-block", padding: "18px 40px",
             background: "var(--rust-soft)", color: "var(--forest)",
             fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700,
@@ -321,7 +388,7 @@ export default function ExpedicoesPage() {
 // ── Trip Card ────────────────────────────────────────────────────────────────
 function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
   const imgCol = (
-    <div style={{ position: "relative", overflow: "hidden", minHeight: 560 }}>
+    <div className="img-col" style={{ position: "relative", overflow: "hidden", minHeight: 560 }}>
       <img src={trip.hero} alt={trip.name}
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
       <div style={{ position: "absolute", top: 24, left: 24,
@@ -329,8 +396,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
         padding: "6px 14px", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em" }}>
         Expedição № {trip.id}
       </div>
-      {/* fontSize: 72 decorativo — não é heading semântico */}
-      <div style={{ position: "absolute", bottom: 24, right: 24,
+      <div className="exp-trip-num-bg" style={{ position: "absolute", bottom: 24, right: 24,
         color: "var(--canvas)", fontFamily: "var(--font-mono)",
         fontSize: 72, fontWeight: 500, letterSpacing: "-.04em",
         lineHeight: 1, mixBlendMode: "difference" }}>
@@ -340,12 +406,12 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
   );
 
   const bodyCol = (
-    <div style={{ padding: "44px 48px 40px", display: "flex",
+    <div className="body-col" style={{ padding: "44px 48px 40px", display: "flex",
       flexDirection: "column", justifyContent: "space-between",
       background: "var(--canvas)", borderTop: "1px solid var(--line)" }}>
       <div>
         <div style={{ display: "flex", justifyContent: "space-between",
-          alignItems: "flex-start", marginBottom: 24 }}>
+          alignItems: "flex-start", marginBottom: 24, gap: 12, flexWrap: "wrap" }}>
           <span style={{ fontFamily: "var(--font-mono)", fontSize: 10,
             letterSpacing: ".22em", textTransform: "uppercase", color: "var(--stone)" }}>
             {trip.country} · {trip.when}
@@ -355,12 +421,13 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
             color: trip.available ? "var(--canvas)" : "var(--stone)",
             border: trip.available ? "none" : "1px solid var(--stone)",
             fontFamily: "var(--font-mono)", fontSize: 9,
-            letterSpacing: ".22em", textTransform: "uppercase" }}>
+            letterSpacing: ".22em", textTransform: "uppercase",
+            whiteSpace: "nowrap" }}>
             {trip.status}
           </span>
         </div>
 
-        <h3 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 700,
+        <h3 className="exp-trip-name" style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 700,
           letterSpacing: "-.03em", lineHeight: 0.95, color: "var(--bark)", margin: 0 }}>
           {trip.name}
         </h3>
@@ -373,7 +440,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
           {trip.desc}
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
+        <div className="exp-trip-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
           gap: 20, marginTop: 28, paddingTop: 24, borderTop: "1px solid var(--line)" }}>
           {[
             { k: "Dias",      v: String(trip.days) },
@@ -382,7 +449,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
             { k: "Nível",     v: trip.level },
           ].map(s => (
             <div key={s.k}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 9,
+              <div className="stat-k" style={{ fontFamily: "var(--font-mono)", fontSize: 9,
                 letterSpacing: ".22em", textTransform: "uppercase",
                 color: "var(--stone)", marginBottom: 4 }}>{s.k}</div>
               <div style={{ fontFamily: "var(--font-ui)", fontSize: 17,
@@ -392,7 +459,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
         </div>
       </div>
 
-      <div style={{ marginTop: 28, paddingTop: 20, borderTop: "1px solid var(--line)",
+      <div className="exp-trip-footer" style={{ marginTop: 28, paddingTop: 20, borderTop: "1px solid var(--line)",
         display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
           <div style={{ fontFamily: "var(--font-mono)", fontSize: 9,
@@ -407,6 +474,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
         </div>
         {trip.available ? (
           <Link href={trip.href}
+            className="exp-trip-footer-cta"
             style={{ padding: "12px 20px", background: "var(--bark)",
               color: "var(--canvas)", fontFamily: "var(--font-ui)",
               fontSize: 11, fontWeight: 700, letterSpacing: ".22em",
@@ -415,6 +483,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
           </Link>
         ) : (
           <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
+            className="exp-trip-footer-cta"
             style={{ padding: "12px 20px", border: "1px solid var(--stone)",
               color: "var(--stone)", fontFamily: "var(--font-ui)",
               fontSize: 11, fontWeight: 600, letterSpacing: ".22em",
@@ -427,7 +496,7 @@ function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
   );
 
   return (
-    <div style={{ display: "grid",
+    <div className="exp-trip-card" style={{ display: "grid",
       gridTemplateColumns: flip ? "1fr 1.1fr" : "1.1fr 1fr",
       marginBottom: 64, borderTop: "1px solid var(--line)" }}>
       {flip ? <>{bodyCol}{imgCol}</> : <>{imgCol}{bodyCol}</>}
