@@ -1,12 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import SiteNav from '@/components/nav'
 import SiteFooter from '@/components/site-footer'
 import {
   PACOTES,
-  ROTEIRO,
   INCLUIDO,
   NAO_INCLUIDO,
   POLITICA_PAGAMENTO,
@@ -93,7 +92,6 @@ function GearChecklist() {
                       background: done ? 'var(--moss)' : 'transparent',
                       flexShrink: 0, marginTop: 1,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      /* transform apenas */
                       transition: 'background .15s, border-color .15s',
                     }}>
                       {done && <span style={{ color: 'var(--canvas)', fontSize: 8, lineHeight: 1 }}>✓</span>}
@@ -117,6 +115,113 @@ function GearChecklist() {
         <p style={{ fontFamily: 'var(--font-serif)', fontSize: 13, color: 'var(--stone)', margin: 0, lineHeight: 1.5 }}>
           Viaje leve! A agência fornece redários, alimentação e toda estrutura de camping. Lista detalhada completa enviada após confirmação da reserva.
         </p>
+      </div>
+    </div>
+  )
+}
+
+/* ─── Carrossel de Pacotes Mobile ──────────────────────────────── */
+function PacotesCarousel() {
+  const [active, setActive] = useState(1) // featured no meio
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const onScroll = () => {
+      const cardWidth = el.offsetWidth * 0.88 + 12 // card + gap
+      const idx = Math.round(el.scrollLeft / cardWidth)
+      setActive(idx)
+    }
+    el.addEventListener('scroll', onScroll, { passive: true })
+    return () => el.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const scrollTo = (i: number) => {
+    const el = scrollRef.current
+    if (!el) return
+    const cardWidth = el.offsetWidth * 0.88 + 12
+    el.scrollTo({ left: i * cardWidth, behavior: 'smooth' })
+  }
+
+  return (
+    <div>
+      <div
+        ref={scrollRef}
+        style={{
+          display: 'flex',
+          gap: 12,
+          overflowX: 'auto',
+          scrollSnapType: 'x mandatory',
+          WebkitOverflowScrolling: 'touch',
+          padding: '4px 6vw 16px',
+          margin: '0 -24px',
+          scrollbarWidth: 'none',
+        }}
+        className="pack-scroll"
+      >
+        <style>{`.pack-scroll::-webkit-scrollbar { display: none; }`}</style>
+        {PACOTES.map(p => (
+          <div
+            key={p.label}
+            style={{
+              flex: '0 0 88%',
+              scrollSnapAlign: 'center',
+              padding: '32px 24px',
+              position: 'relative',
+              background: p.featured ? 'var(--bark)' : 'var(--canvas)',
+              borderTop: p.featured ? '3px solid var(--rust)' : '3px solid transparent',
+              outline: p.featured ? '1px solid var(--rust)' : '1px solid var(--line)',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
+            {p.featured && (
+              <div style={{
+                position: 'absolute', top: -13, left: 24,
+                background: 'var(--rust)', color: 'var(--canvas)',
+                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em',
+                textTransform: 'uppercase', padding: '5px 14px',
+              }}>Mais popular</div>
+            )}
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: p.featured ? 'var(--rust-soft)' : 'var(--stone)', marginBottom: 8 }}>{p.label}</div>
+            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 20, fontWeight: 700, color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 10 }}>{p.datas}</div>
+            <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+              {[p.dias, p.km, p.oasis].map(v => (
+                <span key={v} style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', padding: '3px 9px', color: p.featured ? 'var(--canvas)' : 'var(--stone)', border: `1px solid ${p.featured ? 'var(--forest-soft)' : 'var(--line)'}` }}>{v}</span>
+              ))}
+            </div>
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 14, lineHeight: 1.55, color: p.featured ? 'var(--ashe)' : 'var(--stone)', marginBottom: 20 }}>{p.desc}</p>
+            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 30, fontWeight: 700, letterSpacing: '-.02em', color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 2 }}>{p.price}</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', color: p.featured ? 'var(--ashe-dim)' : 'var(--stone)', marginBottom: 20 }}>por pessoa · até 12x</div>
+            <a href={waMsg(p.label, p.datas, p.price)} target="_blank" rel="noopener noreferrer" style={{
+              display: 'block', textAlign: 'center', textDecoration: 'none',
+              padding: '14px 20px', fontFamily: 'var(--font-ui)', fontSize: 11,
+              fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase',
+              background: p.featured ? 'var(--rust)' : 'transparent',
+              color: p.featured ? 'var(--canvas)' : 'var(--bark)',
+              border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}`,
+              marginTop: 'auto',
+            }}>Reservar →</a>
+          </div>
+        ))}
+      </div>
+
+      {/* Dots */}
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 8 }}>
+        {PACOTES.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => scrollTo(i)}
+            aria-label={`Pacote ${i + 1}`}
+            style={{
+              width: i === active ? 24 : 8, height: 8,
+              borderRadius: 4, padding: 0, border: 'none',
+              background: i === active ? 'var(--rust)' : 'var(--line)',
+              cursor: 'pointer', transition: 'width .3s, background .3s',
+            }}
+          />
+        ))}
       </div>
     </div>
   )
@@ -162,37 +267,84 @@ const NOT_IS = {
 ══════════════════════════════════════════════════════════════════ */
 export default function LencoisPage() {
   return (
-    <main style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)' }}>
+    <main style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)', overflowX: 'hidden' }}>
       <style>{`
         .lenc-trip-img { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
         .lenc-img-wrap:hover .lenc-trip-img { transform: scale(1.04); }
         .lenc-pack:hover { outline: 1px solid var(--rust); }
         .lenc-cta-btn:hover { opacity: .88; }
-        @media(max-width:768px){
-          .lenc-two   { grid-template-columns: 1fr !important; gap: 48px !important; }
-          .lenc-four  { grid-template-columns: 1fr 1fr !important; }
-          .lenc-pad   { padding: 64px 24px !important; }
-          .lenc-hero-pad { padding: 120px 24px 56px !important; }
-          .lenc-day   { grid-template-columns: 48px 1fr !important; }
-          .lenc-day-img  { display: none !important; }
-          .lenc-packs { grid-template-columns: 1fr !important; }
+
+        /* ── DESKTOP padrão definido inline. Mobile abaixo ── */
+
+        /* ── Tablet (≤900px) ── */
+        @media(max-width: 900px) {
+          .lenc-two   { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .lenc-pad   { padding: 56px 24px !important; }
+          .lenc-hero-pad { padding: 100px 24px 40px !important; }
+          .lenc-day   { grid-template-columns: 1fr !important; }
           .lenc-pol   { grid-template-columns: 1fr !important; }
           .gear-grid  { grid-template-columns: 1fr !important; }
           .notis-grid { grid-template-columns: 1fr !important; }
           .outros-grid { grid-template-columns: 1fr !important; }
+          .lenc-incluso-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+          .lenc-nivel { flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
+          .lenc-nivel-divider { display: none !important; }
+        }
+
+        /* ── iPhone (≤480px) — foco principal ── */
+        @media(max-width: 480px) {
+          .lenc-pad   { padding: 48px 20px !important; }
+          .lenc-hero-pad { padding: 88px 20px 28px !important; }
+
+          /* Hero ajustado */
+          .lenc-hero        { min-height: 0 !important; height: 560px !important; }
+          .lenc-hero-handw  { font-size: 30px !important; }
+          .lenc-hero-eyebrow { font-size: 9px !important; gap: 6px !important; flex-wrap: wrap !important; }
+          .lenc-hero-pitch  { font-size: 16px !important; max-width: 100% !important; }
+          .lenc-hero-bottom { flex-direction: column !important; align-items: flex-start !important; gap: 24px !important; }
+          .lenc-hero-stats  { grid-template-columns: 1fr 1fr !important; gap: 14px !important; width: 100%; }
+
+          /* Roteiro dia: imagem em cima, número + texto embaixo */
+          .lenc-day          { padding: 28px 0 !important; gap: 16px !important; }
+          .lenc-day-img      { display: block !important; order: 1; width: 100% !important; aspect-ratio: 16/10; height: auto !important; margin-bottom: 8px; }
+          .lenc-day-num      { order: 2; font-size: 48px !important; margin-bottom: -4px; }
+          .lenc-day-content  { order: 3; }
+
+          /* Tipografia geral */
+          .lenc-section-title { font-size: 28px !important; }
+          .lenc-section-title-lg { font-size: 36px !important; }
+
+          /* Galeria final */
+          .lenc-four { grid-template-columns: 1fr 1fr !important; gap: 2px !important; }
+
+          /* CTA final */
+          .lenc-cta-final { padding: 80px 20px !important; }
+          .lenc-cta-final h2 { font-size: clamp(40px, 11vw, 56px) !important; }
+          .lenc-cta-final-btn { padding: 16px 28px !important; font-size: 11px !important; letter-spacing: .18em !important; }
+
+          /* Política cancelamento — linhas */
+          .lenc-cancel-row { flex-direction: column !important; gap: 4px !important; align-items: flex-start !important; }
+          .lenc-cancel-row > div:last-child { text-align: left !important; }
+
+          /* Mapa wrapper — reenquadra container, sem mexer no <LencoisMap /> */
+          .lenc-map-wrap { aspect-ratio: 4/5 !important; }
+        }
+
+        /* ── Mobile pequeno (≤360px) ── */
+        @media(max-width: 360px) {
+          .lenc-hero-stats { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
       <SiteNav dark={true} />
 
       {/* ── HERO ── */}
-      <section style={{ position: 'relative', minHeight: 820, overflow: 'hidden', background: 'var(--forest)' }}>
+      <section className="lenc-hero" style={{ position: 'relative', minHeight: 820, overflow: 'hidden', background: 'var(--forest)' }}>
         <div className="lenc-trip-img" style={{ position: 'absolute', inset: 0, backgroundImage: `url(${FOTOS_GALERIA[0]})`, backgroundSize: 'cover', backgroundPosition: 'center 30%' }} />
-        {/* gradiente: rgba de var(--forest) #1E2A18 */}
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(30,42,24,.45) 0%, rgba(30,42,24,.05) 40%, rgba(30,42,24,.9) 100%)' }} />
 
-        <div className="lenc-hero-pad" style={{ position: 'relative', zIndex: 2, minHeight: 820, padding: '140px 56px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: 'var(--canvas)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe)', fontWeight: 500 }}>
+        <div className="lenc-hero-pad" style={{ position: 'relative', zIndex: 2, minHeight: 'inherit', padding: '140px 56px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: 'var(--canvas)' }}>
+          <div className="lenc-hero-eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 10, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe)', fontWeight: 500 }}>
             <Link href="/expedicoes" style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
               <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" /></svg>
               Expedições
@@ -204,24 +356,24 @@ export default function LencoisPage() {
           </div>
 
           <div>
-            <div style={{ fontFamily: 'var(--font-hand)', fontSize: 44, color: 'var(--rust-soft)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 6 }}>
+            <div className="lenc-hero-handw" style={{ fontFamily: 'var(--font-hand)', fontSize: 44, color: 'var(--rust-soft)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 6 }}>
               deserto com lagoas, Via Láctea garantida—
             </div>
-            <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(64px, 10vw, 140px)', letterSpacing: '-.04em', lineHeight: 0.9, margin: 0, color: 'var(--canvas)' }}>
+            <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(48px, 10vw, 140px)', letterSpacing: '-.04em', lineHeight: 0.9, margin: 0, color: 'var(--canvas)' }}>
               Lençóis<br />
               <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>Maranhenses</span>
             </h1>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 40, flexWrap: 'wrap' }}>
-            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 20, fontStyle: 'italic', lineHeight: 1.5, maxWidth: '46ch', color: 'var(--canvas)', margin: 0 }}>
+          <div className="lenc-hero-bottom" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 40, flexWrap: 'wrap' }}>
+            <p className="lenc-hero-pitch" style={{ fontFamily: 'var(--font-serif)', fontSize: 20, fontStyle: 'italic', lineHeight: 1.5, maxWidth: '46ch', color: 'var(--canvas)', margin: 0 }}>
               Travessia a pé entre dunas brancas e lagoas de água doce — o parque que parece outro planeta, com fotografia profissional inclusa.
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: 32, flexShrink: 0 }}>
+            <div className="lenc-hero-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: 32, flexShrink: 0 }}>
               {[['35–64km', 'Distância'], ['3–5 dias', 'Duração'], ['2–4 oásis', 'Pernoites'], ['máx. 10', 'Por turma']].map(([v, l]) => (
                 <div key={l}>
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 6 }}>{l}</div>
-                  <div style={{ fontFamily: 'var(--font-ui)', fontSize: 20, fontWeight: 600, color: 'var(--canvas)' }}>{v}</div>
+                  <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18, fontWeight: 600, color: 'var(--canvas)' }}>{v}</div>
                 </div>
               ))}
             </div>
@@ -232,12 +384,12 @@ export default function LencoisPage() {
       {/* ── O QUE ESTA TRAVESSIA NÃO É ── */}
       <section className="lenc-pad" style={{ padding: '80px 56px', background: 'var(--forest)', borderBottom: '1px solid var(--line-dark)' }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust-soft)', marginBottom: 14 }}>№ 00 · Antes de tudo</div>
-        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(28px, 4vw, 44px)', letterSpacing: '-.02em', lineHeight: 1.05, margin: '0 0 40px', color: 'var(--canvas)' }}>
+        <h2 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(28px, 4vw, 44px)', letterSpacing: '-.02em', lineHeight: 1.05, margin: '0 0 40px', color: 'var(--canvas)' }}>
           O que esta travessia <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>não é</span> — e o que ela realmente é.
         </h2>
         <div className="notis-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
           {/* NÃO É */}
-          <div style={{ padding: '32px 36px', background: 'rgba(11,10,8,.4)', border: '1px solid var(--line-dark)' }}>
+          <div style={{ padding: '32px 28px', background: 'rgba(11,10,8,.4)', border: '1px solid var(--line-dark)' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 20 }}>❌ Não é</div>
             {NOT_IS.nao.map(item => (
               <div key={item} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line-dark)', fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--stone)', lineHeight: 1.4 }}>
@@ -247,7 +399,7 @@ export default function LencoisPage() {
             ))}
           </div>
           {/* É */}
-          <div style={{ padding: '32px 36px', background: 'rgba(74,88,56,.12)', border: '1px solid rgba(74,88,56,.3)' }}>
+          <div style={{ padding: '32px 28px', background: 'rgba(74,88,56,.12)', border: '1px solid rgba(74,88,56,.3)' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--moss)', marginBottom: 20 }}>✓ É</div>
             {NOT_IS.e.map(item => (
               <div key={item} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: '1px solid rgba(74,88,56,.15)', fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--canvas)', lineHeight: 1.4 }}>
@@ -258,7 +410,7 @@ export default function LencoisPage() {
           </div>
         </div>
         {/* Detalhes técnicos */}
-        <div style={{ marginTop: 2, padding: '20px 36px', background: 'rgba(166,84,43,.06)', border: '1px solid rgba(166,84,43,.2)', display: 'flex', gap: 48, flexWrap: 'wrap' }}>
+        <div style={{ marginTop: 2, padding: '20px 28px', background: 'rgba(166,84,43,.06)', border: '1px solid rgba(166,84,43,.2)', display: 'flex', gap: 32, flexWrap: 'wrap' }}>
           {[['52km totais', 'Distância'], ['4 dias completos', 'Duração'], ['Grupos pequenos e intimistas', 'Formato']].map(([v, l]) => (
             <div key={l}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--rust-soft)', marginBottom: 4 }}>{l}</div>
@@ -269,14 +421,14 @@ export default function LencoisPage() {
       </section>
 
       {/* ── INTRO ── */}
-      <section className="lenc-pad" style={{ padding: '72px 56px', borderBottom: '1px solid var(--line)', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 80, alignItems: 'start' }}>
+      <section className="lenc-pad lenc-two" style={{ padding: '72px 56px', borderBottom: '1px solid var(--line)', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 80, alignItems: 'start' }}>
         <div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 01 · O lugar</div>
-          <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 32, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.1, margin: 0, color: 'var(--bark)' }}>
+          <h2 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontSize: 32, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.1, margin: 0, color: 'var(--bark)' }}>
             Deserto branco<br />com lagoas<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>de safira.</span>
           </h2>
         </div>
-        <p style={{ fontFamily: 'var(--font-serif)', fontSize: 20, lineHeight: 1.55, color: 'var(--stone)', margin: 0 }}>
+        <p style={{ fontFamily: 'var(--font-serif)', fontSize: 19, lineHeight: 1.55, color: 'var(--stone)', margin: 0 }}>
           Os Lençóis Maranhenses são um dos lugares mais irreais do planeta — um deserto de dunas brancas que, entre janeiro e setembro, se preenche com lagoas de água doce cristalina. A travessia a pé conecta Atins a Santo Amaro pelos caminhos internos do parque, passando por comunidades que vivem isoladas há gerações. Não existe trilha marcada. Você segue guias locais, o vento e a cor da água.
         </p>
       </section>
@@ -286,12 +438,15 @@ export default function LencoisPage() {
         <div className="lenc-pad" style={{ padding: '80px 56px' }}>
           <div style={{ marginBottom: 32 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust-soft)', marginBottom: 14 }}>№ 02 · Mapa</div>
-            <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 'clamp(28px, 3.5vw, 42px)', letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--canvas)' }}>
+            <h2 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 'clamp(28px, 3.5vw, 42px)', letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--canvas)' }}>
               52km. Atins → Santo Amaro.{' '}
               <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>4 dias, 4 cores.</span>
             </h2>
           </div>
-          <LencoisMap />
+          {/* Wrapper reenquadra o mapa sem alterá-lo */}
+          <div className="lenc-map-wrap" style={{ width: '100%' }}>
+            <LencoisMap />
+          </div>
         </div>
       </section>
 
@@ -300,12 +455,11 @@ export default function LencoisPage() {
         <div className="lenc-pad" style={{ padding: '96px 56px' }}>
           <div style={{ marginBottom: 56 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 03 · Roteiro</div>
-            <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
+            <h2 className="lenc-section-title-lg" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
               4 dias.<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>Cada um inesquecível.</span>
             </h2>
           </div>
 
-          {/* Roteiro estático com dados do PDF */}
           {[
             { num: '01', cor: DIA_COLORS[1], rota: 'Barreirinhas → Baixa Grande', tempo: '8h lancha + 9km caminhada · 3h', desc: 'Travessia de lancha pelo Rio Preguiças até Atins, depois trekking pelas primeiras dunas até o oásis de Baixa Grande. Primeiro pernoite em redário sob o céu estrelado — longe de qualquer luz artificial.', highlight: 'Primeiro oásis · Via Láctea garantida', img: FOTOS_GALERIA[1] },
             { num: '02', cor: DIA_COLORS[2], rota: 'Baixa Grande → Queimada dos Britos', tempo: 'Saída 5h · 10km trekking · 5h', desc: 'O dia começa antes do sol. Saída às 5h para capturar o nascer do sol sobre as dunas — a cena mais fotografada da travessia. Travessia do Rio Negro e chegada às lagoas cristalinas do segundo oásis.', highlight: 'Nascer do sol nas dunas · Rio Negro', img: FOTOS_GALERIA[2] },
@@ -313,14 +467,13 @@ export default function LencoisPage() {
             { num: '04', cor: DIA_COLORS[4], rota: 'Betânia → Santo Amaro', tempo: 'Início 7h · 15km finais · 4h', desc: 'O encerramento triunfal. 15km finais em ritmo mais tranquilo — a travessia já está no corpo. Chegada às 11h em Santo Amaro, com transfer de volta para Barreirinhas. Álbum fotográfico entregue em até 15 dias.', highlight: 'Chegada triunfal 11h · Cenários épicos', img: FOTOS_GALERIA[4] },
           ].map((dia) => (
             <div key={dia.num} className="lenc-day" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 300px', gap: 40, padding: '40px 0', borderTop: '1px solid var(--line)', alignItems: 'center' }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 72, fontWeight: 500, letterSpacing: '-.04em', lineHeight: 1, color: dia.cor, opacity: .35, userSelect: 'none' }}>
+              <div className="lenc-day-num" style={{ fontFamily: 'var(--font-mono)', fontSize: 72, fontWeight: 500, letterSpacing: '-.04em', lineHeight: 1, color: dia.cor, opacity: .35, userSelect: 'none' }}>
                 {dia.num}
               </div>
-              <div>
+              <div className="lenc-day-content">
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: dia.cor, marginBottom: 4 }}>{dia.rota}</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--stone)', marginBottom: 16 }}>{dia.tempo}</div>
                 <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, lineHeight: 1.65, color: 'var(--stone)', margin: '0 0 16px', maxWidth: '52ch' }}>{dia.desc}</p>
-                {/* rgba de var(--rust) #A6542B */}
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(166,84,43,.08)', border: '1px solid rgba(166,84,43,.2)', padding: '5px 14px', fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--rust)' }}>
                   {dia.highlight}
                 </div>
@@ -340,13 +493,13 @@ export default function LencoisPage() {
         </div>
         <div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 04 · Diferencial</div>
-          <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.05, margin: '0 0 10px', color: 'var(--bark)' }}>
+          <h2 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.05, margin: '0 0 10px', color: 'var(--bark)' }}>
             Guarda o celular.<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>A gente cuida das fotos.</span>
           </h2>
-          <p style={{ fontFamily: 'var(--font-serif)', fontSize: 18, lineHeight: 1.6, color: 'var(--stone)', marginBottom: 32 }}>
+          <p style={{ fontFamily: 'var(--font-serif)', fontSize: 17, lineHeight: 1.6, color: 'var(--stone)', marginBottom: 28 }}>
             Henrique (@henriq.eu) vai junto na travessia como fotógrafo e guia — você vive a experiência, a gente cuida das imagens. Todas as fotos desta página foram feitas nas travessias anteriores.
           </p>
-          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[
               'Fotógrafo profissional durante TODA a travessia',
               'Cobertura completa: paisagens épicas, momentos espontâneos, comunidades',
@@ -372,12 +525,12 @@ export default function LencoisPage() {
       </section>
 
       {/* ── NÍVEL FÍSICO ── */}
-      <section className="lenc-pad" style={{ padding: '64px 56px', background: 'var(--canvas-deep)', borderBottom: '1px solid var(--line)', display: 'flex', gap: 48, alignItems: 'center', flexWrap: 'wrap' }}>
+      <section className="lenc-pad lenc-nivel" style={{ padding: '64px 56px', background: 'var(--canvas-deep)', borderBottom: '1px solid var(--line)', display: 'flex', gap: 48, alignItems: 'center', flexWrap: 'wrap' }}>
         <div style={{ flex: '0 0 auto' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 6 }}>Nível da travessia</div>
           <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 22, color: 'var(--bark)' }}>Intermediário</div>
         </div>
-        <div style={{ width: 1, height: 40, background: 'var(--line)', flexShrink: 0 }} />
+        <div className="lenc-nivel-divider" style={{ width: 1, height: 40, background: 'var(--line)', flexShrink: 0 }} />
         <div style={{ flex: 1, minWidth: 200 }}>
           <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, color: 'var(--stone)', margin: 0, lineHeight: 1.6 }}>
             Caminhadas diárias de 6–8h em areia. Necessário condicionamento físico básico.{' '}
@@ -392,10 +545,10 @@ export default function LencoisPage() {
       </section>
 
       {/* ── INCLUÍDO / NÃO INCLUÍDO ── */}
-      <section className="lenc-pad" style={{ padding: '96px 56px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60 }}>
-        <div style={{ background: 'var(--canvas-deep)', padding: 40, border: '1px solid var(--line)' }}>
+      <section className="lenc-pad lenc-incluso-grid" style={{ padding: '96px 56px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60 }}>
+        <div style={{ background: 'var(--canvas-deep)', padding: 36, border: '1px solid var(--line)' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 18 }}>№ 05.a · Na mochila</div>
-          <h3 style={{ fontFamily: 'var(--font-ui)', fontSize: 28, fontWeight: 600, letterSpacing: '-.01em', margin: '0 0 20px', color: 'var(--bark)' }}>
+          <h3 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontSize: 28, fontWeight: 600, letterSpacing: '-.01em', margin: '0 0 20px', color: 'var(--bark)' }}>
             O que está <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>incluso.</span>
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -410,9 +563,9 @@ export default function LencoisPage() {
             ))}
           </div>
         </div>
-        <div style={{ padding: 40, border: '1px dashed var(--stone)' }}>
+        <div style={{ padding: 36, border: '1px dashed var(--stone)' }}>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 18 }}>№ 05.b · Por sua conta</div>
-          <h3 style={{ fontFamily: 'var(--font-ui)', fontSize: 28, fontWeight: 600, letterSpacing: '-.01em', margin: '0 0 20px', color: 'var(--bark)' }}>
+          <h3 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontSize: 28, fontWeight: 600, letterSpacing: '-.01em', margin: '0 0 20px', color: 'var(--bark)' }}>
             O que <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--stone)' }}>não</span> está.
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -431,7 +584,7 @@ export default function LencoisPage() {
         <div className="lenc-pad" style={{ padding: '80px 56px' }}>
           <div style={{ marginBottom: 36 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 06 · Preparo</div>
-            <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
+            <h2 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
               O que levar na{' '}
               <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>mochila</span>.
             </h2>
@@ -445,12 +598,13 @@ export default function LencoisPage() {
         <div className="lenc-pad" style={{ padding: '96px 56px' }}>
           <div style={{ marginBottom: 48 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 07 · Datas · Agosto 2026</div>
-            <h2 style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
+            <h2 className="lenc-section-title-lg" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
               Escolha seu <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>pacote.</span>
             </h2>
           </div>
 
-          <div className="lenc-packs" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, marginBottom: 32 }}>
+          {/* DESKTOP: grid 3 cols / MOBILE: carrossel */}
+          <div className="lenc-packs-desktop" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, marginBottom: 32 }}>
             {PACOTES.map(p => (
               <div key={p.label} className="lenc-pack" style={{ padding: '40px 32px', position: 'relative', background: p.featured ? 'var(--bark)' : 'var(--canvas)', borderTop: p.featured ? '3px solid var(--rust)' : '3px solid transparent', outline: p.featured ? '1px solid var(--rust)' : '1px solid var(--line)' }}>
                 {p.featured && <div style={{ position: 'absolute', top: -13, left: 32, background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', padding: '5px 14px' }}>Mais popular</div>}
@@ -471,6 +625,11 @@ export default function LencoisPage() {
             ))}
           </div>
 
+          {/* CARROSSEL MOBILE — só visível em ≤900px */}
+          <div className="lenc-packs-mobile" style={{ display: 'none', marginBottom: 32 }}>
+            <PacotesCarousel />
+          </div>
+
           {/* Política pagamento */}
           <div className="lenc-pol" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
             {POLITICA_PAGAMENTO.map(item => (
@@ -488,7 +647,7 @@ export default function LencoisPage() {
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 20 }}>Outros pacotes disponíveis</div>
         <div className="outros-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
           {OUTROS_PACOTES.map(p => (
-            <div key={p.id} style={{ padding: '32px 36px', border: '1px solid var(--line)', display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div key={p.id} style={{ padding: '32px 28px', border: '1px solid var(--line)', display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 6 }}>{p.dias} · {p.km}</div>
                 <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 20, color: 'var(--bark)', marginBottom: 8 }}>{p.label}</div>
@@ -508,7 +667,7 @@ export default function LencoisPage() {
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 24 }}>Política de cancelamento</div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0, maxWidth: 600 }}>
             {CANCELAMENTO.map((c, i) => (
-              <div key={c.prazo} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '16px 0', borderTop: i === 0 ? '1px solid var(--line)' : '1px solid var(--line)', borderBottom: i === CANCELAMENTO.length - 1 ? '1px solid var(--line)' : 'none', gap: 24 }}>
+              <div key={c.prazo} className="lenc-cancel-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '16px 0', borderTop: '1px solid var(--line)', borderBottom: i === CANCELAMENTO.length - 1 ? '1px solid var(--line)' : 'none', gap: 24 }}>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--stone)' }}>{c.prazo}</div>
                 <div style={{ fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--bark)', textAlign: 'right' }}>{c.condicao}</div>
               </div>
@@ -521,7 +680,7 @@ export default function LencoisPage() {
       </section>
 
       {/* ── CTA FINAL ── */}
-      <section style={{ padding: '120px 56px', background: 'var(--forest)', color: 'var(--canvas)', textAlign: 'center' }}>
+      <section className="lenc-cta-final" style={{ padding: '120px 56px', background: 'var(--forest)', color: 'var(--canvas)', textAlign: 'center' }}>
         <div style={{ fontFamily: 'var(--font-hand)', fontSize: 42, color: 'var(--rust-soft)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 8 }}>bora?</div>
         <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(48px, 8vw, 88px)', letterSpacing: '-.04em', lineHeight: 0.92, margin: 0 }}>
           Sua próxima<br />
@@ -530,7 +689,7 @@ export default function LencoisPage() {
         <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 20, color: 'var(--ashe)', marginTop: 24, maxWidth: '50ch', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
           Vagas limitadas a 10 pessoas por turma. Agosto 2026 — reserve com antecedência.
         </p>
-        <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn" style={{ marginTop: 40, display: 'inline-block', padding: '18px 40px', background: 'var(--rust-soft)', color: 'var(--forest)', fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 700, letterSpacing: '.24em', textTransform: 'uppercase', textDecoration: 'none' }}>
+        <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn lenc-cta-final-btn" style={{ marginTop: 40, display: 'inline-block', padding: '18px 40px', background: 'var(--rust-soft)', color: 'var(--forest)', fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 700, letterSpacing: '.24em', textTransform: 'uppercase', textDecoration: 'none' }}>
           Falar no WhatsApp →
         </a>
         <div style={{ marginTop: 28, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--ashe-dim)' }}>
@@ -548,6 +707,14 @@ export default function LencoisPage() {
       </div>
 
       <SiteFooter dark={false} />
+
+      {/* Switch desktop/mobile pacotes */}
+      <style>{`
+        @media(max-width: 900px) {
+          .lenc-packs-desktop { display: none !important; }
+          .lenc-packs-mobile  { display: block !important; }
+        }
+      `}</style>
     </main>
   )
 }
