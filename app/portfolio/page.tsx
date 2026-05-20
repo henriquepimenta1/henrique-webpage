@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import SiteNav from '@/components/nav'
 import SiteFooter from '@/components/site-footer'
 
@@ -100,10 +100,97 @@ function buildRows(photos: Photo[], containerW: number, targetH: number, gap: nu
   return rows
 }
 
+// ── Masonry 2 cols (balanceia por altura virtual) ───────────────────────────
+function buildMasonry(photos: Photo[]): [Photo[], Photo[]] {
+  const colA: Photo[] = []
+  const colB: Photo[] = []
+  let hA = 0, hB = 0
+  for (const p of photos) {
+    // altura virtual = 1/ar (porque width fixa, height = width / ar... wait, ar = w/h)
+    // ar = width/height, então height proporcional = 1/ar (com width=1)
+    const h = 1 / p.ar
+    if (hA <= hB) { colA.push(p); hA += h }
+    else          { colB.push(p); hB += h }
+  }
+  return [colA, colB]
+}
+
 const FILTERS: Array<'Tudo' | Category> = ['Tudo', 'Deserto', 'Montanha', 'Floresta', 'Noturno', 'Água']
 const CONTAINER_W = 1328
 const TARGET_H    = 420
 const GAP         = 6
+
+// ── Parallax cell (mobile) — img maior que cell, translate por scroll ───────
+function ParallaxCell({
+  photo,
+  expanded,
+  onClick,
+  index,
+}: {
+  photo: Photo
+  expanded: boolean
+  onClick: () => void
+  index: number
+}) {
+  const cellRef = useRef<HTMLDivElement>(null)
+  const imgRef  = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const cell = cellRef.current
+      const img  = imgRef.current
+      if (!cell || !img) return
+      const rect = cell.getBoundingClientRect()
+      const vh = window.innerHeight
+      // -1 (cell saindo por cima) → +1 (cell entrando por baixo)
+      const progress = (rect.top + rect.height / 2 - vh / 2) / (vh / 2)
+      const clamped  = Math.max(-1.2, Math.min(1.2, progress))
+      // img se desloca verticalmente até 12px em cada direção
+      const shift = clamped * -12
+      img.style.transform = `translateY(${shift}px)`
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (raf) cancelAnimationFrame(raf)
+    }
+  }, [])
+
+  return (
+    <figure
+      ref={cellRef}
+      className={`port-m-cell${expanded ? ' port-m-cell-expanded' : ''}`}
+      onClick={onClick}
+      tabIndex={0}
+      role="button"
+      aria-pressed={expanded}
+      aria-label={`${photo.title} — ${photo.place}, ${photo.year}`}
+      style={{ aspectRatio: photo.ar }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={imgRef}
+        src={photo.src}
+        alt={photo.title}
+        loading={index < 4 ? 'eager' : 'lazy'}
+        decoding="async"
+        className="port-m-img"
+      />
+      {expanded && (
+        <div className="port-m-caption">
+          <div className="port-m-caption-title">{photo.title}</div>
+          <div className="port-m-caption-meta">{photo.place} · {photo.year}</div>
+        </div>
+      )}
+    </figure>
+  )
+}
 
 export default function PortfolioPage() {
   const photos = useMemo(() => shuffle(PHOTOS), [])
@@ -116,6 +203,7 @@ export default function PortfolioPage() {
     : photos.filter(p => p.cat.includes(activeFilter))
 
   const rows    = buildRows(filtered, CONTAINER_W, TARGET_H, GAP)
+  const [colA, colB] = buildMasonry(filtered)
   const places  = new Set(PHOTOS.map(p => p.place.split(',')[0].trim())).size
 
   function toggleExpand(src: string) {
@@ -199,27 +287,75 @@ export default function PortfolioPage() {
         @media (prefers-reduced-motion: reduce) {
           .port-row, .port-cell, .port-img { animation: none; transition: none; }
           .port-caption { transition: opacity 0.15s ease; transform: none; filter: none; }
+          .port-m-img { transform: none !important; }
         }
 
         .port-cell:focus-visible  { outline: 2px solid var(--rust); outline-offset: 2px; z-index: 1; }
         .port-filter:focus-visible { outline: 2px solid var(--rust); outline-offset: 4px; }
 
-        /* ── MOBILE feed 3-col ── */
+        /* ── MASONRY mobile (2 cols, parallax, sem corte de AR) ── */
+        .port-masonry { display: none; }
+        .port-m-cell {
+          position: relative;
+          overflow: hidden;
+          margin: 0 0 6px;
+          cursor: pointer;
+          background: var(--canvas-deep);
+          transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
+        }
+        .port-m-cell-expanded {
+          transform: scale(1.02);
+          box-shadow: 0 16px 40px rgba(18,26,14,0.35);
+          z-index: 5;
+        }
+        .port-m-img {
+          display: block;
+          width: 100%;
+          /* maior que o container → permite translate sem mostrar fundo */
+          height: calc(100% + 24px);
+          margin-top: -12px;
+          object-fit: cover;
+          will-change: transform;
+          transition: transform .15s linear;
+        }
+        .port-m-caption {
+          position: absolute;
+          left: 0; right: 0; bottom: 0;
+          padding: 12px 12px 10px;
+          background: linear-gradient(180deg, rgba(18,26,14,0) 0%, rgba(18,26,14,.85) 100%);
+          animation: port-m-cap-in 0.3s cubic-bezier(.2,.8,.2,1);
+        }
+        @keyframes port-m-cap-in {
+          from { opacity: 0; transform: translateY(8px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .port-m-caption-title {
+          font-family: var(--font-serif);
+          font-style: italic;
+          font-size: 14px;
+          color: var(--canvas);
+          line-height: 1.2;
+          margin-bottom: 3px;
+        }
+        .port-m-caption-meta {
+          font-family: var(--font-mono);
+          font-size: 8px;
+          letter-spacing: .14em;
+          color: rgba(232,223,201,.65);
+          text-transform: uppercase;
+        }
+
+        /* ── MOBILE: troca mosaic por masonry ── */
         @media (max-width: 768px) {
           .port-header       { padding: 80px 20px 24px !important; grid-template-columns: 1fr !important; }
           .port-header-meta  { display: none !important; }
-          .port-filters-wrap { padding: 12px 20px !important; gap: 16px !important; }
-          .port-mosaic-wrap  { padding: 0 !important; }
-          .port-mosaic       { display: grid !important; grid-template-columns: repeat(3,1fr) !important; gap: 2px !important; }
-          .port-row          { display: contents !important; animation: none !important; }
-          .port-cell         { width: auto !important; height: 110px !important; transform: none !important; transition: none !important; }
-          .port-cell-expanded { transform: none !important; box-shadow: none !important; }
-          .port-overlay      { display: none !important; }
-          .port-img          { transition: none !important; }
+          .port-filters-wrap { padding: 12px 20px !important; gap: 16px !important; overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap !important; scrollbar-width: none; }
+          .port-filters-wrap::-webkit-scrollbar { display: none; }
+          .port-filter       { flex-shrink: 0; }
+
+          .port-mosaic-wrap  { display: none !important; }
+          .port-masonry      { display: grid !important; grid-template-columns: 1fr 1fr; gap: 6px; padding: 6px 12px 0; }
           .port-footer-bar   { padding: 20px 20px 56px !important; }
-        }
-        @media (max-width: 420px) {
-          .port-cell { height: 90px !important; }
         }
       `}</style>
 
@@ -277,12 +413,12 @@ export default function PortfolioPage() {
             {label}
           </button>
         ))}
-        <span style={{ marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--stone)', letterSpacing: '.14em' }}>
+        <span style={{ marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--stone)', letterSpacing: '.14em', flexShrink: 0 }}>
           {filtered.length} frames
         </span>
       </nav>
 
-      {/* MOSAIC */}
+      {/* ── DESKTOP MOSAIC (justified rows) ── */}
       <div className="port-mosaic-wrap" style={{ padding: '6px 56px 0' }}>
         <div className="port-mosaic">
           {rows.map((row, ri) => {
@@ -336,6 +472,32 @@ export default function PortfolioPage() {
               </div>
             )
           })}
+        </div>
+      </div>
+
+      {/* ── MOBILE MASONRY 2 cols ── */}
+      <div className="port-masonry">
+        <div>
+          {colA.map((p, i) => (
+            <ParallaxCell
+              key={`a-${p.src}`}
+              photo={p}
+              expanded={expandedSrc === p.src}
+              onClick={() => toggleExpand(p.src)}
+              index={i * 2}
+            />
+          ))}
+        </div>
+        <div>
+          {colB.map((p, i) => (
+            <ParallaxCell
+              key={`b-${p.src}`}
+              photo={p}
+              expanded={expandedSrc === p.src}
+              onClick={() => toggleExpand(p.src)}
+              index={i * 2 + 1}
+            />
+          ))}
         </div>
       </div>
 
