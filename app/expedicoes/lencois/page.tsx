@@ -22,7 +22,7 @@ const DIA_COLORS = ['', 'var(--rust)', '#6FA3D8', '#4A5838', 'var(--rust-soft)']
 const GEAR_GROUPS = [
   {
     id: 'base', label: 'Equipamento base',
-    items: ['Mochila de trekking 40–50L confortável', 'Roupas leves de secagem rápida', 'Tênis para caminhada em areia', 'Sandália de trekking (tipo Papete)', 'Mochila pequena para day use (opcional)'],
+    items: ['Mochila de trekking 40–50L confortável', 'Roupas leves de secagem rápida', 'Meias de dupla camada ou lã merino (não algodão)', 'Sandália de trekking (tipo Papete)', 'Mochila pequena para day use (opcional)'],
   },
   {
     id: 'solar', label: 'Proteção solar',
@@ -227,27 +227,6 @@ function PacotesCarousel() {
   )
 }
 
-/* ─── Pacotes alternativos ─────────────────────────────────────── */
-const OUTROS_PACOTES = [
-  {
-    id: 'intensiva',
-    label: 'Travessia Intensiva',
-    dias: '3 dias',
-    km: '35km',
-    desc: 'Aventura concentrada para quem tem menos tempo. Fotografia profissional também inclusa.',
-    price: null,
-    cta: 'Consultar valores',
-  },
-  {
-    id: 'profunda',
-    label: 'Travessia Profunda',
-    dias: '5 dias',
-    km: '64km',
-    desc: 'Imersão total com ritmo contemplativo. Fotografia profissional também inclusa. Vagas limitadas — apenas 1 grupo.',
-    price: null,
-    cta: 'Consultar valores',
-  },
-]
 
 /* ─── Política de cancelamento ─────────────────────────────────── */
 const CANCELAMENTO = [
@@ -465,12 +444,15 @@ export default function LencoisPage() {
             { num: '02', cor: DIA_COLORS[2], rota: 'Baixa Grande → Queimada dos Britos', tempo: 'Saída 5h · 10km trekking · 5h', desc: 'O dia começa antes do sol. Saída às 5h para capturar o nascer do sol sobre as dunas — a cena mais fotografada da travessia. Travessia do Rio Negro e chegada às lagoas cristalinas do segundo oásis.', highlight: 'Nascer do sol nas dunas · Rio Negro', img: FOTOS_GALERIA[2] },
             { num: '03', cor: DIA_COLORS[3], rota: 'Queimada dos Britos → Betânia', tempo: 'Saída 3h · 18km · 6h de aventura', desc: 'O dia mais longo e mais espetacular. Saída ainda na escuridão, às 3h da madrugada, para cruzar 18km de paisagem lunar. As lagoas desta etapa são as mais impressionantes do circuito — poucas pessoas chegam aqui.', highlight: 'Lagoas mais espetaculares da região', img: FOTOS_GALERIA[3] },
             { num: '04', cor: DIA_COLORS[4], rota: 'Betânia → Santo Amaro', tempo: 'Início 7h · 15km finais · 4h', desc: 'O encerramento triunfal. 15km finais em ritmo mais tranquilo — a travessia já está no corpo. Chegada às 11h em Santo Amaro, com transfer de volta para Barreirinhas. Álbum fotográfico entregue em até 15 dias.', highlight: 'Chegada triunfal 11h · Cenários épicos', img: FOTOS_GALERIA[4] },
-          ].map((dia) => (
-            <div key={dia.num} className="lenc-day" style={{ display: 'grid', gridTemplateColumns: '80px 1fr 300px', gap: 40, padding: '40px 0', borderTop: '1px solid var(--line)', alignItems: 'center' }}>
-              <div className="lenc-day-num" style={{ fontFamily: 'var(--font-mono)', fontSize: 72, fontWeight: 500, letterSpacing: '-.04em', lineHeight: 1, color: dia.cor, opacity: .35, userSelect: 'none' }}>
-                {dia.num}
+          ].map((dia, di) => (
+            <div key={dia.num} className="lenc-day" style={{ display: 'grid', gridTemplateColumns: '88px 1fr 300px', gap: 40, padding: '0 0 44px', alignItems: 'flex-start', position: 'relative' }}>
+              <div className="lenc-day-rail" style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', alignSelf: 'stretch', paddingTop: 4 }}>
+                {di < 3 && <div className="lenc-tl-line" style={{ position: 'absolute', top: 106, bottom: -44, left: '50%', transform: 'translateX(-50%)', width: 2, background: 'var(--line)', zIndex: 0 }} />}
+                <div style={{ width: 18, height: 18, borderRadius: '50%', background: dia.cor, border: '4px solid var(--canvas-deep)', position: 'relative', zIndex: 1 }} />
+                <div className="lenc-day-num" style={{ fontFamily: 'var(--font-mono)', fontSize: 50, fontWeight: 500, letterSpacing: '-.04em', lineHeight: 1, color: dia.cor, marginTop: 12, position: 'relative', zIndex: 1 }}>{dia.num}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginTop: 5 }}>Dia</div>
               </div>
-              <div className="lenc-day-content">
+              <div className="lenc-day-content" style={{ paddingTop: 10 }}>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: dia.cor, marginBottom: 4 }}>{dia.rota}</div>
                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--stone)', marginBottom: 16 }}>{dia.tempo}</div>
                 <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, lineHeight: 1.65, color: 'var(--stone)', margin: '0 0 16px', maxWidth: '52ch' }}>{dia.desc}</p>
@@ -538,7 +520,7 @@ export default function LencoisPage() {
           </p>
         </div>
         <div style={{ flex: '0 0 auto', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          {['Areia grossa', '6–8h/dia', 'Sem altitude'].map(tag => (
+          {['Areia Fina', '6–8h/dia', 'Sem altitude'].map(tag => (
             <span key={tag} style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.14em', textTransform: 'uppercase', padding: '5px 12px', border: '1px solid var(--line)', color: 'var(--stone)' }}>{tag}</span>
           ))}
         </div>
@@ -642,24 +624,6 @@ export default function LencoisPage() {
         </div>
       </section>
 
-      {/* ── OUTROS PACOTES ── */}
-      <section className="lenc-pad" style={{ padding: '64px 56px', borderBottom: '1px solid var(--line)' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 20 }}>Outros pacotes disponíveis</div>
-        <div className="outros-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-          {OUTROS_PACOTES.map(p => (
-            <div key={p.id} style={{ padding: '32px 28px', border: '1px solid var(--line)', display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 6 }}>{p.dias} · {p.km}</div>
-                <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 20, color: 'var(--bark)', marginBottom: 8 }}>{p.label}</div>
-                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--stone)', lineHeight: 1.55, margin: 0 }}>{p.desc}</p>
-              </div>
-              <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" style={{ alignSelf: 'flex-start', display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--rust)', textDecoration: 'none', border: '1px solid rgba(166,84,43,.3)', padding: '7px 16px' }}>
-                {p.cta} →
-              </a>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* ── POLÍTICA DE CANCELAMENTO ── */}
       <section style={{ background: 'var(--canvas-deep)', borderBottom: '1px solid var(--line)' }}>
@@ -706,13 +670,34 @@ export default function LencoisPage() {
         ))}
       </div>
 
+      <div className="lenc-sticky-spacer" />
+      <div className="lenc-sticky">
+        <div style={{ lineHeight: 1.05 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 2 }}>a partir de</div>
+          <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 19, letterSpacing: '-.02em', color: 'var(--canvas)' }}>R$ 3.599</div>
+        </div>
+        <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: 'center', padding: '14px', background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', textDecoration: 'none' }}>Reservar →</a>
+      </div>
+
       <SiteFooter dark={false} />
 
-      {/* Switch desktop/mobile pacotes */}
+      {/* Switch desktop/mobile pacotes + timeline + barra fixa mobile */}
       <style>{`
         @media(max-width: 900px) {
           .lenc-packs-desktop { display: none !important; }
           .lenc-packs-mobile  { display: block !important; }
+          .lenc-tl-line { display: none !important; }
+          .lenc-day-rail { flex-direction: row !important; align-items: center !important; gap: 12px !important; align-self: auto !important; padding-top: 0 !important; }
+          .lenc-day-rail .lenc-day-num { font-size: 34px !important; margin-top: 0 !important; }
+        }
+        .lenc-sticky{ display:none; }
+        .lenc-sticky-spacer{ display:none; }
+        @media(max-width: 640px){
+          .lenc-sticky{ display:flex; position:fixed; bottom:0; left:0; right:0; z-index:50; align-items:center; gap:12px; background:rgba(30,42,24,.97); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-top:1px solid rgba(232,223,201,.16); padding:11px 16px calc(11px + env(safe-area-inset-bottom)); }
+          .lenc-sticky-spacer{ display:block; height:74px; }
+        }
+        @media(max-width: 480px) {
+          .lenc-day-rail { order: 2; }
         }
       `}</style>
     </main>

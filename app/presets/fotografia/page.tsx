@@ -7,7 +7,6 @@ import {
   useRef,
   useEffect,
   useMemo,
-  useCallback,
   Fragment,
   type CSSProperties,
 } from "react";
@@ -194,121 +193,6 @@ function StickyCTA() {
       <a href={CTA_URL} {...EXT} onClick={() => vibe(15)} style={{ padding: "13px 18px", background: "var(--rust-soft)", color: "var(--forest)", fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", textDecoration: "none", flexShrink: 0, display: "inline-flex", alignItems: "center", gap: 6 }}>
         Comprar <span style={{ fontSize: "1.15em" }}>→</span>
       </a>
-    </div>
-  );
-}
-
-// ────────────────────────────────────────────────────────────────
-// BeforeAfter — slider + tap to zoom + 3-way mode
-// ────────────────────────────────────────────────────────────────
-interface BeforeAfterProps {
-  presetKey: string;
-  aspectRatio?: string;
-  variant?: "hero" | "section" | "inline";
-  allow3Way?: boolean;
-}
-function BeforeAfter({ presetKey, aspectRatio = "16/9", variant = "section", allow3Way = false }: BeforeAfterProps) {
-  const [pos, setPos] = useState(50);
-  const [zoomed, setZoomed] = useState<{ x: number; y: number } | null>(null);
-  const [mode3, setMode3] = useState(false);
-  const wrap = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
-  const lastVibe = useRef(0);
-
-  const move = useCallback((cx: number) => {
-    const el = wrap.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const newPos = Math.max(2, Math.min(98, ((cx - r.left) / r.width) * 100));
-    setPos(newPos);
-    if ((newPos < 5 || newPos > 95) && Date.now() - lastVibe.current > 400) {
-      vibe(6);
-      lastVibe.current = Date.now();
-    }
-  }, []);
-
-  useEffect(() => {
-    const mm = (e: MouseEvent) => { if (dragging.current) move(e.clientX); };
-    const mu = () => { if (dragging.current) { dragging.current = false; vibe(4); } };
-    window.addEventListener("mousemove", mm);
-    window.addEventListener("mouseup", mu);
-    return () => { window.removeEventListener("mousemove", mm); window.removeEventListener("mouseup", mu); };
-  }, [move]);
-
-  useEffect(() => {
-    const el = wrap.current;
-    if (!el) return;
-    const onTM = (e: TouchEvent) => { if (e.touches.length && dragging.current) { e.preventDefault(); move(e.touches[0].clientX); } };
-    el.addEventListener("touchmove", onTM, { passive: false });
-    return () => el.removeEventListener("touchmove", onTM);
-  }, [move]);
-
-  const img = presetImg(presetKey);
-  const imgRAW = presetImgRAW(presetKey);
-  const isInline = variant === "inline";
-
-  if (mode3 && allow3Way) {
-    return (
-      <div ref={wrap} style={{ position: "relative", width: "100%", aspectRatio, overflow: "hidden", background: "var(--forest)", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 2, boxSizing: "border-box" }}>
-        {[
-          { lbl: "RAW", sub: "sem tratamento", src: imgRAW, fil: "none", bg: "rgba(42,33,26,.85)" },
-          { lbl: "Grátis", sub: "preset comum", src: img, fil: "saturate(1.55) contrast(1.25) brightness(1.05) hue-rotate(22deg)", bg: "rgba(176,87,68,.85)" },
-          { lbl: "Outdoor C.", sub: "tratado", src: img, fil: "none", bg: "rgba(166,84,43,.92)" },
-        ].map(s => (
-          <div key={s.lbl} style={{ position: "relative", overflow: "hidden" }}>
-            <img src={s.src} alt={s.lbl} draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", filter: s.fil }} />
-            <div style={{ position: "absolute", top: 8, left: 8, right: 8, padding: "4px 6px", background: s.bg, color: "var(--canvas)", fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".14em", textTransform: "uppercase", textAlign: "center" }}>
-              <div style={{ fontWeight: 700 }}>{s.lbl}</div>
-              <div style={{ opacity: .7, marginTop: 1, letterSpacing: ".08em", fontSize: 7 }}>{s.sub}</div>
-            </div>
-          </div>
-        ))}
-        <button onClick={() => { setMode3(false); vibe(8); }} style={{ position: "absolute", bottom: 8, right: 8, padding: "5px 10px", background: "rgba(14,12,10,.85)", border: "1px solid rgba(232,223,201,.3)", color: "var(--canvas)", fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".16em", textTransform: "uppercase", cursor: "pointer" }}>← Slider</button>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      ref={wrap}
-      onDoubleClick={e => {
-        if (zoomed) { setZoomed(null); return; }
-        const el = wrap.current;
-        if (!el) return;
-        const r = el.getBoundingClientRect();
-        setZoomed({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 });
-        vibe(15);
-      }}
-      onMouseDown={e => { if (!zoomed) { dragging.current = true; move(e.clientX); } }}
-      onTouchStart={() => { if (!zoomed) dragging.current = true; }}
-      onTouchEnd={() => { dragging.current = false; }}
-      style={{ position: "relative", width: "100%", aspectRatio, overflow: "hidden", cursor: zoomed ? "zoom-out" : "ew-resize", userSelect: "none", background: "var(--forest)", touchAction: "pan-y" }}
-    >
-      <img src={img} alt="Tratado" draggable={false} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", transform: zoomed ? `scale(2.2) translate(${50 - zoomed.x}%,${50 - zoomed.y}%)` : "scale(1)", transformOrigin: zoomed ? `${zoomed.x}% ${zoomed.y}%` : "center", transition: "transform .4s cubic-bezier(.4,0,.2,1)" }} />
-      <div style={{ position: "absolute", inset: 0, clipPath: zoomed ? "none" : `inset(0 ${100 - pos}% 0 0)`, backgroundImage: `url(${imgRAW})`, backgroundSize: "cover", backgroundPosition: "center", transform: zoomed ? `scale(2.2) translate(${50 - zoomed.x}%,${50 - zoomed.y}%)` : "scale(1)", transformOrigin: zoomed ? `${zoomed.x}% ${zoomed.y}%` : "center", transition: "transform .4s cubic-bezier(.4,0,.2,1)", opacity: zoomed ? 0 : 1 }} />
-
-      <div style={{ position: "absolute", top: isInline ? 8 : 12, left: isInline ? 8 : 12, padding: isInline ? "2px 6px" : "5px 10px", background: "rgba(42,33,26,.82)", color: "var(--canvas)", fontFamily: "var(--font-mono)", fontSize: isInline ? 8 : 10, letterSpacing: ".18em", textTransform: "uppercase" }}>RAW</div>
-      <div style={{ position: "absolute", top: isInline ? 8 : 12, right: isInline ? 8 : 12, padding: isInline ? "2px 6px" : "5px 10px", background: "var(--rust)", color: "var(--canvas)", fontFamily: "var(--font-mono)", fontSize: isInline ? 8 : 10, letterSpacing: ".18em", textTransform: "uppercase" }}>Tratado</div>
-
-      {!zoomed && (
-        <>
-          <div style={{ position: "absolute", top: 0, bottom: 0, left: `${pos}%`, width: 2, background: "var(--canvas)", transform: "translateX(-1px)", pointerEvents: "none", boxShadow: "0 0 12px rgba(0,0,0,.5)" }} />
-          <div style={{ position: "absolute", top: "50%", left: `${pos}%`, width: isInline ? 32 : 40, height: isInline ? 32 : 40, borderRadius: "50%", background: "var(--canvas)", transform: "translate(-50%,-50%)", display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none", color: "var(--bark)", fontFamily: "var(--font-mono)", fontSize: isInline ? 11 : 14, fontWeight: 700, boxShadow: "0 4px 16px rgba(0,0,0,.4)" }}>⇄</div>
-        </>
-      )}
-
-      {!isInline && !zoomed && (
-        <div style={{ position: "absolute", bottom: 12, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 6, pointerEvents: "none" }}>
-          <span style={{ padding: "4px 10px", background: "rgba(42,33,26,.72)", color: "var(--canvas)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", opacity: .9 }}>Arraste ⇄ · Toque 2× pra zoom</span>
-        </div>
-      )}
-      {zoomed && (
-        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", padding: "6px 12px", background: "rgba(42,33,26,.75)", color: "var(--canvas)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".15em", textTransform: "uppercase", pointerEvents: "none" }}>Toque 2× pra sair</div>
-      )}
-
-      {allow3Way && !zoomed && (
-        <button onClick={e => { e.stopPropagation(); setMode3(true); vibe(8); }} style={{ position: "absolute", bottom: 12, right: 12, padding: "5px 10px", background: "rgba(14,12,10,.78)", border: "1px solid rgba(232,223,201,.4)", color: "var(--canvas)", fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".16em", textTransform: "uppercase", cursor: "pointer" }}>Modo 3-way</button>
-      )}
     </div>
   );
 }
@@ -549,17 +433,56 @@ function GuaranteeBadge() {
 // ────────────────────────────────────────────────────────────────
 // Hero redesenhado — full-bleed editorial (desktop + mobile)
 // ────────────────────────────────────────────────────────────────
-const HERO_REDESIGN_KEY = "21-campo-seco";
+// Hero: vídeo de fundo (tratado, em movimento) + foto RAW da laguna que faz o
+// wipe por cima via --rev (varredura senoidal automática, pausável ao tocar).
+const HERO_VIDEO = "/videos/VIDEO-HERO2-web.mp4";
+const HERO_POSTER = "/images/presets/hero-laguna.jpg";
+const HERO_RAW = "/images/presets/hero-laguna-raw.jpg";
 function HeroRedesigned() {
   const [rawOk, setRawOk] = useState(true);
-  const K = HERO_REDESIGN_KEY;
+  const secRef = useRef<HTMLElement>(null);
+  const interacting = useRef(false);
+  useEffect(() => {
+    const sec = secRef.current;
+    if (!sec) return;
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+    if (reduce) { sec.style.setProperty("--rev", "36%"); return; }
+    const MIN = 16, MAX = 82, PERIOD = 13000;
+    let raf = 0;
+    let start: number | null = null;
+    const tick = (t: number) => {
+      if (start === null) start = t;
+      if (!interacting.current) {
+        const phase = ((t - start) % PERIOD) / PERIOD;
+        const e = (1 - Math.cos(phase * 2 * Math.PI)) / 2;
+        sec.style.setProperty("--rev", (MIN + (MAX - MIN) * e).toFixed(2) + "%");
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [rawOk]);
+  const setRev = (clientX: number) => {
+    const sec = secRef.current;
+    if (!sec) return;
+    const r = sec.getBoundingClientRect();
+    const p = Math.max(4, Math.min(96, ((clientX - r.left) / r.width) * 100));
+    sec.style.setProperty("--rev", p + "%");
+  };
   return (
-    <section className="pf-hero2">
-      <img className="pf-hero2-img" src={presetImg(K)} alt="" draggable={false} />
-      {rawOk ? <img className="pf-hero2-raw" src={presetImgRAW(K)} alt="" draggable={false} onError={() => setRawOk(false)} /> : null}
+    <section className="pf-hero2" ref={secRef}
+      onPointerDown={e => { if (!rawOk) return; interacting.current = true; setRev(e.clientX); }}
+      onPointerMove={e => { if (interacting.current) setRev(e.clientX); }}
+      onPointerUp={() => { interacting.current = false; }}
+      onPointerLeave={() => { interacting.current = false; }}>
+      <video className="pf-hero2-img" autoPlay loop muted playsInline poster={HERO_POSTER}>
+        <source src={HERO_VIDEO} type="video/mp4" />
+      </video>
+      {rawOk ? <img className="pf-hero2-raw" src={HERO_RAW} alt="" draggable={false} onError={() => setRawOk(false)} /> : null}
       {rawOk ? (
         <>
           <div className="pf-hero2-divider" />
+          <div className="pf-hero2-handle">⇄</div>
           <span className="pf-hero2-lbl pf-hero2-lbl-raw">raw</span>
           <span className="pf-hero2-lbl pf-hero2-lbl-trt">tratado</span>
         </>
@@ -742,11 +665,12 @@ export default function PresetsFotografiaPage() {
         @media(min-width:781px){ .pf-sticky{display:none!important} }
         .pf-hero2{position:relative;height:clamp(580px,90vh,820px);background:var(--forest);overflow:hidden}
         .pf-hero2-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
-        .pf-hero2-raw{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;clip-path:inset(0 76% 0 0)}
-        .pf-hero2-divider{position:absolute;top:0;bottom:0;left:24%;width:1px;background:rgba(245,241,232,.55)}
-        .pf-hero2-lbl{position:absolute;top:50%;font-family:var(--font-serif);font-style:italic;font-size:14px;color:rgba(245,241,232,.92);text-shadow:0 1px 6px rgba(0,0,0,.6)}
-        .pf-hero2-lbl-raw{left:calc(24% - 14px);transform:translate(-100%,-50%)}
-        .pf-hero2-lbl-trt{left:calc(24% + 14px);transform:translateY(-50%)}
+        .pf-hero2-raw{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;clip-path:inset(0 calc(100% - var(--rev,24%)) 0 0)}
+        .pf-hero2-divider{position:absolute;top:0;bottom:0;left:var(--rev,24%);width:2px;background:rgba(245,241,232,.75);box-shadow:0 0 12px rgba(0,0,0,.4)}
+        .pf-hero2-handle{position:absolute;top:46%;left:var(--rev,24%);width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(245,241,232,.95);background:rgba(20,14,8,.28);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;color:var(--canvas);font-family:var(--font-mono);font-size:14px}
+        .pf-hero2-lbl{position:absolute;top:50%;font-family:var(--font-serif);font-style:italic;font-size:14px;color:rgba(245,241,232,.92);text-shadow:0 1px 6px rgba(0,0,0,.6);white-space:nowrap;pointer-events:none}
+        .pf-hero2-lbl-raw{left:calc(var(--rev,24%) - 14px);transform:translate(-100%,-50%)}
+        .pf-hero2-lbl-trt{left:calc(var(--rev,24%) + 14px);transform:translateY(-50%)}
         .pf-hero2-grad{position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,14,8,.72) 0%,rgba(20,14,8,.30) 38%,rgba(20,14,8,0) 60%),linear-gradient(0deg,rgba(20,14,8,.85) 0%,rgba(20,14,8,.15) 42%,rgba(20,14,8,0) 70%)}
         .pf-hero2-bottom{position:absolute;left:0;right:0;bottom:0}
         .pf-hero2-content{padding:0 clamp(20px,5vw,48px) 28px;max-width:760px}
@@ -768,7 +692,7 @@ export default function PresetsFotografiaPage() {
           .pf-mdc-title{font-size:30px}
           .pf-sticky-spacer{height:72px}
           .pf-hero2{height:auto;min-height:88vh;display:flex;flex-direction:column}
-          .pf-hero2-raw,.pf-hero2-divider,.pf-hero2-lbl{display:none}
+          .pf-hero2-raw,.pf-hero2-divider,.pf-hero2-lbl,.pf-hero2-handle{display:none}
           .pf-hero2-img{position:absolute}
           .pf-hero2-grad{background:linear-gradient(0deg,rgba(20,14,8,.92) 0%,rgba(20,14,8,.25) 46%,rgba(20,14,8,.08) 100%)}
           .pf-hero2-bottom{position:relative;margin-top:auto}
@@ -836,20 +760,6 @@ export default function PresetsFotografiaPage() {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ═══ DEMO NÉVOA SUAVE ═══ */}
-      <section style={{ padding: "clamp(48px,7vw,80px) clamp(16px,5vw,48px)", background: "var(--forest)", color: "var(--canvas)", borderBottom: "1px solid rgba(232,223,201,.1)" }}>
-        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: "var(--font-hand)", fontSize: 20, color: "var(--rust-soft)", transform: "rotate(-1.5deg)", display: "inline-block", marginBottom: 4 }}>veja de verdade—</div>
-            <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(22px,4vw,42px)", fontWeight: 600, letterSpacing: "-.02em", lineHeight: 1, margin: 0 }}>
-              Névoa Suave — <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--rust-soft)" }}>RAW ao tratado</span>.
-            </h2>
-            <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 14, color: "rgba(232,223,201,.7)", marginTop: 8, lineHeight: 1.5 }}>Toque 2× pra dar zoom · toque &quot;Modo 3-way&quot; pra comparar com preset grátis.</p>
-          </div>
-          <BeforeAfter presetKey="17-nevoa-suave" aspectRatio="16/9" variant="section" allow3Way={true} />
         </div>
       </section>
 
