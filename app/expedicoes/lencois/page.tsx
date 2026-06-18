@@ -252,6 +252,7 @@ export default function LencoisPage() {
         .lenc-img-wrap:hover .lenc-trip-img { transform: scale(1.04); }
         .lenc-pack:hover { outline: 1px solid var(--rust); }
         .lenc-cta-btn:hover { opacity: .88; }
+        @media (prefers-reduced-motion: reduce) { .lenc-hero-video { display: none !important; } }
 
         /* ── DESKTOP padrão definido inline. Mobile abaixo ── */
 
@@ -319,7 +320,13 @@ export default function LencoisPage() {
 
       {/* ── HERO ── */}
       <section className="lenc-hero" style={{ position: 'relative', minHeight: 820, overflow: 'hidden', background: 'var(--forest)' }}>
-        <div className="lenc-trip-img" style={{ position: 'absolute', inset: 0, backgroundImage: `url(${FOTOS_GALERIA[0]})`, backgroundSize: 'cover', backgroundPosition: 'center 30%' }} />
+        {/* Foto de fundo = poster/fallback (sempre presente atrás do vídeo) */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: `url(${FOTOS_GALERIA[0]})`, backgroundSize: 'cover', backgroundPosition: 'center 30%' }} />
+        {/* Vídeo em loop por cima — escondido em prefers-reduced-motion (mostra a foto) */}
+        <video className="lenc-hero-video" autoPlay loop muted playsInline poster={FOTOS_GALERIA[0]}
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%' }}>
+          <source src="/videos/lencois-hero.mp4" type="video/mp4" />
+        </video>
         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(30,42,24,.45) 0%, rgba(30,42,24,.05) 40%, rgba(30,42,24,.9) 100%)' }} />
 
         <div className="lenc-hero-pad" style={{ position: 'relative', zIndex: 2, minHeight: 'inherit', padding: '140px 56px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: 'var(--canvas)' }}>
