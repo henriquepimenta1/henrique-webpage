@@ -49,7 +49,7 @@ export default function PresetsHubPage() {
         }
 
         @media(max-width:900px){
-          .two-door { grid-template-columns: 1fr !important; }
+          .three-door { grid-template-columns: 1fr !important; }
           .door { height: 480px !important; }
           .compare-grid { grid-template-columns: repeat(2,1fr) !important; }
           .rail { grid-template-columns: repeat(2,1fr) !important; }
@@ -173,15 +173,15 @@ export default function PresetsHubPage() {
 
       {/* ── DUAS PORTAS ── */}
       <div
-        className="hub-doors two-door"
-        style={{ padding: "56px 56px 96px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}
+        className="hub-doors three-door"
+        style={{ padding: "56px 56px 96px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}
       >
 
         {/* Porta 1 · Presets — ATIVA */}
         <Link href="/presets/fotografia" style={{ textDecoration: "none" }}>
           <div
             className="door door-active"
-            style={{ position: "relative", height: 540, overflow: "hidden", cursor: "pointer", background: "var(--forest)" }}
+            style={{ position: "relative", height: 600, overflow: "hidden", cursor: "pointer", background: "var(--forest)" }}
           >
             <div
               className="door-img"
@@ -195,11 +195,11 @@ export default function PresetsHubPage() {
             <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "32px 32px 36px", zIndex: 2, color: "var(--canvas)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
                 <div style={{ padding: "5px 10px", border: "1px solid rgba(232,223,201,.5)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase" }}>.xmp · .dng</div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 01 / 02</div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 01 / 03</div>
               </div>
               <div>
                 <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "var(--ashe)", marginBottom: 12 }}>Para fotografia · Lightroom</div>
-                <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 44, letterSpacing: "-.02em", lineHeight: 1, margin: 0, marginBottom: 4 }}>
+                <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: "clamp(24px, 2.5vw, 32px)", letterSpacing: "-.02em", lineHeight: 1.02, margin: 0, marginBottom: 4 }}>
                   Outdoor Cinematic<br />Presets
                 </h2>
                 <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
@@ -211,10 +211,47 @@ export default function PresetsHubPage() {
           </div>
         </Link>
 
-        {/* Porta 2 · LUTs — DESABILITADA */}
+        {/* Porta 2 · Outdoor Grain — EM BREVE */}
         <div
           className="door"
-          style={{ position: "relative", height: 540, overflow: "hidden", cursor: "default", background: "var(--forest)" }}
+          style={{ position: "relative", height: 600, overflow: "hidden", cursor: "default", background: "var(--forest)" }}
+        >
+          <div
+            className="door-img"
+            style={{
+              position: "absolute", inset: 0,
+              backgroundImage: "url(/images/outdoor-grain-capa.jpg)",
+              backgroundSize: "cover", backgroundPosition: "center",
+              filter: "brightness(.85)",
+            }}
+          />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.15) 40%, rgba(30,42,24,.9) 100%)" }} />
+
+          <div style={{ position: "absolute", top: 32, right: 32, zIndex: 3, padding: "6px 14px", background: "var(--rust)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--canvas)" }}>
+            Em breve
+          </div>
+
+          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "32px 32px 36px", zIndex: 2, color: "var(--canvas)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+              <div style={{ padding: "5px 10px", border: "1px solid rgba(232,223,201,.5)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase" }}>.xmp · .dng</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 02 / 03</div>
+            </div>
+            <div>
+              <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "var(--ashe)", marginBottom: 12 }}>Película analógica · Lightroom</div>
+              <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: "clamp(24px, 2.5vw, 32px)", letterSpacing: "-.02em", lineHeight: 1.02, margin: 0, marginBottom: 4 }}>
+                Outdoor Grain<br />Presets
+              </h2>
+              <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
+                <span>+15 presets · Em breve</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Porta 3 · LUTs — DESABILITADA */}
+        <div
+          className="door"
+          style={{ position: "relative", height: 600, overflow: "hidden", cursor: "default", background: "var(--forest)" }}
         >
           <div
             className="door-img"
@@ -234,11 +271,11 @@ export default function PresetsHubPage() {
           <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "32px 32px 36px", zIndex: 2, color: "var(--canvas)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <div style={{ padding: "5px 10px", border: "1px solid rgba(232,223,201,.5)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase" }}>.cube · .3dl</div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 02 / 02</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 03 / 03</div>
             </div>
             <div>
               <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "var(--ashe)", marginBottom: 12 }}>Para vídeo · Premiere · DaVinci · FCP</div>
-              <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 44, letterSpacing: "-.02em", lineHeight: 1, margin: 0, marginBottom: 4 }}>
+              <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: "clamp(24px, 2.5vw, 32px)", letterSpacing: "-.02em", lineHeight: 1.02, margin: 0, marginBottom: 4 }}>
                 Outdoor Cinematic<br />LUTs
               </h2>
               <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
