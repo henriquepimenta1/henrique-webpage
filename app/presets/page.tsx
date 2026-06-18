@@ -18,6 +18,13 @@ export default function PresetsHubPage() {
         .compare-item:hover .compare-label { transform: translateY(-3px); opacity: 1; }
         .compare-label { transition: transform .3s cubic-bezier(.2,.7,.2,1), opacity .3s; opacity: .75; }
 
+        /* Ken Burns leve nas portas (igual home) */
+        @keyframes hubkb { 0%,100%{ transform: scale(1.04); } 50%{ transform: scale(1.12); } }
+        .door-img { animation: hubkb 24s ease-in-out infinite; will-change: transform; }
+        .three-door > *:nth-child(2) .door-img { animation-delay: -8s; }
+        .three-door > *:nth-child(3) .door-img { animation-delay: -16s; }
+        @media (prefers-reduced-motion: reduce) { .door-img { animation: none !important; } }
+
         /* Video hero */
         .hub-video-bg {
           position: absolute;
@@ -287,13 +294,7 @@ export default function PresetsHubPage() {
       </div>
 
       {/* ── A MESMA PALETA ── */}
-      <div className="hub-compare" style={{ padding: "96px 56px", background: "var(--canvas-deep)" }}>
-        <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: 48, letterSpacing: "-.02em", lineHeight: 1, marginBottom: 14, color: "var(--bark)", margin: 0 }}>
-          A mesma <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--moss)" }}>paleta</span>,<br />em foto e vídeo.
-        </h2>
-        <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 18, color: "#3A3530", maxWidth: "52ch", marginTop: 14, marginBottom: 40, lineHeight: 1.55 }}>
-          Construí as duas coleções a partir do mesmo referencial cinematográfico. Cor de cinema, mas feita em campo — não em estúdio.
-        </p>
+      <div className="hub-compare" style={{ padding: "64px 56px 96px", background: "var(--canvas-deep)" }}>
         <div className="compare-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
           {[
             { img: "/images/portfolio/acapamento-janca-huayhuash.jpg",        lbl: "Portfolio · Andes" },
