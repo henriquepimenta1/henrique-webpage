@@ -433,10 +433,9 @@ function GuaranteeBadge() {
 // ────────────────────────────────────────────────────────────────
 // Hero redesenhado — full-bleed editorial (desktop + mobile)
 // ────────────────────────────────────────────────────────────────
-// Hero: vídeo de fundo (tratado, em movimento) + foto RAW da laguna que faz o
-// wipe por cima via --rev (varredura senoidal automática, pausável ao tocar).
-const HERO_VIDEO = "/videos/VIDEO-HERO2-web.mp4";
-const HERO_POSTER = "/images/presets/hero-laguna.jpg";
+// Hero: foto da laguna tratada (base) + foto RAW que faz o wipe por cima via
+// --rev (varredura senoidal automática, pausável ao tocar/arrastar).
+const HERO_IMG = "/images/presets/hero-laguna.jpg";
 const HERO_RAW = "/images/presets/hero-laguna-raw.jpg";
 function HeroRedesigned() {
   const [rawOk, setRawOk] = useState(true);
@@ -475,9 +474,7 @@ function HeroRedesigned() {
       onPointerMove={e => { if (interacting.current) setRev(e.clientX); }}
       onPointerUp={() => { interacting.current = false; }}
       onPointerLeave={() => { interacting.current = false; }}>
-      <video className="pf-hero2-img" autoPlay loop muted playsInline poster={HERO_POSTER}>
-        <source src={HERO_VIDEO} type="video/mp4" />
-      </video>
+      <img className="pf-hero2-img" src={HERO_IMG} alt="" draggable={false} />
       {rawOk ? <img className="pf-hero2-raw" src={HERO_RAW} alt="" draggable={false} onError={() => setRawOk(false)} /> : null}
       {rawOk ? (
         <>
