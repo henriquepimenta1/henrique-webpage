@@ -1,0 +1,670 @@
+// Expedição Lençóis Maranhenses — export para remap no Claude design
+// Fonte: https://euhenriq.com/expedicoes/lencois (app/expedicoes/lencois/page.tsx)
+// Formato artifact: React global, SiteFooter/Link via window, dados inline,
+// imagens em public/images/..., SiteNav e o mapa inlined neste arquivo.
+const { SiteFooter, Link } = window;
+const { useState, useRef, useEffect } = React;
+
+/* ─── WhatsApp ──────────────────────────────────────────────────── */
+const WA_BASE = "https://wa.me/5511988128064?text=";
+const WA_GERAL = WA_BASE + encodeURIComponent(
+  "Olá! Tenho interesse na Travessia dos Lençóis Maranhenses. Pode me passar mais informações sobre datas e vagas disponíveis?"
+);
+const waMsg = (label, datas, price) =>
+  WA_BASE + encodeURIComponent(`Olá! Tenho interesse na ${label} (${datas}) — ${price}. Ainda tem vagas disponíveis?`);
+
+/* ─── Dados canônicos (content/lencois.ts) ──────────────────────── */
+const PACOTES = [
+  { label: "Travessia Intensiva", datas: "8 a 10 de Agosto", dias: "3 dias", km: "35km", oasis: "2 oásis", price: "R$ 3.599", desc: "Aventura concentrada para quem tem menos tempo. A essência dos Lençóis em 3 dias completos.", featured: false },
+  { label: "Travessia Completa", datas: "3 a 6 de Agosto", dias: "4 dias", km: "52km", oasis: "3 oásis", price: "R$ 3.899", desc: "52km do início ao fim. A experiência mais equilibrada e completa dos Lençóis.", featured: true },
+  { label: "Imersão Total", datas: "12 a 16 de Agosto", dias: "5 dias", km: "64km", oasis: "4 oásis", price: "R$ 4.499", desc: "Ritmo contemplativo, mais tempo em cada oásis. Para quem quer viver cada detalhe.", featured: false },
+];
+
+const INCLUIDO = [
+  { title: "Guia Especializado", desc: "Profissionais que conhecem cada duna e lagoa do percurso" },
+  { title: "Todos os Transportes", desc: "Lancha, barcos e veículos 4x4 durante a travessia, a partir de Barreirinhas" },
+  { title: "Alimentação Completa", desc: "Todas as refeições preparadas por famílias locais" },
+  { title: "Hospedagem Autêntica", desc: "Pernoites em redários nos oásis — experiência única com a natureza" },
+  { title: "Fotografia Profissional", desc: "Henrique (@henriq.eu) vai junto registrando cada momento da jornada" },
+];
+
+const NAO_INCLUIDO = "Transporte São Luís → Barreirinhas · Hospedagem antes/depois da travessia · Bebidas extras · Despesas pessoais";
+
+const POLITICA_PAGAMENTO = [
+  { title: "25% de sinal", desc: "Para garantir sua vaga na turma escolhida" },
+  { title: "Restante na viagem", desc: "À vista ou parcelado em até 12x*" },
+  { title: "Cancelamento", desc: "Até 30 dias: crédito de 12 meses. 29–15 dias: retenção de 50%" },
+];
+
+// Fotos em public/images/lencois/
+const FOTOS_GALERIA = [
+  "public/images/lencois/DJI_20250828174205_0403_D-HDR.jpg",  // hero
+  "public/images/lencois/DSC02245.jpg",
+  "public/images/lencois/DJI_20250826043905_0121_D.jpg",
+  "public/images/lencois/DSC02529.jpg",
+  "public/images/lencois/DSC03215.jpg",                        // foto fotógrafo
+  "public/images/lencois/DJI_20250828042744_0378_D.jpg",
+  "public/images/lencois/DJI_20250828175706_0461_D-Edit-2.jpg",
+  "public/images/lencois/DSC02599.jpg",
+  "public/images/lencois/DSC01958.jpg",
+  "public/images/lencois/henrique_sesana1.jpg",
+  "public/images/lencois/henrique_sesana2.jpg",
+  "public/images/lencois/henrique_sesana3.jpg",
+];
+
+const NAV_LINKS = [
+  { label: "Portfolio", href: "/portfolio" },
+  { label: "Presets & LUTs", href: "/presets" },
+  { label: "Expedições", href: "/expedicoes" },
+  { label: "Quadros", href: "/quadros" },
+  { label: "Midiakit", href: "/midiakit" },
+  { label: "Sobre", href: "/sobre" },
+  { label: "Contato", href: "/contato" },
+];
+
+const DIA_COLORS = ['', 'var(--rust)', '#6FA3D8', '#4A5838', 'var(--rust-soft)'];
+
+/* ─── Checklist de equipamentos ────────────────────────────────── */
+const GEAR_GROUPS = [
+  { id: 'base', label: 'Equipamento base', items: ['Mochila de trekking 40–50L confortável', 'Roupas leves de secagem rápida', 'Meias de dupla camada ou lã merino (não algodão)', 'Sandália de trekking (tipo Papete)', 'Mochila pequena para day use (opcional)'] },
+  { id: 'solar', label: 'Proteção solar', items: ['Chapéu ou boné com aba', 'Óculos de sol com proteção UV', 'Protetor solar FPS 50+ resistente', 'Repelente de insetos'] },
+  { id: 'hidra', label: 'Hidratação & energia', items: ['Garrafa/squeeze de água (1–2L)', 'Lanches extras (barras, castanhas, frutas secas)', 'Eletrólitos/isotônicos em pó (opcional)'] },
+  { id: 'essen', label: 'Essenciais', items: ['Lanterna de cabeça ou headlamp', 'Capa de chuva leve', 'Sacos estanques para eletrônicos', 'Medicamentos pessoais', 'Kit higiene básico', 'Toalha de secagem rápida (microfibra)'] },
+];
+
+/* ─── Pacotes alternativos ─────────────────────────────────────── */
+const OUTROS_PACOTES = [
+  { id: 'intensiva', label: 'Travessia Intensiva', dias: '3 dias', km: '35km', desc: 'Aventura concentrada para quem tem menos tempo. Fotografia profissional também inclusa.', price: null, cta: 'Consultar valores' },
+  { id: 'profunda', label: 'Travessia Profunda', dias: '5 dias', km: '64km', desc: 'Imersão total com ritmo contemplativo. Fotografia profissional também inclusa. Vagas limitadas — apenas 1 grupo.', price: null, cta: 'Consultar valores' },
+];
+
+/* ─── Política de cancelamento ─────────────────────────────────── */
+const CANCELAMENTO = [
+  { prazo: 'Até 30 dias antes', condicao: 'Crédito válido por 12 meses' },
+  { prazo: '29 a 15 dias antes', condicao: 'Retenção de 50%' },
+  { prazo: 'Menos de 14 dias', condicao: 'Sem reembolso' },
+];
+
+/* ─── NOT / IS ─────────────────────────────────────────────────── */
+const NOT_IS = {
+  nao: ['Passeio de 2h', 'Tour de ônibus', 'Grupo de 40', 'Lagoas lotadas', 'Fotos clichês da internet', 'Cansaço', 'Turismo mais do mesmo'],
+  e: ['4 dias de imersão completa', 'Caminhada consciente', 'Máximo 12 pessoas', 'Oásis secretos fora do roteiro', 'Fotógrafo profissional incluso', 'Transformação real'],
+};
+
+/* ─── SiteNav (inlined de components/nav.tsx) ──────────────────── */
+function SiteNav({ dark = true }) {
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const fg = dark ? "var(--canvas)" : "var(--bark)";
+  const bg = dark ? "var(--forest)" : "var(--canvas)";
+  const border = dark ? "rgba(232,223,201,.14)" : "rgba(42,33,26,.14)";
+  return (
+    <header className="site-header" style={{ position: "absolute", top: 0, left: 0, right: 0, height: 72, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 40px", zIndex: 30, background: bg, borderBottom: `1px solid ${border}` }}>
+      <Link href="/" style={{ textDecoration: "none", flexShrink: 0 }}>
+        <span style={{ fontFamily: "var(--font-hand)", fontSize: 28, color: fg, letterSpacing: ".02em", lineHeight: 1 }}>Eu Henriq</span>
+      </Link>
+      <nav className="site-nav-links" style={{ display: "flex", gap: 24, fontFamily: "var(--font-ui)", fontSize: 10.5, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 500 }}>
+        {NAV_LINKS.map(item => {
+          const active = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+          return (
+            <Link key={item.href} href={item.href} style={{ color: fg, textDecoration: "none", opacity: active ? 1 : .72, paddingBottom: 2, borderBottom: active ? `1px solid var(--rust-soft)` : "1px solid transparent", transition: "opacity .2s,border-color .2s", whiteSpace: "nowrap" }}>
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+    </header>
+  );
+}
+
+/* ─── LencoisMap (PLACEHOLDER) ──────────────────────────────────────
+   Na produção é um mapa interativo MapLibre (rota GPX real Atins→Santo
+   Amaro, 4 dias). Em artifact não roda lib de mapa — aqui fica uma
+   representação estática da rota pra você redesenhar a seção em volta.
+─────────────────────────────────────────────────────────────────── */
+const MAP_WAYPOINTS = [
+  { id: 'atins', label: 'Atins', dot: '#E8DFC9' },
+  { id: 'baixa', label: 'Baixa Grande', dot: '#A6542B' },
+  { id: 'queimada', label: 'Queimada dos Britos', dot: '#6FA3D8' },
+  { id: 'betania', label: 'Betânia', dot: '#4A5838' },
+  { id: 'stamaro', label: 'Santo Amaro', dot: '#D4956A' },
+];
+const MAP_CORES = { 1: '#A6542B', 2: '#6FA3D8', 3: '#4A5838', 4: '#D4956A' };
+function LencoisMap() {
+  return (
+    <div style={{ position: 'relative', height: 480, borderRadius: 2, overflow: 'hidden', border: '1px solid var(--line-dark)', background: 'radial-gradient(120% 80% at 50% 0%, #34432a 0%, #1e2a18 70%)' }}>
+      {/* Rota estilizada (placeholder do mapa real) */}
+      <svg viewBox="0 0 800 460" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+        <path d="M70,360 C180,300 220,250 320,260" fill="none" stroke={MAP_CORES[1]} strokeWidth="3" opacity="0.9" />
+        <path d="M320,260 C420,270 470,200 540,210" fill="none" stroke={MAP_CORES[2]} strokeWidth="3" opacity="0.9" />
+        <path d="M540,210 C600,215 620,150 660,140" fill="none" stroke={MAP_CORES[3]} strokeWidth="3" opacity="0.9" />
+        <path d="M660,140 C700,135 720,110 740,90" fill="none" stroke={MAP_CORES[4]} strokeWidth="3" opacity="0.9" />
+        {[[70, 360], [320, 260], [540, 210], [660, 140], [740, 90]].map((p, i) => (
+          <circle key={i} cx={p[0]} cy={p[1]} r={i === 0 || i === 4 ? 7 : 5} fill={MAP_WAYPOINTS[i].dot} stroke="rgba(255,255,255,.9)" strokeWidth="2" />
+        ))}
+      </svg>
+      {/* Rótulos waypoints */}
+      <div style={{ position: 'absolute', top: 14, left: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {MAP_WAYPOINTS.map(wp => (
+          <div key={wp.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ width: 9, height: 9, borderRadius: '50%', background: wp.dot, border: '2px solid rgba(255,255,255,.9)' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--canvas)', background: 'rgba(30,42,24,.6)', padding: '2px 6px' }}>{wp.label}</span>
+          </div>
+        ))}
+      </div>
+      {/* Legenda */}
+      <div style={{ position: 'absolute', bottom: 16, left: 12, zIndex: 10, background: 'rgba(30,42,24,0.82)', border: '1px solid var(--line-dark)', padding: '10px 14px', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+        {[1, 2, 3, 4].map(d => (
+          <div key={d} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 20, height: 2.5, background: MAP_CORES[d], borderRadius: 1 }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.16em', textTransform: 'uppercase', color: 'var(--canvas)' }}>Dia {d}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{ position: 'absolute', top: 14, right: 14, fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.16em', textTransform: 'uppercase', color: 'rgba(232,223,201,.5)' }}>mapa interativo (produção)</div>
+    </div>
+  );
+}
+
+/* ─── Checklist de equipamentos ────────────────────────────────── */
+function GearChecklist() {
+  const total = GEAR_GROUPS.reduce((acc, g) => acc + g.items.length, 0);
+  const [checked, setChecked] = useState(new Set());
+  const toggle = (key) => {
+    setChecked(prev => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  };
+  const pct = Math.round((checked.size / total) * 100);
+  return (
+    <div>
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--stone)' }}>{checked.size}/{total} itens</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.16em', color: pct === 100 ? 'var(--moss)' : 'var(--rust)', fontWeight: 700 }}>{pct === 100 ? 'Mochila pronta ✓' : `${pct}%`}</span>
+        </div>
+        <div style={{ height: 2, background: 'var(--line)', borderRadius: 1, overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: `${pct}%`, background: pct === 100 ? 'var(--moss)' : 'var(--rust)', transition: 'width .3s ease' }} />
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }} className="gear-grid">
+        {GEAR_GROUPS.map(group => (
+          <div key={group.id}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 10 }}>{group.label}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {group.items.map(item => {
+                const key = `${group.id}:${item}`;
+                const done = checked.has(key);
+                return (
+                  <button key={key} onClick={() => toggle(key)} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, padding: '8px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', borderBottom: '1px solid var(--line)' }}>
+                    <div style={{ width: 14, height: 14, border: `1px solid ${done ? 'var(--moss)' : 'var(--stone)'}`, background: done ? 'var(--moss)' : 'transparent', flexShrink: 0, marginTop: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .15s, border-color .15s' }}>
+                      {done && <span style={{ color: 'var(--canvas)', fontSize: 8, lineHeight: 1 }}>✓</span>}
+                    </div>
+                    <span style={{ fontFamily: 'var(--font-serif)', fontSize: 13, lineHeight: 1.4, color: done ? 'var(--stone)' : 'var(--bark)', textDecoration: done ? 'line-through' : 'none', transition: 'color .15s' }}>{item}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{ marginTop: 20, padding: '14px 18px', background: 'rgba(74,88,56,.08)', border: '1px solid rgba(74,88,56,.25)', display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+        <span style={{ color: 'var(--moss)', fontSize: 16, flexShrink: 0 }}>✓</span>
+        <p style={{ fontFamily: 'var(--font-serif)', fontSize: 13, color: 'var(--stone)', margin: 0, lineHeight: 1.5 }}>Viaje leve! A agência fornece redários, alimentação e toda estrutura de camping. Lista detalhada completa enviada após confirmação da reserva.</p>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Carrossel de Pacotes Mobile ──────────────────────────────── */
+function PacotesCarousel() {
+  const [active, setActive] = useState(1);
+  const scrollRef = useRef(null);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      const cardWidth = el.offsetWidth * 0.88 + 12;
+      setActive(Math.round(el.scrollLeft / cardWidth));
+    };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+  const scrollTo = (i) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.offsetWidth * 0.88 + 12;
+    el.scrollTo({ left: i * cardWidth, behavior: 'smooth' });
+  };
+  return (
+    <div>
+      <div ref={scrollRef} style={{ display: 'flex', gap: 12, overflowX: 'auto', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch', padding: '4px 6vw 16px', margin: '0 -24px', scrollbarWidth: 'none' }} className="pack-scroll">
+        <style>{`.pack-scroll::-webkit-scrollbar { display: none; }`}</style>
+        {PACOTES.map(p => (
+          <div key={p.label} style={{ flex: '0 0 88%', scrollSnapAlign: 'center', padding: '32px 24px', position: 'relative', background: p.featured ? 'var(--bark)' : 'var(--canvas)', borderTop: p.featured ? '3px solid var(--rust)' : '3px solid transparent', outline: p.featured ? '1px solid var(--rust)' : '1px solid var(--line)', display: 'flex', flexDirection: 'column' }}>
+            {p.featured && <div style={{ position: 'absolute', top: -13, left: 24, background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', padding: '5px 14px' }}>Mais popular</div>}
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: p.featured ? 'var(--rust-soft)' : 'var(--stone)', marginBottom: 8 }}>{p.label}</div>
+            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 20, fontWeight: 700, color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 10 }}>{p.datas}</div>
+            <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+              {[p.dias, p.km, p.oasis].map(v => (
+                <span key={v} style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', padding: '3px 9px', color: p.featured ? 'var(--canvas)' : 'var(--stone)', border: `1px solid ${p.featured ? 'var(--forest-soft)' : 'var(--line)'}` }}>{v}</span>
+              ))}
+            </div>
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 14, lineHeight: 1.55, color: p.featured ? 'var(--ashe)' : 'var(--stone)', marginBottom: 20 }}>{p.desc}</p>
+            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 30, fontWeight: 700, letterSpacing: '-.02em', color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 2 }}>{p.price}</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', color: p.featured ? 'var(--ashe-dim)' : 'var(--stone)', marginBottom: 20 }}>por pessoa · até 12x</div>
+            <a href={waMsg(p.label, p.datas, p.price)} target="_blank" rel="noopener noreferrer" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '14px 20px', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase', background: p.featured ? 'var(--rust)' : 'transparent', color: p.featured ? 'var(--canvas)' : 'var(--bark)', border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}`, marginTop: 'auto' }}>Reservar →</a>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 8 }}>
+        {PACOTES.map((_, i) => (
+          <button key={i} onClick={() => scrollTo(i)} aria-label={`Pacote ${i + 1}`} style={{ width: i === active ? 24 : 8, height: 8, borderRadius: 4, padding: 0, border: 'none', background: i === active ? 'var(--rust)' : 'var(--line)', cursor: 'pointer', transition: 'width .3s, background .3s' }} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PAGE
+══════════════════════════════════════════════════════════════════ */
+function LencoisPage() {
+  return (
+    <main style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)', overflowX: 'hidden' }}>
+      <style>{`
+        .lenc-trip-img { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
+        .lenc-img-wrap:hover .lenc-trip-img { transform: scale(1.04); }
+        .lenc-pack:hover { outline: 1px solid var(--rust); }
+        .lenc-cta-btn:hover { opacity: .88; }
+        @media(max-width: 900px){ .site-nav-links{ gap:14px!important; font-size:9px!important; } }
+        @media(max-width: 640px){ .site-nav-links{ display:none!important; } .site-header{ padding:0 24px!important; } }
+        .lenc-sticky{ display:none; }
+        .lenc-sticky-spacer{ display:none; }
+        @media(max-width: 640px){
+          .lenc-sticky{ display:flex; position:fixed; bottom:0; left:0; right:0; z-index:50; align-items:center; gap:12px; background:rgba(30,42,24,.97); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-top:1px solid rgba(232,223,201,.16); padding:11px 16px calc(11px + env(safe-area-inset-bottom)); }
+          .lenc-sticky-spacer{ display:block; height:74px; }
+        }
+        @media(max-width: 900px) {
+          .lenc-tl-line { display: none !important; }
+          .lenc-day-rail { flex-direction: row !important; align-items: center !important; gap: 12px !important; align-self: auto !important; padding-top: 0 !important; }
+          .lenc-day-rail .lenc-day-num { font-size: 34px !important; margin-top: 0 !important; }
+          .lenc-two   { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .lenc-pad   { padding: 56px 24px !important; }
+          .lenc-hero-pad { padding: 100px 24px 40px !important; }
+          .lenc-day   { grid-template-columns: 1fr !important; }
+          .lenc-pol   { grid-template-columns: 1fr !important; }
+          .gear-grid  { grid-template-columns: 1fr !important; }
+          .notis-grid { grid-template-columns: 1fr !important; }
+          .outros-grid { grid-template-columns: 1fr !important; }
+          .lenc-incluso-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+          .lenc-nivel { flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
+          .lenc-nivel-divider { display: none !important; }
+          .lenc-packs-desktop { display: none !important; }
+          .lenc-packs-mobile  { display: block !important; }
+        }
+        @media(max-width: 480px) {
+          .lenc-pad   { padding: 48px 20px !important; }
+          .lenc-hero-pad { padding: 88px 20px 28px !important; }
+          .lenc-hero        { min-height: 0 !important; height: 560px !important; }
+          .lenc-hero-handw  { font-size: 30px !important; }
+          .lenc-hero-eyebrow { font-size: 9px !important; gap: 6px !important; flex-wrap: wrap !important; }
+          .lenc-hero-pitch  { font-size: 16px !important; max-width: 100% !important; }
+          .lenc-hero-bottom { flex-direction: column !important; align-items: flex-start !important; gap: 24px !important; }
+          .lenc-hero-stats  { grid-template-columns: 1fr 1fr !important; gap: 14px !important; width: 100%; }
+          .lenc-day          { padding: 28px 0 !important; gap: 16px !important; }
+          .lenc-day-img      { display: block !important; order: 1; width: 100% !important; aspect-ratio: 16/10; height: auto !important; margin-bottom: 8px; }
+          .lenc-day-rail     { order: 2; }
+          .lenc-day-content  { order: 3; }
+          .lenc-section-title { font-size: 28px !important; }
+          .lenc-section-title-lg { font-size: 36px !important; }
+          .lenc-four { grid-template-columns: 1fr 1fr !important; gap: 2px !important; }
+          .lenc-cta-final { padding: 80px 20px !important; }
+          .lenc-cta-final h2 { font-size: clamp(40px, 11vw, 56px) !important; }
+          .lenc-cta-final-btn { padding: 16px 28px !important; font-size: 11px !important; letter-spacing: .18em !important; }
+          .lenc-cancel-row { flex-direction: column !important; gap: 4px !important; align-items: flex-start !important; }
+          .lenc-cancel-row > div:last-child { text-align: left !important; }
+          .lenc-map-wrap { aspect-ratio: 4/5 !important; }
+        }
+        @media(max-width: 360px) {
+          .lenc-hero-stats { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
+
+      <SiteNav dark={true} />
+
+      {/* ── HERO ── */}
+      <section className="lenc-hero" style={{ position: 'relative', minHeight: 820, overflow: 'hidden', background: 'var(--forest)' }}>
+        <div className="lenc-trip-img" style={{ position: 'absolute', inset: 0, backgroundImage: `url(${FOTOS_GALERIA[0]})`, backgroundSize: 'cover', backgroundPosition: 'center 30%' }} />
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(30,42,24,.45) 0%, rgba(30,42,24,.05) 40%, rgba(30,42,24,.9) 100%)' }} />
+        <div className="lenc-hero-pad" style={{ position: 'relative', zIndex: 2, minHeight: 'inherit', padding: '140px 56px 56px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: 'var(--canvas)' }}>
+          <div className="lenc-hero-eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 10, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe)', fontWeight: 500 }}>
+            <Link href="/expedicoes" style={{ color: 'inherit', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16l-4-4m0 0l4-4m-4 4h18" /></svg>
+              Expedições
+            </Link>
+            <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--rust-soft)', display: 'inline-block' }} />
+            <span>Lençóis Maranhenses</span>
+            <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--rust-soft)', display: 'inline-block' }} />
+            <span style={{ color: 'var(--rust-soft)' }}>Agosto 2026</span>
+          </div>
+          <div>
+            <div className="lenc-hero-handw" style={{ fontFamily: 'var(--font-hand)', fontSize: 44, color: 'var(--rust-soft)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 6 }}>deserto com lagoas, Via Láctea garantida—</div>
+            <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(48px, 10vw, 140px)', letterSpacing: '-.04em', lineHeight: 0.9, margin: 0, color: 'var(--canvas)' }}>
+              Lençóis<br />
+              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>Maranhenses</span>
+            </h1>
+          </div>
+          <div className="lenc-hero-bottom" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 40, flexWrap: 'wrap' }}>
+            <p className="lenc-hero-pitch" style={{ fontFamily: 'var(--font-serif)', fontSize: 20, fontStyle: 'italic', lineHeight: 1.5, maxWidth: '46ch', color: 'var(--canvas)', margin: 0 }}>
+              Travessia a pé entre dunas brancas e lagoas de água doce — o parque que parece outro planeta, com fotografia profissional inclusa.
+            </p>
+            <div className="lenc-hero-stats" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', gap: 32, flexShrink: 0 }}>
+              {[['35–64km', 'Distância'], ['3–5 dias', 'Duração'], ['2–4 oásis', 'Pernoites'], ['máx. 10', 'Por turma']].map(([v, l]) => (
+                <div key={l}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 6 }}>{l}</div>
+                  <div style={{ fontFamily: 'var(--font-ui)', fontSize: 18, fontWeight: 600, color: 'var(--canvas)' }}>{v}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── O QUE ESTA TRAVESSIA NÃO É ── */}
+      <section className="lenc-pad" style={{ padding: '80px 56px', background: 'var(--forest)', borderBottom: '1px solid var(--line-dark)' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust-soft)', marginBottom: 14 }}>№ 00 · Antes de tudo</div>
+        <h2 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(28px, 4vw, 44px)', letterSpacing: '-.02em', lineHeight: 1.05, margin: '0 0 40px', color: 'var(--canvas)' }}>
+          O que esta travessia <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>não é</span> — e o que ela realmente é.
+        </h2>
+        <div className="notis-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          <div style={{ padding: '32px 28px', background: 'rgba(11,10,8,.4)', border: '1px solid var(--line-dark)' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 20 }}>❌ Não é</div>
+            {NOT_IS.nao.map(item => (
+              <div key={item} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--line-dark)', fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--stone)', lineHeight: 1.4 }}>
+                <span style={{ flexShrink: 0, opacity: .4 }}>—</span>{item}
+              </div>
+            ))}
+          </div>
+          <div style={{ padding: '32px 28px', background: 'rgba(74,88,56,.12)', border: '1px solid rgba(74,88,56,.3)' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--moss)', marginBottom: 20 }}>✓ É</div>
+            {NOT_IS.e.map(item => (
+              <div key={item} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: '1px solid rgba(74,88,56,.15)', fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--canvas)', lineHeight: 1.4 }}>
+                <span style={{ color: 'var(--moss)', flexShrink: 0, fontWeight: 700 }}>✓</span>{item}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ marginTop: 2, padding: '20px 28px', background: 'rgba(166,84,43,.06)', border: '1px solid rgba(166,84,43,.2)', display: 'flex', gap: 32, flexWrap: 'wrap' }}>
+          {[['52km totais', 'Distância'], ['4 dias completos', 'Duração'], ['Grupos pequenos e intimistas', 'Formato']].map(([v, l]) => (
+            <div key={l}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.2em', textTransform: 'uppercase', color: 'var(--rust-soft)', marginBottom: 4 }}>{l}</div>
+              <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 16, color: 'var(--canvas)' }}>{v}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── INTRO ── */}
+      <section className="lenc-pad lenc-two" style={{ padding: '72px 56px', borderBottom: '1px solid var(--line)', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 80, alignItems: 'start' }}>
+        <div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 01 · O lugar</div>
+          <h2 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontSize: 32, fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.1, margin: 0, color: 'var(--bark)' }}>
+            Deserto branco<br />com lagoas<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>de safira.</span>
+          </h2>
+        </div>
+        <p style={{ fontFamily: 'var(--font-serif)', fontSize: 19, lineHeight: 1.55, color: 'var(--stone)', margin: 0 }}>
+          Os Lençóis Maranhenses são um dos lugares mais irreais do planeta — um deserto de dunas brancas que, entre janeiro e setembro, se preenche com lagoas de água doce cristalina. A travessia a pé conecta Atins a Santo Amaro pelos caminhos internos do parque, passando por comunidades que vivem isoladas há gerações. Não existe trilha marcada. Você segue guias locais, o vento e a cor da água.
+        </p>
+      </section>
+
+      {/* ── MAPA DO ROTEIRO ── */}
+      <section style={{ background: 'var(--forest)', borderBottom: '1px solid var(--line-dark)' }}>
+        <div className="lenc-pad" style={{ padding: '80px 56px' }}>
+          <div style={{ marginBottom: 32 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust-soft)', marginBottom: 14 }}>№ 02 · Mapa</div>
+            <h2 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 'clamp(28px, 3.5vw, 42px)', letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--canvas)' }}>
+              52km. Atins → Santo Amaro.{' '}
+              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>4 dias, 4 cores.</span>
+            </h2>
+          </div>
+          <div className="lenc-map-wrap" style={{ width: '100%' }}>
+            <LencoisMap />
+          </div>
+        </div>
+      </section>
+
+      {/* ── ROTEIRO DIA A DIA ── */}
+      <section style={{ background: 'var(--canvas-deep)', borderBottom: '1px solid var(--line)' }}>
+        <div className="lenc-pad" style={{ padding: '96px 56px' }}>
+          <div style={{ marginBottom: 56 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 03 · Roteiro</div>
+            <h2 className="lenc-section-title-lg" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
+              4 dias.<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>Cada um inesquecível.</span>
+            </h2>
+          </div>
+          {[
+            { num: '01', cor: DIA_COLORS[1], rota: 'Barreirinhas → Baixa Grande', tempo: '8h lancha + 9km caminhada · 3h', desc: 'Travessia de lancha pelo Rio Preguiças até Atins, depois trekking pelas primeiras dunas até o oásis de Baixa Grande. Primeiro pernoite em redário sob o céu estrelado — longe de qualquer luz artificial.', highlight: 'Primeiro oásis · Via Láctea garantida', img: FOTOS_GALERIA[1] },
+            { num: '02', cor: DIA_COLORS[2], rota: 'Baixa Grande → Queimada dos Britos', tempo: 'Saída 5h · 10km trekking · 5h', desc: 'O dia começa antes do sol. Saída às 5h para capturar o nascer do sol sobre as dunas — a cena mais fotografada da travessia. Travessia do Rio Negro e chegada às lagoas cristalinas do segundo oásis.', highlight: 'Nascer do sol nas dunas · Rio Negro', img: FOTOS_GALERIA[2] },
+            { num: '03', cor: DIA_COLORS[3], rota: 'Queimada dos Britos → Betânia', tempo: 'Saída 3h · 18km · 6h de aventura', desc: 'O dia mais longo e mais espetacular. Saída ainda na escuridão, às 3h da madrugada, para cruzar 18km de paisagem lunar. As lagoas desta etapa são as mais impressionantes do circuito — poucas pessoas chegam aqui.', highlight: 'Lagoas mais espetaculares da região', img: FOTOS_GALERIA[3] },
+            { num: '04', cor: DIA_COLORS[4], rota: 'Betânia → Santo Amaro', tempo: 'Início 7h · 15km finais · 4h', desc: 'O encerramento triunfal. 15km finais em ritmo mais tranquilo — a travessia já está no corpo. Chegada às 11h em Santo Amaro, com transfer de volta para Barreirinhas. Álbum fotográfico entregue em até 15 dias.', highlight: 'Chegada triunfal 11h · Cenários épicos', img: FOTOS_GALERIA[4] },
+          ].map((dia, di) => (
+            <div key={dia.num} className="lenc-day" style={{ display: 'grid', gridTemplateColumns: '88px 1fr 300px', gap: 40, padding: '0 0 44px', alignItems: 'flex-start', position: 'relative' }}>
+              <div className="lenc-day-rail" style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', alignSelf: 'stretch', paddingTop: 4 }}>
+                {di < 3 && <div className="lenc-tl-line" style={{ position: 'absolute', top: 106, bottom: -44, left: '50%', transform: 'translateX(-50%)', width: 2, background: 'var(--line)', zIndex: 0 }} />}
+                <div style={{ width: 18, height: 18, borderRadius: '50%', background: dia.cor, border: '4px solid var(--canvas-deep)', position: 'relative', zIndex: 1 }} />
+                <div className="lenc-day-num" style={{ fontFamily: 'var(--font-mono)', fontSize: 50, fontWeight: 500, letterSpacing: '-.04em', lineHeight: 1, color: dia.cor, marginTop: 12, position: 'relative', zIndex: 1 }}>{dia.num}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginTop: 5 }}>Dia</div>
+              </div>
+              <div className="lenc-day-content" style={{ paddingTop: 10 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: dia.cor, marginBottom: 4 }}>{dia.rota}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--stone)', marginBottom: 16 }}>{dia.tempo}</div>
+                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, lineHeight: 1.65, color: 'var(--stone)', margin: '0 0 16px', maxWidth: '52ch' }}>{dia.desc}</p>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(166,84,43,.08)', border: '1px solid rgba(166,84,43,.2)', padding: '5px 14px', fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--rust)' }}>{dia.highlight}</div>
+              </div>
+              <div className="lenc-img-wrap lenc-day-img" style={{ overflow: 'hidden', aspectRatio: '4/3' }}>
+                <img src={dia.img} alt={`Dia ${dia.num}`} className="lenc-trip-img" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── FOTOGRAFIA ── */}
+      <section className="lenc-pad lenc-two" style={{ padding: '96px 56px', borderBottom: '1px solid var(--line)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+        <div className="lenc-img-wrap" style={{ overflow: 'hidden', aspectRatio: '3/4' }}>
+          <img src="public/images/lencois/DSC03215.jpg" alt="Fotografia" className="lenc-trip-img" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </div>
+        <div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 04 · Diferencial</div>
+          <h2 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1.05, margin: '0 0 10px', color: 'var(--bark)' }}>
+            Guarda o celular.<br /><span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>A gente cuida das fotos.</span>
+          </h2>
+          <p style={{ fontFamily: 'var(--font-serif)', fontSize: 17, lineHeight: 1.6, color: 'var(--stone)', marginBottom: 28 }}>
+            Henrique (@henriq.eu) vai junto na travessia como fotógrafo e guia — você vive a experiência, a gente cuida das imagens. Todas as fotos desta página foram feitas nas travessias anteriores.
+          </p>
+          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {['Fotógrafo profissional durante TODA a travessia', 'Cobertura completa: paisagens épicas, momentos espontâneos, comunidades', 'Fotos tratadas profissionalmente — entregues em até 15 dias', 'Álbum digital com as melhores fotos do grupo'].map(item => (
+              <li key={item} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--stone)', lineHeight: 1.6 }}>
+                <span style={{ color: 'var(--moss)', fontWeight: 700, flexShrink: 0, marginTop: 1 }}>✓</span>{item}
+              </li>
+            ))}
+          </ul>
+          <div style={{ padding: '16px 20px', background: 'var(--canvas-deep)', border: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 14 }}>
+            <div className="lenc-img-wrap" style={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '2px solid var(--line)' }}>
+              <img src="public/images/lencois/henrique_sesana1.jpg" alt="Henrique" className="lenc-trip-img" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+            <div>
+              <div style={{ fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 700, color: 'var(--bark)' }}>Henrique Pimenta</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--stone)', marginTop: 2 }}>@henriq.eu · Fotógrafo e guia da expedição</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── NÍVEL FÍSICO ── */}
+      <section className="lenc-pad lenc-nivel" style={{ padding: '64px 56px', background: 'var(--canvas-deep)', borderBottom: '1px solid var(--line)', display: 'flex', gap: 48, alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ flex: '0 0 auto' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 6 }}>Nível da travessia</div>
+          <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 22, color: 'var(--bark)' }}>Intermediário</div>
+        </div>
+        <div className="lenc-nivel-divider" style={{ width: 1, height: 40, background: 'var(--line)', flexShrink: 0 }} />
+        <div style={{ flex: 1, minWidth: 200 }}>
+          <p style={{ fontFamily: 'var(--font-serif)', fontSize: 16, color: 'var(--stone)', margin: 0, lineHeight: 1.6 }}>
+            Caminhadas diárias de 6–8h em areia. Necessário condicionamento físico básico.{' '}
+            <strong style={{ color: 'var(--bark)', fontWeight: 600 }}>Se você caminha regularmente, você consegue.</strong>
+          </p>
+        </div>
+        <div style={{ flex: '0 0 auto', display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          {['Areia Fina', '6–8h/dia', 'Sem altitude'].map(tag => (
+            <span key={tag} style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.14em', textTransform: 'uppercase', padding: '5px 12px', border: '1px solid var(--line)', color: 'var(--stone)' }}>{tag}</span>
+          ))}
+        </div>
+      </section>
+
+      {/* ── INCLUÍDO / NÃO INCLUÍDO ── */}
+      <section className="lenc-pad lenc-incluso-grid" style={{ padding: '96px 56px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60 }}>
+        <div style={{ background: 'var(--canvas-deep)', padding: 36, border: '1px solid var(--line)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 18 }}>№ 05.a · Na mochila</div>
+          <h3 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontSize: 28, fontWeight: 600, letterSpacing: '-.01em', margin: '0 0 20px', color: 'var(--bark)' }}>
+            O que está <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>incluso.</span>
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {INCLUIDO.map(item => (
+              <div key={item.title} style={{ display: 'flex', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--line)', fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--stone)', alignItems: 'flex-start' }}>
+                <span style={{ color: 'var(--moss)', fontWeight: 700, flexShrink: 0, marginTop: 2 }}>✓</span>
+                <div>
+                  <strong style={{ fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 700, color: 'var(--bark)', display: 'block', marginBottom: 2 }}>{item.title}</strong>
+                  {item.desc}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{ padding: 36, border: '1px dashed var(--stone)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 18 }}>№ 05.b · Por sua conta</div>
+          <h3 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontSize: 28, fontWeight: 600, letterSpacing: '-.01em', margin: '0 0 20px', color: 'var(--bark)' }}>
+            O que <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--stone)' }}>não</span> está.
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {NAO_INCLUIDO.split(' · ').map(item => (
+              <div key={item} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--stone)', lineHeight: 1.5 }}>
+                <span style={{ flexShrink: 0, marginTop: 3 }}>—</span>{item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── O QUE LEVAR ── */}
+      <section style={{ background: 'var(--canvas-deep)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+        <div className="lenc-pad" style={{ padding: '80px 56px' }}>
+          <div style={{ marginBottom: 36 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 06 · Preparo</div>
+            <h2 className="lenc-section-title" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(28px, 3.5vw, 40px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
+              O que levar na{' '}
+              <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>mochila</span>.
+            </h2>
+          </div>
+          <GearChecklist />
+        </div>
+      </section>
+
+      {/* ── PACOTES ── */}
+      <section style={{ background: 'var(--canvas-deep)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
+        <div className="lenc-pad" style={{ padding: '96px 56px' }}>
+          <div style={{ marginBottom: 48 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 07 · Datas · Agosto 2026</div>
+            <h2 className="lenc-section-title-lg" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
+              Escolha seu <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>pacote.</span>
+            </h2>
+          </div>
+          <div className="lenc-packs-desktop" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, marginBottom: 32 }}>
+            {PACOTES.map(p => (
+              <div key={p.label} className="lenc-pack" style={{ padding: '40px 32px', position: 'relative', background: p.featured ? 'var(--bark)' : 'var(--canvas)', borderTop: p.featured ? '3px solid var(--rust)' : '3px solid transparent', outline: p.featured ? '1px solid var(--rust)' : '1px solid var(--line)' }}>
+                {p.featured && <div style={{ position: 'absolute', top: -13, left: 32, background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', padding: '5px 14px' }}>Mais popular</div>}
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: p.featured ? 'var(--rust-soft)' : 'var(--stone)', marginBottom: 8 }}>{p.label}</div>
+                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 22, fontWeight: 700, color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 10 }}>{p.datas}</div>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
+                  {[p.dias, p.km, p.oasis].map(v => (
+                    <span key={v} style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', padding: '3px 10px', color: p.featured ? 'var(--canvas)' : 'var(--stone)', border: `1px solid ${p.featured ? 'var(--forest-soft)' : 'var(--line)'}` }}>{v}</span>
+                  ))}
+                </div>
+                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, lineHeight: 1.6, color: p.featured ? 'var(--ashe)' : 'var(--stone)', marginBottom: 28 }}>{p.desc}</p>
+                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(24px, 3.5vw, 36px)', fontWeight: 700, letterSpacing: '-.02em', color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 4 }}>{p.price}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', color: p.featured ? 'var(--ashe-dim)' : 'var(--stone)', marginBottom: 28 }}>por pessoa · até 12x</div>
+                <a href={waMsg(p.label, p.datas, p.price)} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '14px 24px', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase', background: p.featured ? 'var(--rust)' : 'transparent', color: p.featured ? 'var(--canvas)' : 'var(--bark)', border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}` }}>Reservar esta data →</a>
+              </div>
+            ))}
+          </div>
+          <div className="lenc-packs-mobile" style={{ display: 'none', marginBottom: 32 }}>
+            <PacotesCarousel />
+          </div>
+          <div className="lenc-pol" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+            {POLITICA_PAGAMENTO.map(item => (
+              <div key={item.title} style={{ padding: '20px 24px', background: 'var(--canvas)', border: '1px solid var(--line)' }}>
+                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 700, color: 'var(--bark)', marginBottom: 4 }}>{item.title}</div>
+                <div style={{ fontFamily: 'var(--font-serif)', fontSize: 13, color: 'var(--stone)', lineHeight: 1.6 }}>{item.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── POLÍTICA DE CANCELAMENTO ── */}
+      <section style={{ background: 'var(--canvas-deep)', borderBottom: '1px solid var(--line)' }}>
+        <div className="lenc-pad" style={{ padding: '64px 56px' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--stone)', marginBottom: 24 }}>Política de cancelamento</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0, maxWidth: 600 }}>
+            {CANCELAMENTO.map((c, i) => (
+              <div key={c.prazo} className="lenc-cancel-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', padding: '16px 0', borderTop: '1px solid var(--line)', borderBottom: i === CANCELAMENTO.length - 1 ? '1px solid var(--line)' : 'none', gap: 24 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--stone)' }}>{c.prazo}</div>
+                <div style={{ fontFamily: 'var(--font-serif)', fontSize: 15, color: 'var(--bark)', textAlign: 'right' }}>{c.condicao}</div>
+              </div>
+            ))}
+          </div>
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', color: 'var(--stone)', marginTop: 16 }}>
+            Condições climáticas extremas: experiência remarcada sem custo adicional. Grupo mínimo: 4 pessoas para confirmar saída. Época ideal: junho a setembro.
+          </p>
+        </div>
+      </section>
+
+      {/* ── CTA FINAL ── */}
+      <section className="lenc-cta-final" style={{ padding: '120px 56px', background: 'var(--forest)', color: 'var(--canvas)', textAlign: 'center' }}>
+        <div style={{ fontFamily: 'var(--font-hand)', fontSize: 42, color: 'var(--rust-soft)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 8 }}>bora?</div>
+        <h2 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(48px, 8vw, 88px)', letterSpacing: '-.04em', lineHeight: 0.92, margin: 0 }}>
+          Sua próxima<br />
+          <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>expedição</span>
+        </h2>
+        <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 20, color: 'var(--ashe)', marginTop: 24, maxWidth: '50ch', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
+          Vagas limitadas a 10 pessoas por turma. Agosto 2026 — reserve com antecedência.
+        </p>
+        <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn lenc-cta-final-btn" style={{ marginTop: 40, display: 'inline-block', padding: '18px 40px', background: 'var(--rust-soft)', color: 'var(--forest)', fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 700, letterSpacing: '.24em', textTransform: 'uppercase', textDecoration: 'none' }}>Falar no WhatsApp →</a>
+        <div style={{ marginTop: 28, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--ashe-dim)' }}>Em parceria com @lencoisexperience · @livinglencois</div>
+      </section>
+
+      {/* ── GALERIA ── */}
+      <div className="lenc-four" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 3 }}>
+        {FOTOS_GALERIA.slice(8, 12).map((src, i) => (
+          <div key={i} className="lenc-img-wrap" style={{ aspectRatio: '1', overflow: 'hidden' }}>
+            <img src={src} alt="" className="lenc-trip-img" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          </div>
+        ))}
+      </div>
+
+      <div className="lenc-sticky-spacer" />
+      <div className="lenc-sticky">
+        <div style={{ lineHeight: 1.05 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 2 }}>a partir de</div>
+          <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 19, letterSpacing: '-.02em', color: 'var(--canvas)' }}>R$ 3.599</div>
+        </div>
+        <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: 'center', padding: '14px', background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', textDecoration: 'none' }}>Reservar →</a>
+      </div>
+
+      <SiteFooter dark={false} />
+    </main>
+  );
+}
+
+window.LencoisPage = LencoisPage;
