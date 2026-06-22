@@ -45,8 +45,8 @@ export const HOME_CARDS = [
     titleBold: "Trilhas",
     desc: "Registos de lugares remotos, montanhas e natureza selvagem.",
     cta: "Explorar",
-    bg: "/images/hiker.jpg",
-    bgPosition: "center top",
+    bg: "/images/expedicao-lencois.jpg",
+    bgPosition: "center 35%",
   },
 ] as const
 
