@@ -218,42 +218,45 @@ export default function PresetsHubPage() {
           </div>
         </Link>
 
-        {/* Porta 2 · Outdoor Grain — EM BREVE */}
-        <div
-          className="door"
-          style={{ position: "relative", height: 600, overflow: "hidden", cursor: "default", background: "var(--forest)" }}
-        >
+        {/* Porta 2 · Outdoor Grain — ATIVA (página de showcase no ar) */}
+        <Link href="/presets/outdoor-grain" style={{ textDecoration: "none" }}>
           <div
-            className="door-img"
-            style={{
-              position: "absolute", inset: 0,
-              backgroundImage: "url(/images/outdoor-grain-capa.jpg)",
-              backgroundSize: "cover", backgroundPosition: "center",
-              filter: "brightness(.85)",
-            }}
-          />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.15) 40%, rgba(30,42,24,.9) 100%)" }} />
+            className="door door-active"
+            style={{ position: "relative", height: 600, overflow: "hidden", cursor: "pointer", background: "var(--forest)" }}
+          >
+            <div
+              className="door-img"
+              style={{
+                position: "absolute", inset: 0,
+                backgroundImage: "url(/images/outdoor-grain-capa.jpg)",
+                backgroundSize: "cover", backgroundPosition: "center",
+                filter: "brightness(.85)",
+              }}
+            />
+            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.15) 40%, rgba(30,42,24,.9) 100%)" }} />
 
-          <div style={{ position: "absolute", top: 32, right: 32, zIndex: 3, padding: "6px 14px", background: "var(--rust)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--canvas)" }}>
-            Em breve
-          </div>
-
-          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "32px 32px 36px", zIndex: 2, color: "var(--canvas)" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-              <div style={{ padding: "5px 10px", border: "1px solid rgba(232,223,201,.5)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase" }}>.xmp · .dng</div>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 02 / 03</div>
+            <div style={{ position: "absolute", top: 32, right: 32, zIndex: 3, padding: "6px 14px", background: "var(--rust)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--canvas)" }}>
+              Em breve
             </div>
-            <div>
-              <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "var(--ashe)", marginBottom: 12 }}>Película analógica · Lightroom</div>
-              <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: "clamp(24px, 2.5vw, 32px)", letterSpacing: "-.02em", lineHeight: 1.02, margin: 0, marginBottom: 4 }}>
-                Outdoor Grain<br />Presets
-              </h2>
-              <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
-                <span>+15 presets · Em breve</span>
+
+            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "32px 32px 36px", zIndex: 2, color: "var(--canvas)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div style={{ padding: "5px 10px", border: "1px solid rgba(232,223,201,.5)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase" }}>.xmp · .dng</div>
+                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 02 / 03</div>
+              </div>
+              <div>
+                <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "var(--ashe)", marginBottom: 12 }}>Película analógica · Lightroom</div>
+                <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: "clamp(24px, 2.5vw, 32px)", letterSpacing: "-.02em", lineHeight: 1.02, margin: 0, marginBottom: 4 }}>
+                  Outdoor Grain<br />Presets
+                </h2>
+                <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
+                  <span>21 presets · Em breve</span>
+                  <span className="door-cta-arrow" style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 22, fontWeight: 400 }}>→</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Porta 3 · LUTs — DESABILITADA */}
         <div
