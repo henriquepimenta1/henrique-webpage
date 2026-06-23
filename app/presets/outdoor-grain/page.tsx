@@ -13,6 +13,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 const IMG = (k: string) => "/images/odg-opt/" + k + ".jpg";
 
 const TOTAL = 21;
+const CAKTO_URL = "https://pay.cakto.com.br/458hrkh_938519";
+const PRICE = "34,90", PRICE_OLD = "64,90";
 
 interface PresetEntry {
   n: string;
@@ -84,6 +86,7 @@ const FAQ: [string, string, string][] = [
   ["04","Drone & câmera no mesmo set","O bloco de Calibração Aérea (19) foi desenhado para nivelar arquivos DNG de drone com os RAWs da câmera principal — cor consistente no mesmo carretel."],
   ["05","Cada foto fica idêntica?","Não. Preset é ponto de partida, não filtro fixo. Exposição e WB do seu arquivo mudam o resultado — por isso o pack traz 21 variações para cada condição."],
   ["06","Atualizações","Vitálias e sem custo. Novas versões do pack entram na mesma pasta de download."],
+  ["07","Funciona no celular?","Sim — e muito bem. Os .dng abrem direto no Lightroom Mobile (iOS e Android), de graça e sem assinatura. Boa parte deste pack foi editada no próprio celular, em campo, sem laptop — o look fica idêntico ao do desktop."],
 ];
 
 /* ---- PRIMITIVOS ---- */
@@ -250,7 +253,7 @@ function Nav() {
             <a key={h} href={h} style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--ink-3)", textDecoration: "none" }}>{t}</a>
           ))}
         </nav>
-        <a href="#checkout" style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--amber-soft)", textDecoration: "none", border: "1px solid var(--line-2)", padding: "9px 16px" }}>Em breve</a>
+        <a href={CAKTO_URL} style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "#0a0a0b", background: "var(--amber)", textDecoration: "none", border: "1px solid var(--amber)", padding: "9px 16px" }}>Comprar · R$ {PRICE}</a>
       </div>
     </header>
   );
@@ -276,11 +279,11 @@ function Hero() {
           <span style={{ color: "var(--ink)" }}>{TOTAL} emulações de filme</span> calibradas em campo — sol de meio-dia, neblina, breu e drone. O grão, o halo e a química do analógico. Sem laboratório.
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 34 }}>
-          <a href="#checkout" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 26px", background: "var(--amber)", color: "#0a0a0b", fontFamily: "var(--sans)", fontWeight: 600, fontSize: 14, letterSpacing: ".02em", textDecoration: "none" }}>Em breve</a>
+          <a href={CAKTO_URL} style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 26px", background: "var(--amber)", color: "#0a0a0b", fontFamily: "var(--sans)", fontWeight: 600, fontSize: 14, letterSpacing: ".02em", textDecoration: "none" }}>Comprar agora · R$ {PRICE}</a>
           <a href="#arquivos" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 26px", border: "1px solid var(--line-2)", color: "var(--ink)", fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".12em", textTransform: "uppercase", textDecoration: "none", whiteSpace: "nowrap" }}>Ver os {TOTAL} arquivos</a>
         </div>
         <div className="odg-hero-meta" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 1, marginTop: "clamp(40px,6vw,72px)", border: "1px solid var(--line)", background: "var(--line)" }}>
-          {([["Arquivos",TOTAL],["Formato",".xmp · .dng"],["Plataforma","LR · ACR"],["Licença","Vitálícia"]] as [string,string|number][]).map(([k, v]) => (
+          {([["Arquivos",TOTAL],["Formato",".xmp · .dng"],["Plataforma","LR · ACR · Mobile"],["Licença","Vitálícia"]] as [string,string|number][]).map(([k, v]) => (
             <div key={String(k)} style={{ background: "var(--bg)", padding: "16px 18px" }}>
               <div style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--ink-3)", marginBottom: 7 }}>{k}</div>
               <div style={{ fontFamily: "var(--mono)", fontSize: 15, color: "var(--ink)" }}>{v}</div>
@@ -407,6 +410,7 @@ const ALL_PRESETS: PresetItem[] = BLOCKS.flatMap(b => b.items.map(it => ({ num: 
 
 function Arquivos() {
   const [sel, setSel] = useState<PresetItem>(ALL_PRESETS[0]);
+  const [swiped, setSwiped] = useState(false);
   return (
     <section id="arquivos" style={{ background: "var(--panel)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
       <div style={SECTION}>
@@ -430,9 +434,9 @@ function Arquivos() {
             <span style={{ height: 1, flex: 1, background: "var(--line)" }} />
             <span className="odg-roll-hint" style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--ink-4)" }}>← role o filme</span>
           </div>
-          <div className="odg-roll">
+          <div className="odg-roll" data-swiped={swiped ? "1" : "0"}>
             <div className="odg-perf" />
-            <div className="odg-roll-track">
+            <div className="odg-roll-track" onScroll={() => { if (!swiped) setSwiped(true); }}>
               {ALL_PRESETS.map(p => {
                 const on = sel.num === p.num;
                 return (
@@ -447,6 +451,8 @@ function Arquivos() {
               })}
             </div>
             <div className="odg-perf" />
+            <div className="odg-roll-fade" aria-hidden="true" />
+            <div className="odg-swipe-hint" aria-hidden="true"><span>deslize · ver os {TOTAL}</span><span className="odg-swipe-arrow">→</span></div>
           </div>
         </div>
       </div>
@@ -533,7 +539,7 @@ function FaqFooter() {
           <Corner style={{ padding: "clamp(32px,5vw,64px)", background: "var(--panel)" }}>
             <div className="odg-cta" style={{ display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: "clamp(32px,5vw,64px)", alignItems: "center" }}>
               <div>
-                <Tick label="Pack completo · lançamento" />
+                <Tick label="Pack completo · disponível agora" />
                 <h2 style={{ margin: "18px 0 0", fontFamily: "var(--sans)", fontWeight: 700, fontSize: "clamp(30px,4.6vw,56px)", lineHeight: 1, letterSpacing: "-.03em" }}>
                   {TOTAL} filmstocks.<br /><span style={{ color: "var(--amber)" }}>Um</span> carretel.
                 </h2>
@@ -541,15 +547,19 @@ function FaqFooter() {
               </div>
               <div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 1, background: "var(--line)", border: "1px solid var(--line)", marginBottom: 22 }}>
-                  {([["Arquivos", `${TOTAL} presets`],["Formato",".xmp · .dng"],["Compatível","LR Classic · CC · ACR"],["Licença","Pessoal + comercial"]] as [string,string][]).map(([k, v]) => (
+                  {([["Arquivos", `${TOTAL} presets`],["Formato",".xmp · .dng"],["Compatível","LR Classic · CC · Mobile · ACR"],["Licença","Pessoal + comercial"]] as [string,string][]).map(([k, v]) => (
                     <div key={k} style={{ background: "var(--bg)", display: "flex", justifyContent: "space-between", padding: "11px 16px" }}>
                       <span style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--ink-3)" }}>{k}</span>
                       <span style={{ fontFamily: "var(--mono)", fontSize: 12, color: "var(--ink)" }}>{v}</span>
                     </div>
                   ))}
                 </div>
-                <a href="#" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "17px", background: "var(--amber)", color: "#0a0a0b", fontFamily: "var(--sans)", fontWeight: 600, fontSize: 14, letterSpacing: ".02em", textDecoration: "none" }}>Em breve</a>
-                <div style={{ textAlign: "center", marginTop: 11, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--ink-3)" }}>Lançamento em breve · entre na lista sem custo</div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 16 }}>
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 13, color: "var(--ink-3)", textDecoration: "line-through" }}>R$ {PRICE_OLD}</span>
+                  <span style={{ fontFamily: "var(--sans)", fontWeight: 700, fontSize: "clamp(34px,5vw,48px)", letterSpacing: "-.03em", color: "var(--ink)", lineHeight: 1 }}>R$ {PRICE}</span>
+                </div>
+                <a href={CAKTO_URL} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "17px", background: "var(--amber)", color: "#0a0a0b", fontFamily: "var(--sans)", fontWeight: 600, fontSize: 14, letterSpacing: ".02em", textDecoration: "none" }}>Comprar agora →</a>
+                <div style={{ textAlign: "center", marginTop: 11, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--ink-3)" }}>Download imediato · acesso vitalício</div>
               </div>
             </div>
           </Corner>
@@ -568,7 +578,7 @@ function FaqFooter() {
             </div>
             <div>
               <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--ink-3)", marginBottom: 14 }}>Specs</div>
-              {([["FORMATO",".xmp · .dng · .cube"],["PLATAFORMA","LR · ACR · Mobile"],["VERSÃO","1.0 / 2026"]] as [string,string][]).map(([k, v]) => (
+              {([["FORMATO",".xmp · .dng"],["PLATAFORMA","LR · ACR · Mobile"],["VERSÃO","1.0 / 2026"]] as [string,string][]).map(([k, v]) => (
                 <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", fontFamily: "var(--mono)", fontSize: 11 }}>
                   <span style={{ color: "var(--ink-3)" }}>{k}</span><span style={{ color: "var(--ink-2)" }}>{v}</span>
                 </div>

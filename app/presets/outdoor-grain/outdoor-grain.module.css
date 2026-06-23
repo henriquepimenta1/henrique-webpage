@@ -55,41 +55,58 @@
   100% { transform: translate(0, 0); }
 }
 .odg section[id] { scroll-margin-top: 72px; }
-.odg .odg-roll { position: relative; background: #141416; border: 1px solid var(--line); }
-.odg .odg-perf { height: 15px; background-image: radial-gradient(circle at center, #000 0 3.2px, transparent 3.6px); background-size: 21px 15px; background-position: center; opacity: 0.85; }
-.odg .odg-roll-track { display: flex; gap: 2px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; padding: 9px; background: #0d0d0e; -webkit-overflow-scrolling: touch; }
-.odg .odg-roll-track::-webkit-scrollbar { height: 5px; }
-.odg .odg-roll-track::-webkit-scrollbar-track { background: #141416; }
-.odg .odg-roll-track::-webkit-scrollbar-thumb { background: var(--line-2); }
-.odg .odg-roll-track::-webkit-scrollbar-thumb:hover { background: var(--amber); }
-.odg .odg-frame { flex-shrink: 0; width: 138px; scroll-snap-align: center; appearance: none; border: none; background: none; cursor: pointer; padding: 0; display: flex; flex-direction: column; gap: 6px; }
-.odg .odg-frame-img { position: relative; aspect-ratio: 3 / 2; overflow: hidden; outline: 1px solid var(--line); outline-offset: -1px; transition: outline-color 0.2s; }
-.odg .odg-frame-img img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.85) brightness(0.62); transition: filter 0.25s, transform 0.35s; }
-.odg .odg-frame-num { position: absolute; top: 0; left: 0; font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.05em; color: var(--ink-2); background: rgba(10,10,11,0.72); padding: 2px 5px; }
-.odg .odg-frame-cap { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-4); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.2s; }
-.odg .odg-frame:hover .odg-frame-img img { filter: saturate(0.95) brightness(0.82); }
-.odg .odg-frame:hover .odg-frame-cap { color: var(--ink-3); }
-.odg .odg-frame[data-on="1"] .odg-frame-img { outline: 2px solid var(--amber); outline-offset: -2px; }
-.odg .odg-frame[data-on="1"] .odg-frame-img img { filter: none; }
-.odg .odg-frame[data-on="1"] .odg-frame-num { color: #0a0a0b; background: var(--amber); }
-.odg .odg-frame[data-on="1"] .odg-frame-cap { color: var(--amber-soft); }
+
+/* ── Film roll ──
+   These classes are applied as plain string classNames in page.tsx
+   (className="odg-roll" etc.), so they MUST stay global — otherwise
+   CSS Modules hashes them and the rules never match. */
+.odg :global(.odg-roll) { position: relative; background: #141416; border: 1px solid var(--line); }
+.odg :global(.odg-perf) { height: 15px; background-image: radial-gradient(circle at center, #000 0 3.2px, transparent 3.6px); background-size: 21px 15px; background-position: center; opacity: 0.85; }
+.odg :global(.odg-roll-track) { display: flex; gap: 2px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x proximity; padding: 9px; background: #0d0d0e; -webkit-overflow-scrolling: touch; }
+.odg :global(.odg-roll-track)::-webkit-scrollbar { height: 5px; }
+.odg :global(.odg-roll-track)::-webkit-scrollbar-track { background: #141416; }
+.odg :global(.odg-roll-track)::-webkit-scrollbar-thumb { background: var(--line-2); }
+.odg :global(.odg-roll-track)::-webkit-scrollbar-thumb:hover { background: var(--amber); }
+.odg :global(.odg-frame) { flex-shrink: 0; width: 138px; scroll-snap-align: center; appearance: none; border: none; background: none; cursor: pointer; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.odg :global(.odg-frame-img) { position: relative; aspect-ratio: 3 / 2; overflow: hidden; outline: 1px solid var(--line); outline-offset: -1px; transition: outline-color 0.2s; }
+.odg :global(.odg-frame-img) img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.85) brightness(0.62); transition: filter 0.25s, transform 0.35s; }
+.odg :global(.odg-frame-num) { position: absolute; top: 0; left: 0; font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.05em; color: var(--ink-2); background: rgba(10,10,11,0.72); padding: 2px 5px; }
+.odg :global(.odg-frame-cap) { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-4); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.2s; }
+.odg :global(.odg-frame:hover .odg-frame-img) img { filter: saturate(0.95) brightness(0.82); }
+.odg :global(.odg-frame:hover .odg-frame-cap) { color: var(--ink-3); }
+.odg :global(.odg-frame[data-on="1"] .odg-frame-img) { outline: 2px solid var(--amber); outline-offset: -2px; }
+.odg :global(.odg-frame[data-on="1"] .odg-frame-img) img { filter: none; }
+.odg :global(.odg-frame[data-on="1"] .odg-frame-num) { color: #0a0a0b; background: var(--amber); }
+.odg :global(.odg-frame[data-on="1"] .odg-frame-cap) { color: var(--amber-soft); }
+
+/* Swipe affordance — visible only on mobile, fades out after first scroll */
+.odg :global(.odg-roll-fade) { position: absolute; top: 15px; bottom: 15px; right: 0; width: 56px; pointer-events: none; background: linear-gradient(90deg, transparent, #0d0d0e); opacity: 0; transition: opacity 0.3s; }
+.odg :global(.odg-swipe-hint) { position: absolute; bottom: 23px; right: 11px; display: none; align-items: center; gap: 7px; padding: 6px 11px; background: rgba(10,10,11,0.82); border: 1px solid var(--line-2); border-radius: 2px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--amber-soft); pointer-events: none; transition: opacity 0.3s; }
+.odg :global(.odg-swipe-arrow) { display: inline-block; animation: odgSwipe 1.4s ease-in-out infinite; }
+@keyframes odgSwipe { 0%, 100% { transform: translateX(0); opacity: 0.45; } 50% { transform: translateX(5px); opacity: 1; } }
+.odg :global(.odg-roll[data-swiped="1"] .odg-swipe-hint) { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { .odg :global(.odg-swipe-arrow) { animation: none; } }
+
 @media (max-width: 860px) {
-  .odg .odg-navlinks { display: none !important; }
-  .odg .odg-ficha, .odg .odg-raiox, .odg .odg-log-row, .odg .odg-cta, .odg .odg-foot { grid-template-columns: 1fr !important; }
-  .odg .odg-hero-meta { grid-template-columns: repeat(2, 1fr) !important; }
-  .odg .odg-blk-grid { grid-template-columns: 1fr !important; }
-  .odg .odg-blk-sub { display: none !important; }
-  .odg .odg-arq-grid { grid-template-columns: repeat(2, 1fr) !important; }
-  .odg .odg-readout { grid-template-columns: repeat(2, 1fr) !important; }
-  .odg .odg-lineage { grid-template-columns: 1fr !important; }
+  .odg :global(.odg-navlinks) { display: none !important; }
+  .odg :global(.odg-ficha), .odg :global(.odg-raiox), .odg :global(.odg-log-row), .odg :global(.odg-cta), .odg :global(.odg-foot) { grid-template-columns: 1fr !important; }
+  .odg :global(.odg-hero-meta) { grid-template-columns: repeat(2, 1fr) !important; }
+  .odg :global(.odg-blk-grid) { grid-template-columns: 1fr !important; }
+  .odg :global(.odg-blk-sub) { display: none !important; }
+  .odg :global(.odg-arq-grid) { grid-template-columns: repeat(2, 1fr) !important; }
+  .odg :global(.odg-readout) { grid-template-columns: repeat(2, 1fr) !important; }
+  .odg :global(.odg-lineage) { grid-template-columns: 1fr !important; }
 }
 @media (max-width: 600px) {
-  .odg .odg-arq-cap { flex-direction: column; align-items: flex-start !important; gap: 8px !important; }
-  .odg .odg-arq-cap p { max-width: 100% !important; }
-  .odg .odg-foot { gap: 26px !important; }
-  .odg .odg-frame { width: 118px; }
-  .odg .odg-roll-hint { display: none; }
+  .odg :global(.odg-arq-cap) { flex-direction: column; align-items: flex-start !important; gap: 8px !important; }
+  .odg :global(.odg-arq-cap p) { max-width: 100% !important; }
+  .odg :global(.odg-foot) { gap: 26px !important; }
+  .odg :global(.odg-frame) { width: 118px; }
+  .odg :global(.odg-roll-hint) { display: none; }
+  .odg :global(.odg-roll-fade) { opacity: 1; }
+  .odg :global(.odg-swipe-hint) { display: flex; }
+  .odg :global(.odg-roll[data-swiped="1"] .odg-roll-fade) { opacity: 0.5; }
 }
 @media (max-width: 440px) {
-  .odg .odg-hero-meta { grid-template-columns: repeat(2, 1fr) !important; }
+  .odg :global(.odg-hero-meta) { grid-template-columns: repeat(2, 1fr) !important; }
 }
