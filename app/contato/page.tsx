@@ -195,14 +195,15 @@ export default function ContatoPage() {
 
           <div style={{ paddingBottom: 32, borderBottom: '1px solid var(--line-dark)' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 14 }}>Onde mais me achar</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, fontFamily: 'var(--font-ui)', fontSize: 14, color: 'var(--ashe)' }}>
-              {[['IG', '@henriq.eu'], ['YT', 'Henrique Sesana Pimenta'], ['VS', 'henriqsesana'], ['SB', 'open.substack.com/henriq']].map(([k, v]) => (
-                <div key={k}>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.1em', color: 'var(--ashe-dim)', marginRight: 14 }}>{k}</span>
-                  {v}
-                </div>
-              ))}
-            </div>
+            <a
+              href="https://instagram.com/henriq.eu"
+              target="_blank"
+              rel="noreferrer"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 14, fontFamily: 'var(--font-ui)', fontSize: 16, color: 'var(--canvas)', textDecoration: 'none', borderBottom: '1px solid var(--rust-soft)', paddingBottom: 2 }}
+            >
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.1em', color: 'var(--ashe-dim)' }}>IG</span>
+              @henriq.eu
+            </a>
           </div>
 
           <div>
