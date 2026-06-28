@@ -930,8 +930,8 @@ const LUT_CSS = `
 .lut-mood{ margin-bottom:30px; }
 .lut-mood-label{ display:flex; align-items:center; gap:9px; margin-bottom:14px; font-family:var(--font-mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--mut); flex-wrap:wrap; }
 .lut-mood-line{ flex:1; min-width:30px; height:1px; background:var(--hair); margin-left:6px; }
-/* grade horizontal — cards 16:9 lado a lado (capa antes/depois log→lut) */
-.lut-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+/* grade horizontal — cards 16:9 lado a lado (capa antes/depois log→lut) · 4 por família = 1 linha */
+.lut-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
 .lut-card{ position:relative; aspect-ratio:16/9; overflow:hidden; border:none; padding:0; cursor:pointer; background:#15140f; }
 .lut-card .lut-clip{ inset:0; }
 .lut-card .lut-clip-bg{ display:none; }
