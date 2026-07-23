@@ -2,6 +2,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import styles from "./outdoor-grain.module.css";
 import { Space_Grotesk, IBM_Plex_Mono } from "next/font/google";
+import DarkTopNav from "@/components/dark-nav";
+import DarkFooter from "@/components/dark-footer";
 
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--odg-sans" });
 const ibmPlexMono = IBM_Plex_Mono({
@@ -225,40 +227,6 @@ function Head({ code, kicker, title, style }: { code: string; kicker: string; ti
 
 const SECTION: React.CSSProperties = { maxWidth: 1200, margin: "0 auto", padding: "clamp(64px,9vw,128px) clamp(20px,5vw,56px)" };
 
-/* ---- NAV ---- */
-function Nav() {
-  const [s, setS] = useState(false);
-  useEffect(() => {
-    const f = () => setS(window.scrollY > 40);
-    window.addEventListener("scroll", f);
-    return () => window.removeEventListener("scroll", f);
-  }, []);
-  return (
-    <header style={{
-      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-      background: s ? "rgba(10,10,11,.82)" : "transparent",
-      backdropFilter: s ? "blur(12px)" : "none",
-      borderBottom: s ? "1px solid var(--line)" : "1px solid transparent",
-      transition: "all .3s",
-    }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 clamp(20px,5vw,56px)", height: 62, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <a href="/presets" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
-          <span style={{ width: 9, height: 9, border: "1px solid var(--amber)", position: "relative", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ width: 3, height: 3, background: "var(--amber)", borderRadius: "50%" }} />
-          </span>
-          <span style={{ fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".22em", color: "var(--ink)", fontWeight: 500 }}>OUTDOOR&nbsp;GRAIN</span>
-        </a>
-        <nav className="odg-navlinks" style={{ display: "flex", alignItems: "center", gap: 30 }}>
-          {([["Ficha","#ficha"],["Calibração","#raiox"],["Log","#log"],["Arquivos","#arquivos"]] as [string,string][]).map(([t, h]) => (
-            <a key={h} href={h} style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--ink-3)", textDecoration: "none" }}>{t}</a>
-          ))}
-        </nav>
-        <a href={CAKTO_URL} style={{ fontFamily: "var(--mono)", fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", color: "#0a0a0b", background: "var(--amber)", textDecoration: "none", border: "1px solid var(--amber)", padding: "9px 16px" }}>Comprar · R$ {PRICE}</a>
-      </div>
-    </header>
-  );
-}
-
 /* ---- HERO ---- */
 function Hero() {
   return (
@@ -279,7 +247,7 @@ function Hero() {
           <span style={{ color: "var(--ink)" }}>{TOTAL} emulações de filme</span> calibradas em campo — sol de meio-dia, neblina, breu e drone. O grão, o halo e a química do analógico. Sem laboratório.
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 34 }}>
-          <a href={CAKTO_URL} style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 26px", background: "var(--amber)", color: "#0a0a0b", fontFamily: "var(--sans)", fontWeight: 600, fontSize: 14, letterSpacing: ".02em", textDecoration: "none" }}>Comprar agora · R$ {PRICE}</a>
+          <a href={CAKTO_URL} target="_blank" rel="noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 26px", background: "var(--amber)", color: "#0a0a0b", fontFamily: "var(--sans)", fontWeight: 600, fontSize: 14, letterSpacing: ".02em", textDecoration: "none" }}>Comprar agora · R$ {PRICE}</a>
           <a href="#arquivos" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 26px", border: "1px solid var(--line-2)", color: "var(--ink)", fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".12em", textTransform: "uppercase", textDecoration: "none", whiteSpace: "nowrap" }}>Ver os {TOTAL} arquivos</a>
         </div>
         <div className="odg-hero-meta" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 1, marginTop: "clamp(40px,6vw,72px)", border: "1px solid var(--line)", background: "var(--line)" }}>
@@ -558,44 +526,13 @@ function FaqFooter() {
                   <span style={{ fontFamily: "var(--mono)", fontSize: 13, color: "var(--ink-3)", textDecoration: "line-through" }}>R$ {PRICE_OLD}</span>
                   <span style={{ fontFamily: "var(--sans)", fontWeight: 700, fontSize: "clamp(34px,5vw,48px)", letterSpacing: "-.03em", color: "var(--ink)", lineHeight: 1 }}>R$ {PRICE}</span>
                 </div>
-                <a href={CAKTO_URL} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "17px", background: "var(--amber)", color: "#0a0a0b", fontFamily: "var(--sans)", fontWeight: 600, fontSize: 14, letterSpacing: ".02em", textDecoration: "none" }}>Comprar agora →</a>
+                <a href={CAKTO_URL} target="_blank" rel="noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, padding: "17px", background: "var(--amber)", color: "#0a0a0b", fontFamily: "var(--sans)", fontWeight: 600, fontSize: 14, letterSpacing: ".02em", textDecoration: "none" }}>Comprar agora →</a>
                 <div style={{ textAlign: "center", marginTop: 11, fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--ink-3)" }}>Download imediato · acesso vitalício</div>
               </div>
             </div>
           </Corner>
         </div>
       </section>
-
-      <footer style={{ borderTop: "1px solid var(--line)", background: "var(--bg)" }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "48px clamp(20px,5vw,56px)" }}>
-          <div className="odg-foot" style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr", gap: 32, alignItems: "start" }}>
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 11, marginBottom: 14 }}>
-                <span style={{ width: 9, height: 9, border: "1px solid var(--amber)", display: "inline-flex", alignItems: "center", justifyContent: "center" }}><span style={{ width: 3, height: 3, background: "var(--amber)", borderRadius: "50%" }} /></span>
-                <span style={{ fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".22em", color: "var(--ink)" }}>OUTDOOR&nbsp;GRAIN</span>
-              </div>
-              <p style={{ margin: 0, maxWidth: "38ch", fontFamily: "var(--sans)", fontSize: 13.5, lineHeight: 1.55, color: "var(--ink-3)" }}>Emulações de filme para fotografia de outdoor e expedição. Calibradas em campo por Henrique Sesana.</p>
-            </div>
-            <div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--ink-3)", marginBottom: 14 }}>Specs</div>
-              {([["FORMATO",".xmp · .dng"],["PLATAFORMA","LR · ACR · Mobile"],["VERSÃO","1.0 / 2026"]] as [string,string][]).map(([k, v]) => (
-                <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", fontFamily: "var(--mono)", fontSize: 11 }}>
-                  <span style={{ color: "var(--ink-3)" }}>{k}</span><span style={{ color: "var(--ink-2)" }}>{v}</span>
-                </div>
-              ))}
-            </div>
-            <div>
-              <div style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--ink-3)", marginBottom: 14 }}>Contato</div>
-              <a href="mailto:contato@euhenriq.com" style={{ display: "block", fontFamily: "var(--mono)", fontSize: 11, color: "var(--ink-2)", textDecoration: "none", padding: "6px 0" }}>contato@euhenriq.com</a>
-              <a href="https://instagram.com/euhenriq" target="_blank" rel="noopener noreferrer" style={{ display: "block", fontFamily: "var(--mono)", fontSize: 11, color: "var(--ink-2)", textDecoration: "none", padding: "6px 0" }}>@euhenriq</a>
-            </div>
-          </div>
-          <div style={{ marginTop: 40, paddingTop: 20, borderTop: "1px solid var(--line)", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
-            <span style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", color: "var(--ink-4)" }}>© 2026 EU HENRIQ — TODOS OS DIREITOS RESERVADOS</span>
-            <span style={{ fontFamily: "var(--mono)", fontSize: 10, letterSpacing: ".14em", color: "var(--ink-4)" }}>23°33′S · 46°38′W · ALT 760M</span>
-          </div>
-        </div>
-      </footer>
     </>
   );
 }
@@ -603,18 +540,21 @@ function FaqFooter() {
 /* ---- PAGE EXPORT ---- */
 export default function OutdoorGrainPage() {
   return (
-    <div
-      className={[styles.odg, spaceGrotesk.variable, ibmPlexMono.variable].join(" ")}
-      style={{ ["--mono" as string]: "var(--odg-mono, 'IBM Plex Mono', ui-monospace, monospace)", ["--sans" as string]: "var(--odg-sans, 'Space Grotesk', system-ui, sans-serif)" }}
-    >
-      <Nav />
-      <Hero />
-      <Ficha />
-      <RaioX />
-      <LogExp />
-      <Origem />
-      <Arquivos />
-      <FaqFooter />
+    <div className="theme-fdl">
+      <DarkTopNav active="Presets" />
+      <div
+        className={[styles.odg, spaceGrotesk.variable, ibmPlexMono.variable].join(" ")}
+        style={{ ["--mono" as string]: "var(--odg-mono, 'IBM Plex Mono', ui-monospace, monospace)", ["--sans" as string]: "var(--odg-sans, 'Space Grotesk', system-ui, sans-serif)" }}
+      >
+        <Hero />
+        <Ficha />
+        <RaioX />
+        <LogExp />
+        <Origem />
+        <Arquivos />
+        <FaqFooter />
+      </div>
+      <DarkFooter coords="grão · calibrado em campo" />
     </div>
   );
 }
