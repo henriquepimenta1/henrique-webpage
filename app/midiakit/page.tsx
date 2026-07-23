@@ -1,6 +1,7 @@
 import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
+import CountUp from "@/components/count-up";
 
 // Midiakit — Dark Editorial "Fim de Luz". Portado do protótipo hi-fi.
 // Sparkline e gráficos usam âmbar var(--accent).
@@ -320,7 +321,7 @@ export default function MidiakitPage() {
           {D.metrics.map((m) => (
             <div key={m.label} className="mkd-metric">
               <div className="mkd-metric-k">{m.label}</div>
-              <div className="mkd-metric-v">{m.value}</div>
+              <div className="mkd-metric-v"><CountUp value={m.value} /></div>
               <div className="mkd-metric-s">{m.sub}</div>
             </div>
           ))}
