@@ -103,19 +103,39 @@ export default function PresetsPage() {
     <div className="theme-fdl">
       <DarkTopNav active="Presets" />
 
-      <header className="prd-head">
-        <div className="v2-eyebrow" style={{ marginBottom: 22 }}>
-          № 03 · Cor · tratamento · desde 2022
+      <header className="prd-head" style={{ position: "relative", overflow: "hidden" }}>
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="/images/portfolio/pico-ciririca-serradoibitiraquire.jpg"
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", zIndex: 0 }}
+        >
+          <source src="/videos/VIDEO-HERO2-web.mp4" type="video/mp4" />
+        </video>
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 1,
+            background: "linear-gradient(180deg,rgba(13,12,11,.70) 0%,rgba(13,12,11,.55) 45%,rgba(13,12,11,.9) 100%)",
+          }}
+        />
+        <div style={{ position: "relative", zIndex: 2 }}>
+          <div className="v2-eyebrow" style={{ marginBottom: 22 }}>
+            № 03 · Cor · tratamento · desde 2022
+          </div>
+          <h1 className="prd-h1">
+            A mesma cor que eu uso,
+            <br />
+            <em>no seu fluxo de trabalho.</em>
+          </h1>
+          <p className="prd-sub">
+            O tratamento que aplico no meu próprio portfólio, pronto pro seu Lightroom e pro seu Premiere. Três coleções —
+            escolha a que cabe no seu fluxo, ou leve tudo.
+          </p>
         </div>
-        <h1 className="prd-h1">
-          A mesma cor que eu uso,
-          <br />
-          <em>no seu fluxo de trabalho.</em>
-        </h1>
-        <p className="prd-sub">
-          O tratamento que aplico no meu próprio portfólio, pronto pro seu Lightroom e pro seu Premiere. Três coleções —
-          escolha a que cabe no seu fluxo, ou leve tudo.
-        </p>
       </header>
 
       <div className="prd-trust">
