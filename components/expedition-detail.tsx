@@ -240,7 +240,7 @@ export default function ExpeditionDetail({ expedition, onClose }: Props) {
                 <span>→</span>
               </a>
               <a
-                href={`mailto:management@henriq.eu?subject=Expedição Lençóis ${expedition.stats.days} Dias&body=${whatsappText}`}
+                href={`mailto:contato@euhenriq.com?subject=Expedição Lençóis ${expedition.stats.days} Dias&body=${whatsappText}`}
                 className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full text-sm font-medium transition-all"
                 style={{
                   background: "rgba(255,255,255,.04)",
@@ -253,7 +253,7 @@ export default function ExpeditionDetail({ expedition, onClose }: Props) {
             </div>
 
             <p className="text-[11px]" style={{ color: "#3A3028" }}>
-              Resposta em menos de 24h · management@henriq.eu
+              Resposta em menos de 24h · contato@euhenriq.com
             </p>
           </div>
         </div>

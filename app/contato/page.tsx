@@ -139,7 +139,7 @@ export default function ContatoPage() {
           </div>
           <div className="ctd-block">
             <div className="ctd-block-k">Parcerias &amp; marcas</div>
-            <a href="mailto:management@henriq.eu">management@henriq.eu</a>
+            <a href="mailto:contato@euhenriq.com">contato@euhenriq.com</a>
             <p>Briefings, licenciamento e campanhas.</p>
           </div>
           <div className="ctd-block">

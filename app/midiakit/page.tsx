@@ -440,8 +440,8 @@ export default function MidiakitPage() {
             <Link className="mkd-btn" href="/contato">
               Briefing & contato →
             </Link>
-            <a className="mkd-btn-ghost" href="mailto:management@henriq.eu">
-              management@henriq.eu
+            <a className="mkd-btn-ghost" href="mailto:contato@euhenriq.com">
+              contato@euhenriq.com
             </a>
           </div>
         </div>

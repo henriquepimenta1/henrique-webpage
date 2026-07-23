@@ -1,18 +1,19 @@
 "use client";
 
-// Presets Fotografia LP — v2 mobile-premium
-// Portado do design (Claude artifact) para Next.js / TSX.
+// Outdoor Cinematic Presets — LP dark "Fim de Luz".
+// Portado do protótipo hi-fi (presets-fotografia-dark.jsx) para Next App Router.
+// Tokens dark escopados em .theme-fdl (globals.css). CSS específico no <style> abaixo.
 import {
   useState,
   useRef,
   useEffect,
-  useMemo,
   Fragment,
   type CSSProperties,
 } from "react";
-import SiteFooter from "@/components/site-footer";
+import DarkTopNav from "@/components/dark-nav";
+import DarkFooter from "@/components/dark-footer";
 
-const PRICE_VISTA = "39,90";
+const PRICE_VISTA = "39,00";
 const PRICE_PARCEL = "5,19";
 const PRICE_N = "9";
 const CTA_URL = "https://pay.cakto.com.br/C4dmPFR";
@@ -133,38 +134,7 @@ const vibe = (ms = 8) => {
   }
 };
 
-const EXT = { target: "_blank", rel: "noopener noreferrer" } as const;
-
-// ────────────────────────────────────────────────────────────────
-// Countdown banner
-// ────────────────────────────────────────────────────────────────
-function CountdownBanner() {
-  const KEY = "pf_deadline_v2";
-  const deadline = useMemo(() => {
-    if (typeof window === "undefined") return Date.now() + 15 * 60_000;
-    const s = sessionStorage.getItem(KEY);
-    if (s) return Number(s);
-    const d = Date.now() + 15 * 60_000;
-    sessionStorage.setItem(KEY, String(d));
-    return d;
-  }, []);
-  const [secs, setSecs] = useState(() => Math.max(0, Math.floor((deadline - Date.now()) / 1000)));
-  useEffect(() => {
-    const id = setInterval(() => setSecs(Math.max(0, Math.floor((deadline - Date.now()) / 1000))), 1000);
-    return () => clearInterval(id);
-  }, [deadline]);
-  if (secs === 0) return null;
-  const m = String(Math.floor(secs / 60)).padStart(2, "0");
-  const s = String(secs % 60).padStart(2, "0");
-  return (
-    <div style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: "var(--rust)", color: "var(--canvas)", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "9px 12px", fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", flexWrap: "nowrap", overflow: "hidden" }}>
-      <span style={{ opacity: .85, fontSize: 10, whiteSpace: "nowrap" }}>Oferta limitada</span>
-      <span style={{ fontWeight: 700, fontSize: 13, background: "rgba(0,0,0,.25)", padding: "1px 7px", borderRadius: 2, whiteSpace: "nowrap" }}>{m}:{s}</span>
-      <span style={{ opacity: .9, whiteSpace: "nowrap" }}>R$ {PRICE_VISTA}</span>
-      <a href={CTA_URL} {...EXT} onClick={() => vibe(12)} style={{ padding: "4px 12px", background: "var(--canvas)", color: "var(--rust)", fontFamily: "var(--font-ui)", fontSize: 11, fontWeight: 700, letterSpacing: ".1em", textDecoration: "none", textTransform: "uppercase", whiteSpace: "nowrap", marginLeft: 4 }}>Comprar →</a>
-    </div>
-  );
-}
+const EXT = { target: "_blank", rel: "noreferrer" } as const;
 
 // ────────────────────────────────────────────────────────────────
 // Sticky bottom CTA — aparece após scroll (mobile)
@@ -182,7 +152,7 @@ function StickyCTA() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <div className="pf-sticky" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 90, background: "rgba(30,42,24,.96)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", borderTop: "1px solid rgba(232,223,201,.15)", transform: show ? "translateY(0)" : "translateY(100%)", transition: "transform .35s cubic-bezier(.4,0,.2,1)", padding: "10px 14px env(safe-area-inset-bottom, 10px)", display: "flex", alignItems: "center", gap: 10 }}>
+    <div className="pf-sticky" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 90, background: "rgba(23,20,18,.96)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", borderTop: "1px solid rgba(232,223,201,.15)", transform: show ? "translateY(0)" : "translateY(100%)", transition: "transform .35s cubic-bezier(.4,0,.2,1)", padding: "10px 14px env(safe-area-inset-bottom, 10px)", display: "flex", alignItems: "center", gap: 10 }}>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(232,223,201,.55)", marginBottom: 1 }}>De R$ 79 por</div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 6, color: "var(--canvas)" }}>
@@ -238,23 +208,29 @@ function TryItSection() {
           <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: "clamp(12px,2vw,15px)", color: "var(--stone)", marginTop: 10, marginBottom: 0, lineHeight: 1.5 }}>Escolha um preset e arraste pra comparar com a foto original — mesma cena, RAW de verdade.</p>
         </div>
 
+        {/* Before/after slider — original vs editada */}
         <div
           onPointerDown={e => { dragging.current = true; moveTo(e.clientX, e.currentTarget); e.currentTarget.setPointerCapture(e.pointerId); }}
           onPointerMove={e => { if (dragging.current) moveTo(e.clientX, e.currentTarget); }}
           onPointerUp={() => { dragging.current = false; }}
           style={{ position: "relative", width: "100%", aspectRatio: "3/2", overflow: "hidden", background: "var(--forest)", borderRadius: 2, marginBottom: 14, cursor: "ew-resize", touchAction: "none", userSelect: "none" }}>
+          {/* editada (after) — base, crossfade entre presets */}
           {TRYIT_PRESETS.map(p => (
             <img key={p.key} src={presetImg(p.key)} alt={p.name} draggable={false}
               style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: active === p.key ? 1 : 0, transition: "opacity .45s ease", pointerEvents: "none" }} />
           ))}
+          {/* original (before) — clipada à esquerda */}
           <img src={TRYIT_ORIGINAL} alt="Original" draggable={false}
             style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", clipPath: `inset(0 ${100 - pos}% 0 0)`, pointerEvents: "none" }} />
+          {/* divisor + handle */}
           <div style={{ position: "absolute", top: 0, bottom: 0, left: `${pos}%`, width: 2, background: "rgba(245,241,232,.85)", boxShadow: "0 0 10px rgba(0,0,0,.45)", pointerEvents: "none" }} />
           <div style={{ position: "absolute", top: "50%", left: `${pos}%`, width: 38, height: 38, borderRadius: "50%", border: "1.5px solid rgba(245,241,232,.95)", background: "rgba(20,14,8,.3)", backdropFilter: "blur(2px)", transform: "translate(-50%,-50%)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--canvas)", fontFamily: "var(--font-mono)", fontSize: 14, pointerEvents: "none" }}>⇄</div>
+          {/* rótulos */}
           <div style={{ position: "absolute", top: 10, left: 10, padding: "4px 9px", background: "rgba(42,33,26,.82)", color: "var(--canvas)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".16em", textTransform: "uppercase", pointerEvents: "none" }}>Original</div>
           <div style={{ position: "absolute", top: 10, right: 10, padding: "4px 9px", background: "var(--rust)", color: "var(--canvas)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".16em", textTransform: "uppercase", pointerEvents: "none" }}>{activePreset?.name}</div>
         </div>
 
+        {/* Chips de presets — scroll horizontal, tons intercalados */}
         <div style={{ display: "flex", gap: 8, overflowX: "auto", overflowY: "hidden", paddingBottom: 8, scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" } as CSSProperties} className="pf-chip-scroll">
           {TRYIT_PRESETS.map(p => {
             const on = active === p.key;
@@ -300,16 +276,16 @@ function VsCarousel() {
           <div style={{ display: "flex", transform: `translateX(-${idx * 100}%)`, transition: "transform .45s cubic-bezier(.4,0,.2,1)" }}>
             {VS_ROWS.map((row, i) => (
               <div key={i} style={{ minWidth: "100%", padding: "4px", boxSizing: "border-box" }}>
-                <div style={{ background: "var(--canvas)", border: "1px solid var(--line)", padding: "clamp(20px,4vw,28px)", display: "flex", flexDirection: "column", gap: 14 }}>
+                <div style={{ background: "#171412", border: "1px solid var(--line)", padding: "clamp(20px,4vw,28px)", display: "flex", flexDirection: "column", gap: 14 }}>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--rust)" }}>№ {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}</div>
                   <h3 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(18px,3.5vw,26px)", fontWeight: 700, letterSpacing: "-.02em", lineHeight: 1.2, margin: 0, color: "var(--bark)" }}>{row.k}</h3>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 6 }}>
-                    <div style={{ padding: "14px 12px", border: "1px solid #d3c5a8", background: "rgba(176,87,68,.04)" }}>
+                    <div style={{ padding: "14px 12px", border: "1px solid rgba(237,231,219,.2)", background: "rgba(192,130,70,.04)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
                         <span style={{ width: 18, height: 18, borderRadius: "50%", background: "#B05744", color: "#fff", display: "inline-flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>×</span>
                         <span style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".18em", textTransform: "uppercase", color: "#B05744", fontWeight: 700 }}>Grátis</span>
                       </div>
-                      <div style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(12px,2.5vw,14px)", lineHeight: 1.45, color: "#3A3530" }}>{row.free}</div>
+                      <div style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(12px,2.5vw,14px)", lineHeight: 1.45, color: "rgba(232,223,201,.72)" }}>{row.free}</div>
                     </div>
                     <div style={{ padding: "14px 12px", background: "var(--forest)", color: "var(--canvas)" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
@@ -325,6 +301,7 @@ function VsCarousel() {
           </div>
         </div>
 
+        {/* Dots */}
         <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 14 }}>
           {VS_ROWS.map((_, i) => (<button key={i} onClick={() => { setIdx(i); vibe(6); }} aria-label={`Critério ${i + 1}`} style={{ width: i === idx ? 22 : 7, height: 7, borderRadius: 4, border: "none", cursor: "pointer", background: i === idx ? "var(--rust)" : "var(--line)", transition: "width .3s,background .3s", padding: 0 }} />))}
         </div>
@@ -354,7 +331,9 @@ function FaqChat() {
           </h2>
         </div>
 
-        <div style={{ background: "var(--canvas)", border: "1px solid var(--line)", padding: "14px 12px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
+        {/* Chat container */}
+        <div style={{ background: "#171412", border: "1px solid var(--line)", padding: "14px 12px 18px", display: "flex", flexDirection: "column", gap: 10 }}>
+          {/* Phone header mock */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, paddingBottom: 10, borderBottom: "1px solid var(--line)" }}>
             <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--canvas-deep)", border: "1px solid var(--line)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-hand)", fontSize: 20, color: "var(--rust)" }}>H</div>
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -369,12 +348,14 @@ function FaqChat() {
             const open = revealed.includes(i);
             return (
               <Fragment key={i}>
+                {/* User (você) bubble */}
                 <div style={{ alignSelf: "flex-end", maxWidth: "82%" }}>
-                  <button onClick={() => reveal(i)} style={{ background: "#A6542B", color: "var(--canvas)", padding: "9px 13px", borderRadius: "14px 14px 4px 14px", border: "none", cursor: open ? "default" : "pointer", textAlign: "left", fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 500, lineHeight: 1.4, boxShadow: "0 1px 4px rgba(0,0,0,.08)" }}>
+                  <button onClick={() => reveal(i)} style={{ background: "#8f5a2c", color: "var(--canvas)", padding: "9px 13px", borderRadius: "14px 14px 4px 14px", border: "none", cursor: open ? "default" : "pointer", textAlign: "left", fontFamily: "var(--font-ui)", fontSize: 13, fontWeight: 500, lineHeight: 1.4, boxShadow: "0 1px 4px rgba(0,0,0,.08)" }}>
                     {item.q}
                   </button>
                   <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, color: "var(--stone)", textAlign: "right", marginTop: 2, paddingRight: 4 }}>Você</div>
                 </div>
+                {/* Henrique reply */}
                 {open && (
                   <div style={{ alignSelf: "flex-start", maxWidth: "82%", animation: "pf-chat-in .3s ease" }}>
                     <div style={{ background: "var(--canvas-deep)", color: "var(--bark)", padding: "10px 13px", borderRadius: "14px 14px 14px 4px", fontFamily: "var(--font-serif)", fontSize: 13.5, lineHeight: 1.5, boxShadow: "0 1px 4px rgba(0,0,0,.05)" }}>
@@ -394,7 +375,7 @@ function FaqChat() {
           )}
         </div>
 
-        <div style={{ textAlign: "center", marginTop: 18, fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 13, color: "#3A3530" }}>
+        <div style={{ textAlign: "center", marginTop: 18, fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 13, color: "rgba(232,223,201,.72)" }}>
           Outra dúvida? <a href="mailto:contato@euhenriq.com" style={{ color: "var(--rust)" }}>contato@euhenriq.com</a>
         </div>
       </div>
@@ -432,9 +413,9 @@ function GuaranteeBadge() {
 
 // ────────────────────────────────────────────────────────────────
 // Hero redesenhado — full-bleed editorial (desktop + mobile)
+// Foto tratada (base) + foto RAW que faz o wipe por cima via --rev
+// (varredura senoidal automática, pausável ao tocar/arrastar).
 // ────────────────────────────────────────────────────────────────
-// Hero: foto da laguna tratada (base) + foto RAW que faz o wipe por cima via
-// --rev (varredura senoidal automática, pausável ao tocar/arrastar).
 const HERO_IMG = "/images/presets/hero-laguna.jpg";
 const HERO_RAW = "/images/presets/hero-laguna-raw.jpg";
 function HeroRedesigned() {
@@ -569,6 +550,7 @@ function MasterDetailCollection() {
 
   return (
     <div className="pf-mdc">
+      {/* TREE */}
       <div className="pf-mdc-tree">
         {grouped.map(({ cat, items }) => {
           const isOpen = open[cat.label];
@@ -590,9 +572,9 @@ function MasterDetailCollection() {
                       <button key={p.key}
                         onMouseEnter={() => setSel(p.key)}
                         onClick={() => pick(p.key)}
-                        style={{ position: "relative", width: "100%", appearance: "none", border: "none", cursor: "pointer", textAlign: "left", display: "grid", gridTemplateColumns: "32px 1fr", alignItems: "center", gap: 11, padding: "7px 8px 7px 16px", background: on ? "rgba(166,84,43,.10)" : "transparent", borderLeft: on ? "2px solid var(--rust)" : "2px solid transparent", transition: "background .15s" }}>
+                        style={{ position: "relative", width: "100%", appearance: "none", border: "none", cursor: "pointer", textAlign: "left", display: "grid", gridTemplateColumns: "32px 1fr", alignItems: "center", gap: 11, padding: "7px 8px 7px 16px", background: on ? "rgba(192,130,70,.10)" : "transparent", borderLeft: on ? "2px solid var(--rust)" : "2px solid transparent", transition: "background .15s" }}>
                         <div style={{ position: "absolute", left: 4, top: "50%", width: 11, height: 1, background: "var(--line)" }} />
-                        {last && <div style={{ position: "absolute", left: 4, top: "calc(50% + 1px)", bottom: 0, width: 1, background: "var(--canvas)" }} />}
+                        {last && <div style={{ position: "absolute", left: 4, top: "calc(50% + 1px)", bottom: 0, width: 1, background: "#14110F" }} />}
                         <div style={{ width: 32, height: 32, overflow: "hidden", border: on ? "1px solid var(--rust)" : "1px solid var(--line)", flexShrink: 0 }}>
                           <img src={presetImg(p.key)} alt={p.name} draggable={false} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                         </div>
@@ -609,11 +591,12 @@ function MasterDetailCollection() {
         })}
       </div>
 
+      {/* PREVIEW — before/after slider */}
       <div className="pf-mdc-preview"
         onPointerDown={e => { if (!rawOk) return; dragging.current = true; moveTo(e.clientX, e.currentTarget); e.currentTarget.setPointerCapture(e.pointerId); }}
         onPointerMove={e => { if (dragging.current) moveTo(e.clientX, e.currentTarget); }}
         onPointerUp={() => { dragging.current = false; }}
-        style={{ position: "relative", overflow: "hidden", background: "var(--forest-soft, #2a3820)", cursor: rawOk ? "ew-resize" : "default", touchAction: "none", userSelect: "none" }}>
+        style={{ position: "relative", overflow: "hidden", background: "var(--forest-soft, #211D19)", cursor: rawOk ? "ew-resize" : "default", touchAction: "none", userSelect: "none" }}>
         <img key={"t-" + sel} src={presetImg(sel)} alt={selPreset?.name} draggable={false} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", pointerEvents: "none" }} />
         {rawOk ? <img key={"r-" + sel} src={presetImgRAW(sel)} alt="" draggable={false} onError={() => setRawOk(false)} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", clipPath: `inset(0 ${100 - pos}% 0 0)`, pointerEvents: "none" }} /> : null}
         {rawOk ? (
@@ -624,6 +607,7 @@ function MasterDetailCollection() {
             <div style={{ position: "absolute", top: 14, right: 14, fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--canvas)", background: "var(--rust)", padding: "3px 8px", pointerEvents: "none" }}>Tratado</div>
           </>
         ) : null}
+        {/* gradient + caption */}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg,rgba(14,12,10,.86) 0%,rgba(14,12,10,.14) 38%,rgba(14,12,10,0) 64%)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", left: 22, right: 22, bottom: 18, pointerEvents: "none" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(245,241,232,.85)", marginBottom: 6, textShadow: "0 1px 6px rgba(0,0,0,.5)" }}>
@@ -642,9 +626,12 @@ function MasterDetailCollection() {
 // ────────────────────────────────────────────────────────────────
 export default function PresetsFotografiaPage() {
   return (
-    <div className="pf-lp" style={{ background: "var(--canvas)", color: "var(--bark)", fontFamily: "var(--font-ui)", overflowX: "hidden", maxWidth: "100vw", paddingBottom: 88 }}>
-      <style>{`
+    <div className="theme-fdl">
+      <div className="pf-lp" style={{ background: "#0D0C0B", color: "var(--canvas)", fontFamily: "var(--font-ui)", overflowX: "hidden", maxWidth: "100vw", paddingBottom: 88 }}>
+        <style>{`
         .pf-lp *,.pf-lp *::before,.pf-lp *::after{box-sizing:border-box}
+        .pf-skeleton{ animation: pf-pulse 1.4s ease-in-out infinite; }
+        @keyframes pf-pulse { 0%,100%{ background-position: 0% 50%; opacity:.7 } 50%{ background-position: 100% 50%; opacity:.45 } }
         @keyframes pf-chat-in { from{ opacity:0; transform:translateY(8px) } to{ opacity:1; transform:translateY(0) } }
         .pf-chip-scroll::-webkit-scrollbar{ height:4px } .pf-chip-scroll::-webkit-scrollbar-thumb{ background:var(--rust);border-radius:2px }
         @media(hover:hover) and (pointer:fine){
@@ -653,8 +640,11 @@ export default function PresetsFotografiaPage() {
         @media (prefers-reduced-motion: reduce){
           *,*::before,*::after{ animation-duration:0.01ms!important; transition-duration:0.01ms!important }
         }
+        .pf-hero-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:0;background:var(--forest)}
+        .pf-hero-panel{padding:clamp(18px,3vw,40px) clamp(16px,3vw,32px);display:flex;flex-direction:column;justify-content:space-between;gap:18px;min-width:0;color:var(--canvas)}
+        .pf-includes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,3vw,28px)}
         .pf-cta-final{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-        .pf-mdc{display:flex;border:1px solid var(--line);background:var(--canvas)}
+        .pf-mdc{display:flex;border:1px solid var(--line);background:#14110F}
         .pf-mdc-tree{flex:0 0 40%;border-right:1px solid var(--line);max-height:560px;overflow-y:auto;padding:14px 22px 28px}
         .pf-mdc-preview{flex:1;min-width:0;min-height:560px}
         .pf-mdc-title{font-size:38px}
@@ -671,7 +661,7 @@ export default function PresetsFotografiaPage() {
         .pf-hero2-grad{position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,14,8,.72) 0%,rgba(20,14,8,.30) 38%,rgba(20,14,8,0) 60%),linear-gradient(0deg,rgba(20,14,8,.85) 0%,rgba(20,14,8,.15) 42%,rgba(20,14,8,0) 70%)}
         .pf-hero2-bottom{position:absolute;left:0;right:0;bottom:0}
         .pf-hero2-content{padding:0 clamp(20px,5vw,48px) 28px;max-width:760px}
-        .pf-hero2-offer{display:flex;align-items:center;gap:28px;background:rgba(245,241,232,.94);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-top:1px solid rgba(42,33,26,.12);padding:16px clamp(20px,5vw,48px)}
+        .pf-hero2-offer{display:flex;align-items:center;gap:28px;background:rgba(13,17,13,.94);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-top:1px solid rgba(232,223,201,.12);padding:16px clamp(20px,5vw,48px)}
         .pf-about-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:0.82fr 1fr;gap:0;align-items:stretch}
         .pf-about-photo{position:relative;min-height:480px;overflow:hidden}
         .pf-about-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
@@ -679,6 +669,7 @@ export default function PresetsFotografiaPage() {
         .pf-about-stats{display:flex;background:var(--rust);width:fit-content;margin-top:28px}
         .pf-about-stats > div:last-child{border-right:none!important}
         @media(max-width:900px){
+          .pf-hero-grid{grid-template-columns:1fr}
           .pf-includes{grid-template-columns:repeat(2,1fr)}
           .pf-cta-final{grid-template-columns:1fr;gap:24px}
         }
@@ -703,120 +694,127 @@ export default function PresetsFotografiaPage() {
           .pf-about-stats > div{flex:1;text-align:center}
         }
         @media(max-width:600px){
+          .pf-hero-panel{padding:18px 18px 24px;gap:16px}
           .pf-includes{grid-template-columns:1fr!important}
           .pf-cta-final{display:flex!important;flex-direction:column-reverse!important;gap:20px!important}
         }
+
+        /* ══════ CINE DARK — Outdoor Cinematic Presets ══════ */
+        .pf-lp{
+          --forest:#171412; --forest-soft:#211D19;
+          --canvas:#EDE7DB; --paper:#EDE7DB; --bark:#EDE7DB;
+          --stone:var(--text-3); --moss:var(--accent);
+          --rust:var(--accent); --rust-soft:var(--accent-hover);
+          --line:var(--border); --canvas-deep:#100E0C;
+          background:var(--bg);
+        }
+        .pf-lp::before{ content:""; position:fixed; inset:0; z-index:8; pointer-events:none; box-shadow:inset 0 0 200px rgba(0,0,0,.55); }
+        .pf-lp h1,.pf-lp h2{ text-shadow:0 2px 30px rgba(0,0,0,.5); }
+        .pf-hero2-content h1{ text-shadow:0 2px 22px rgba(0,0,0,.5), 0 0 46px rgba(206,140,74,.26); }
+        .pf-hero2-content > div:first-child{ text-shadow:0 0 24px rgba(194,128,61,.5)!important; }
       `}</style>
-      <CountdownBanner />
 
-      {/* Minimal nav */}
-      <div style={{ paddingTop: 40 }}>
-        <header style={{ height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 clamp(16px,5vw,40px)", borderBottom: "1px solid rgba(42,33,26,.1)" }}>
-          <a href="/" style={{ textDecoration: "none" }}>
-            <span style={{ fontFamily: "var(--font-hand)", fontSize: 24, color: "var(--bark)", letterSpacing: ".02em", lineHeight: 1 }}>Eu Henriq</span>
-          </a>
-          <a href="/presets" style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--stone)", textDecoration: "none" }}>← Presets</a>
-        </header>
-      </div>
+        <DarkTopNav active="Presets" />
 
-      {/* ═══ HERO ═══ */}
-      <HeroRedesigned />
+        {/* ═══ HERO ═══ */}
+        <HeroRedesigned />
 
-      {/* ═══ CREDIBILIDADE ═══ */}
-      <section style={{ borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", display: "grid", gridTemplateColumns: "repeat(4,1fr)", background: "var(--canvas)" }}>
-        {[{ v: "4 anos", k: "em campo" }, { v: "45", k: "presets" }, { v: "LR", k: "Classic · CC · Mobile" }, { v: "14d", k: "garantia" }].map((s, i) => (
-          <div key={i} style={{ padding: "14px 6px", borderLeft: i === 0 ? "none" : "1px solid var(--line)", textAlign: "center" }}>
-            <div style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(14px,3.5vw,20px)", fontWeight: 700, letterSpacing: "-.01em", color: "var(--bark)", marginBottom: 2 }}>{s.v}</div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: "clamp(7px,1.8vw,9px)", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--stone)", lineHeight: 1.2 }}>{s.k}</div>
-          </div>
-        ))}
-      </section>
-
-      {/* ═══ TRY IT ═══ */}
-      <TryItSection />
-
-      {/* ═══ INCLUSO ═══ */}
-      <section style={{ padding: "clamp(48px,7vw,80px) clamp(16px,5vw,48px)", background: "var(--canvas)", borderBottom: "1px solid var(--line)" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(24px,4vw,44px)", fontWeight: 600, letterSpacing: "-.02em", lineHeight: 1, marginBottom: 28, marginTop: 0, color: "var(--bark)" }}>
-            O que vem na <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--moss)" }}>mochila</span>.
-          </h2>
-          <div className="pf-includes" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "clamp(16px,3vw,28px)" }}>
-            {[
-              { n: "01", t: "45 presets Lightroom", d: "Arquivos .xmp para Classic, CC, Mobile e Camera Raw. Dois packs: 18 + 27." },
-              { n: "02", t: "Perfis .dng", d: "Perfis de cor — mais estáveis, não bagunçam seus sliders." },
-              { n: "03", t: "Guia de instalação", d: "PDF passo a passo para cada versão do Lightroom." },
-              { n: "04", t: "Videoaula", d: "Como escolher o preset certo e fazer ajustes finos." },
-              { n: "05", t: "Licença comercial", d: "Use em trabalhos pagos e clientes. Sem pegadinha." },
-              { n: "06", t: "Atualizações vitalícias", d: "Todo pack novo vai pra você automaticamente." },
-            ].map(it => (
-              <div key={it.n} style={{ borderTop: "1px solid var(--line)", paddingTop: 14 }}>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".18em", color: "var(--rust)", marginBottom: 5 }}>№ {it.n}</div>
-                <div style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(14px,2.5vw,18px)", fontWeight: 600, marginBottom: 4, color: "var(--bark)", lineHeight: 1.2 }}>{it.t}</div>
-                <div style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(12px,1.8vw,13px)", lineHeight: 1.55, color: "#3A3530" }}>{it.d}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ QUEM SOU EU ═══ */}
-      <AboutAuthor />
-
-      {/* ═══ VS CAROUSEL ═══ */}
-      <VsCarousel />
-
-      {/* ═══ COLEÇÃO ═══ */}
-      <section style={{ padding: "clamp(48px,7vw,80px) clamp(16px,5vw,48px)", background: "var(--canvas)", borderBottom: "1px solid var(--line)" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 18 }}>
-            <div>
-              <div style={{ fontFamily: "var(--font-hand)", fontSize: 20, color: "var(--rust)", transform: "rotate(-1.5deg)", display: "inline-block", marginBottom: 2 }}>tudo que tem—</div>
-              <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: "clamp(24px,4vw,40px)", letterSpacing: "-.02em", lineHeight: 1, margin: 0, color: "var(--bark)" }}>
-                A coleção <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--moss)" }}>completa</span>.
-              </h2>
+        {/* ═══ CREDIBILIDADE ═══ */}
+        <section style={{ borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)", display: "grid", gridTemplateColumns: "repeat(4,1fr)", background: "#100E0C" }}>
+          {[{ v: "4 anos", k: "em campo" }, { v: "45", k: "presets" }, { v: "LR", k: "Classic · CC · Mobile" }, { v: "14d", k: "garantia" }].map((s, i) => (
+            <div key={i} style={{ padding: "14px 6px", borderLeft: i === 0 ? "none" : "1px solid var(--line)", textAlign: "center" }}>
+              <div style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(14px,3.5vw,20px)", fontWeight: 700, letterSpacing: "-.01em", color: "var(--bark)", marginBottom: 2 }}>{s.v}</div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "clamp(7px,1.8vw,9px)", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--stone)", lineHeight: 1.2 }}>{s.k}</div>
             </div>
-            <p style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--stone)", margin: 0, paddingBottom: 4 }}>passe o mouse · arraste pra comparar</p>
-          </div>
-          <MasterDetailCollection />
-          <div style={{ marginTop: 24, maxWidth: 340 }}><CTAButton /></div>
-        </div>
-      </section>
+          ))}
+        </section>
 
-      {/* ═══ FAQ CHAT ═══ */}
-      <FaqChat />
+        {/* ═══ TRY IT ═══ */}
+        <TryItSection />
 
-      {/* ═══ CTA FINAL ═══ */}
-      <section style={{ padding: "clamp(56px,8vw,90px) clamp(16px,5vw,48px)", background: "var(--forest)" }}>
-        <div className="pf-cta-final">
-          <div>
-            <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(34px,6vw,62px)", fontWeight: 700, letterSpacing: "-.03em", lineHeight: .92, margin: 0, color: "var(--canvas)" }}>
-              Pronto pra<br />dar <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--rust-soft)" }}>cor</span><br />às suas fotos?
+        {/* ═══ INCLUSO ═══ */}
+        <section style={{ padding: "clamp(48px,7vw,80px) clamp(16px,5vw,48px)", background: "#100E0C", borderBottom: "1px solid var(--line)" }}>
+          <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+            <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(24px,4vw,44px)", fontWeight: 600, letterSpacing: "-.02em", lineHeight: 1, marginBottom: 28, marginTop: 0, color: "var(--bark)" }}>
+              O que vem na <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--moss)" }}>mochila</span>.
             </h2>
-            <p style={{ fontFamily: "var(--font-serif)", fontSize: 15, color: "rgba(232,223,201,.65)", marginTop: 14, lineHeight: 1.5 }}>Download imediato. Acesso vitalício. Garantia de 14 dias.</p>
-          </div>
-          <div style={{ background: "var(--canvas)", padding: "clamp(18px,4vw,28px)" }}>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--stone)", marginBottom: 5 }}>Outdoor Cinematic Presets</div>
-            <div style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(38px,5vw,56px)", fontWeight: 700, letterSpacing: "-.03em", color: "var(--bark)", lineHeight: 1, marginBottom: 3 }}>
-              <span style={{ fontFamily: "var(--font-mono)", fontSize: ".3em", color: "var(--stone)", fontWeight: 400 }}>R$ </span>{PRICE_VISTA}
-            </div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--stone)", marginBottom: 14 }}>acesso vitalício · download imediato</div>
-            <div style={{ borderTop: "1px solid var(--line)", paddingTop: 12, marginBottom: 14 }}>
-              {["45 presets .xmp + .dng", "2 packs: 18 + 27", "Guia PDF + videoaula", "Licença pessoal e comercial", "Atualizações vitalícias", "Suporte por email"].map(item => (
-                <div key={item} style={{ display: "flex", gap: 8, padding: "5px 0", fontFamily: "var(--font-serif)", fontSize: 13, color: "#3A3530" }}>
-                  <span style={{ color: "var(--moss)", fontWeight: 700, flexShrink: 0 }}>✓</span><span>{item}</span>
+            <div className="pf-includes">
+              {[
+                { n: "01", t: "45 presets Lightroom", d: "Arquivos .xmp para Classic, CC, Mobile e Camera Raw. Dois packs: 18 + 27." },
+                { n: "02", t: "Perfis .dng", d: "Perfis de cor — mais estáveis, não bagunçam seus sliders." },
+                { n: "03", t: "Guia de instalação", d: "PDF passo a passo para cada versão do Lightroom." },
+                { n: "04", t: "Videoaula", d: "Como escolher o preset certo e fazer ajustes finos." },
+                { n: "05", t: "Licença comercial", d: "Use em trabalhos pagos e clientes. Sem pegadinha." },
+                { n: "06", t: "Atualizações vitalícias", d: "Todo pack novo vai pra você automaticamente." },
+              ].map(it => (
+                <div key={it.n} style={{ borderTop: "1px solid var(--line)", paddingTop: 14 }}>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".18em", color: "var(--rust)", marginBottom: 5 }}>№ {it.n}</div>
+                  <div style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(14px,2.5vw,18px)", fontWeight: 600, marginBottom: 4, color: "var(--bark)", lineHeight: 1.2 }}>{it.t}</div>
+                  <div style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(12px,1.8vw,13px)", lineHeight: 1.55, color: "rgba(232,223,201,.72)" }}>{it.d}</div>
                 </div>
               ))}
             </div>
-            <CTAButton />
-            <div style={{ marginTop: 10 }}><GuaranteeBadge /></div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <SiteFooter dark={false} />
-      <div className="pf-sticky-spacer" />
-      <StickyCTA />
+        {/* ═══ QUEM SOU EU ═══ */}
+        <AboutAuthor />
+
+        {/* ═══ VS CAROUSEL ═══ */}
+        <VsCarousel />
+
+        {/* ═══ COLEÇÃO ═══ */}
+        <section style={{ padding: "clamp(48px,7vw,80px) clamp(16px,5vw,48px)", background: "#100E0C", borderBottom: "1px solid var(--line)" }}>
+          <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 18 }}>
+              <div>
+                <div style={{ fontFamily: "var(--font-hand)", fontSize: 20, color: "var(--rust)", transform: "rotate(-1.5deg)", display: "inline-block", marginBottom: 2 }}>tudo que tem—</div>
+                <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: "clamp(24px,4vw,40px)", letterSpacing: "-.02em", lineHeight: 1, margin: 0, color: "var(--bark)" }}>
+                  A coleção <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--moss)" }}>completa</span>.
+                </h2>
+              </div>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--stone)", margin: 0, paddingBottom: 4 }}>passe o mouse · arraste pra comparar</p>
+            </div>
+            <MasterDetailCollection />
+            <div style={{ marginTop: 24, maxWidth: 340 }}><CTAButton /></div>
+          </div>
+        </section>
+
+        {/* ═══ FAQ CHAT ═══ */}
+        <FaqChat />
+
+        {/* ═══ CTA FINAL ═══ */}
+        <section style={{ padding: "clamp(56px,8vw,90px) clamp(16px,5vw,48px)", background: "var(--forest)" }}>
+          <div className="pf-cta-final">
+            <div>
+              <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(34px,6vw,62px)", fontWeight: 700, letterSpacing: "-.03em", lineHeight: .92, margin: 0, color: "var(--canvas)" }}>
+                Pronto pra<br />dar <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400, color: "var(--rust-soft)" }}>cor</span><br />às suas fotos?
+              </h2>
+              <p style={{ fontFamily: "var(--font-serif)", fontSize: 15, color: "rgba(232,223,201,.65)", marginTop: 14, lineHeight: 1.5 }}>Download imediato. Acesso vitalício. Garantia de 14 dias.</p>
+            </div>
+            <div style={{ background: "#171412", padding: "clamp(18px,4vw,28px)" }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--stone)", marginBottom: 5 }}>Outdoor Cinematic Presets</div>
+              <div style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(38px,5vw,56px)", fontWeight: 700, letterSpacing: "-.03em", color: "var(--bark)", lineHeight: 1, marginBottom: 3 }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: ".3em", color: "var(--stone)", fontWeight: 400 }}>R$ </span>{PRICE_VISTA}
+              </div>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--stone)", marginBottom: 14 }}>acesso vitalício · download imediato</div>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 12, marginBottom: 14 }}>
+                {["45 presets .xmp + .dng", "2 packs: 18 + 27", "Guia PDF + videoaula", "Licença pessoal e comercial", "Atualizações vitalícias", "Suporte por email"].map(item => (
+                  <div key={item} style={{ display: "flex", gap: 8, padding: "5px 0", fontFamily: "var(--font-serif)", fontSize: 13, color: "rgba(232,223,201,.72)" }}>
+                    <span style={{ color: "var(--moss)", fontWeight: 700, flexShrink: 0 }}>✓</span><span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <CTAButton />
+              <div style={{ marginTop: 10 }}><GuaranteeBadge /></div>
+            </div>
+          </div>
+        </section>
+
+        <DarkFooter coords="calibrado em campo · não em estúdio" />
+        <div className="pf-sticky-spacer" />
+        <StickyCTA />
+      </div>
     </div>
   );
 }

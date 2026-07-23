@@ -6,8 +6,8 @@
 // Portado de luts-foto.jsx (protótipo) para Next App Router.
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import SiteFooter from "@/components/site-footer";
+import DarkTopNav from "@/components/dark-nav";
+import DarkFooter from "@/components/dark-footer";
 
 // vídeo por LUT — slug derivado do nome bate com /videos/luts/<slug>.mp4
 const slugify = (s: string) =>
@@ -431,7 +431,7 @@ function LutSticky() {
       <a
         href={LUT_CTA}
         onClick={() => vibe(15)}
-        style={{ padding: "13px 18px", background: "var(--rust-soft)", color: "#10140d", fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", textDecoration: "none", flexShrink: 0, whiteSpace: "nowrap" }}
+        style={{ padding: "13px 18px", background: "var(--rust-soft)", color: "#0D0C0B", fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", textDecoration: "none", flexShrink: 0, whiteSpace: "nowrap" }}
       >
         Comprar →
       </a>
@@ -610,18 +610,10 @@ export default function LutsPage() {
   const wetJungle = LUTS.find((l) => l.name === "Wet Jungle")!;
 
   return (
-    <div className="lut-lp">
+    <div className="theme-fdl lut-lp">
       <style>{LUT_CSS}</style>
 
-      {/* Nav mínima */}
-      <header className="lut-nav">
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <span style={{ fontFamily: "var(--font-hand)", fontSize: 24, color: "var(--canvas)", lineHeight: 1 }}>Eu Henriq</span>
-        </Link>
-        <Link href="/presets" style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(232,223,201,.55)", textDecoration: "none" }}>
-          ← Presets &amp; LUTs
-        </Link>
-      </header>
+      <DarkTopNav active="Presets" />
 
       {/* ═══ HERO ═══ */}
       <section className="lut-hero">
@@ -836,7 +828,7 @@ export default function LutsPage() {
         Estes LUTs são interpretações criativas autorais inspiradas na linguagem visual do cinema. Não são produtos oficiais, licenciados ou afiliados a nenhum filme, estúdio ou detentor de direitos. Marcas e títulos citados pertencem a seus respectivos donos e servem apenas como referência estética.
       </section>
 
-      <SiteFooter dark={true} />
+      <DarkFooter coords="cor de cinema · calibrada em campo" />
       <div style={{ height: 74 }} />
       <LutSticky />
 
@@ -849,16 +841,13 @@ export default function LutsPage() {
 // CSS
 // ════════════════════════════════════════════════════════════
 const LUT_CSS = `
-.lut-lp{ --bg:#0a0c0b; --bg2:#0e110f; --surf:#13160f; --hair:rgba(232,223,201,.12);
-  --tx:#ECE3CE; --mut:rgba(232,223,201,.6); --dim:rgba(232,223,201,.42);
+.lut-lp{ --bg:#0D0C0B; --bg2:#100E0C; --surf:#171412; --hair:rgba(237,231,219,.12);
+  --tx:#EDE7DB; --mut:rgba(237,231,219,.6); --dim:rgba(237,231,219,.42);
+  --canvas:#EDE7DB; --paper:#0D0C0B; --rust:var(--accent); --rust-soft:var(--accent-hover);
   position:relative; background:var(--bg); color:var(--tx); font-family:var(--font-ui); overflow-x:hidden; max-width:100vw; }
 .lut-lp *{ box-sizing:border-box; }
 .lut-lp .ital{ font-family:var(--font-serif); font-style:italic; font-weight:400; color:var(--rust-soft); }
-.lut-lp::after{ content:""; position:fixed; inset:0; z-index:7; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size:200px 200px; }
 .lut-lp::before{ content:""; position:fixed; inset:0; z-index:7; pointer-events:none; box-shadow:inset 0 0 200px rgba(0,0,0,.55); }
-
-.lut-nav{ height:58px; display:flex; align-items:center; justify-content:space-between; padding:0 clamp(16px,5vw,40px); border-bottom:1px solid var(--hair); position:relative; z-index:10; }
 
 /* clip + frame de cinema */
 .lut-frame{ position:relative; border:1px solid var(--hair); background:#000; overflow:hidden; box-shadow:0 30px 80px -30px rgba(0,0,0,.9); }
@@ -876,7 +865,7 @@ const LUT_CSS = `
 .lut-reel-chip{ display:inline-flex; align-items:center; gap:7px; padding:7px 12px; background:transparent; border:1px solid var(--hair); color:var(--mut); font-family:var(--font-mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; cursor:pointer; transition:border-color .2s,color .2s,background .2s; }
 .lut-reel-chip span{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
 .lut-reel-chip:hover{ border-color:var(--rust-soft); color:var(--canvas); }
-.lut-reel-chip.on{ border-color:var(--rust-soft); color:var(--canvas); background:rgba(206,140,74,.1); }
+.lut-reel-chip.on{ border-color:var(--rust-soft); color:var(--canvas); background:rgba(192,130,70,.1); }
 
 /* hero — vídeo protagonista, empilhado e centrado */
 .lut-hero{ display:flex; flex-direction:column; align-items:center; gap:clamp(22px,3vw,34px); padding:clamp(26px,4vw,52px) clamp(16px,5vw,56px) clamp(40px,5vw,72px); position:relative; z-index:1; text-align:center; }
@@ -892,14 +881,14 @@ const LUT_CSS = `
 .lut-hand,.lut-hand2{ font-family:var(--font-hand); color:var(--rust-soft); transform:rotate(-2deg); display:inline-block; text-shadow:0 0 24px rgba(194,128,61,.45); }
 .lut-hand{ font-size:clamp(26px,3.4vw,34px); margin-bottom:2px; }
 .lut-hand2{ font-size:clamp(22px,3vw,28px); margin-bottom:2px; }
-.lut-h1{ margin:0 0 14px; font-family:var(--font-ui); font-weight:700; font-size:clamp(34px,5vw,58px); letter-spacing:-.035em; line-height:.96; color:var(--canvas); text-shadow:0 2px 30px rgba(0,0,0,.5), 0 0 46px rgba(206,140,74,.18); }
+.lut-h1{ margin:0 0 14px; font-family:var(--font-ui); font-weight:700; font-size:clamp(34px,5vw,58px); letter-spacing:-.035em; line-height:.96; color:var(--canvas); text-shadow:0 2px 30px rgba(0,0,0,.5), 0 0 46px rgba(192,130,70,.18); }
 .lut-sub{ font-family:var(--font-serif); font-size:clamp(15px,1.7vw,18px); line-height:1.55; color:var(--mut); margin:0 auto; max-width:62ch; }
 .lut-hero-cta{ display:flex; align-items:center; justify-content:center; gap:clamp(20px,3vw,36px); flex-wrap:wrap; }
 .lut-price-aside{ display:flex; flex-direction:column; gap:2px; }
 
 /* buy */
 .lut-buy{ display:inline-flex; flex-direction:column; gap:5px; text-decoration:none; }
-.lut-buy-main{ display:inline-flex; align-items:center; justify-content:center; gap:9px; padding:16px 26px; background:var(--rust-soft); color:#10140d; font-family:var(--font-ui); font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; transition:background .2s; }
+.lut-buy-main{ display:inline-flex; align-items:center; justify-content:center; gap:9px; padding:16px 26px; background:var(--rust-soft); color:#0D0C0B; font-family:var(--font-ui); font-size:12px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; transition:background .2s; }
 .lut-buy:hover .lut-buy-main{ background:var(--rust); color:var(--paper); }
 
 /* compat */
@@ -909,7 +898,7 @@ const LUT_CSS = `
 .lut-chip{ font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; color:var(--mut); border:1px solid var(--hair); padding:5px 10px; white-space:nowrap; }
 
 /* sprockets */
-.lut-sprockets{ display:flex; gap:0; justify-content:center; overflow:hidden; padding:9px 0; background:#070806; }
+.lut-sprockets{ display:flex; gap:0; justify-content:center; overflow:hidden; padding:9px 0; background:#0A0908; }
 .lut-sprockets span{ flex:0 0 auto; width:13px; height:9px; border-radius:2px; background:rgba(232,223,201,.12); margin:0 7px; }
 
 /* manifesto */
@@ -950,7 +939,7 @@ const LUT_CSS = `
 .lut-card-meta{ position:absolute; left:0; right:0; bottom:0; z-index:4; padding:12px 12px 13px; text-align:left; background:linear-gradient(0deg,rgba(8,7,5,.88) 0%,rgba(8,7,5,.2) 72%,transparent 100%); }
 .lut-card-spot{ font-family:var(--font-serif); font-style:italic; font-size:11px; color:rgba(245,241,232,.66); line-height:1.25; margin-top:3px; }
 .lut-card::after{ content:""; position:absolute; inset:0; box-shadow:inset 0 0 0 1px rgba(0,0,0,0); transition:box-shadow .3s; z-index:5; pointer-events:none; }
-.lut-card:hover::after{ box-shadow:inset 0 0 0 1px rgba(206,140,74,.4); }
+.lut-card:hover::after{ box-shadow:inset 0 0 0 1px rgba(192,130,70,.4); }
 
 /* como */
 .lut-how{ padding:clamp(56px,8vw,96px) clamp(16px,5vw,56px); position:relative; z-index:1; }
@@ -996,7 +985,7 @@ const LUT_CSS = `
 .lut-faq-a p{ margin:0; padding:0 4px 18px; font-family:var(--font-serif); font-size:clamp(13px,1.7vw,15px); line-height:1.6; color:var(--mut); }
 
 /* final */
-.lut-final{ padding:clamp(56px,9vw,110px) clamp(16px,5vw,56px); background:linear-gradient(180deg,#0c0f0a 0%,#0a0c0b 100%); border-top:1px solid var(--hair); position:relative; z-index:1; }
+.lut-final{ padding:clamp(56px,9vw,110px) clamp(16px,5vw,56px); background:linear-gradient(180deg,#100E0C 0%,#0D0C0B 100%); border-top:1px solid var(--hair); position:relative; z-index:1; }
 .lut-final-grid{ max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; }
 .lut-final-h{ margin:0; font-family:var(--font-ui); font-weight:700; font-size:clamp(32px,5.4vw,58px); letter-spacing:-.035em; line-height:.95; color:var(--canvas); }
 .lut-final-p{ font-family:var(--font-serif); font-size:clamp(14px,1.8vw,17px); line-height:1.55; color:var(--mut); margin-top:16px; max-width:42ch; }
