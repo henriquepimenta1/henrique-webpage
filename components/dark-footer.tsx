@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DARK_NAV_L, DARK_NAV_R } from "@/components/dark-nav";
+import { DARK_NAV_L, DARK_NAV_R } from "@/components/dark-nav-links";
 
 interface DarkFooterProps {
   coords?: string;

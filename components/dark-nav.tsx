@@ -1,22 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useState, type CSSProperties } from "react";
+import { DARK_NAV_L, DARK_NAV_R } from "@/components/dark-nav-links";
 
 // Chrome "Fim de Luz" — topbar. Divergências por página viram props:
 //   active: label da página atual · topStyle: override de posicionamento.
-export const DARK_NAV_L = [
-  { label: "Portfolio", href: "/portfolio" },
-  { label: "Presets", href: "/presets" },
-  { label: "Expedições", href: "/expedicoes" },
-] as const;
-
-export const DARK_NAV_R = [
-  { label: "Quadros", href: "/quadros" },
-  { label: "Midiakit", href: "/midiakit" },
-  { label: "Sobre", href: "/sobre" },
-  { label: "Contato", href: "/contato" },
-] as const;
-
 interface DarkTopNavProps {
   active?: string;
   topStyle?: CSSProperties;

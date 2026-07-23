@@ -1,322 +1,198 @@
-"use client";
-
 import Link from "next/link";
-import SiteNav from "@/components/nav";
-import SiteFooter from "@/components/site-footer";
+import DarkTopNav from "@/components/dark-nav";
+import DarkFooter from "@/components/dark-footer";
 
-export default function PresetsHubPage() {
+// Loja Presets & LUTs — Dark Editorial "Fim de Luz".
+// Preços/URLs Cakto confirmados no handoff: 39,00 · 34,90 · 37,90.
+interface Collection {
+  num: string;
+  name: string;
+  forWhat: string;
+  formats: string;
+  count: string;
+  href: string;
+  buy: string;
+  img: string;
+  imgPos?: string;
+  desc: string;
+  now: string;
+  from?: string;
+  parcel: string;
+}
+
+const COLLECTIONS: Collection[] = [
+  {
+    num: "01",
+    name: "Outdoor Cinematic Presets",
+    forWhat: "Fotografia · Lightroom",
+    formats: ".xmp · .dng",
+    count: "45 presets",
+    href: "/presets/fotografia",
+    buy: "https://pay.cakto.com.br/C4dmPFR",
+    img: "/images/portfolio/pico-ciririca-serradoibitiraquire.jpg",
+    desc: "O mesmo tratamento do portfólio — duna, lagoa, montanha, selva e golden hour — no seu Lightroom.",
+    now: "39,00",
+    from: "79,90",
+    parcel: "9× R$ 5,19",
+  },
+  {
+    num: "02",
+    name: "Outdoor Grain Presets",
+    forWhat: "Fotografia · emulação de filme",
+    formats: ".xmp · .dng",
+    count: "21 presets",
+    href: "/presets/outdoor-grain",
+    buy: "https://pay.cakto.com.br/458hrkh_938519",
+    img: "/images/outdoor-grain-capa.jpg",
+    imgPos: "center 38%",
+    desc: "Emulações de filme analógico — o grão, o halo e a cor da película, calibrados em campo.",
+    now: "34,90",
+    parcel: "9× R$ 4,55",
+  },
+  {
+    num: "03",
+    name: "Outdoor Cinematic LUTs",
+    forWhat: "Vídeo · 5 perfis log",
+    formats: ".cube · .3dl",
+    count: "21 LUTs",
+    href: "/presets/video",
+    buy: "https://pay.cakto.com.br/6tNxcGs",
+    img: "/images/portfolio/as3lagunas-huayhuash.jpg",
+    desc: "21 LUTs em 6 famílias, compatíveis com C-Log, RED, S-Log2/3 e Rec.709. Cor de cinema, feita em campo.",
+    now: "37,90",
+    from: "99,00",
+    parcel: "9× R$ 4,93",
+  },
+];
+
+const TRUST = [
+  "Download imediato",
+  "Garantia de 14 dias",
+  "Licença pessoal + comercial",
+  "Atualizações vitalícias",
+];
+
+const PALETTE: ReadonlyArray<[string, string]> = [
+  ["/images/portfolio/acapamento-janca-huayhuash.jpg", "Portfolio · Andes"],
+  ["/images/portfolio/laguna-acampamento-janca-huayhuash.jpg", "Campo · Huayhuash"],
+  ["/images/portfolio/lencois-silhueta-pordosol.jpg", "Lençóis · Pôr do sol"],
+  ["/images/portfolio/vista-para-montanhas-itatiaia.jpg", "Itatiaia · Amanhecer"],
+];
+
+function priceDiscount(now: string, from: string): number {
+  return Math.round((1 - parseFloat(now.replace(",", ".")) / parseFloat(from.replace(",", "."))) * 100);
+}
+
+function PriceBlock({ now, from, parcel }: { now: string; from?: string; parcel: string }) {
   return (
-    <main style={{ background: "var(--canvas)", color: "var(--bark)", fontFamily: "var(--font-ui)", minHeight: "100vh" }}>
-      <style>{`
-        .door-img { transition: transform .65s cubic-bezier(.2,.7,.2,1); }
-        .door-active:hover .door-img { transform: scale(1.04); }
-        .door-cta-arrow { transition: transform .3s cubic-bezier(.2,.7,.2,1), opacity .3s; }
-        .door-active:hover .door-cta-arrow { transform: translateX(6px); }
-        .compare-item { overflow: hidden; }
-        .compare-img { transition: transform .65s cubic-bezier(.2,.7,.2,1); }
-        .compare-item:hover .compare-img { transform: scale(1.04); }
-        .compare-item:hover .compare-label { transform: translateY(-3px); opacity: 1; }
-        .compare-label { transition: transform .3s cubic-bezier(.2,.7,.2,1), opacity .3s; opacity: .75; }
-
-        /* Ken Burns leve nas portas (igual home) */
-        @keyframes hubkb { 0%,100%{ transform: scale(1.04); } 50%{ transform: scale(1.12); } }
-        .door-img { animation: hubkb 24s ease-in-out infinite; will-change: transform; }
-        .three-door > *:nth-child(2) .door-img { animation-delay: -8s; }
-        .three-door > *:nth-child(3) .door-img { animation-delay: -16s; }
-        @media (prefers-reduced-motion: reduce) { .door-img { animation: none !important; } }
-
-        /* Video hero */
-        .hub-video-bg {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          filter: blur(3px) brightness(.55) saturate(.85);
-          transform: scale(1.04); /* evita bordas brancas do blur */
-          z-index: 0;
-        }
-        .hub-hero-inner {
-          position: relative;
-          z-index: 1;
-        }
-
-        /* Rail items stagger */
-        .rail-item {
-          opacity: 0;
-          transform: translateY(10px);
-          animation: railIn .5s cubic-bezier(.2,.7,.2,1) forwards;
-        }
-        .rail-item:nth-child(1) { animation-delay: .05s; }
-        .rail-item:nth-child(2) { animation-delay: .12s; }
-        .rail-item:nth-child(3) { animation-delay: .19s; }
-        .rail-item:nth-child(4) { animation-delay: .26s; }
-        @keyframes railIn {
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media(max-width:900px){
-          .three-door { grid-template-columns: 1fr !important; }
-          .door { height: 480px !important; }
-          .compare-grid { grid-template-columns: repeat(2,1fr) !important; }
-          .rail { grid-template-columns: repeat(2,1fr) !important; }
-          .hub-title { font-size: clamp(52px,12vw,84px) !important; }
-        }
-        @media(max-width:560px){
-          .compare-grid { grid-template-columns: 1fr !important; }
-          .hub-hero { padding: 100px 24px 64px !important; }
-          .hub-rail, .hub-compare, .hub-doors { padding-left: 24px !important; padding-right: 24px !important; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .door-img, .compare-img, .door-cta-arrow, .compare-label, .rail-item {
-            transition: none !important;
-            animation: none !important;
-            opacity: 1 !important;
-            transform: none !important;
-          }
-        }
-      `}</style>
-
-      <SiteNav dark={false} />
-
-      {/* ── HERO COM VÍDEO ── */}
-      <div
-        className="hub-hero"
-        style={{
-          padding: "120px 56px 80px",
-          position: "relative",
-          overflow: "hidden",
-          background: "var(--forest)", // fallback
-        }}
-      >
-        {/* Vídeo de fundo */}
-        <video
-          className="hub-video-bg"
-          autoPlay
-          loop
-          muted
-          playsInline
-          aria-hidden="true"
-        >
-          <source src="/videos/VIDEO-HERO2-web.mp4" type="video/mp4" />
-        </video>
-
-        {/* Gradiente sobre o vídeo para legibilidade */}
-        <div style={{
-          position: "absolute", inset: 0, zIndex: 0,
-          background: "linear-gradient(180deg, rgba(14,12,10,.3) 0%, rgba(14,12,10,.15) 50%, rgba(14,12,10,.6) 100%)",
-        }} />
-
-        <div className="hub-hero-inner">
-          {/* Eyebrow */}
-          <div style={{
-            display: "flex", alignItems: "center", gap: 10,
-            fontFamily: "var(--font-ui)", fontSize: 10, letterSpacing: ".22em",
-            textTransform: "uppercase", color: "rgba(232,223,201,.6)", fontWeight: 500,
-            marginBottom: 20,
-          }}>
-            <span>№ 03</span>
-            <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust)", display: "inline-block" }} />
-            <span>Cor · tratamento</span>
-            <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust)", display: "inline-block" }} />
-            <span style={{ color: "var(--rust)" }}>Desde 2022</span>
-          </div>
-
-          <div style={{
-            fontFamily: "var(--font-hand)", fontSize: 38, color: "var(--rust-soft)",
-            transform: "rotate(-2deg)", display: "inline-block", marginBottom: 6, letterSpacing: ".01em",
-          }}>
-            a mesma cor que eu uso—
-          </div>
-
-          <h1
-            className="hub-title"
-            style={{
-              fontFamily: "var(--font-ui)", fontWeight: 700,
-              fontSize: "clamp(52px,7vw,84px)", letterSpacing: "-.03em",
-              lineHeight: 0.95, margin: 0, color: "var(--canvas)",
-            }}
-          >
-            Presets & LUTs<br />
-            <span style={{
-              fontFamily: "var(--font-serif)", fontStyle: "italic",
-              fontWeight: 400, color: "var(--rust-soft)",
-            }}>
-              saídos das minhas fotos
-            </span>
-          </h1>
-
-          <p style={{
-            fontFamily: "var(--font-serif)", fontWeight: 400, fontSize: 19,
-            lineHeight: 1.5, color: "rgba(232,223,201,.8)", marginTop: 28, maxWidth: "58ch",
-          }}>
-            O mesmo tratamento que aplico no meu próprio portfólio, agora no seu Lightroom e no seu Premiere. Dois pacotes separados — escolha o que cabe no seu fluxo.
-          </p>
-        </div>
+    <div className="prd-price">
+      <div className="prd-price-row">
+        {from && <span className="prd-price-from">R$ {from}</span>}
+        <span className="prd-price-now">
+          <span className="prd-price-cur">R$</span>
+          {now}
+        </span>
       </div>
+      {parcel && <div className="prd-price-parcel">ou {parcel}</div>}
+    </div>
+  );
+}
 
-      {/* ── RAIL TÉCNICO ── */}
-      <div
-        className="hub-rail rail"
-        style={{
-          padding: "40px 56px",
-          borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)",
-          display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 40,
-        }}
-      >
-        {[
-          { k: "Compatibilidade", v: "Lightroom · Photoshop · Camera Raw" },
-          { k: "Formato",         v: ".xmp · .dng · .cube · .3dl" },
-          { k: "Licença",         v: "Pessoal + comercial" },
-          { k: "Atualizações",    v: "Vitalícias, sem custo" },
-        ].map(({ k, v }) => (
-          <div key={k} className="rail-item">
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--stone)", marginBottom: 6 }}>{k}</div>
-            <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 19, color: "var(--bark)" }}>{v}</div>
-          </div>
+export default function PresetsPage() {
+  return (
+    <div className="theme-fdl">
+      <DarkTopNav active="Presets" />
+
+      <header className="prd-head">
+        <div className="v2-eyebrow" style={{ marginBottom: 22 }}>
+          № 03 · Cor · tratamento · desde 2022
+        </div>
+        <h1 className="prd-h1">
+          A mesma cor que eu uso,
+          <br />
+          <em>no seu fluxo de trabalho.</em>
+        </h1>
+        <p className="prd-sub">
+          O tratamento que aplico no meu próprio portfólio, pronto pro seu Lightroom e pro seu Premiere. Três coleções —
+          escolha a que cabe no seu fluxo, ou leve tudo.
+        </p>
+      </header>
+
+      <div className="prd-trust">
+        {TRUST.map((t) => (
+          <span key={t} className="prd-trust-item">
+            <span className="prd-trust-dot">✓</span>
+            {t}
+          </span>
         ))}
       </div>
 
-      {/* ── DUAS PORTAS ── */}
-      <div
-        className="hub-doors three-door"
-        style={{ padding: "56px 56px 96px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}
-      >
-
-        {/* Porta 1 · Presets — ATIVA */}
-        <Link href="/presets/fotografia" style={{ textDecoration: "none" }}>
-          <div
-            className="door door-active"
-            style={{ position: "relative", height: 600, overflow: "hidden", cursor: "pointer", background: "var(--forest)" }}
-          >
-            <div
-              className="door-img"
-              style={{
-                position: "absolute", inset: 0,
-                backgroundImage: "url(/images/portfolio/pico-ciririca-serradoibitiraquire.jpg)",
-                backgroundSize: "cover", backgroundPosition: "center",
-              }}
-            />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(30,42,24,.25) 0%, rgba(30,42,24,.1) 40%, rgba(30,42,24,.85) 100%)" }} />
-            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "32px 32px 36px", zIndex: 2, color: "var(--canvas)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div style={{ padding: "5px 10px", border: "1px solid rgba(232,223,201,.5)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase" }}>.xmp · .dng</div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 01 / 03</div>
-              </div>
-              <div>
-                <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "var(--ashe)", marginBottom: 12 }}>Para fotografia · Lightroom</div>
-                <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: "clamp(24px, 2.5vw, 32px)", letterSpacing: "-.02em", lineHeight: 1.02, margin: 0, marginBottom: 4 }}>
-                  Outdoor Cinematic<br />Presets
-                </h2>
-                <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
-                  <span>45 presets · R$39,90</span>
-                  <span className="door-cta-arrow" style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 22, fontWeight: 400 }}>→</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Link>
-
-        {/* Porta 2 · Outdoor Grain — ATIVA (página de showcase no ar) */}
-        <Link href="/presets/outdoor-grain" style={{ textDecoration: "none" }}>
-          <div
-            className="door door-active"
-            style={{ position: "relative", height: 600, overflow: "hidden", cursor: "pointer", background: "var(--forest)" }}
-          >
-            <div
-              className="door-img"
-              style={{
-                position: "absolute", inset: 0,
-                backgroundImage: "url(/images/outdoor-grain-capa.jpg)",
-                backgroundSize: "cover", backgroundPosition: "center",
-                filter: "brightness(.85)",
-              }}
-            />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.15) 40%, rgba(30,42,24,.9) 100%)" }} />
-
-            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "32px 32px 36px", zIndex: 2, color: "var(--canvas)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div style={{ padding: "5px 10px", border: "1px solid rgba(232,223,201,.5)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase" }}>.xmp · .dng</div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 02 / 03</div>
-              </div>
-              <div>
-                <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "var(--ashe)", marginBottom: 12 }}>Película analógica · Lightroom</div>
-                <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: "clamp(24px, 2.5vw, 32px)", letterSpacing: "-.02em", lineHeight: 1.02, margin: 0, marginBottom: 4 }}>
-                  Outdoor Grain<br />Presets
-                </h2>
-                <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
-                  <span>21 presets · R$ 34,90</span>
-                  <span className="door-cta-arrow" style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 22, fontWeight: 400 }}>→</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Link>
-
-        {/* Porta 3 · LUTs — ATIVA */}
-        <Link href="/presets/video" style={{ textDecoration: "none" }}>
-          <div
-            className="door door-active"
-            style={{ position: "relative", height: 600, overflow: "hidden", cursor: "pointer", background: "var(--forest)" }}
-          >
-            <div
-              className="door-img"
-              style={{
-                position: "absolute", inset: 0,
-                backgroundImage: "url(/images/portfolio/as3lagunas-huayhuash.jpg)",
-                backgroundSize: "cover", backgroundPosition: "center",
-                filter: "brightness(.85)",
-              }}
-            />
-            <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.15) 40%, rgba(30,42,24,.9) 100%)" }} />
-
-            <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "32px 32px 36px", zIndex: 2, color: "var(--canvas)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div style={{ padding: "5px 10px", border: "1px solid rgba(232,223,201,.5)", fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase" }}>.cube · LUT 3D</div>
-                <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em", color: "var(--ashe)" }}>№ 03 / 03</div>
-              </div>
-              <div>
-                <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 16, color: "var(--ashe)", marginBottom: 12 }}>Para vídeo · 5 perfis log (C-Log · RED · S-Log2/3 · Rec.709) · .cube</div>
-                <h2 style={{ fontFamily: "var(--font-ui)", fontWeight: 600, fontSize: "clamp(24px, 2.5vw, 32px)", letterSpacing: "-.02em", lineHeight: 1.02, margin: 0, marginBottom: 4 }}>
-                  Outdoor Cinematic<br />LUTs
-                </h2>
-                <div style={{ marginTop: 24, paddingTop: 18, borderTop: "1px solid rgba(232,223,201,.25)", display: "flex", justifyContent: "space-between", alignItems: "center", fontFamily: "var(--font-ui)", fontSize: 11, letterSpacing: ".22em", textTransform: "uppercase", fontWeight: 600 }}>
-                  <span>21 LUTs · R$ 37,90</span>
-                  <span className="door-cta-arrow" style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 22, fontWeight: 400 }}>→</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Link>
-      </div>
-
-      {/* ── A MESMA PALETA ── */}
-      <div className="hub-compare" style={{ padding: "64px 56px 96px", background: "var(--canvas-deep)" }}>
-        <div className="compare-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
-          {[
-            { img: "/images/portfolio/acapamento-janca-huayhuash.jpg",        lbl: "Portfolio · Andes" },
-            { img: "/images/portfolio/laguna-acampamento-janca-huayhuash.jpg", lbl: "Campo · Huayhuash" },
-            { img: "/images/portfolio/lencois-silhueta-pordosol.jpg",          lbl: "Lençóis · Pôr do sol" },
-            { img: "/images/portfolio/vista-para-montanhas-itatiaia.jpg",      lbl: "Itatiaia · Amanhecer" },
-          ].map(({ img, lbl }) => (
-            <div key={lbl} className="compare-item" style={{ aspectRatio: "3/4", position: "relative" }}>
-              <div
-                className="compare-img"
-                style={{ position: "absolute", inset: 0, backgroundImage: `url(${img})`, backgroundSize: "cover", backgroundPosition: "center" }}
+      <section className="prd-grid">
+        {COLLECTIONS.map((c) => (
+          <article key={c.num} className="prd-card">
+            <Link className="prd-card-media" href={c.href} aria-label={`Ver ${c.name}`}>
+              <img
+                src={c.img}
+                alt={c.name}
+                style={c.imgPos ? { objectPosition: c.imgPos } : undefined}
+                loading="lazy"
               />
-              <div
-                className="compare-label"
-                style={{ position: "absolute", bottom: 10, left: 10, fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".15em", color: "var(--canvas)", background: "rgba(30,42,24,.75)", padding: "3px 8px" }}
-              >
-                {lbl}
+              {c.from && <span className="prd-badge">-{priceDiscount(c.now, c.from)}%</span>}
+              <span className="prd-card-num">№ {c.num} / 03</span>
+            </Link>
+            <div className="prd-card-body">
+              <div className="prd-card-meta">
+                {c.count} · {c.formats}
               </div>
+              <h2 className="prd-card-name">{c.name}</h2>
+              <div className="prd-card-for">{c.forWhat}</div>
+              <p className="prd-card-desc">{c.desc}</p>
+              <div className="prd-card-foot">
+                <PriceBlock now={c.now} from={c.from} parcel={c.parcel} />
+                <div className="prd-card-actions">
+                  <a className="prd-btn" href={c.buy} target="_blank" rel="noreferrer">
+                    Comprar <span aria-hidden="true">→</span>
+                  </a>
+                  <Link className="prd-link-detail" href={c.href}>
+                    Ver detalhes
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section className="prd-palette">
+        <div className="v2-eyebrow">A prova</div>
+        <h2 className="prd-h2">
+          A mesma paleta, <em>em foto e vídeo.</em>
+        </h2>
+        <p
+          style={{
+            fontFamily: "var(--font-serif)",
+            fontStyle: "italic",
+            fontSize: 16,
+            lineHeight: 1.6,
+            color: "var(--text-2)",
+            maxWidth: "52ch",
+            margin: "18px 0 0",
+          }}
+        >
+          Construí as coleções a partir do mesmo referencial cinematográfico. Cor de cinema, mas feita em campo — não em
+          estúdio.
+        </p>
+        <div className="prd-pal-grid">
+          {PALETTE.map(([img, lbl]) => (
+            <div key={lbl} className="prd-pal-item">
+              <img src={img} alt={lbl} loading="lazy" />
+              <div className="prd-pal-cap">{lbl}</div>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      <SiteFooter dark={false} />
-    </main>
+      <DarkFooter coords="calibrado em campo · não em estúdio" />
+    </div>
   );
 }
