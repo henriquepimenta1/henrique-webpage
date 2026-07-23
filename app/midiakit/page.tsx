@@ -42,7 +42,6 @@ interface Gear {
 }
 
 interface MidiakitData {
-  reachDaily: number[];
   metrics: Metric[];
   topPosts: TopPost[];
   brands: Brand[];
@@ -52,11 +51,6 @@ interface MidiakitData {
 }
 
 const D: MidiakitData = {
-  // Série com tendência de alta (crescimento do perfil) · média ~6.468/dia.
-  reachDaily: [
-    3719, 4189, 3858, 4595, 4296, 4969, 4681, 5450, 5108, 5686, 5354, 6070, 5771, 6466, 6113, 6818,
-    6434, 7182, 6840, 7534, 7203, 7887, 7502, 8250, 7866, 8603, 8218, 8956, 8571, 9832,
-  ],
   metrics: [
     { label: "Seguidores", value: "15.458", sub: "@henriq.eu · Criador de Conteúdo Digital" },
     { label: "Alcance mensal", value: "194k", sub: "194.030 · últimos 30 dias" },
@@ -110,32 +104,6 @@ function Kicker({ n, label }: { n: string; label: string }) {
       <span className="rule" />
       <span>{label}</span>
     </div>
-  );
-}
-
-function Sparkline({ data }: { data: number[] }) {
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const W = 600;
-  const H = 80;
-  const x = (i: number) => (i / (data.length - 1)) * W;
-  const y = (v: number) => H - ((v - min) / (max - min)) * (H - 8) - 4;
-  const path = data.map((v, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
-  const area = `${path} L${W},${H} L0,${H} Z`;
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: 80, display: "block" }}>
-      <defs>
-        <linearGradient id="mkd-spark" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={area} fill="url(#mkd-spark)" />
-      <path d={path} fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      {data.map((v, i) => (
-        <circle key={i} cx={x(i)} cy={y(v)} r="2" fill="var(--accent)" opacity={0.55} />
-      ))}
-    </svg>
   );
 }
 
@@ -326,15 +294,6 @@ export default function MidiakitPage() {
               <div className="mkd-metric-s">{m.sub}</div>
             </div>
           ))}
-        </div>
-        <div>
-          <div className="mkd-spark-head">
-            <span className="v2-eyebrow">Alcance diário · últimos 30 dias</span>
-            <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 14, color: "var(--accent)" }}>
-              ↑ tendência de alta · média ~6.468/dia
-            </span>
-          </div>
-          <Sparkline data={D.reachDaily} />
         </div>
       </section>
 

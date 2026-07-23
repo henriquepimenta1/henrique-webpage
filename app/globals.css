@@ -366,6 +366,19 @@ body {
 .theme-fdl a{ color:inherit }
 .theme-fdl img{ max-width:100% }
 
+/* variante clara (galeria — Quadros). Contrastes sobre #E8DFC9 validados AA.
+   Especificidade .theme-fdl.theme-light vence o bloco .theme-fdl acima. */
+.theme-fdl.theme-light{
+  --bg:#E8DFC9; --surface:#DFD6BE; --surface-el:#D6CBAF;
+  --border:rgba(26,23,18,.15); --border-strong:rgba(26,23,18,.28);
+  --text-1:#1A1712; --text-2:#4A4335; --text-3:#6B6252;
+  --accent:#8A5624; --accent-hover:#74471B;
+  --shadow-gallery:0 1px 2px rgba(42,36,28,.10),0 12px 32px rgba(42,36,28,.14);
+  color:var(--text-2);
+}
+.theme-fdl.theme-light::after{mix-blend-mode:multiply;opacity:.14}
+.theme-fdl.theme-light .v2-menu-overlay{background:rgba(232,223,201,.98)}
+
 /* ── grão global (unifica fotos de câmeras/tratamentos diferentes) ── */
 .theme-fdl::after{content:"";position:fixed;inset:0;z-index:9;pointer-events:none;mix-blend-mode:overlay;opacity:.12;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
