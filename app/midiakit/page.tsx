@@ -94,6 +94,7 @@ const D: MidiakitData = {
     "Lençóis Maranhenses · MA", "Serra da Mantiqueira · SP/MG", "PN Itatiaia · RJ", "PN Serra dos Órgãos · RJ",
     "Serra do Ibitiraquire · PR", "Serra da Bocaina · SP/RJ", "Cordilheira Blanca · Peru", "Cordilheira Huayhuash · Peru",
     "Atacama · Chile",
+    "Bolívia · 2027", "Chile · 2027", "Peru · 2027",
   ],
 };
 
