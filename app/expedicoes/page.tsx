@@ -1,505 +1,251 @@
-"use client";
-
 import Link from "next/link";
-import SiteNav from "@/components/nav";
-import SiteFooter from "@/components/site-footer";
+import DarkTopNav from "@/components/dark-nav";
+import DarkFooter from "@/components/dark-footer";
 
-const WHATSAPP = "https://wa.me/5511988128064";
+// Expedições — Dark Editorial "Fim de Luz". Portado do protótipo hi-fi.
+// Regra de negócio: SOB CONSULTA, SEM PREÇOS. Valores sob consulta.
+const EMAIL = "contato@euhenriq.com";
 
-const trips = [
+interface Trip {
+  id: string;
+  href?: string;
+  name: string;
+  country: string;
+  when: string;
+  days: number;
+  alt: string;
+  km: string;
+  level: string;
+  status: string;
+  available: boolean;
+  cta?: string;
+  hero: string;
+  kicker: string;
+  desc: string;
+}
+
+const TRIPS: Trip[] = [
   {
     id: "01",
-    slug: "lencois",
     href: "/expedicoes/lencois",
     name: "Lençóis Maranhenses",
     country: "Brasil · MA",
     when: "Ago 2026",
     days: 4,
     alt: "40 m",
-    km: 52,
+    km: "52 km",
     level: "Intermediário",
     status: "Vagas abertas",
     available: true,
-    preco: "a partir de R$ 3.599",
     hero: "/images/lencois/DJI_20250828174205_0403_D-HDR.jpg",
     kicker: "Deserto com lagoas. Sem neblina, com Via Láctea.",
     desc: "Quatro dias na melhor janela do ano — lagoas cheias, poucos turistas e astrofotografia garantida. Três pacotes de imersão. Base em Barreirinhas, travessia a pé até Santo Amaro.",
   },
   {
     id: "02",
-    slug: "rondonia",
-    href: "/expedicoes/rondonia",
     name: "Explore Rondônia",
     country: "Brasil · RO",
     when: "2026",
     days: 5,
     alt: "Pakaás",
-    km: 0,
+    km: "Barco · trilhas",
     level: "Iniciante",
     status: "Em formação",
-    available: true,
-    preco: "Lista de interesse",
+    available: false,
+    cta: "Quero saber mais →",
     hero: "/images/portfolio/hotel-pakaas-ronodonia-riomamore-riopakaas.jpg",
     kicker: "Amazônia onde quase ninguém vai.",
     desc: "Cinco dias fotografando o Rio Mamoré, o Forte Príncipe da Beira, aldeias ribeirinhas e a mata amazônica — na fronteira entre Brasil e Bolívia. Base no Hotel Pakaás. Datas em definição.",
   },
   {
     id: "03",
-    slug: "huayhuash",
-    href: "/expedicoes/lencois",
     name: "Cordillera Huayhuash",
     country: "Peru",
     when: "2027",
     days: 11,
     alt: "5 050 m",
-    km: 130,
+    km: "130 km",
     level: "Avançado",
     status: "Em breve",
     available: false,
-    preco: "Em breve",
     hero: "/images/exp-huayhuash.jpg",
     kicker: "A trilha mais dura, a luz mais limpa.",
     desc: "Onze dias no circuito clássico da Huayhuash, passando por lagoas de 4.600 m e o vale de Janca. Saímos de Huaraz com mulas carregando o acampamento — você carrega só sua câmera.",
   },
 ];
 
+const STEPS: ReadonlyArray<[string, string, string]> = [
+  ["01", "Conversa", "Você escreve, eu respondo em 48h com um papo por vídeo."],
+  ["02", "Reserva", "Condições de reserva e pagamento, sob consulta."],
+  ["03", "Preparo", "Kit completo: equipamento, preparo físico, briefing."],
+  ["04", "Campo", "Encontro na cidade-base, expedição, álbum digital."],
+];
+
+function TripCard({ trip }: { trip: Trip }) {
+  return (
+    <article className="ex-card">
+      <div className="ex-card-img">
+        <img src={trip.hero} alt={trip.name} loading="lazy" />
+      </div>
+      <div className="ex-card-body">
+        <div className="ex-card-k">
+          <span>Expedição № {trip.id}</span>
+          <span>{trip.when}</span>
+        </div>
+        <h3 className="ex-card-name">{trip.name}</h3>
+        <p className="ex-card-kicker">{trip.kicker}</p>
+        <p className="ex-card-desc">{trip.desc}</p>
+        <div className="ex-specs">
+          {(
+            [
+              ["Duração", `${trip.days} dias`],
+              ["Percurso", trip.km],
+              ["Altitude", trip.alt],
+              ["Nível", trip.level],
+            ] as ReadonlyArray<[string, string]>
+          ).map(([k, v]) => (
+            <div key={k}>
+              <div className="ex-spec-k">{k}</div>
+              <div className="ex-spec-v">{v}</div>
+            </div>
+          ))}
+        </div>
+        <div className="ex-card-foot">
+          <span className="ex-card-price">{trip.available ? "Valores sob consulta" : trip.status}</span>
+          {trip.available && trip.href ? (
+            <Link className="ex-card-cta" href={trip.href}>
+              Detalhes →
+            </Link>
+          ) : (
+            <a className="ex-card-cta muted" href={`mailto:${EMAIL}`}>
+              {trip.cta || "Avisar quando abrir"}
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function ExpedicoesPage() {
   return (
-    <div style={{ background: "var(--canvas)", color: "var(--bark)", fontFamily: "var(--font-ui)", overflowX: "hidden" }}>
+    <div className="theme-fdl">
       <style>{`
-        /* ── Mobile responsivo ── */
-        @media(max-width: 900px) {
-          .exp-hero            { height: auto !important; min-height: 100vh !important; }
-          .exp-hero-pad        { padding: 100px 24px 40px !important; }
-          .exp-hero-title      { font-size: clamp(48px, 12vw, 80px) !important; }
-          .exp-hero-bottom     { flex-direction: column !important; align-items: flex-start !important; gap: 28px !important; }
-          .exp-hero-stats      { grid-template-columns: 1fr !important; gap: 14px !important; }
-          .exp-hero-stat-row   { display: flex !important; justify-content: space-between !important; align-items: baseline !important; gap: 12px; border-bottom: 1px solid rgba(232,223,201,.15); padding-bottom: 10px; }
-          .exp-hero-stat-row .stat-k { margin-bottom: 0 !important; }
+        /* ── hero ── */
+        .ex-hero{position:relative;min-height:74vh;display:flex;align-items:flex-end;overflow:hidden;margin-top:-76px}
+        .ex-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+        .ex-hero-grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,12,11,.55) 0%,rgba(13,12,11,0) 38%,rgba(13,12,11,.9) 100%)}
+        .ex-hero-body{position:relative;z-index:2;padding:var(--hero-clear) var(--s-5) var(--s-56);width:100%}
+        .ex-h1{font-family:var(--font-serif);font-weight:500;font-size:clamp(44px,6.6vw,84px);letter-spacing:-.015em;line-height:1.04;color:var(--text-1);margin:0;max-width:19ch;text-wrap:pretty}
+        .ex-h1 em{font-style:italic;font-weight:400}
+        .ex-hero-foot{margin-top:var(--s-3);display:flex;align-items:baseline;gap:32px;flex-wrap:wrap}
+        .ex-hero-note{font-family:var(--font-serif);font-style:italic;font-size:15px;color:var(--text-2)}
 
-          .exp-intro           { padding: 56px 24px !important; grid-template-columns: 1fr !important; gap: 24px !important; }
+        /* ── agenda ── */
+        .ex-section{padding:var(--sect-y) var(--s-5)}
+        .ex-h2{font-family:var(--font-serif);font-weight:500;font-size:clamp(30px,4vw,44px);letter-spacing:-.01em;color:var(--text-1);margin:var(--s-1) 0 var(--s-40)}
+        .ex-h2 em{font-style:italic;font-weight:400;color:var(--text-2)}
+        .ex-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:var(--s-3)}
+        .ex-card{background:var(--surface);border:1px solid var(--border);display:flex;flex-direction:column}
+        .ex-card-img{height:280px;overflow:hidden}
+        .ex-card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
+        .ex-card:hover .ex-card-img img{transform:scale(1.035)}
+        .ex-card-body{padding:var(--s-3) var(--s-3) var(--s-3);display:flex;flex-direction:column;flex:1}
+        .ex-card-k{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3)}
+        .ex-card-name{font-family:var(--font-serif);font-weight:500;font-size:clamp(24px,3vw,30px);letter-spacing:-.01em;color:var(--text-1);margin:var(--s-1) 0 0;line-height:1.15}
+        .ex-card-kicker{font-family:var(--font-serif);font-style:italic;font-size:14.5px;line-height:1.55;color:var(--text-2);margin:8px 0 0}
+        .ex-card-desc{font-family:var(--font-serif);font-size:14px;line-height:1.7;color:var(--text-2);margin:var(--s-1) 0 0}
+        .ex-specs{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--s-2);margin-top:var(--s-2);padding-top:var(--s-2);border-top:1px solid var(--border)}
+        .ex-spec-k{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)}
+        .ex-spec-v{font-size:14px;font-weight:500;color:var(--text-1);margin-top:4px}
+        .ex-card-foot{margin-top:auto;padding-top:var(--s-2);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:var(--s-1);margin-block-start:20px}
+        .ex-card-price{font-family:var(--font-serif);font-style:italic;font-size:14px;color:var(--text-2)}
+        .ex-card-cta{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);text-decoration:none;white-space:nowrap}
+        .ex-card-cta.muted{color:var(--text-3)}
 
-          .exp-trips-section   { padding: 56px 24px !important; }
-          .exp-trips-header    { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; margin-bottom: 32px !important; }
+        /* ── passos ── */
+        .ex-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(var(--s-2),3vw,var(--s-4))}
+        .ex-step{border-top:1px solid var(--border);padding-top:16px}
+        .ex-step-n{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;color:var(--text-3);margin-bottom:10px}
+        .ex-step-t{font-size:17px;font-weight:600;color:var(--text-1);margin-bottom:6px;line-height:1.2}
+        .ex-step-d{font-family:var(--font-serif);font-size:14px;line-height:1.65;color:var(--text-2)}
 
-          /* TripCard mobile: imagem em cima, body embaixo (sempre, independente do flip) */
-          .exp-trip-card       { grid-template-columns: 1fr !important; }
-          .exp-trip-card .img-col { order: 1 !important; min-height: 280px !important; }
-          .exp-trip-card .body-col { order: 2 !important; padding: 28px 24px 32px !important; border-top: none !important; }
-          .exp-trip-num-bg     { font-size: 56px !important; }
-          .exp-trip-stats      { grid-template-columns: 1fr 1fr !important; gap: 16px !important; }
-          .exp-trip-footer     { flex-direction: column !important; align-items: stretch !important; gap: 16px !important; }
-          .exp-trip-footer-cta { width: 100% !important; text-align: center !important; }
-          .exp-trip-name       { font-size: clamp(28px, 8vw, 40px) !important; }
+        /* ── consulta ── */
+        .ex-consulta{border-top:1px solid var(--border);padding:var(--sect-xl) var(--s-5);text-align:center}
+        .ex-consulta p{font-family:var(--font-serif);font-style:italic;font-size:clamp(20px,2.6vw,28px);line-height:1.55;color:var(--text-2);max-width:40ch;margin:0 auto}
 
-          .exp-howto           { padding: 56px 24px !important; }
-          .exp-howto-grid      { grid-template-columns: 1fr 1fr !important; gap: 20px !important; }
-
-          .exp-included        { padding: 56px 24px !important; grid-template-columns: 1fr !important; gap: 24px !important; }
-          .exp-included > div  { padding: 28px 24px !important; }
-
-          .exp-cta-final       { padding: 72px 24px !important; }
+        /* ── responsive ── */
+        @media(max-width:960px){
+          .ex-cards{grid-template-columns:1fr}
+          .ex-steps{grid-template-columns:1fr 1fr}
         }
-
-        /* ── iPhone 375-414px (foco principal) ── */
-        @media(max-width: 480px) {
-          .exp-hero-pad        { padding: 96px 20px 32px !important; }
-          .exp-hero-eyebrow    { font-size: 9px !important; letter-spacing: .18em !important; flex-wrap: wrap !important; gap: 6px !important; }
-          .exp-hero-handw      { font-size: 32px !important; }
-          .exp-hero-pitch      { font-size: 17px !important; max-width: 100% !important; }
-
-          .exp-intro           { padding: 48px 20px !important; }
-          .exp-intro h2        { font-size: 26px !important; }
-          .exp-intro p         { font-size: 16px !important; }
-
-          .exp-trips-section   { padding: 48px 20px !important; }
-          .exp-trips-header h2 { font-size: 36px !important; }
-
-          .exp-trip-card .body-col { padding: 24px 20px 28px !important; }
-          .exp-trip-card .img-col  { min-height: 240px !important; }
-
-          .exp-howto           { padding: 48px 20px !important; }
-          .exp-howto-grid      { grid-template-columns: 1fr !important; gap: 24px !important; }
-
-          .exp-included        { padding: 48px 20px !important; }
-          .exp-included > div  { padding: 24px 20px !important; }
-          .exp-included h3     { font-size: 24px !important; }
-
-          .exp-cta-final       { padding: 64px 20px !important; }
-          .exp-cta-final h2    { font-size: clamp(44px, 12vw, 60px) !important; }
-          .exp-cta-final-btn   { padding: 16px 28px !important; font-size: 11px !important; letter-spacing: .18em !important; }
-        }
-
-        /* ── Mobile pequeno (320-360px) ── */
-        @media(max-width: 360px) {
-          .exp-trip-stats      { grid-template-columns: 1fr !important; }
-          .exp-trip-stats > div { display: flex !important; justify-content: space-between !important; align-items: baseline !important; gap: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
-          .exp-trip-stats > div .stat-k { margin-bottom: 0 !important; }
+        @media(max-width:640px){
+          .ex-hero-body{padding:var(--hero-clear) var(--s-3) var(--s-5)}
+          .ex-section{padding:var(--s-56) var(--s-3)}
+          .ex-consulta{padding:var(--s-6) var(--s-3) var(--s-72)}
+          .ex-steps{grid-template-columns:1fr}
+          .ex-cards{grid-template-columns:1fr}
+          .ex-card-img{height:220px}
         }
       `}</style>
 
-      <SiteNav dark={true} />
+      <DarkTopNav active="Expedições" topStyle={{ background: "transparent", position: "relative" }} />
 
-      {/* ── HERO ── */}
-      <section className="exp-hero" style={{ position: "relative", height: 820, overflow: "hidden", background: "var(--forest)" }}>
-        <img src="/images/lencois/DJI_20250828174205_0403_D-HDR.jpg" alt="expedição"
-          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-        <div style={{ position: "absolute", inset: 0,
-          background: "linear-gradient(180deg, rgba(30,42,24,.35) 0%, rgba(30,42,24,.05) 40%, rgba(30,42,24,.85) 100%)" }} />
-
-        <div className="exp-hero-pad" style={{ position: "absolute", inset: 0, padding: "140px 56px 48px",
-          display: "flex", flexDirection: "column", justifyContent: "space-between",
-          color: "var(--canvas)", zIndex: 2 }}>
-          <div>
-            <div className="exp-hero-eyebrow" style={{ display: "flex", alignItems: "center", gap: 10,
-              fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em",
-              textTransform: "uppercase",
-              color: "rgba(232,223,201,.6)" }}>
-              <span>№ 02</span>
-              <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust-soft)", display: "block" }} />
-              <span>Viagens guiadas de fotografia</span>
-              <span style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--rust-soft)", display: "block" }} />
-              <span style={{ color: "var(--rust-soft)" }}>Agenda 2026</span>
-            </div>
-            <div style={{ marginTop: 32 }}>
-              <div className="exp-hero-handw" style={{ fontFamily: "var(--font-hand)", fontSize: 42,
-                color: "var(--rust-soft)", transform: "rotate(-2deg)",
-                display: "inline-block", marginBottom: 4 }}>
-                andar devagar, ver mais—
-              </div>
-              <h1 className="exp-hero-title" style={{ fontFamily: "var(--font-ui)", fontWeight: 700,
-                fontSize: "clamp(72px, 9vw, 140px)", letterSpacing: "-.04em",
-                lineHeight: 0.9, margin: 0 }}>
-                Expedições
-                <br />
-                <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-                  fontWeight: 400, color: "var(--rust-soft)" }}>que ensinam</span>
-              </h1>
-            </div>
+      <section className="ex-hero">
+        <img src="/images/lencois/DJI_20250828174205_0403_D-HDR.jpg" alt="Lençóis Maranhenses vistos do alto" />
+        <div className="ex-hero-grad" />
+        <div className="ex-hero-body">
+          <div className="v2-eyebrow" style={{ marginBottom: 20 }}>
+            № 02 · Viagens guiadas · grupos de até 10
           </div>
-
-          <div className="exp-hero-bottom" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 40 }}>
-            <p className="exp-hero-pitch" style={{ fontFamily: "var(--font-serif)", fontSize: 21,
-              fontStyle: "italic", lineHeight: 1.5, maxWidth: "46ch",
-              color: "var(--canvas)", margin: 0 }}>
-              Grupos pequenos, nunca mais de 10 pessoas. Itinerários que priorizam a luz, não o ticket de atração.
-            </p>
-            <div className="exp-hero-stats" style={{ display: "grid", gridTemplateColumns: "repeat(3, auto)", gap: 32 }}>
-              {[
-                { k: "Desde",      v: "2019" },
-                { k: "Expedições", v: "18 destinos" },
-                { k: "Fotógrafos", v: "214+" },
-              ].map(m => (
-                <div key={m.k} className="exp-hero-stat-row">
-                  <div className="stat-k" style={{ fontFamily: "var(--font-mono)", fontSize: 9,
-                    letterSpacing: ".22em", textTransform: "uppercase",
-                    color: "rgba(232,223,201,.45)", marginBottom: 6 }}>{m.k}</div>
-                  <div style={{ fontFamily: "var(--font-ui)", fontSize: 20, fontWeight: 600 }}>{m.v}</div>
-                </div>
-              ))}
-            </div>
+          <h1 className="ex-h1">
+            Expedições <em>que ensinam a ver.</em>
+          </h1>
+          <div className="ex-hero-foot">
+            <a className="v2-accent-link" href="#agenda">
+              Ver a próxima expedição →
+            </a>
+            <span className="ex-hero-note">Lençóis Maranhenses · agosto 2026</span>
           </div>
         </div>
       </section>
 
-      {/* ── INTRO ── */}
-      <section className="exp-intro" style={{ padding: "72px 56px", borderBottom: "1px solid var(--line)",
-        display: "grid", gridTemplateColumns: "1fr 2fr", gap: 80, alignItems: "start" }}>
-        <div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
-            letterSpacing: ".22em", textTransform: "uppercase",
-            color: "var(--rust)", marginBottom: 14 }}>№ 01 · Como é</div>
-          <h2 style={{ fontFamily: "var(--font-ui)", fontSize: 32, fontWeight: 600,
-            letterSpacing: "-.02em", lineHeight: 1.1, margin: 0 }}>
-            Aulas de campo,{" "}<br />não{" "}
-            <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-              fontWeight: 400, color: "var(--moss)" }}>aulas de slide.</span>
+      <section id="agenda" className="ex-section">
+        <div className="v2-eyebrow">Agenda</div>
+        <h2 className="ex-h2">Três destinos</h2>
+        <div className="ex-cards">
+          {TRIPS.map((t) => (
+            <TripCard key={t.id} trip={t} />
+          ))}
+        </div>
+      </section>
+
+      <section className="ex-section" style={{ paddingTop: 0 }}>
+        <div style={{ borderTop: "1px solid var(--border)", paddingTop: 48 }}>
+          <div className="v2-eyebrow">Como funciona</div>
+          <h2 className="ex-h2" style={{ fontSize: "clamp(26px,3.4vw,36px)", marginBottom: 36 }}>
+            Quatro passos, do email ao campo
           </h2>
-        </div>
-        <p style={{ fontFamily: "var(--font-serif)", fontSize: 20, lineHeight: 1.55,
-          color: "var(--stone)", margin: 0 }}>
-          Não é workshop. Não é tour. É expedição de fotografia — itinerário pensado pela luz, tempo pra esperar a foto acontecer, e alguém ao seu lado pra te ajudar a ler o que está na frente. Em três anos na Huayhuash, aprendi que a coisa mais valiosa que posso oferecer é{" "}
-          <em>o tempo certo no lugar certo</em>.
-        </p>
-      </section>
-
-      {/* ── TRIPS ── */}
-      <section className="exp-trips-section" style={{ padding: "96px 56px" }}>
-        <div className="exp-trips-header" style={{ marginBottom: 56, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
-              letterSpacing: ".22em", textTransform: "uppercase",
-              color: "var(--rust)", marginBottom: 12 }}>№ 02 · Agenda 2026</div>
-            <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(36px, 5vw, 56px)", fontWeight: 600,
-              letterSpacing: "-.02em", lineHeight: 1, margin: 0 }}>
-              Três{" "}
-              <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-                fontWeight: 400, color: "var(--moss)" }}>destinos</span>.
-            </h2>
-          </div>
-          <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-            fontSize: 17, color: "var(--stone)", maxWidth: "36ch",
-            lineHeight: 1.5, margin: 0 }}>
-            Pouco, bem feito. Cada viagem é desenhada por mim, sem operação de terceiros no meio.
-          </p>
-        </div>
-
-        {trips.map((t, idx) => (
-          <TripCard key={t.id} trip={t} flip={idx % 2 === 1} />
-        ))}
-      </section>
-
-      {/* ── COMO FUNCIONA ── */}
-      <section className="exp-howto" style={{ padding: "96px 56px", background: "var(--forest)", color: "var(--canvas)" }}>
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
-          letterSpacing: ".22em", textTransform: "uppercase",
-          color: "var(--rust-soft)", marginBottom: 14 }}>
-          № 03 · Como funciona
-        </div>
-        <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 600,
-          letterSpacing: "-.02em", lineHeight: 1, margin: "0 0 12px" }}>
-          Quatro passos,{" "}<br />do email ao{" "}
-          <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-            fontWeight: 400, color: "var(--rust-soft)" }}>cume</span>.
-        </h2>
-        <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-          fontSize: 18, color: "rgba(232,223,201,.7)", maxWidth: "54ch",
-          marginBottom: 56, lineHeight: 1.5 }}>
-          Sem mistério. O processo é simples, direto, e você nunca fica sem resposta.
-        </p>
-        <div className="exp-howto-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 32 }}>
-          {[
-            { n: "01", t: "Conversa", d: "Você escreve, eu respondo em 48h com um papo por vídeo pra entender sua experiência e expectativa." },
-            { n: "02", t: "Reserva",  d: "Sinal de 30% garante a vaga. O restante em até 60 dias antes da saída, sem juros." },
-            { n: "03", t: "Preparo",  d: "Um mês antes mando o kit completo: lista de equipamento, preparo físico, briefing fotográfico." },
-            { n: "04", t: "Campo",    d: "Encontro na cidade-base, expedição, e álbum digital pós-viagem com as melhores fotos do grupo." },
-          ].map(st => (
-            <div key={st.n} style={{ borderTop: "1px solid var(--line-dark)", paddingTop: 20 }}>
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 11,
-                letterSpacing: ".22em", color: "var(--rust-soft)", marginBottom: 10 }}>
-                № {st.n}
+          <div className="ex-steps">
+            {STEPS.map(([n, t, d]) => (
+              <div key={n} className="ex-step">
+                <div className="ex-step-n">№ {n}</div>
+                <div className="ex-step-t">{t}</div>
+                <div className="ex-step-d">{d}</div>
               </div>
-              <div style={{ fontFamily: "var(--font-ui)", fontSize: 22,
-                fontWeight: 600, letterSpacing: "-.01em", marginBottom: 8 }}>
-                {st.t}
-              </div>
-              <div style={{ fontFamily: "var(--font-serif)", fontSize: 14,
-                lineHeight: 1.55, color: "rgba(232,223,201,.7)" }}>
-                {st.d}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── INCLUSO / NÃO INCLUSO ── */}
-      <section className="exp-included" style={{ padding: "96px 56px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
-        <div style={{ background: "var(--canvas-deep)", padding: 40, border: "1px solid var(--line)" }}>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
-            letterSpacing: ".22em", textTransform: "uppercase",
-            color: "var(--stone)", marginBottom: 14 }}>
-            № 04.a · Na mochila
-          </div>
-          <h3 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 600,
-            letterSpacing: "-.01em", margin: "0 0 20px" }}>
-            O que está{" "}
-            <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400 }}>incluso</span>.
-          </h3>
-          {[
-            "Acomodação em lodge ou camping premium",
-            "Todas as refeições durante a expedição",
-            "Guia local + transfers dentro do destino",
-            "Mentoria fotográfica 1:1 em campo",
-            "Edição conjunta pós-viagem",
-            "Álbum digital com melhores fotos do grupo",
-            "Seguro viagem com cobertura outdoor",
-          ].map(item => (
-            <div key={item} style={{ display: "flex", gap: 12, padding: "10px 0",
-              borderBottom: "1px solid var(--line)", fontFamily: "var(--font-serif)",
-              fontSize: 15, color: "var(--stone)" }}>
-              <span style={{ color: "var(--moss)", fontWeight: 600, flexShrink: 0 }}>✓</span>
-              {item}
-            </div>
-          ))}
-        </div>
-        <div style={{ padding: 40, border: "1px dashed var(--stone)" }}>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 10,
-            letterSpacing: ".22em", textTransform: "uppercase",
-            color: "var(--stone)", marginBottom: 14 }}>
-            № 04.b · Por sua conta
-          </div>
-          <h3 style={{ fontFamily: "var(--font-ui)", fontSize: 28, fontWeight: 600,
-            letterSpacing: "-.01em", margin: "0 0 20px" }}>
-            O que{" "}
-            <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontWeight: 400 }}>não</span> está.
-          </h3>
-          {[
-            "Passagem aérea até a cidade-base",
-            "Equipamento fotográfico",
-            "Vistos e documentação internacional",
-            "Bebidas e extras pessoais",
-            "Gorjetas para guias locais (sugeridas)",
-          ].map(item => (
-            <div key={item} style={{ display: "flex", gap: 12, padding: "10px 0",
-              borderBottom: "1px solid var(--line)", fontFamily: "var(--font-serif)",
-              fontSize: 15, color: "var(--stone)" }}>
-              <span style={{ flexShrink: 0 }}>—</span>
-              {item}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CTA FINAL ── */}
-      <section className="exp-cta-final" style={{ padding: "120px 56px", background: "var(--forest)",
-        color: "var(--canvas)", textAlign: "center" }}>
-        <div style={{ fontFamily: "var(--font-hand)", fontSize: 38,
-          color: "var(--rust-soft)", transform: "rotate(-2deg)",
-          display: "inline-block", marginBottom: 8 }}>
-          bora?
-        </div>
-        <h2 style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(48px, 8vw, 80px)", fontWeight: 700,
-          letterSpacing: "-.04em", lineHeight: 0.92, margin: 0 }}>
-          Sua próxima
-          <br />
-          <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-            fontWeight: 400, color: "var(--rust-soft)" }}>expedição</span>
-        </h2>
-        <p style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-          fontSize: 20, color: "rgba(232,223,201,.7)", marginTop: 24,
-          maxWidth: "50ch", marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>
-          Grupo pequeno, vaga garantida. Reserve antes da próxima janela de luz fechar.
-        </p>
-        <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-          className="exp-cta-final-btn"
-          style={{ marginTop: 40, display: "inline-block", padding: "18px 40px",
-            background: "var(--rust-soft)", color: "var(--forest)",
-            fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700,
-            letterSpacing: ".24em", textTransform: "uppercase", textDecoration: "none" }}>
+      <section className="ex-consulta">
+        <p>Datas, itinerários e condições — tudo sob consulta, em conversa direta.</p>
+        <a className="v2-accent-link" style={{ marginTop: 32, display: "inline-block" }} href={`mailto:${EMAIL}`}>
           Escrever pra Henrique →
         </a>
       </section>
 
-      <SiteFooter dark={true} />
-    </div>
-  );
-}
-
-// ── Trip Card ────────────────────────────────────────────────────────────────
-function TripCard({ trip, flip }: { trip: typeof trips[0]; flip: boolean }) {
-  const imgCol = (
-    <div className="img-col" style={{ position: "relative", overflow: "hidden", minHeight: 560 }}>
-      <img src={trip.hero} alt={trip.name}
-        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-      <div style={{ position: "absolute", top: 24, left: 24,
-        background: "var(--canvas)", color: "var(--bark)",
-        padding: "6px 14px", fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".22em" }}>
-        Expedição № {trip.id}
-      </div>
-      <div className="exp-trip-num-bg" style={{ position: "absolute", bottom: 24, right: 24,
-        color: "var(--canvas)", fontFamily: "var(--font-mono)",
-        fontSize: 72, fontWeight: 500, letterSpacing: "-.04em",
-        lineHeight: 1, mixBlendMode: "difference" }}>
-        {trip.id}
-      </div>
-    </div>
-  );
-
-  const bodyCol = (
-    <div className="body-col" style={{ padding: "44px 48px 40px", display: "flex",
-      flexDirection: "column", justifyContent: "space-between",
-      background: "var(--canvas)", borderTop: "1px solid var(--line)" }}>
-      <div>
-        <div style={{ display: "flex", justifyContent: "space-between",
-          alignItems: "flex-start", marginBottom: 24, gap: 12, flexWrap: "wrap" }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: 10,
-            letterSpacing: ".22em", textTransform: "uppercase", color: "var(--stone)" }}>
-            {trip.country} · {trip.when}
-          </span>
-          <span style={{ padding: "4px 10px",
-            background: trip.available ? "var(--rust)" : "transparent",
-            color: trip.available ? "var(--canvas)" : "var(--stone)",
-            border: trip.available ? "none" : "1px solid var(--stone)",
-            fontFamily: "var(--font-mono)", fontSize: 9,
-            letterSpacing: ".22em", textTransform: "uppercase",
-            whiteSpace: "nowrap" }}>
-            {trip.status}
-          </span>
-        </div>
-
-        <h3 className="exp-trip-name" style={{ fontFamily: "var(--font-ui)", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 700,
-          letterSpacing: "-.03em", lineHeight: 0.95, color: "var(--bark)", margin: 0 }}>
-          {trip.name}
-        </h3>
-        <div style={{ fontFamily: "var(--font-serif)", fontStyle: "italic",
-          fontSize: 20, color: "var(--moss)", marginTop: 10, marginBottom: 20 }}>
-          {trip.kicker}
-        </div>
-        <p style={{ fontFamily: "var(--font-serif)", fontSize: 16,
-          lineHeight: 1.6, color: "var(--stone)", margin: 0 }}>
-          {trip.desc}
-        </p>
-
-        <div className="exp-trip-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 20, marginTop: 28, paddingTop: 24, borderTop: "1px solid var(--line)" }}>
-          {[
-            { k: "Dias",      v: String(trip.days) },
-            { k: "Altitude",  v: trip.alt },
-            { k: "Caminhada", v: trip.km > 0 ? `${trip.km} km` : "Barco · trilhas" },
-            { k: "Nível",     v: trip.level },
-          ].map(s => (
-            <div key={s.k}>
-              <div className="stat-k" style={{ fontFamily: "var(--font-mono)", fontSize: 9,
-                letterSpacing: ".22em", textTransform: "uppercase",
-                color: "var(--stone)", marginBottom: 4 }}>{s.k}</div>
-              <div style={{ fontFamily: "var(--font-ui)", fontSize: 17,
-                fontWeight: 600, color: "var(--bark)" }}>{s.v}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="exp-trip-footer" style={{ marginTop: 28, paddingTop: 20, borderTop: "1px solid var(--line)",
-        display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 9,
-            letterSpacing: ".22em", textTransform: "uppercase",
-            color: "var(--stone)", marginBottom: 4 }}>
-            Investimento
-          </div>
-          <div style={{ fontFamily: "var(--font-ui)", fontSize: 28,
-            fontWeight: 700, letterSpacing: "-.02em", color: "var(--bark)" }}>
-            {trip.preco}
-          </div>
-        </div>
-        {trip.available ? (
-          <Link href={trip.href}
-            className="exp-trip-footer-cta"
-            style={{ padding: "12px 20px", background: "var(--bark)",
-              color: "var(--canvas)", fontFamily: "var(--font-ui)",
-              fontSize: 11, fontWeight: 700, letterSpacing: ".22em",
-              textTransform: "uppercase", textDecoration: "none" }}>
-            {trip.slug === "rondonia" ? "Quero saber mais →" : "Ver detalhes →"}
-          </Link>
-        ) : (
-          <a href={WHATSAPP} target="_blank" rel="noopener noreferrer"
-            className="exp-trip-footer-cta"
-            style={{ padding: "12px 20px", border: "1px solid var(--stone)",
-              color: "var(--stone)", fontFamily: "var(--font-ui)",
-              fontSize: 11, fontWeight: 600, letterSpacing: ".22em",
-              textTransform: "uppercase", textDecoration: "none" }}>
-            Avisar quando abrir
-          </a>
-        )}
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="exp-trip-card" style={{ display: "grid",
-      gridTemplateColumns: flip ? "1fr 1.1fr" : "1.1fr 1fr",
-      marginBottom: 64, borderTop: "1px solid var(--line)" }}>
-      {flip ? <>{bodyCol}{imgCol}</> : <>{imgCol}{bodyCol}</>}
+      <DarkFooter coords="2°34′S 43°07′W · Atins → Santo Amaro" />
     </div>
   );
 }

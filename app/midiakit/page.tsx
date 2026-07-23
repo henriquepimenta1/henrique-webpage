@@ -1,850 +1,492 @@
-"use client";
-
-import { useEffect, useRef, useState, useCallback } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import DarkTopNav from "@/components/dark-nav";
+import DarkFooter from "@/components/dark-footer";
 
-/* ─── types ─── */
-interface Post {
-  id: string;
-  url: string;
-  caption: string;
-  reach: number;
-  likes: number;
-  comments: number;
-  saves: number;
-  shares: number;
+// Midiakit — Dark Editorial "Fim de Luz". Portado do protótipo hi-fi.
+// Sparkline e gráficos usam âmbar var(--accent).
+
+interface Metric {
+  label: string;
+  value: string;
+  sub: string;
 }
 
-interface BrandWork {
+interface TopPost {
+  caption: string;
+  reach: string;
+  likes: string;
+  saves: string;
+  img: string;
+}
+
+interface Brand {
   brand: string;
-  detail: string;
   type: string;
   product: string;
-  description: string;
-  stats: { label: string; value: string }[];
-  postUrl: string;
-  photos: { src: string; caption: string }[];
+  img: string;
+  likes?: string;
+  comments?: string;
+  reach?: string;
+  saves?: string;
 }
 
-interface LightboxState {
-  work: BrandWork;
-  photoIdx: number;
+interface Service {
+  name: string;
+  desc: string;
 }
 
-/* ─── data — atualizado via Windsor.ai · abril/2026 ─── */
-
-const REACH_DAILY = [4704,5897,11425,9388,11579,12640,9662,6155,5175,6006,11242,10477,7055,7036,5765,5617,6084,8688,10050,6897,7470,4408,5135,4425,4399,2867,1560,3304,4365,1897];
-
-const TOP_POSTS: Post[] = [
-  { id: "DVjv2OIAWjh", url: "https://www.instagram.com/reel/DVjv2OIAWjh/", caption: "Escalando Cabeça de Peixe — Serra dos Órgãos", reach:11352, likes:1540, comments:53, saves:112, shares:204 },
-  { id: "DQW1SHdjVkf", url: "https://www.instagram.com/reel/DQW1SHdjVkf/", caption: "Atravessando os Lençóis Maranhenses — Ep. 1",  reach:6857,  likes:481,  comments:51, saves:25,  shares:81  },
-  { id: "DTd5iA1EnbI", url: "https://www.instagram.com/reel/DTd5iA1EnbI/", caption: "Cabeça de Peixe — plano B virou a melhor aventura", reach:5911, likes:447, comments:27, saves:20, shares:27 },
-  { id: "DU3_3nKkh-W", url: "https://www.instagram.com/reel/DU3_3nKkh-W/", caption: "Memories of Peru — Cordilheira de Huayhuash",  reach:4684,  likes:412,  comments:25, saves:28,  shares:15  },
-];
-
-const DESTINATIONS = [
-  { name: "Lençóis Maranhenses", loc: "MA, Brasil", note: "UNESCO · agosto/2026", upcoming: true },
-  { name: "Parque Nacional do Itatiaia", loc: "RJ, Brasil", note: "2.791m" },
-  { name: "Serra dos Órgãos", loc: "RJ, Brasil", note: "Cabeça de Peixe" },
-  { name: "Serra do Ibitiraquire", loc: "PR, Brasil", note: "Pico Paraná · 1.877m" },
-  { name: "Serra do Mar", loc: "SP/RJ, Brasil", note: "Travessia" },
-  { name: "Serra da Bocaina", loc: "SP/RJ, Brasil", note: "Trilha Ouro" },
-  { name: "Serra Fina", loc: "MG, Brasil", note: "Travessia" },
-  { name: "Cordillera Blanca", loc: "Peru", note: "5.000m+" },
-  { name: "Cordillera Huayhuash", loc: "Peru", note: "Circuito" },
-  { name: "Atacama", loc: "Chile", note: "5.592m · maio/2026", upcoming: true },
-];
-
-const SERVICES = [
-  { name: "Reels de Expedição",           desc: "Vídeos cinematográficos 15–60s com narrativa emocional" },
-  { name: "Drone Cinematography",         desc: "Captação aérea profissional com DJI Air 3S" },
-  { name: "Carrosséis de Destino",        desc: "Séries fotográficas editoriais para Instagram" },
-  { name: "Licenciamento de Conteúdo",    desc: "Uso em campanhas, sites e materiais da marca" },
-  { name: "Conteúdo Bilíngue PT/EN",      desc: "Criação e adaptação para mercado internacional" },
-  { name: "Guia de Expedição + Produção", desc: "Logística completa + produção audiovisual integrada" },
-];
-
-const GEAR = [
-  { name: "Sony A7 IV",      cat: "Câmera principal" },
-  { name: "DJI Air 3S",      cat: "Drone cinematográfico" },
-  { name: "Comica VM40",     cat: "Áudio 32-bit float" },
-  { name: "DaVinci Resolve", cat: "Pós-produção" },
-  { name: "Lightroom",       cat: "Presets próprios" },
-];
-
-const BRAND_WORKS: BrandWork[] = [
-  {
-    brand: "Aiuruocan", detail: "Parceria de campo", type: "Vestuário Outdoor", product: "White Melton",
-    description: "Moletom em unifloc de garrafas PET recicladas — 84% algodão + 16% poliéster. Testado na Travessia Marins × Itaguaré, Serra da Mantiqueira.",
-    stats: [{ label: "Curtidas", value: "276" }, { label: "Alcance", value: "3.757" }, { label: "Salvos", value: "20" }, { label: "Compartilhamentos", value: "25" }],
-    postUrl: "https://www.instagram.com/reel/DKXZmtdO2d9/",
-    photos: [
-      { src: "/images/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-001.jpg", caption: "White Melton em campo — Travessia Marins × Itaguaré" },
-      { src: "/images/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-002.jpg", caption: "Tecido unifloc — reciclagem de garrafas PET" },
-      { src: "/images/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-003.jpg", caption: "Serra da Mantiqueira · altitude e conforto" },
-    ],
-  },
-  {
-    brand: "O Boticário", detail: "Campanha de produto", type: "Beauty & Lifestyle", product: "Arbo Puro — Desodorante Colônia 100ml",
-    description: "92% ingredientes naturais com refil — fusão do bambu com notas cítricas. Filmado no Rio Marcolino, Mata Atlântica.",
-    stats: [{ label: "Curtidas", value: "2.277" }, { label: "Comentários", value: "107" }],
-    postUrl: "https://www.instagram.com/reel/C3LBa1oMmu6/",
-    photos: [
-      { src: "/images/work/OBOTICARIO/OBOTICARIO-001.jpg", caption: "Arbo Puro — a essência da natureza ao alcance das mãos" },
-      { src: "/images/work/OBOTICARIO/OBOTICARIO-002.jpg", caption: "Rio Marcolino · Mata Atlântica, São Paulo" },
-      { src: "/images/work/OBOTICARIO/OBOTICARIO-003.jpg", caption: "92% ingredientes naturais · com refil" },
-    ],
-  },
-  {
-    brand: "OMA Gear", detail: "Conteúdo de campo", type: "Gear & Equipamento", product: "Kit Cozinha Ultra Leve",
-    description: "149g no total: panela 600ml (112g) + Cone Caldera Inka (22g) + fogareiro ultracompacto (15g).",
-    stats: [{ label: "Curtidas", value: "217" }, { label: "Comentários", value: "20" }, { label: "Compartilhamentos", value: "4" }],
-    postUrl: "https://www.instagram.com/reel/DQC7JWfCYtD/",
-    photos: [
-      { src: "/images/work/OMA-GEAR/OMA-GEAR-001.jpg", caption: "Kit Cozinha Ultra Leve — 149g no total" },
-      { src: "/images/work/OMA-GEAR/OMA-GEAR-002.jpg", caption: "Panela 600ml + Cone Caldera Inka + fogareiro" },
-      { src: "/images/work/OMA-GEAR/OMA-GEAR-003.jpg", caption: "Testado em campo — menos peso, mais liberdade" },
-    ],
-  },
-  {
-    brand: "Brightin Star", detail: "Óptica · parceria", type: "Equipamento Fotográfico", product: "Lente 16mm f/2.8",
-    description: "Wide manual com sharpness excelente ao centro desde f/2.8. Testada em Sony A7 IV no centro de SP.",
-    stats: [{ label: "Curtidas", value: "370" }, { label: "Alcance", value: "4.053" }, { label: "Salvos", value: "31" }, { label: "Compartilhamentos", value: "31" }],
-    postUrl: "https://www.instagram.com/reel/DPSo5_iDSmY/",
-    photos: [
-      { src: "/images/work/BRIGHTIN-STAR/BRIGHTIN-STAR-001.jpg", caption: "Brightin Star 16mm f/2.8 — review real, centro de SP" },
-      { src: "/images/work/BRIGHTIN-STAR/BRIGHTIN-STAR-002.jpg", caption: "Sharpness e bokeh — Sony A7 IV handheld" },
-    ],
-  },
-  {
-    brand: "Botas Vento", detail: "Conteúdo de campo", type: "Calçados Outdoor", product: "Titan",
-    description: "Conteúdo cinematográfico de campo — pedra, lama, cansaço real. #voudeVENTO",
-    stats: [{ label: "Curtidas", value: "599" }, { label: "Comentários", value: "18" }],
-    postUrl: "https://www.instagram.com/reel/DLXYsDvOG28/",
-    photos: [
-      { src: "/images/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-001.jpg", caption: "Titan em terreno técnico — pedra, lama e trilha real" },
-      { src: "/images/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-002.jpg", caption: "Conteúdo cinematográfico de campo — #voudeVENTO" },
-      { src: "/images/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-003.jpg", caption: "Resistir, apoiar e seguir firme" },
-    ],
-  },
-  {
-    brand: "K&F Concept", detail: "Sponsor ativo · cupom HENRIQ", type: "Equipamento Fotográfico", product: "Tripé Omni Series + Cabeça FH03",
-    description: "Fibra de carbono — 1,64kg total com cabeça hidráulica FH03. Cupom HENRIQ · 18% off.",
-    stats: [{ label: "Curtidas", value: "285" }, { label: "Comentários", value: "16" }],
-    postUrl: "https://www.instagram.com/p/DW7asyXDejY/?img_index=1",
-    photos: [
-      { src: "/images/work/KNF-CONCEPT/KNF-CONCEPT-001.jpg", caption: "K&F Omni Series — fibra de carbono 1,64kg em campo" },
-      { src: "/images/work/KNF-CONCEPT/KNF-CONCEPT-002.jpg", caption: "Cabeça hidráulica FH03 — suporta 5kg" },
-      { src: "/images/work/KNF-CONCEPT/KNF-CONCEPT-003.jpg", caption: "Review completo — Sony A7 IV + tripé profissional" },
-    ],
-  },
-  {
-    brand: "Alto Estilo", detail: "Editorial de moda outdoor", type: "Moda & Equipamento", product: "Mochila Ataque 40+5L",
-    description: "Cordura® 500D — testada em ataque à Pedra Furada (PNI) e camping de 3 dias.",
-    stats: [{ label: "Curtidas", value: "260" }, { label: "Alcance", value: "3.423" }, { label: "Salvos", value: "16" }],
-    postUrl: "https://www.instagram.com/p/DM_DwNAJ306/?img_index=1",
-    photos: [
-      { src: "/images/work/ALTO-ESTILO/ALTO-ESTILO-001.jpg", caption: "Mochila Ataque 40+5L — testada no Itatiaia" },
-      { src: "/images/work/ALTO-ESTILO/ALTO-ESTILO-002.jpg", caption: "Pochete Hidro adaptada para drone Air 3S" },
-      { src: "/images/work/ALTO-ESTILO/ALTO-ESTILO-003.jpg", caption: "Cordura® 500D — 3 dias de camping" },
-    ],
-  },
-];
-
-const WA = "https://wa.me/5511988128064";
-
-/* ─── count-up hook ─── */
-function useCountUp(target: number, duration = 1800, active = false) {
-  const [val, setVal] = useState(0);
-  useEffect(() => {
-    if (!active) return;
-    let start = 0;
-    const step = target / (duration / 16);
-    const id = setInterval(() => {
-      start += step;
-      if (start >= target) { setVal(target); clearInterval(id); }
-      else setVal(Math.floor(start));
-    }, 16);
-    return () => clearInterval(id);
-  }, [active, target, duration]);
-  return val;
+interface Gear {
+  name: string;
+  cat: string;
 }
 
-/* ─── intersection observer hook ─── */
-function useVisible(threshold = 0.2) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true); },
-      { threshold }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, [threshold]);
-  return { ref, visible };
+interface MidiakitData {
+  reachDaily: number[];
+  metrics: Metric[];
+  topPosts: TopPost[];
+  brands: Brand[];
+  services: Service[];
+  gear: Gear[];
+  destinations: string[];
 }
 
-/* ─── fade-in wrapper ─── */
-function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const { ref, visible } = useVisible(0.15);
+const D: MidiakitData = {
+  reachDaily: [
+    3982, 7554, 12928, 9374, 5840, 7149, 4704, 5897, 11425, 9388, 11579, 12640, 9662, 6155, 5175, 6006,
+    11242, 10477, 7055, 7036, 5765, 5617, 6084, 8688, 10050, 6897, 7470, 4408, 5135, 2704,
+  ],
+  metrics: [
+    { label: "Seguidores", value: "13,4k", sub: "@henriq.eu" },
+    { label: "Alcance mensal", value: "131k", sub: "reach últimos 30 dias" },
+    { label: "Interações/mês", value: "27,9k", sub: "likes · saves · comentários" },
+    { label: "Engajamento s/ alcance", value: "21,3%", sub: "muito acima da média do nicho" },
+    { label: "Alcance médio/dia", value: "5.045", sub: "contas alcançadas" },
+    { label: "Novos seguidores/mês", value: "+786", sub: "crescimento orgânico" },
+  ],
+  topPosts: [
+    { caption: "Escalando Cabeça de Peixe — Serra dos Órgãos", reach: "11.352", likes: "1.540", saves: "112", img: "escalada-cabeca-depeixe" },
+    { caption: "Atravessando os Lençóis Maranhenses — Ep. 1", reach: "6.857", likes: "481", saves: "25", img: "grupo-caminhando-lencois" },
+    { caption: "Cabeça de Peixe — plano B virou a melhor aventura", reach: "5.911", likes: "447", saves: "20", img: "queimada-dos-britos-lencois" },
+    { caption: "Memories of Peru — Cordilheira de Huayhuash", reach: "4.684", likes: "412", saves: "28", img: "laguna-acampamento-janca-huayhuash" },
+  ],
+  brands: [
+    { brand: "O Boticário", type: "Beauty & Lifestyle", product: "Arbo Puro · Desodorante Colônia", img: "/images/work/OBOTICARIO/OBOTICARIO-001.jpg", likes: "2.277", comments: "107" },
+    { brand: "Aiuruocan", type: "Vestuário Outdoor", product: "White Melton + Colors Blue", img: "/images/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-001.jpg", likes: "276", reach: "3.757" },
+    { brand: "OMA Gear", type: "Gear & Equipamento", product: "Kit Cozinha Ultra Leve · 149g", img: "/images/work/OMA-GEAR/OMA-GEAR-001.jpg", likes: "217", comments: "20" },
+    { brand: "K&F Concept", type: "Equipamento Fotográfico", product: "Tripé Omni Series + FH03", img: "/images/work/KNF-CONCEPT/KNF-CONCEPT-001.jpg", likes: "285", comments: "16" },
+    { brand: "Brightin Star", type: "Óptica", product: "Lente 16mm f/2.8", img: "/images/work/BRIGHTIN-STAR/BRIGHTIN-STAR-001.jpg", reach: "4.053", saves: "31" },
+    { brand: "Botas Vento", type: "Calçados Outdoor", product: "Titan + Finisterre", img: "/images/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-001.jpg", likes: "599", comments: "18" },
+    { brand: "Alto Estilo", type: "Moda & Equipamento", product: "Mochila Ataque 40+5L", img: "/images/work/ALTO-ESTILO/ALTO-ESTILO-001.jpg", likes: "260", reach: "3.423" },
+    { brand: "Gorro Vans", type: "Vestuário Outdoor", product: "Beanie · Pico Mateo 5.150m", img: "/images/work/GORRO-VANS/GORRO-VANS-001.jpg", likes: "197", reach: "5.341" },
+  ],
+  services: [
+    { name: "Reels de Expedição", desc: "Vídeos cinematográficos 15–60s com narrativa emocional" },
+    { name: "Drone Cinematography", desc: "Captação aérea profissional com DJI Air 3S" },
+    { name: "Carrosséis de Destino", desc: "Séries fotográficas editoriais para Instagram" },
+    { name: "Licenciamento de Conteúdo", desc: "Uso em campanhas, sites e materiais da marca" },
+    { name: "Conteúdo Bilíngue PT/EN", desc: "Criação e adaptação para mercado internacional" },
+    { name: "Guia + Produção", desc: "Logística completa + audiovisual integrado" },
+  ],
+  gear: [
+    { name: "Sony A7 IV", cat: "Câmera principal" },
+    { name: "DJI Air 3S", cat: "Drone cinematográfico" },
+    { name: "Comica VM40", cat: "Áudio 32-bit float" },
+    { name: "DaVinci Resolve", cat: "Pós-produção" },
+    { name: "Lightroom", cat: "Presets próprios" },
+  ],
+  destinations: [
+    "Lençóis Maranhenses · MA", "Serra da Mantiqueira · SP/MG", "PN Itatiaia · RJ", "PN Serra dos Órgãos · RJ",
+    "Serra do Ibitiraquire · PR", "Serra da Bocaina · SP/RJ", "Cordilheira Blanca · Peru", "Cordilheira Huayhuash · Peru",
+    "Atacama · Chile",
+  ],
+};
+
+function Kicker({ n, label }: { n: string; label: string }) {
   return (
-    <div ref={ref} style={{
-      opacity: visible ? 1 : 0,
-      transform: visible ? "translateY(0)" : "translateY(24px)",
-      transition: `opacity .65s ${delay}s, transform .65s ${delay}s`,
-    }}>
-      {children}
+    <div className="mkd-kicker">
+      <span>№ {n}</span>
+      <span className="rule" />
+      <span>{label}</span>
     </div>
   );
 }
 
-/* ─── section label ─── */
-function SectionLabel({ n, text }: { n: string; text: string }) {
-  return (
-    <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--ashe-dim)", marginBottom: 40, display: "flex", alignItems: "center", gap: 16 }}>
-      <span>{n}</span>
-      <span style={{ flex: 1, height: 1, background: "var(--line-dark)" }} />
-      <span>{text}</span>
-    </div>
-  );
-}
-
-/* ─── metric card ─── */
-function MetricCard({ label, value, suffix = "", prefix = "" }: { label: string; value: number; suffix?: string; prefix?: string }) {
-  const { ref, visible } = useVisible();
-  const count = useCountUp(value, 1600, visible);
-  return (
-    <div ref={ref} style={{
-      background: "rgba(255,255,255,.04)",
-      border: "1px solid var(--line-dark)",
-      borderRadius: 2,
-      padding: "28px 24px",
-      display: "flex",
-      flexDirection: "column",
-      gap: 8,
-    }}>
-      <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".22em", textTransform: "uppercase", color: "var(--ashe-dim)" }}>{label}</span>
-      <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "clamp(28px,4vw,42px)", letterSpacing: "-.04em", color: "var(--canvas)", lineHeight: 1 }}>
-        {prefix}{count.toLocaleString("pt-BR")}{suffix}
-      </span>
-    </div>
-  );
-}
-
-/* ─── sparkline ─── */
 function Sparkline({ data }: { data: number[] }) {
-  const { ref, visible } = useVisible(0.3);
   const max = Math.max(...data);
   const min = Math.min(...data);
-  const W = 600, H = 80;
-  const px = (i: number) => (i / (data.length - 1)) * W;
-  const py = (v: number) => H - ((v - min) / (max - min)) * (H - 8) - 4;
-  const path = data.map((v, i) => `${i === 0 ? "M" : "L"}${px(i).toFixed(1)},${py(v).toFixed(1)}`).join(" ");
+  const W = 600;
+  const H = 80;
+  const x = (i: number) => (i / (data.length - 1)) * W;
+  const y = (v: number) => H - ((v - min) / (max - min)) * (H - 8) - 4;
+  const path = data.map((v, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
   const area = `${path} L${W},${H} L0,${H} Z`;
   return (
-    <div ref={ref} style={{ width: "100%", overflowX: "auto" }}>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", minWidth: 280, height: 80, display: "block" }}>
-        <defs>
-          <linearGradient id="spark-fill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="var(--rust)" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="var(--rust)" stopOpacity="0" />
-          </linearGradient>
-          <clipPath id="spark-clip">
-            <rect x="0" y="0" width={visible ? W : 0} height={H} style={{ transition: "width 1.4s ease" }} />
-          </clipPath>
-        </defs>
-        <path d={area} fill="url(#spark-fill)" clipPath="url(#spark-clip)" />
-        <path d={path} fill="none" stroke="var(--rust)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" clipPath="url(#spark-clip)" />
-        {data.map((v, i) => (
-          <circle key={i} cx={px(i)} cy={py(v)} r="2.5" fill="var(--rust)" opacity={visible ? 0.7 : 0}
-            style={{ transition: `opacity .3s ${i * 0.04}s` }} />
-        ))}
-      </svg>
-    </div>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: 80, display: "block" }}>
+      <defs>
+        <linearGradient id="mkd-spark" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--accent)" stopOpacity="0.35" />
+          <stop offset="100%" stopColor="var(--accent)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={area} fill="url(#mkd-spark)" />
+      <path d={path} fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      {data.map((v, i) => (
+        <circle key={i} cx={x(i)} cy={y(v)} r="2" fill="var(--accent)" opacity={0.55} />
+      ))}
+    </svg>
   );
 }
 
-/* ─── post card ─── */
-function PostCard({ post }: { post: Post }) {
-  const [hovered, setHovered] = useState(false);
-  const eng = ((post.likes + post.comments + post.saves + post.shares) / post.reach * 100).toFixed(1);
+export default function MidiakitPage() {
   return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        position: "relative", overflow: "hidden", borderRadius: 2,
-        background: "var(--forest)", border: "1px solid var(--line-dark)",
-        /* mobile: altura auto para não quebrar em telas pequenas */
-        height: "clamp(320px, 50vw, 480px)",
-        cursor: "pointer",
-        transition: "transform .25s, box-shadow .25s",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
-        boxShadow: hovered ? "0 12px 40px rgba(0,0,0,.5)" : "0 2px 12px rgba(0,0,0,.3)",
-      }}
-    >
-      <iframe src={`https://www.instagram.com/reel/${post.id}/embed/`}
-        style={{ width: "100%", height: "100%", border: "none", display: "block" }}
-        scrolling="no" allowFullScreen loading="lazy" />
-      <div style={{
-        position: "absolute", inset: 0,
-        background: hovered ? "rgba(30,42,24,.9)" : "transparent",
-        display: "flex", flexDirection: "column", justifyContent: "flex-end",
-        padding: 16, gap: 8,
-        pointerEvents: hovered ? "auto" : "none",
-        transition: "background .2s",
-      }}>
-        {hovered && <>
-          <p style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--canvas)", margin: 0, lineHeight: 1.35 }}>{post.caption}</p>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-            {[["Alcance", post.reach.toLocaleString("pt-BR")], ["Curtidas", post.likes], ["Salvos", post.saves], ["Engaj.", `${eng}%`]].map(([k, v]) => (
-              <div key={String(k)} style={{ fontFamily: "var(--font-mono)", fontSize: 9 }}>
-                <div style={{ color: "var(--ashe-dim)", letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 1, fontSize: 8 }}>{k}</div>
-                <div style={{ color: "var(--canvas)", fontWeight: 600 }}>{v}</div>
-              </div>
-            ))}
-          </div>
-          <a href={post.url} target="_blank" rel="noopener noreferrer"
-            style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--rust)", textDecoration: "none" }}>
-            Ver no Instagram →
-          </a>
-        </>}
-      </div>
-    </div>
-  );
-}
-
-/* ─── brand work card ─── */
-function BrandWorkCard({ work, delay, onOpen }: { work: BrandWork; delay: number; onOpen: (w: BrandWork, i: number) => void }) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <FadeIn delay={delay}>
-      <div
-        onClick={() => onOpen(work, 0)}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          overflow: "hidden", borderRadius: 2, cursor: "pointer",
-          border: `1px solid ${hovered ? "rgba(166,84,43,.5)" : "var(--line-dark)"}`,
-          background: hovered ? "rgba(166,84,43,.04)" : "transparent",
-          transition: "border-color .2s, background .2s, transform .25s",
-          transform: hovered ? "translateY(-3px)" : "translateY(0)",
-        }}
-      >
-        <div style={{ position: "relative", aspectRatio: "4/5", background: "var(--forest-soft)", overflow: "hidden" }}>
-          <Image src={work.photos[0].src} alt={work.product} fill
-            style={{ objectFit: "cover", objectPosition: "center",
-              transform: hovered ? "scale(1.04)" : "scale(1)",
-              transition: "transform .4s ease",
-            }} />
-          <div style={{
-            position: "absolute", inset: 0,
-            background: hovered ? "rgba(30,42,24,.55)" : "rgba(30,42,24,.15)",
-            transition: "background .25s",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            {hovered && (
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--canvas)", border: "1px solid rgba(232,223,201,.4)", padding: "8px 16px", borderRadius: 2 }}>
-                Ver trabalho
-              </div>
-            )}
-          </div>
-          {work.photos.length > 1 && (
-            <div style={{ position: "absolute", top: 10, right: 10, background: "rgba(30,42,24,.8)", fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".14em", color: "var(--ashe)", padding: "4px 8px", borderRadius: 2 }}>
-              {work.photos.length} fotos
-            </div>
-          )}
-        </div>
-        <div style={{ padding: "16px 18px 18px" }}>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 7, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--ashe-dim)", marginBottom: 5 }}>{work.type}</div>
-          <div style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: 14, color: "var(--canvas)", marginBottom: 2 }}>{work.brand}</div>
-          <div style={{ fontFamily: "var(--font-ui)", fontSize: 12, color: "var(--rust-soft)", marginBottom: 8 }}>{work.product}</div>
-          <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".14em", color: "var(--ashe-dim)" }}>{work.detail}</div>
-        </div>
-      </div>
-    </FadeIn>
-  );
-}
-
-/* ─── lightbox ─── */
-function BrandLightbox({ state, onClose }: { state: LightboxState; onClose: () => void }) {
-  const { work, photoIdx: initialIdx } = state;
-  const [idx, setIdx] = useState(initialIdx);
-  const photo = work.photos[idx];
-  const multi = work.photos.length > 1;
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight" && multi) setIdx(i => (i + 1) % work.photos.length);
-      if (e.key === "ArrowLeft"  && multi) setIdx(i => (i - 1 + work.photos.length) % work.photos.length);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [work.photos.length, multi, onClose]);
-
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
-  }, []);
-
-  return (
-    <div onClick={onClose} style={{ position: "fixed", inset: 0, zIndex: 1000, background: "rgba(11,10,8,.97)", backdropFilter: "blur(20px)", overflowY: "auto", padding: 16 }}>
+    <div className="theme-fdl">
       <style>{`
-        @keyframes lb-in  { from { opacity:0 } to { opacity:1 } }
-        @keyframes lb-img { from { transform:scale(.97);opacity:0 } to { transform:scale(1);opacity:1 } }
-        .lb-inner { animation:lb-in .18s ease; max-width:1100px; margin:0 auto; display:flex; flex-direction:column; min-height:100%; justify-content:center; }
-        .lb-img-k { animation:lb-img .22s ease; }
-        .lb-grid  { display:grid; grid-template-columns:1fr 300px; gap:24px; align-items:start; }
-        .lb-thumbs { display:flex; gap:6px; }
-        @media(max-width:700px){ .lb-grid{grid-template-columns:1fr!important;} .lb-thumbs{justify-content:center;} }
-      `}</style>
-      <div className="lb-inner" onClick={e => e.stopPropagation()}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16, paddingBottom:16, borderBottom:"1px solid var(--line-dark)" }}>
-          <div>
-            <div style={{ fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".28em", textTransform:"uppercase", color:"var(--ashe-dim)", marginBottom:4 }}>{work.type}</div>
-            <div style={{ fontFamily:"var(--font-ui)", fontWeight:700, fontSize:16, color:"var(--canvas)" }}>
-              {work.brand} <span style={{ color:"var(--rust)" }}>·</span> {work.product}
-            </div>
-          </div>
-          <button onClick={onClose} style={{ background:"none", border:"1px solid rgba(232,223,201,.2)", color:"var(--ashe-dim)", cursor:"pointer", fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", padding:"8px 16px", borderRadius:2 }}>
-            Fechar · ESC
-          </button>
-        </div>
+/* ── hero ── */
+.mkd-hero{position:relative;min-height:82vh;display:flex;align-items:flex-end;overflow:hidden;margin-top:-76px}
+.mkd-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 35%}
+.mkd-hero-grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,12,11,.72) 0%,rgba(13,12,11,.08) 42%,rgba(13,12,11,.94) 100%)}
+.mkd-hero-body{position:relative;z-index:2;padding:var(--hero-clear) var(--s-5) var(--s-56);width:100%}
+.mkd-h1{font-family:var(--font-serif);font-weight:500;font-size:clamp(48px,7.5vw,104px);letter-spacing:-.015em;line-height:1.02;color:var(--text-1);margin:0;text-wrap:pretty}
+.mkd-h1 em{font-style:italic;font-weight:400;color:var(--text-2)}
+.mkd-hero-meta{margin-top:var(--s-3);display:flex;gap:var(--s-3);flex-wrap:wrap;font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)}
 
-        <div className="lb-grid">
-          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-            <div className="lb-img-k" key={idx} style={{ position:"relative", background:"var(--forest)", borderRadius:2, overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center" }}>
-              <img src={photo.src} alt={photo.caption} style={{ display:"block", width:"100%", height:"auto", maxHeight:"65vh", objectFit:"contain" }} />
-              {multi && <>
-                <button onClick={() => setIdx(i => (i - 1 + work.photos.length) % work.photos.length)}
-                  style={{ position:"absolute", left:10, top:"50%", transform:"translateY(-50%)", background:"rgba(30,42,24,.8)", border:"1px solid var(--line-dark)", color:"var(--canvas)", width:36, height:36, borderRadius:2, cursor:"pointer", fontSize:14, display:"flex", alignItems:"center", justifyContent:"center", zIndex:2 }}>←</button>
-                <button onClick={() => setIdx(i => (i + 1) % work.photos.length)}
-                  style={{ position:"absolute", right:10, top:"50%", transform:"translateY(-50%)", background:"rgba(30,42,24,.8)", border:"1px solid var(--line-dark)", color:"var(--canvas)", width:36, height:36, borderRadius:2, cursor:"pointer", fontSize:14, display:"flex", alignItems:"center", justifyContent:"center", zIndex:2 }}>→</button>
-              </>}
-            </div>
-            <p style={{ fontFamily:"var(--font-ui)", fontSize:12, color:"var(--ashe-dim)", lineHeight:1.4, margin:0, textAlign:"center" }}>{photo.caption}</p>
-            {multi && (
-              <div className="lb-thumbs">
-                {work.photos.map((p, i) => (
-                  <button key={i} onClick={() => setIdx(i)} style={{ flex:1, maxWidth:80, aspectRatio:"1", overflow:"hidden", borderRadius:2, cursor:"pointer", padding:0, border: i===idx ? "2px solid var(--rust)" : "2px solid var(--line-dark)", transition:"border-color .2s", background:"var(--forest-soft)" }}>
-                    <img src={p.src} alt={p.caption} style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }} />
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+/* ── seções ── */
+.mkd-section{padding:var(--sect-y) var(--s-5);border-top:1px solid var(--border)}
+.mkd-kicker{display:flex;align-items:center;gap:16px;font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);margin-bottom:48px}
+.mkd-kicker .rule{flex:1;height:1px;background:var(--border)}
+.mkd-h2{font-family:var(--font-serif);font-weight:500;font-size:clamp(30px,4vw,46px);letter-spacing:-.01em;line-height:1.1;color:var(--text-1);margin:0 0 48px}
+.mkd-h2 em{font-style:italic;font-weight:400;color:var(--text-2)}
 
-          <div style={{ display:"flex", flexDirection:"column", gap:20 }}>
-            <div>
-              <div style={{ fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--ashe-dim)", marginBottom:8 }}>Produto</div>
-              <div style={{ fontFamily:"var(--font-ui)", fontWeight:600, fontSize:14, color:"var(--canvas)", marginBottom:10 }}>{work.product}</div>
-              <p style={{ fontFamily:"var(--font-ui)", fontSize:12, color:"var(--ashe-dim)", lineHeight:1.65, margin:0 }}>{work.description}</p>
-            </div>
-            <div style={{ borderTop:"1px solid var(--line-dark)", paddingTop:16 }}>
-              <div style={{ fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--ashe-dim)", marginBottom:12 }}>Métricas</div>
-              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8 }}>
-                {work.stats.map(s => (
-                  <div key={s.label} style={{ background:"rgba(255,255,255,.03)", border:"1px solid var(--line-dark)", borderRadius:2, padding:"10px 12px" }}>
-                    <div style={{ fontFamily:"var(--font-mono)", fontSize:7, letterSpacing:".18em", textTransform:"uppercase", color:"var(--ashe-dim)", marginBottom:4 }}>{s.label}</div>
-                    <div style={{ fontFamily:"var(--font-ui)", fontWeight:700, fontSize:18, color:"var(--canvas)", letterSpacing:"-.03em" }}>{s.value}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <a href={work.postUrl} target="_blank" rel="noopener noreferrer"
-              style={{ display:"inline-flex", alignItems:"center", justifyContent:"center", gap:10, background:"var(--rust)", color:"var(--canvas)", fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".2em", textTransform:"uppercase", textDecoration:"none", padding:"14px 20px", borderRadius:2, transition:"background .2s" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "var(--rust-soft)")}
-              onMouseLeave={e => (e.currentTarget.style.background = "var(--rust)")}
-            >
-              Ver no Instagram →
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+/* sobre */
+.mkd-bio{display:grid;grid-template-columns:1.3fr 1fr;gap:var(--s-72)}
+.mkd-bio-lead{font-family:var(--font-serif);font-style:italic;font-weight:400;font-size:clamp(20px,2.2vw,25px);line-height:1.55;letter-spacing:-.01em;color:var(--text-1);margin:0 0 var(--s-3)}
+.mkd-bio p.body{font-family:var(--font-serif);font-size:15px;line-height:1.75;color:var(--text-2);margin:0 0 var(--s-2)}
+.mkd-sign{font-family:var(--font-hand);font-size:38px;color:var(--accent);display:inline-block;transform:rotate(-2deg)}
+.mkd-portraits{display:flex;flex-direction:column;gap:24px}
+.mkd-portraits img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 22%;border:1px solid var(--border)}
+.mkd-portrait-2{margin-left:15%;margin-top:-40px}
+
+/* métricas */
+.mkd-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:64px}
+.mkd-metric{background:var(--bg);padding:var(--s-4) var(--s-3)}
+.mkd-metric-k{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);margin-bottom:var(--s-2)}
+.mkd-metric-v{font-family:var(--font-serif);font-weight:500;font-size:46px;letter-spacing:-.02em;color:var(--text-1);line-height:1;margin-bottom:10px}
+.mkd-metric-s{font-family:var(--font-serif);font-style:italic;font-size:13px;color:var(--text-3)}
+.mkd-spark-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:var(--s-2);gap:16px;flex-wrap:wrap}
+
+/* reels */
+.mkd-posts{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.mkd-post{aspect-ratio:9/16;border:1px solid var(--border);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:var(--s-2);background:var(--surface)}
+.mkd-post-bg{position:absolute;inset:0;background-size:cover;background-position:center 62%}
+.mkd-post-grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,12,11,.15) 0%,rgba(13,12,11,.9) 100%)}
+.mkd-post-body{position:relative;z-index:2;display:flex;flex-direction:column;gap:var(--s-1)}
+.mkd-post-cap{font-family:var(--font-serif);font-size:14px;line-height:1.45;color:var(--text-1);margin:0}
+.mkd-post-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding-top:var(--s-1);border-top:1px solid var(--border-strong)}
+
+/* marcas */
+.mkd-brands{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
+.mkd-brand{background:var(--bg);position:relative;aspect-ratio:4/5;overflow:hidden}
+.mkd-brand img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:brightness(.68);transition:transform .9s cubic-bezier(.2,.7,.2,1),filter .3s}
+.mkd-brand:hover img{transform:scale(1.045);filter:brightness(.85)}
+.mkd-brand-grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,12,11,.1) 30%,rgba(13,12,11,.88) 100%);pointer-events:none}
+.mkd-brand-body{position:absolute;inset:0;padding:var(--s-2);display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
+.mkd-brand-type{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-2);border:1px solid var(--border-strong);padding:4px 8px;align-self:flex-start}
+.mkd-brand-name{font-family:var(--font-serif);font-weight:500;font-size:23px;letter-spacing:-.01em;color:var(--text-1);margin-bottom:4px}
+.mkd-brand-prod{font-family:var(--font-serif);font-style:italic;font-size:13px;color:var(--text-2);margin-bottom:var(--s-2);line-height:1.35}
+.mkd-brand-stats{display:flex;gap:var(--s-2);font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--text-3)}
+
+/* serviços */
+.mkd-services{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
+.mkd-service{background:var(--bg);padding:var(--s-4) var(--s-3)}
+.mkd-service-n{font-family:var(--font-ui);font-weight:600;font-size:16px;color:var(--text-1);margin-bottom:10px;letter-spacing:-.01em}
+.mkd-service-d{font-family:var(--font-serif);font-style:italic;font-size:14px;color:var(--text-2);line-height:1.55}
+
+/* gear + destinos */
+.mkd-split{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-72)}
+.mkd-gear{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2)}
+.mkd-gear-item{border:1px solid var(--border);padding:var(--s-2) var(--s-2)}
+.mkd-dest-item{padding:var(--s-2) 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.mkd-dest-item:last-child{border-bottom:none}
+
+/* cta */
+.mkd-cta{position:relative;overflow:hidden;border-top:1px solid var(--border)}
+.mkd-cta img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.16}
+.mkd-cta-grad{position:absolute;inset:0;background:linear-gradient(180deg,var(--bg) 0%,rgba(13,12,11,.72) 100%)}
+.mkd-cta-body{position:relative;z-index:2;padding:var(--sect-xl) var(--s-5);max-width:880px}
+.mkd-cta-h{font-family:var(--font-serif);font-weight:500;font-size:clamp(44px,7vw,92px);letter-spacing:-.015em;line-height:1.03;margin:0 0 var(--s-3);color:var(--text-1)}
+.mkd-cta-h em{font-style:italic;font-weight:400;color:var(--text-2)}
+.mkd-cta-p{font-family:var(--font-serif);font-style:italic;font-size:18px;line-height:1.6;color:var(--text-2);max-width:48ch;margin:0 0 var(--s-40)}
+.mkd-btn{display:inline-block;padding:var(--s-2) var(--s-4);background:var(--accent);color:var(--bg);font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:background .2s}
+.mkd-btn:hover{background:var(--accent-hover)}
+.mkd-btn-ghost{display:inline-block;padding:var(--s-2) var(--s-4);border:1px solid var(--border-strong);color:var(--text-1);font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;text-decoration:none}
+
+/* ── responsive ── */
+@media(max-width:1100px){
+  .mkd-bio{grid-template-columns:1fr;gap:48px}
+  .mkd-metrics{grid-template-columns:1fr 1fr}
+  .mkd-posts,.mkd-brands{grid-template-columns:1fr 1fr}
+  .mkd-services{grid-template-columns:1fr 1fr}
+  .mkd-split{grid-template-columns:1fr;gap:var(--s-56)}
+  .mkd-portraits{flex-direction:row;gap:16px}
+  .mkd-portraits img{flex:1;min-width:0}
+  .mkd-portrait-2{margin-left:0;margin-top:48px}
 }
-
-/* ════════════════════════════════════════════════
-   PAGE
-═══════════════════════════════════════════════ */
-export default function MidiaKitPage() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const [scrollY, setScrollY] = useState(0);
-  const [lightbox, setLightbox] = useState<LightboxState | null>(null);
-
-  const openLightbox = useCallback((work: BrandWork, idx: number) => setLightbox({ work, photoIdx: idx }), []);
-  const closeLightbox = useCallback(() => setLightbox(null), []);
-
-  useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  return (
-    <main style={{ background: "var(--forest)", color: "var(--canvas)", fontFamily: "var(--font-ui)", overflowX: "hidden" }}>
-      <style>{`
-        .mk-section      { padding: 100px 56px; border-bottom: 1px solid rgba(232,223,201,.08); }
-        .mk-metrics      { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
-        .mk-services     { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
-        .mk-destinations { display: grid; grid-template-columns: repeat(5,1fr); gap: 12px; }
-        .mk-gear         { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; }
-        .mk-works        { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
-        .mk-bio-grid     { display: grid; grid-template-columns: 1fr 380px; gap: 64px; align-items: start; }
-        .mk-photos       { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .mk-two-col      { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-        .mk-traj-grid    { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
-        .mk-posts        { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
-
-        /* ── NAV mobile: esconde label central, mantém logo + botão ── */
-        @media(max-width:600px){
-          .mk-nav-label { display: none !important; }
-          .mk-nav-btn   { font-size: 8px !important; padding: 5px 10px !important; }
-        }
-
-        @media(max-width:1100px){
-          .mk-destinations { grid-template-columns:repeat(3,1fr)!important; }
-          .mk-posts        { grid-template-columns:repeat(2,1fr)!important; }
-          .mk-works        { grid-template-columns:repeat(3,1fr)!important; }
-        }
-        @media(max-width:900px){
-          .mk-bio-grid  { grid-template-columns:1fr!important; gap:32px!important; }
-          .mk-metrics   { grid-template-columns:repeat(2,1fr)!important; }
-          .mk-services  { grid-template-columns:1fr 1fr!important; }
-          .mk-destinations { grid-template-columns:1fr 1fr!important; }
-          .mk-gear      { grid-template-columns:repeat(2,1fr)!important; }
-          .mk-works     { grid-template-columns:repeat(2,1fr)!important; }
-          .mk-section   { padding:72px 24px!important; }
-          .mk-two-col   { grid-template-columns:1fr!important; }
-          .mk-traj-grid { grid-template-columns:1fr!important; }
-        }
-        @media(max-width:600px){
-          .mk-posts    { grid-template-columns:1fr!important; }
-          .mk-metrics  { grid-template-columns:1fr 1fr!important; }
-          .mk-services { grid-template-columns:1fr!important; }
-          .mk-gear     { grid-template-columns:1fr 1fr!important; }
-          .mk-works    { grid-template-columns:1fr 1fr!important; }
-          .mk-section  { padding:56px 20px!important; }
-          /* hero: padding-top compensa nav fixo */
-          .mk-hero-section { padding-top: 80px !important; }
-          /* CTA: email não overflow */
-          .mk-cta-email { font-size: 11px !important; word-break: break-all; }
-          /* trajetória: gap menor em coluna */
-          .mk-traj-grid { gap: 24px !important; }
-          /* fotos bio: coluna única em telas muito pequenas */
-          .mk-photos { grid-template-columns: 1fr !important; }
-          /* posts: 1 coluna já definido acima, altura responsiva via clamp no componente */
-        }
+@media(max-width:640px){
+  .mkd-hero{min-height:88vh}
+  .mkd-hero-body{padding:var(--hero-clear) var(--s-3) var(--s-40)}
+  .mkd-hero-meta{gap:10px var(--s-2);font-size:10px}
+  .mkd-section{padding:var(--s-56) var(--s-3)}
+  .mkd-kicker{margin-bottom:32px}
+  .mkd-h2{margin-bottom:32px}
+  .mkd-metrics,.mkd-services{grid-template-columns:1fr}
+  .mkd-posts,.mkd-brands{grid-template-columns:1fr 1fr;gap:10px}
+  .mkd-posts{gap:10px}
+  .mkd-post{padding:var(--s-1)}
+  .mkd-post-cap{font-size:11.5px;line-height:1.35}
+  .mkd-post-stats{grid-template-columns:1fr 1fr;gap:4px}
+  .mkd-post-stats > div:nth-child(3){display:none}
+  .mkd-brand-name{font-size:17px}
+  .mkd-brand-prod{font-size:11px;margin-bottom:10px}
+  .mkd-brand-body{padding:var(--s-2)}
+  .mkd-brand-stats{gap:10px;font-size:10px;letter-spacing:.14em;flex-wrap:wrap}
+  .mkd-gear{grid-template-columns:1fr 1fr;gap:10px}
+  .mkd-gear-item{padding:var(--s-2) var(--s-2)}
+  .mkd-portraits{flex-direction:row;gap:10px}
+  .mkd-portrait-2{margin-top:var(--s-3)}
+  .mkd-metric-v{font-size:38px}
+  .mkd-metric{padding:var(--s-3) var(--s-3)}
+  .mkd-dest-item span:first-child{font-size:16px}
+  .mkd-cta-body{padding:var(--s-72) var(--s-3)}
+}
       `}</style>
 
-      {/* ── NAV ── */}
-      <header style={{ position:"fixed", top:0, left:0, right:0, height:60, display:"flex", alignItems:"center", justifyContent:"space-between", padding:"0 clamp(16px,4vw,40px)", zIndex:50, background:"rgba(30,42,24,.9)", backdropFilter:"blur(12px)", borderBottom:"1px solid var(--line-dark)" }}>
-        <Link href="/" style={{ display:"flex", alignItems:"center", gap:10, textDecoration:"none" }}>
-          <div style={{ width:28, height:28, border:"1.5px solid var(--ashe)", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"var(--font-serif)", fontStyle:"italic", fontSize:16, fontWeight:500, color:"var(--ashe)" }}>H</div>
-        </Link>
-        {/* label central — some em mobile <600px */}
-        <span className="mk-nav-label" style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".28em", textTransform:"uppercase", color:"var(--ashe-dim)" }}>Media Kit · 2026</span>
-        <a href={WA} target="_blank" rel="noopener noreferrer" className="mk-nav-btn" style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".2em", textTransform:"uppercase", color:"var(--rust)", textDecoration:"none", border:"1px solid rgba(166,84,43,.4)", padding:"6px 14px" }}>Contato</a>
-      </header>
+      <DarkTopNav active="Midiakit" />
 
-      {/* ════════ 1. HERO ════════ */}
-      {/* paddingTop: 60px compensa nav fixo */}
-      <section className="mk-hero-section" ref={heroRef} style={{ position:"relative", minHeight:"100svh", display:"flex", flexDirection:"column", justifyContent:"flex-end", padding:"60px clamp(20px,5vw,56px) clamp(48px,8vw,80px)", overflow:"hidden" }}>
-        <div style={{ position:"absolute", inset:0, zIndex:0 }}>
-          <Image src="/images/exp-huayhuash.jpg" alt="Expedição nos Andes" fill priority
-            style={{ objectFit:"cover", objectPosition:"center", transform:`translateY(${scrollY * 0.25}px)`, transition:"transform 0s linear" }} />
-          <div style={{ position:"absolute", inset:0, background:"linear-gradient(to top, rgba(11,10,8,1) 0%, rgba(11,10,8,.7) 40%, rgba(11,10,8,.3) 100%)" }} />
-        </div>
-        <div style={{ position:"relative", zIndex:1, maxWidth:900 }}>
-          <div style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".28em", textTransform:"uppercase", color:"var(--ashe-dim)", marginBottom:24 }}>Media Kit · Abril 2026</div>
-          <h1 style={{ margin:"0 0 8px", lineHeight:.85 }}>
-            <span style={{ fontFamily:"var(--font-hand)", fontSize:"clamp(52px,8vw,88px)", color:"var(--ashe)", display:"block", marginBottom:4 }}>Adventure Filmmaker</span>
-            <span style={{ fontFamily:"var(--font-ui)", fontWeight:700, fontSize:"clamp(64px,12vw,152px)", letterSpacing:"-.05em", textTransform:"uppercase", display:"block", color:"var(--canvas)" }}>HENRIQUE</span>
-            <span style={{ fontFamily:"var(--font-ui)", fontWeight:700, fontSize:"clamp(64px,12vw,152px)", letterSpacing:"-.05em", textTransform:"uppercase", display:"block", color:"var(--rust)" }}>SESANA</span>
+      {/* HERO */}
+      <section className="mkd-hero">
+        <img src="/images/exp-huayhuash.jpg" alt="Cordilheira Huayhuash" />
+        <div className="mkd-hero-grad" />
+        <div className="mkd-hero-body">
+          <div className="v2-eyebrow" style={{ marginBottom: 22, color: "var(--text-2)", textShadow: "0 1px 12px rgba(13,12,11,.8)" }}>
+            Media Kit · 2026 · @henriq.eu
+          </div>
+          <h1 className="mkd-h1">
+            Henrique Sesana,
+            <br />
+            <em>adventure filmmaker.</em>
           </h1>
-          <div style={{ marginTop:32, display:"flex", gap:32, flexWrap:"wrap", alignItems:"center" }}>
-            <span style={{ fontFamily:"var(--font-mono)", fontSize:10, letterSpacing:".18em", color:"var(--ashe-dim)" }}>Trekking · Montanhismo · Cinematografia</span>
-            <span style={{ fontFamily:"var(--font-mono)", fontSize:10, letterSpacing:".18em", color:"var(--stone)" }}>São Paulo, Brasil</span>
-            <span style={{ fontFamily:"var(--font-mono)", fontSize:10, letterSpacing:".18em", color:"var(--stone)" }}>PT · EN</span>
+          <div className="mkd-hero-meta">
+            <span>Trekking · Montanhismo · Cinematografia</span>
+            <span style={{ opacity: 0.65 }}>São Paulo, BR</span>
+            <span style={{ opacity: 0.65 }}>PT · EN</span>
           </div>
         </div>
-        <div style={{ position:"absolute", bottom:32, right:56, zIndex:1, display:"flex", flexDirection:"column", alignItems:"flex-end", gap:6 }}>
-          <span style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".2em", textTransform:"uppercase", color:"var(--stone)" }}>@henriq.eu</span>
-          <div style={{ width:1, height:48, background:"var(--line-dark)" }} />
-        </div>
       </section>
 
-      {/* ════════ 2. BIO ════════ */}
-      <section className="mk-section">
-        <FadeIn><SectionLabel n="01" text="Sobre" /></FadeIn>
-        <div className="mk-bio-grid">
-          <FadeIn>
-            <p style={{ fontFamily:"var(--font-serif)", fontStyle:"italic", fontSize:"clamp(17px,2.2vw,22px)", lineHeight:1.65, letterSpacing:"-.01em", color:"var(--canvas)", margin:"0 0 24px" }}>
-              Sou fotógrafo, filmmaker e contador de histórias visuais que nascem da terra, do vento e do tempo. Minha estética é contemplativa, minimalista e profundamente conectada à natureza.
+      {/* № 01 SOBRE */}
+      <section className="mkd-section">
+        <Kicker n="01" label="Sobre" />
+        <div className="mkd-bio">
+          <div>
+            <p className="mkd-bio-lead">
+              Fotógrafo, filmmaker e contador de histórias visuais que nascem da terra, do vento e do tempo. Estética
+              contemplativa, minimalista, profundamente conectada à natureza.
             </p>
-            <p style={{ fontFamily:"var(--font-ui)", fontSize:"clamp(13px,1.6vw,15px)", lineHeight:1.7, color:"var(--ashe-dim)", margin:"0 0 20px" }}>
-              As cores que escolho dialogam com o ambiente: verdes densos, tons de areia, luz natural e texturas reais. Valorizo a composição espontânea, o detalhe que o olho quase não vê, o instante que carrega uma presença sutil.
+            <p className="body">
+              As cores que escolho dialogam com o ambiente: verdes densos, tons de areia, luz natural e texturas reais.
+              Composição espontânea, detalhe que o olho quase não vê, instante que carrega presença sutil. Minha
+              fotografia não busca impacto — busca permanência.
             </p>
-            <p style={{ fontFamily:"var(--font-ui)", fontSize:"clamp(13px,1.6vw,15px)", lineHeight:1.7, color:"var(--ashe-dim)", margin:"0 0 32px" }}>
-              Em agosto de 2026, volto aos Lençóis Maranhenses para guiar três grupos com fotografia integrada — travessia com produção própria de ponta a ponta.
+            <p className="body">
+              Já produzi campanhas para marcas de vestuário, turismo e cosméticos, sempre propondo um caminho mais
+              poético e imersivo — onde o produto entra na paisagem, e não o contrário.
             </p>
-            <span style={{ fontFamily:"var(--font-hand)", fontSize:34, color:"var(--rust-soft)", display:"inline-block", transform:"rotate(-2deg)" }}>— Henrique</span>
-          </FadeIn>
-          <FadeIn delay={0.15}>
-            <div className="mk-photos">
-              <div style={{ position:"relative", borderRadius:2, overflow:"hidden", aspectRatio:"3/4" }}>
-                <Image src="/images/henrique-portrait-1.jpg" alt="Henrique Sesana em expedição" fill style={{ objectFit:"cover", objectPosition:"center top" }} />
-              </div>
-              <div style={{ position:"relative", borderRadius:2, overflow:"hidden", aspectRatio:"3/4", marginTop:32 }}>
-                <Image src="/images/henrique-portrait-2.jpg" alt="Henrique Sesana na montanha" fill style={{ objectFit:"cover", objectPosition:"center top" }} />
-              </div>
-            </div>
-          </FadeIn>
-        </div>
-      </section>
-
-      {/* ════════ 3. FILOSOFIA ════════ */}
-      <section className="mk-section" style={{ background:"rgba(166,84,43,.04)" }}>
-        <FadeIn>
-          <SectionLabel n="02" text="Estado de Presença" />
-          <div className="mk-two-col">
-            <div>
-              <h2 style={{ fontFamily:"var(--font-hand)", fontSize:"clamp(36px,5vw,64px)", color:"var(--canvas)", margin:"0 0 24px", lineHeight:1.1, transform:"rotate(-1deg)", display:"inline-block" }}>
-                Sentir o local através da imagem
-              </h2>
-              <p style={{ fontFamily:"var(--font-ui)", fontSize:14, lineHeight:1.75, color:"var(--ashe-dim)", margin:0 }}>
-                Minha criação parte de um princípio simples: você não precisa ter estado lá para sentir que estava. Cada frame carrega a temperatura do ar, o peso do silêncio, o cheiro da terra molhada.
-              </p>
-            </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
-              {[
-                { title:"Lugares que as pessoas não imaginam", desc:"Mostro destinos que saem do roteiro turístico convencional — serras remotas, travessias sem nome, paisagens que exigem dois dias de caminhada." },
-                { title:"Relatos pessoais como narrativa",     desc:"Cada expedição tem uma história humana. Não documento apenas o visual — documento a jornada, o cansaço, a recompensa." },
-                { title:"Presença como método",                desc:"Aprofundo meu olhar através de referências do cinema contemplativo, da arte minimalista e do design orgânico." },
-              ].map(item => (
-                <div key={item.title} style={{ background:"rgba(166,84,43,.06)", borderRadius:2, padding:"16px 20px" }}>
-                  <div style={{ fontFamily:"var(--font-ui)", fontWeight:600, fontSize:13, color:"var(--canvas)", marginBottom:6 }}>{item.title}</div>
-                  <div style={{ fontFamily:"var(--font-ui)", fontSize:12, lineHeight:1.6, color:"var(--ashe-dim)" }}>{item.desc}</div>
-                </div>
-              ))}
-            </div>
+            <p className="body" style={{ marginBottom: 36 }}>
+              Em agosto de 2026, volto aos Lençóis Maranhenses para guiar três grupos com fotografia integrada —
+              travessia com produção própria de ponta a ponta.
+            </p>
+            <span className="mkd-sign">— Henrique</span>
           </div>
-        </FadeIn>
+          <div className="mkd-portraits">
+            <img src="/images/portrait.jpg" alt="Henrique em campo" />
+          </div>
+        </div>
       </section>
 
-      {/* ════════ 4. EQUIPAMENTO ════════ */}
-      <section className="mk-section">
-        <FadeIn><SectionLabel n="03" text="Equipamento" /></FadeIn>
-        <div className="mk-gear">
-          {GEAR.map((g, i) => (
-            <FadeIn key={g.name} delay={i * 0.07}>
-              <div style={{ border:"1px solid var(--line-dark)", padding:"20px 18px", borderRadius:2 }}>
-                <div style={{ fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--ashe-dim)", marginBottom:8 }}>{g.cat}</div>
-                <div style={{ fontFamily:"var(--font-ui)", fontWeight:600, fontSize:13, color:"var(--canvas)" }}>{g.name}</div>
-              </div>
-            </FadeIn>
+      {/* № 02 MÉTRICAS */}
+      <section className="mkd-section">
+        <Kicker n="02" label="Métricas · Instagram" />
+        <div className="mkd-metrics">
+          {D.metrics.map((m) => (
+            <div key={m.label} className="mkd-metric">
+              <div className="mkd-metric-k">{m.label}</div>
+              <div className="mkd-metric-v">{m.value}</div>
+              <div className="mkd-metric-s">{m.sub}</div>
+            </div>
           ))}
         </div>
-      </section>
-
-      {/* ════════ 5. MÉTRICAS ════════ */}
-      <section className="mk-section">
-        <FadeIn><SectionLabel n="04" text="Instagram · Abril 2026" /></FadeIn>
-        <div className="mk-metrics" style={{ marginBottom:24 }}>
-          <MetricCard label="Seguidores"     value={12388} />
-          <MetricCard label="Reach mensal"   value={201372} />
-          <MetricCard label="Interações/mês" value={34139} />
-          <div style={{ background:"rgba(255,255,255,.04)", border:"1px solid var(--line-dark)", borderRadius:2, padding:"28px 24px", display:"flex", flexDirection:"column", gap:8 }}>
-            <span style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".22em", textTransform:"uppercase", color:"var(--ashe-dim)" }}>Engagement rate</span>
-            <span style={{ fontFamily:"var(--font-ui)", fontWeight:700, fontSize:"clamp(28px,4vw,42px)", letterSpacing:"-.04em", color:"var(--canvas)", lineHeight:1 }}>17,0%</span>
-          </div>
-        </div>
-        <div className="mk-metrics" style={{ marginBottom:40 }}>
-          <MetricCard label="Reach médio/dia"     value={6712} />
-          <MetricCard label="Novos seguidores/mês" value={2848} prefix="+" />
-          <MetricCard label="Posts publicados"     value={432} />
-          <div style={{ background:"rgba(255,255,255,.04)", border:"1px solid var(--line-dark)", borderRadius:2, padding:"28px 24px", display:"flex", flexDirection:"column", gap:8 }}>
-            <span style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".22em", textTransform:"uppercase", color:"var(--ashe-dim)" }}>Tipo de conta</span>
-            <span style={{ fontFamily:"var(--font-hand)", fontSize:28, color:"var(--rust)", lineHeight:1 }}>Creator</span>
-          </div>
-        </div>
-        <FadeIn delay={0.2}>
-          <div style={{ background:"rgba(255,255,255,.03)", border:"1px solid var(--line-dark)", borderRadius:2, padding:"32px 28px" }}>
-            <div style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".22em", textTransform:"uppercase", color:"var(--ashe-dim)", marginBottom:20 }}>Reach diário — abril 2026</div>
-            <Sparkline data={REACH_DAILY} />
-            <div style={{ display:"flex", justifyContent:"space-between", marginTop:8 }}>
-              <span style={{ fontFamily:"var(--font-mono)", fontSize:8, color:"var(--stone)" }}>1 abr</span>
-              <span style={{ fontFamily:"var(--font-mono)", fontSize:8, color:"var(--stone)" }}>30 abr</span>
-            </div>
-            <p style={{ fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".14em", color:"var(--stone)", marginTop:16, marginBottom:0 }}>Dados via Windsor.ai — atualização abril/2026</p>
-          </div>
-        </FadeIn>
-        <FadeIn delay={0.3}>
-          <div style={{ marginTop:20, padding:"18px 24px", border:"1px solid rgba(166,84,43,.3)", borderRadius:2, background:"rgba(166,84,43,.04)", display:"flex", alignItems:"center", gap:16, flexWrap:"wrap" }}>
-            <div style={{ width:8, height:8, borderRadius:"50%", background:"var(--rust)", flexShrink:0, boxShadow:"0 0 8px rgba(166,84,43,.6)" }} />
-            <span style={{ fontFamily:"var(--font-mono)", fontSize:10, letterSpacing:".14em", color:"var(--ashe-dim)" }}>
-              +2.848 seguidores em abril/2026. Alcance orgânico 201k em expansão semana a semana.
+        <div>
+          <div className="mkd-spark-head">
+            <span className="v2-eyebrow">Alcance diário · últimos 30 dias</span>
+            <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 14, color: "var(--accent)" }}>
+              média de 5.045/dia
             </span>
           </div>
-        </FadeIn>
-      </section>
-
-      {/* ════════ 6. TOP POSTS ════════ */}
-      <section className="mk-section">
-        <FadeIn>
-          <SectionLabel n="05" text="Top Posts" />
-          <p style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".16em", color:"var(--stone)", marginBottom:32 }}>Passe o mouse para ver as métricas.</p>
-        </FadeIn>
-        <div className="mk-posts">
-          {TOP_POSTS.map((post, i) => (
-            <FadeIn key={post.id} delay={i * 0.08}><PostCard post={post} /></FadeIn>
-          ))}
+          <Sparkline data={D.reachDaily} />
         </div>
-        <FadeIn delay={0.2}>
-          <div style={{ marginTop:32, display:"flex", justifyContent:"center" }}>
-            <Link href="/portfolio"
-              style={{ display:"inline-flex", alignItems:"center", gap:12, border:"1px solid var(--line-dark)", padding:"13px 32px", borderRadius:2, textDecoration:"none", fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".22em", textTransform:"uppercase", color:"var(--ashe)", transition:"border-color .2s, color .2s" }}
-              onMouseEnter={e => { const a = e.currentTarget as HTMLAnchorElement; a.style.borderColor="rgba(166,84,43,.6)"; a.style.color="var(--canvas)"; }}
-              onMouseLeave={e => { const a = e.currentTarget as HTMLAnchorElement; a.style.borderColor="var(--line-dark)"; a.style.color="var(--ashe)"; }}
-            >
-              Ver portfolio completo →
-            </Link>
-          </div>
-        </FadeIn>
       </section>
 
-      {/* ════════ 7. EXPEDIÇÕES ════════ */}
-      <section className="mk-section">
-        <FadeIn><SectionLabel n="06" text="Expedições & Destinos" /></FadeIn>
-        <div className="mk-destinations">
-          {DESTINATIONS.map((d, i) => (
-            <FadeIn key={d.name} delay={i * 0.05}>
-              <div style={{ border:`1px solid ${d.upcoming ? "rgba(166,84,43,.5)" : "var(--line-dark)"}`, borderRadius:2, padding:"22px 18px", position:"relative" }}>
-                {d.upcoming && <div style={{ position:"absolute", top:8, right:8, fontFamily:"var(--font-mono)", fontSize:7, letterSpacing:".2em", textTransform:"uppercase", color:"var(--rust)", border:"1px solid rgba(166,84,43,.5)", padding:"3px 7px" }}>Em breve</div>}
-                <div style={{ fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--stone)", marginBottom:6 }}>{d.loc}</div>
-                <div style={{ fontFamily:"var(--font-ui)", fontWeight:600, fontSize:13, color:"var(--canvas)", lineHeight:1.3, marginBottom:8 }}>{d.name}</div>
-                <div style={{ fontFamily:"var(--font-mono)", fontSize:9, color:"var(--rust-soft)" }}>{d.note}</div>
+      {/* № 03 REELS */}
+      <section className="mkd-section">
+        <Kicker n="03" label="Reels em destaque" />
+        <div className="mkd-posts">
+          {D.topPosts.map((p, i) => (
+            <div key={i} className="mkd-post">
+              <div className="mkd-post-bg" style={{ backgroundImage: `url(/images/portfolio/${p.img}.jpg)` }} />
+              <div className="mkd-post-grad" />
+              <div className="mkd-post-body">
+                <div className="v2-eyebrow" style={{ fontSize: 9 }}>
+                  Reel · #{i + 1}
+                </div>
+                <p className="mkd-post-cap">{p.caption}</p>
+                <div className="mkd-post-stats">
+                  {([["Alcance", p.reach], ["Likes", p.likes], ["Saves", p.saves]] as const).map(([k, v]) => (
+                    <div key={k}>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-mono)",
+                          fontSize: 8,
+                          letterSpacing: ".15em",
+                          textTransform: "uppercase",
+                          color: "var(--text-3)",
+                          marginBottom: 2,
+                        }}
+                      >
+                        {k}
+                      </div>
+                      <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-1)" }}>{v}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </FadeIn>
-          ))}
-        </div>
-      </section>
-
-      {/* ════════ 8. SERVIÇOS ════════ */}
-      <section className="mk-section">
-        <FadeIn><SectionLabel n="07" text="Serviços" /></FadeIn>
-        <div className="mk-services">
-          {SERVICES.map((s, i) => (
-            <FadeIn key={s.name} delay={i * 0.07}>
-              <div
-                style={{ border:"1px solid var(--line-dark)", borderRadius:2, padding:"28px 24px", transition:"border-color .2s, background .2s" }}
-                onMouseEnter={e => { const d=e.currentTarget as HTMLDivElement; d.style.borderColor="rgba(166,84,43,.5)"; d.style.background="rgba(166,84,43,.05)"; }}
-                onMouseLeave={e => { const d=e.currentTarget as HTMLDivElement; d.style.borderColor="var(--line-dark)"; d.style.background="transparent"; }}
-              >
-                <div style={{ fontFamily:"var(--font-ui)", fontWeight:600, fontSize:14, color:"var(--canvas)", marginBottom:10 }}>{s.name}</div>
-                <div style={{ fontFamily:"var(--font-ui)", fontSize:12, color:"var(--ashe-dim)", lineHeight:1.5 }}>{s.desc}</div>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </section>
-
-      {/* ════════ 9. TRABALHOS COM MARCAS ════════ */}
-      <section className="mk-section">
-        <FadeIn>
-          <SectionLabel n="08" text="Trabalhos com Marcas" />
-          <p style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".16em", color:"var(--stone)", marginBottom:40 }}>Clique para ver fotos e métricas.</p>
-        </FadeIn>
-        <div className="mk-works">
-          {BRAND_WORKS.map((work, i) => (
-            <BrandWorkCard key={`${work.brand}-${work.product}`} work={work} delay={i * 0.05} onOpen={openLightbox} />
-          ))}
-        </div>
-      </section>
-
-      {/* ════════ 10. TRAJETÓRIA ════════ */}
-      <section className="mk-section" style={{ background:"rgba(166,84,43,.03)" }}>
-        <FadeIn>
-          <SectionLabel n="09" text="Trajetória" />
-          <div className="mk-traj-grid">
-            <div>
-              <h2 style={{ fontFamily:"var(--font-hand)", fontSize:"clamp(40px,6vw,72px)", color:"var(--canvas)", margin:"0 0 24px", lineHeight:1.05, transform:"rotate(-1.5deg)", display:"inline-block" }}>A conta está crescendo</h2>
-              <p style={{ fontFamily:"var(--font-ui)", fontSize:14, lineHeight:1.75, color:"var(--ashe-dim)", margin:"0 0 16px" }}>
-                O crescimento não é fruto de tendências ou viralizações artificiais — é orgânico, consistente e construído sobre conteúdo real de campo.
-              </p>
-              <p style={{ fontFamily:"var(--font-ui)", fontSize:14, lineHeight:1.75, color:"var(--ashe-dim)", margin:0 }}>
-                Com três expedições guiadas agendadas para 2026 e produções solo em curso, o volume de conteúdo vai aumentar. Entrar agora significa crescer junto.
-              </p>
             </div>
-            <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
-              {[
-                { label:"Crescimento mensal",    val:"+2.848 seguidores",     note:"Orgânico · abril 2026" },
-                { label:"Engagement rate",        val:"17,0%",                note:"Média do setor: 3–5%" },
-                { label:"Alcance vs. seguidores", val:"16,3×",                note:"201k alcance / 12,4k seguidores" },
-                { label:"Próximas expedições",    val:"3 grupos confirmados",  note:"Lençóis · agosto 2026" },
-              ].map(stat => (
-                <div key={stat.label} style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", padding:"16px 0", borderBottom:"1px solid rgba(232,223,201,.06)" }}>
-                  <div>
-                    <div style={{ fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--stone)", marginBottom:4 }}>{stat.label}</div>
-                    <div style={{ fontFamily:"var(--font-ui)", fontWeight:700, fontSize:18, color:"var(--canvas)" }}>{stat.val}</div>
+          ))}
+        </div>
+      </section>
+
+      {/* № 04 MARCAS */}
+      <section className="mkd-section">
+        <Kicker n="04" label="Marcas · Parcerias" />
+        <h2 className="mkd-h2">
+          Marcas que <em>caminharam junto.</em>
+        </h2>
+        <div className="mkd-brands">
+          {D.brands.map((b, i) => (
+            <article key={i} className="mkd-brand">
+              <img src={b.img} alt={b.brand} loading="lazy" />
+              <div className="mkd-brand-grad" />
+              <div className="mkd-brand-body">
+                <span className="mkd-brand-type">{b.type}</span>
+                <div>
+                  <div className="mkd-brand-name">{b.brand}</div>
+                  <div className="mkd-brand-prod">{b.product}</div>
+                  <div className="mkd-brand-stats">
+                    {b.likes && <span>♥ {b.likes}</span>}
+                    {b.reach && <span>◎ {b.reach}</span>}
+                    {b.comments && <span>✎ {b.comments}</span>}
+                    {b.saves && <span>⌘ {b.saves}</span>}
                   </div>
-                  <div style={{ fontFamily:"var(--font-mono)", fontSize:9, color:"var(--rust-soft)", textAlign:"right", maxWidth:160, lineHeight:1.4 }}>{stat.note}</div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* № 05 SERVIÇOS */}
+      <section className="mkd-section">
+        <Kicker n="05" label="Serviços" />
+        <div className="mkd-services">
+          {D.services.map((s) => (
+            <div key={s.name} className="mkd-service">
+              <div className="mkd-service-n">{s.name}</div>
+              <div className="mkd-service-d">{s.desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* № 06/07 GEAR + DESTINOS */}
+      <section className="mkd-section">
+        <div className="mkd-split">
+          <div>
+            <Kicker n="06" label="Equipamento" />
+            <div className="mkd-gear">
+              {D.gear.map((g) => (
+                <div key={g.name} className="mkd-gear-item">
+                  <div
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: 9,
+                      letterSpacing: ".2em",
+                      textTransform: "uppercase",
+                      color: "var(--text-3)",
+                      marginBottom: 8,
+                    }}
+                  >
+                    {g.cat}
+                  </div>
+                  <div style={{ fontWeight: 600, fontSize: 14, color: "var(--text-1)" }}>{g.name}</div>
                 </div>
               ))}
             </div>
           </div>
-        </FadeIn>
+          <div>
+            <Kicker n="07" label="Destinos · 2024–2026" />
+            <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+              {D.destinations.map((d, i) => (
+                <li key={d} className="mkd-dest-item">
+                  <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 18, color: "var(--text-1)" }}>
+                    {d}
+                  </span>
+                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".18em", color: "var(--text-3)" }}>
+                    № {String(i + 1).padStart(2, "0")}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </section>
 
-      {/* ════════ 11. CTA ════════ */}
-      <section style={{ padding:"clamp(64px,10vw,120px) clamp(20px,5vw,56px) clamp(56px,8vw,100px)", textAlign:"center" }}>
-        <FadeIn>
-          <div style={{ fontFamily:"var(--font-mono)", fontSize:9, letterSpacing:".28em", textTransform:"uppercase", color:"var(--stone)", marginBottom:32 }}>10 · Vamos trabalhar juntos</div>
-          <h2 style={{ fontFamily:"var(--font-hand)", fontSize:"clamp(48px,8vw,96px)", color:"var(--canvas)", margin:"0 0 16px", transform:"rotate(-1.5deg)", display:"inline-block" }}>Vamos conversar</h2>
-          <p style={{ fontFamily:"var(--font-serif)", fontStyle:"italic", fontSize:18, color:"var(--ashe-dim)", marginBottom:48 }}>Para parcerias, licenciamentos e expedições com produção.</p>
-          <div style={{ display:"flex", gap:16, justifyContent:"center", flexWrap:"wrap", marginBottom:48 }}>
-            <a href={WA} target="_blank" rel="noopener noreferrer"
-              style={{ display:"inline-flex", alignItems:"center", gap:10, background:"var(--rust)", color:"var(--canvas)", fontFamily:"var(--font-ui)", fontWeight:600, fontSize:13, letterSpacing:".06em", textDecoration:"none", padding:"14px 32px", borderRadius:2, transition:"background .2s" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "var(--rust-soft)")}
-              onMouseLeave={e => (e.currentTarget.style.background = "var(--rust)")}
-            >
-              WhatsApp — +55 11 98812-8064
-            </a>
-            {/* EMAIL CORRIGIDO — contato@euhenriq.com */}
-            <a href="mailto:contato@euhenriq.com" className="mk-cta-email"
-              style={{ display:"inline-flex", alignItems:"center", gap:10, border:"1px solid rgba(232,223,201,.25)", color:"var(--canvas)", fontFamily:"var(--font-ui)", fontSize:13, textDecoration:"none", padding:"14px 32px", borderRadius:2, transition:"border-color .2s" }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(166,84,43,.7)")}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(232,223,201,.25)")}
-            >
-              contato@euhenriq.com
+      {/* CTA */}
+      <section className="mkd-cta">
+        <img src="/images/lencois/DJI_20250828174205_0403_D-HDR.jpg" alt="" />
+        <div className="mkd-cta-grad" />
+        <div className="mkd-cta-body">
+          <div className="v2-eyebrow" style={{ marginBottom: 22 }}>
+            Vamos conversar
+          </div>
+          <h2 className="mkd-cta-h">
+            Sua marca,
+            <br />
+            <em>na paisagem.</em>
+          </h2>
+          <p className="mkd-cta-p">
+            Briefings personalizados, prazos honestos, conteúdo que dura mais que um ciclo de algoritmo.
+          </p>
+          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+            <Link className="mkd-btn" href="/contato">
+              Briefing & contato →
+            </Link>
+            <a className="mkd-btn-ghost" href="mailto:management@henriq.eu">
+              management@henriq.eu
             </a>
           </div>
-          <div style={{ display:"flex", gap:32, justifyContent:"center", flexWrap:"wrap" }}>
-            {[
-              { label:"Instagram", val:"@henriq.eu",      href:"https://instagram.com/henriq.eu" },
-              { label:"YouTube",   val:"@henriq_eu",      href:"https://youtube.com/@henriq_eu" },
-              { label:"Site",      val:"euhenriq.com.br", href:"https://euhenriq.com.br" },
-            ].map(c => (
-              <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer" style={{ textDecoration:"none", textAlign:"center" }}>
-                <div style={{ fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".22em", textTransform:"uppercase", color:"var(--stone)", marginBottom:4 }}>{c.label}</div>
-                <div style={{ fontFamily:"var(--font-ui)", fontSize:13, color:"var(--ashe)" }}>{c.val}</div>
-              </a>
-            ))}
-          </div>
-        </FadeIn>
+        </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <div style={{ padding:"24px clamp(20px,5vw,56px)", borderTop:"1px solid rgba(232,223,201,.06)", display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:12 }}>
-        <span style={{ fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--stone)" }}>Henrique Sesana · Media Kit 2026</span>
-        <span style={{ fontFamily:"var(--font-mono)", fontSize:8, letterSpacing:".2em", textTransform:"uppercase", color:"var(--stone)" }}>euhenriq.com.br</span>
-      </div>
-
-      {lightbox && <BrandLightbox state={lightbox} onClose={closeLightbox} />}
-    </main>
+      <DarkFooter coords="10°17′S 76°54′W · alt 4 800 m" />
+    </div>
   );
 }

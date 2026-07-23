@@ -1,133 +1,165 @@
 'use client'
 
 import { useState } from 'react'
-import SiteNav from '@/components/nav'
-import SiteFooter from '@/components/site-footer'
-import { SITE_EMAIL } from '@/content/home'
+import DarkTopNav from '@/components/dark-nav'
+import DarkFooter from '@/components/dark-footer'
 
+// Contato — Dark Editorial "Fim de Luz". Portado do protótipo hi-fi.
+// Aside (correção de negócio): Email · Parcerias & marcas · Instagram · Base.
 export default function ContatoPage() {
   const [sent, setSent] = useState(false)
 
   return (
-    <main style={{ background: 'var(--forest)', color: 'var(--canvas)', fontFamily: 'var(--font-ui)', position: 'relative', overflow: 'hidden' }}>
+    <div className="theme-fdl">
       <style>{`
-        .cnt-input { width: 100%; padding: 16px 0 12px; background: transparent; border: none; border-bottom: 1px solid var(--line-dark); color: var(--canvas); font-family: var(--font-serif); font-weight: 300; font-size: 22px; outline: none; box-sizing: border-box; }
-        .cnt-input::placeholder { color: var(--ashe-dim); font-style: italic; }
-        .cnt-input:focus { border-bottom-color: var(--canvas); transition: border-bottom-color .3s; }
-        @media(max-width:900px){
-          .cnt-grid { grid-template-columns: 1fr !important; gap: 56px !important; }
-          .cnt-head { padding: 100px 24px 56px !important; }
-          .cnt-body { padding: 56px 24px 80px !important; }
-        }
+/* ── layout ── */
+.ctd-wrap{display:grid;grid-template-columns:1.2fr 1fr;gap:clamp(48px,7vw,110px);padding:var(--sect-y) var(--s-5) var(--sect-xl);max-width:1360px}
+.ctd-h1{font-family:var(--font-serif);font-weight:500;font-size:clamp(48px,7vw,96px);letter-spacing:-.015em;line-height:1.03;color:var(--text-1);margin:0 0 24px;text-wrap:pretty}
+.ctd-h1 em{font-style:italic;font-weight:400;color:var(--text-2)}
+.ctd-sub{font-family:var(--font-serif);font-style:italic;font-size:18px;line-height:1.6;color:var(--text-2);max-width:42ch;margin:0 0 var(--s-56)}
+
+/* form */
+.ctd-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);display:block;margin-bottom:10px}
+.ctd-input{width:100%;padding:var(--s-2) 0 var(--s-1);background:transparent;border:none;border-bottom:1px solid var(--border-strong);color:var(--text-1);font-family:var(--font-serif);font-weight:400;font-size:19px;outline:none;transition:border-bottom-color .3s;border-radius:0}
+.ctd-input::placeholder{color:var(--text-3);font-style:italic}
+.ctd-input:focus{border-bottom-color:var(--accent)}
+.ctd-btn{padding:var(--s-2) var(--s-4);background:var(--accent);color:var(--bg);border:none;font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .2s;display:inline-flex;align-items:center;gap:var(--s-1)}
+.ctd-btn:hover{background:var(--accent-hover)}
+
+/* aside */
+.ctd-aside{display:flex;flex-direction:column;gap:var(--s-40);padding-top:var(--s-1)}
+.ctd-block{border-top:1px solid var(--border);padding-top:24px}
+.ctd-block-k{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);margin-bottom:var(--s-1)}
+.ctd-block a{font-family:var(--font-serif);font-size:19px;color:var(--text-1);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.ctd-block a:hover{border-color:var(--accent)}
+.ctd-block p{font-family:var(--font-serif);font-style:italic;font-size:14.5px;line-height:1.6;color:var(--text-2);margin:8px 0 0}
+.ctd-sign{font-family:var(--font-hand);font-size:44px;color:var(--accent);transform:rotate(-2deg);display:inline-block;line-height:1}
+
+/* sent state */
+.ctd-sent-h{font-family:var(--font-serif);font-weight:500;font-size:clamp(38px,5vw,60px);letter-spacing:-.015em;line-height:1.05;color:var(--text-1);margin:16px 0 0}
+.ctd-sent-h em{font-style:italic;font-weight:400;color:var(--text-2)}
+.ctd-ghost{margin-top:var(--s-4);padding:var(--s-2) var(--s-3);border:1px solid var(--border-strong);background:transparent;color:var(--text-1);font-family:var(--font-ui);font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;cursor:pointer}
+
+/* ── responsive ── */
+@media(max-width:1000px){
+  .ctd-wrap{grid-template-columns:1fr;gap:64px}
+}
+@media(max-width:640px){
+  .ctd-wrap{padding:var(--s-5) var(--s-3) var(--s-72)}
+  .ctd-sub{margin-bottom:var(--s-40)}
+}
       `}</style>
 
-      {/* background photo — ghosted */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'url(/images/lencois/DJI_20250828174205_0403_D-HDR.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.22, filter: 'grayscale(.3)' }} />
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(30,42,24,.45) 0%, rgba(30,42,24,.88) 60%, var(--forest) 100%)' }} />
+      <DarkTopNav active="Contato" />
 
-      <SiteNav dark={true} />
-
-      {/* ── HEADER ── */}
-      <header className="cnt-head" style={{ position: 'relative', padding: '140px 56px 56px', borderBottom: '1px solid var(--line-dark)' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 16 }}>
-          № 06 · Manda mensagem
-        </div>
-        <h1 style={{ margin: 0, lineHeight: 0.85 }}>
-          <span style={{ fontFamily: 'var(--font-hand)', fontSize: 72, color: 'var(--rust-soft)', transform: 'rotate(-3deg)', display: 'inline-block', marginRight: 20 }}>pode falar—</span>
-          <br />
-          <span style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(80px, 15vw, 220px)', letterSpacing: '-.05em', lineHeight: 0.85, display: 'block', textTransform: 'uppercase' }}>
-            CONTATO.
-          </span>
-        </h1>
-        <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 24, color: 'var(--ashe)', marginTop: 28, maxWidth: '50ch', lineHeight: 1.5 }}>
-          Expedição, preset, parceria ou só um papo sobre fotografia. Tudo chega na mesma caixa.
-        </p>
-      </header>
-
-      {/* ── BODY ── */}
-      <div className="cnt-body cnt-grid" style={{ position: 'relative', padding: '80px 56px 120px', display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 80 }}>
-
+      <main className="ctd-wrap" data-screen-label="Contato">
         {/* FORM */}
-        {!sent ? (
-          <form
-            style={{ display: 'flex', flexDirection: 'column', gap: 28 }}
-            onSubmit={e => { e.preventDefault(); setSent(true) }}
-          >
-            {/* name */}
-            <div>
-              <label style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe)', display: 'block', marginBottom: 10 }}>Seu nome</label>
-              <input required className="cnt-input" type="text" placeholder="Maria da Silva" />
-            </div>
-
-            {/* email */}
-            <div>
-              <label style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe)', display: 'block', marginBottom: 10 }}>Email</label>
-              <input required className="cnt-input" type="email" placeholder="maria@exemplo.com" />
-            </div>
-
-            {/* message */}
-            <div>
-              <label style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe)', display: 'block', marginBottom: 10 }}>Mensagem</label>
-              <textarea
-                required
-                className="cnt-input"
-                placeholder="Me conta o que você precisa..."
-                style={{ minHeight: 120, resize: 'none', paddingTop: 16, display: 'block' }}
-              />
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                style={{ padding: '18px 32px', background: 'var(--canvas)', color: 'var(--bark)', border: 'none', fontFamily: 'var(--font-ui)', fontSize: 13, fontWeight: 700, letterSpacing: '.15em', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: 12, cursor: 'pointer' }}
-              >
-                Enviar mensagem <span style={{ fontFamily: 'var(--font-hand)', fontSize: 28, color: 'var(--rust)', transform: 'rotate(-2deg)', display: 'inline-block' }}>→</span>
-              </button>
-              <div style={{ fontFamily: 'var(--font-ui)', fontSize: 11, color: 'var(--ashe-dim)', letterSpacing: '.05em', marginTop: 12 }}>
-                Ao enviar, você aceita receber a resposta no email informado. Nada de spam.
-              </div>
-            </div>
-          </form>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', padding: '40px 0' }}>
-            <div style={{ fontFamily: 'var(--font-hand)', fontSize: 96, color: 'var(--rust-soft)', lineHeight: 1, transform: 'rotate(-4deg)' }}>obrigado!</div>
-            <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 48, letterSpacing: '-.04em', marginTop: 24, lineHeight: 0.95, textTransform: 'uppercase' }}>
-              mensagem<br />enviada.
-            </div>
-            <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 18, color: 'var(--ashe)', marginTop: 24, maxWidth: '40ch', lineHeight: 1.5 }}>
-              Em até 48h você recebe minha resposta.
-            </p>
-            <button
-              onClick={() => setSent(false)}
-              style={{ marginTop: 32, padding: '14px 24px', border: '1px solid var(--canvas)', color: 'var(--canvas)', background: 'transparent', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 600, letterSpacing: '.15em', textTransform: 'uppercase', cursor: 'pointer' }}
-            >Nova mensagem</button>
+        <div>
+          <div className="v2-eyebrow" style={{ marginBottom: 22 }}>
+            № 06 · Manda mensagem
           </div>
-        )}
+          <h1 className="ctd-h1">
+            Pode falar <em>— tudo chega na mesma caixa.</em>
+          </h1>
+          <p className="ctd-sub">
+            Reserva de expedição, dúvida sobre preset, parceria de marca ou só um papo sobre montanha.
+          </p>
 
-        {/* SIDEBAR — minimal */}
-        <aside style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
-          <div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 14 }}>Email direto</div>
-            <a href={`mailto:${SITE_EMAIL}`} style={{ fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 18, color: 'var(--canvas)', borderBottom: '1px solid var(--rust-soft)', paddingBottom: 2, textDecoration: 'none' }}>
-              {SITE_EMAIL}
-            </a>
-          </div>
-
-          <div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 14 }}>Instagram</div>
-            <a
-              href="https://instagram.com/henriq.eu"
-              target="_blank"
-              rel="noreferrer"
-              style={{ fontFamily: 'var(--font-ui)', fontWeight: 600, fontSize: 18, color: 'var(--canvas)', borderBottom: '1px solid var(--rust-soft)', paddingBottom: 2, textDecoration: 'none' }}
+          {!sent ? (
+            <form
+              style={{ display: 'flex', flexDirection: 'column', gap: 36 }}
+              onSubmit={e => {
+                e.preventDefault()
+                setSent(true)
+              }}
             >
+              <div>
+                <label className="ctd-label" htmlFor="ctd-nome">
+                  Nome
+                </label>
+                <input id="ctd-nome" required className="ctd-input" type="text" placeholder="Seu nome" />
+              </div>
+              <div>
+                <label className="ctd-label" htmlFor="ctd-email">
+                  Email
+                </label>
+                <input id="ctd-email" required className="ctd-input" type="email" placeholder="voce@exemplo.com" />
+              </div>
+              <div>
+                <label className="ctd-label" htmlFor="ctd-msg">
+                  Mensagem
+                </label>
+                <textarea
+                  id="ctd-msg"
+                  required
+                  className="ctd-input"
+                  placeholder="Conta um pouco sobre o que tá procurando..."
+                  style={{ minHeight: 140, resize: 'none', display: 'block' }}
+                />
+              </div>
+              <div>
+                <button type="submit" className="ctd-btn">
+                  Enviar{' '}
+                  <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 18 }}>→</span>
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div>
+              <span className="ctd-sign">obrigado!</span>
+              <h2 className="ctd-sent-h">
+                Mensagem <em>enviada.</em>
+              </h2>
+              <p
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontStyle: 'italic',
+                  fontSize: 16,
+                  color: 'var(--text-2)',
+                  marginTop: 18,
+                  maxWidth: '36ch',
+                  lineHeight: 1.6,
+                }}
+              >
+                Em até 48h você recebe minha resposta.
+              </p>
+              <button className="ctd-ghost" onClick={() => setSent(false)}>
+                Nova mensagem
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ASIDE */}
+        <aside className="ctd-aside">
+          <div className="ctd-block">
+            <div className="ctd-block-k">Email</div>
+            <a href="mailto:contato@euhenriq.com">contato@euhenriq.com</a>
+            <p>Respondo em até 48h, direto do campo quando dá.</p>
+          </div>
+          <div className="ctd-block">
+            <div className="ctd-block-k">Parcerias &amp; marcas</div>
+            <a href="mailto:management@henriq.eu">management@henriq.eu</a>
+            <p>Briefings, licenciamento e campanhas.</p>
+          </div>
+          <div className="ctd-block">
+            <div className="ctd-block-k">Instagram</div>
+            <a href="https://instagram.com/henriq.eu" target="_blank" rel="noreferrer">
               @henriq.eu
             </a>
+            <p>Bastidores das expedições, quase em tempo real.</p>
+          </div>
+          <div className="ctd-block">
+            <div className="ctd-block-k">Base</div>
+            <span style={{ fontFamily: 'var(--font-serif)', fontSize: 19, color: 'var(--text-1)' }}>
+              São Paulo · BR
+            </span>
+            <p>Atende worldwide. Desde 2018.</p>
           </div>
         </aside>
-      </div>
+      </main>
 
-      <SiteFooter dark={true} />
-    </main>
+      <DarkFooter coords="23°33′S 46°38′W · São Paulo" />
+    </div>
   )
 }
