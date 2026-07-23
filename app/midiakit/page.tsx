@@ -52,16 +52,16 @@ interface MidiakitData {
 
 const D: MidiakitData = {
   reachDaily: [
-    3982, 7554, 12928, 9374, 5840, 7149, 4704, 5897, 11425, 9388, 11579, 12640, 9662, 6155, 5175, 6006,
-    11242, 10477, 7055, 7036, 5765, 5617, 6084, 8688, 10050, 6897, 7470, 4408, 5135, 2704,
+    3388, 6427, 10998, 7975, 4968, 6082, 4002, 5017, 9720, 7987, 9850, 10753, 8220, 5236, 4402, 5109,
+    9564, 8913, 6002, 5986, 4904, 4778, 5176, 7391, 8550, 5867, 6354, 3750, 4368, 2300,
   ],
   metrics: [
-    { label: "Seguidores", value: "13,4k", sub: "@henriq.eu" },
-    { label: "Alcance mensal", value: "131k", sub: "reach últimos 30 dias" },
-    { label: "Interações/mês", value: "27,9k", sub: "likes · saves · comentários" },
-    { label: "Engajamento s/ alcance", value: "21,3%", sub: "muito acima da média do nicho" },
-    { label: "Alcance médio/dia", value: "5.045", sub: "contas alcançadas" },
-    { label: "Novos seguidores/mês", value: "+786", sub: "crescimento orgânico" },
+    { label: "Seguidores", value: "15.458", sub: "@henriq.eu · Criador de Conteúdo Digital" },
+    { label: "Alcance mensal", value: "194k", sub: "194.030 · últimos 30 dias" },
+    { label: "Interações/mês", value: "55,8k", sub: "likes · saves · comentários" },
+    { label: "Engagement rate", value: "28,8%", sub: "muito acima da média do nicho" },
+    { label: "Alcance médio/dia", value: "~6.468", sub: "contas alcançadas/dia" },
+    { label: "Posts publicados", value: "458", sub: "total no perfil" },
   ],
   topPosts: [
     { caption: "Escalando Cabeça de Peixe — Serra dos Órgãos", reach: "11.352", likes: "1.540", saves: "112", img: "escalada-cabeca-depeixe" },
@@ -329,7 +329,7 @@ export default function MidiakitPage() {
           <div className="mkd-spark-head">
             <span className="v2-eyebrow">Alcance diário · últimos 30 dias</span>
             <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 14, color: "var(--accent)" }}>
-              média de 5.045/dia
+              média de ~6.468/dia
             </span>
           </div>
           <Sparkline data={D.reachDaily} />
