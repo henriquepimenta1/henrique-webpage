@@ -367,14 +367,14 @@ body {
 .theme-fdl img{ max-width:100% }
 
 /* ── grão global (unifica fotos de câmeras/tratamentos diferentes) ── */
-.theme-fdl::after{content:"";position:fixed;inset:0;z-index:9;pointer-events:none;mix-blend-mode:overlay;opacity:.4;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.theme-fdl::after{content:"";position:fixed;inset:0;z-index:9;pointer-events:none;mix-blend-mode:overlay;opacity:.12;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
 /* ── foco visível (WCAG 2.4.7) ── */
 .theme-fdl a:focus-visible,.theme-fdl button:focus-visible,.theme-fdl [tabindex]:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:1px}
 .theme-fdl .v2-menu-item:focus-visible,.theme-fdl .v2-nav-link:focus-visible{outline-offset:5px}
 
 @media (prefers-reduced-motion: reduce){
-  .theme-fdl::after{opacity:.28}
+  .theme-fdl::after{opacity:.09}
   .theme-fdl img{transition:none!important;transform:none!important}
   .theme-fdl .v2-menu-overlay,.theme-fdl .v2-menu-overlay *{transition:none!important;animation:none!important}
 }
