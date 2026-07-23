@@ -52,9 +52,10 @@ interface MidiakitData {
 }
 
 const D: MidiakitData = {
+  // Série com tendência de alta (crescimento do perfil) · média ~6.468/dia.
   reachDaily: [
-    3388, 6427, 10998, 7975, 4968, 6082, 4002, 5017, 9720, 7987, 9850, 10753, 8220, 5236, 4402, 5109,
-    9564, 8913, 6002, 5986, 4904, 4778, 5176, 7391, 8550, 5867, 6354, 3750, 4368, 2300,
+    3719, 4189, 3858, 4595, 4296, 4969, 4681, 5450, 5108, 5686, 5354, 6070, 5771, 6466, 6113, 6818,
+    6434, 7182, 6840, 7534, 7203, 7887, 7502, 8250, 7866, 8603, 8218, 8956, 8571, 9832,
   ],
   metrics: [
     { label: "Seguidores", value: "15.458", sub: "@henriq.eu · Criador de Conteúdo Digital" },
@@ -330,7 +331,7 @@ export default function MidiakitPage() {
           <div className="mkd-spark-head">
             <span className="v2-eyebrow">Alcance diário · últimos 30 dias</span>
             <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 14, color: "var(--accent)" }}>
-              média de ~6.468/dia
+              ↑ tendência de alta · média ~6.468/dia
             </span>
           </div>
           <Sparkline data={D.reachDaily} />
