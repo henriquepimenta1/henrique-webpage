@@ -192,9 +192,7 @@ function PacotesCarousel() {
               ))}
             </div>
             <p style={{ fontFamily: 'var(--font-serif)', fontSize: 14, lineHeight: 1.55, color: p.featured ? 'var(--ashe)' : 'var(--stone)', marginBottom: 20 }}>{p.desc}</p>
-            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 30, fontWeight: 700, letterSpacing: '-.02em', color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 2 }}>{p.price}</div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', color: p.featured ? 'var(--ashe-dim)' : 'var(--stone)', marginBottom: 20 }}>por pessoa · até 12x</div>
-            <a href={waMsg(p.label, p.datas, p.price)} target="_blank" rel="noopener noreferrer" style={{
+            <a href={waMsg(p.label)} target="_blank" rel="noopener noreferrer" style={{
               display: 'block', textAlign: 'center', textDecoration: 'none',
               padding: '14px 20px', fontFamily: 'var(--font-ui)', fontSize: 11,
               fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase',
@@ -202,7 +200,7 @@ function PacotesCarousel() {
               color: p.featured ? 'var(--canvas)' : 'var(--bark)',
               border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}`,
               marginTop: 'auto',
-            }}>Reservar →</a>
+            }}>Estou interessado →</a>
           </div>
         ))}
       </div>
@@ -338,7 +336,7 @@ export default function LencoisPage() {
             <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--rust-soft)', display: 'inline-block' }} />
             <span>Lençóis Maranhenses</span>
             <span style={{ width: 4, height: 4, borderRadius: '50%', background: 'var(--rust-soft)', display: 'inline-block' }} />
-            <span style={{ color: 'var(--rust-soft)' }}>Agosto 2026</span>
+            <span style={{ color: 'var(--rust-soft)' }}>Em breve · 2027</span>
           </div>
 
           <div>
@@ -586,7 +584,7 @@ export default function LencoisPage() {
       <section style={{ background: 'var(--canvas-deep)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
         <div className="lenc-pad" style={{ padding: '96px 56px' }}>
           <div style={{ marginBottom: 48 }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 07 · Datas · Agosto 2026</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 07 · Em breve · 2027</div>
             <h2 className="lenc-section-title-lg" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
               Escolha seu <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>pacote.</span>
             </h2>
@@ -605,10 +603,8 @@ export default function LencoisPage() {
                   ))}
                 </div>
                 <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, lineHeight: 1.6, color: p.featured ? 'var(--ashe)' : 'var(--stone)', marginBottom: 28 }}>{p.desc}</p>
-                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(24px, 3.5vw, 36px)', fontWeight: 700, letterSpacing: '-.02em', color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 4 }}>{p.price}</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', color: p.featured ? 'var(--ashe-dim)' : 'var(--stone)', marginBottom: 28 }}>por pessoa · até 12x</div>
-                <a href={waMsg(p.label, p.datas, p.price)} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '14px 24px', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase', background: p.featured ? 'var(--rust)' : 'transparent', color: p.featured ? 'var(--canvas)' : 'var(--bark)', border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}` }}>
-                  Reservar esta data →
+                <a href={waMsg(p.label)} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '14px 24px', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase', background: p.featured ? 'var(--rust)' : 'transparent', color: p.featured ? 'var(--canvas)' : 'var(--bark)', border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}` }}>
+                  Estou interessado →
                 </a>
               </div>
             ))}
@@ -658,10 +654,10 @@ export default function LencoisPage() {
           <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>expedição</span>
         </h2>
         <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 20, color: 'var(--ashe)', marginTop: 24, maxWidth: '50ch', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
-          Vagas limitadas a 10 pessoas por turma. Agosto 2026 — reserve com antecedência.
+          Vagas limitadas a 10 pessoas por turma. Em breve, 2027 — chame no WhatsApp para entrar na lista de interessados.
         </p>
         <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn lenc-cta-final-btn" style={{ marginTop: 40, display: 'inline-block', padding: '18px 40px', background: 'var(--rust-soft)', color: 'var(--forest)', fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 700, letterSpacing: '.24em', textTransform: 'uppercase', textDecoration: 'none' }}>
-          Falar no WhatsApp →
+          Estou interessado →
         </a>
         <div style={{ marginTop: 28, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--ashe-dim)' }}>
           Em parceria com @lencoisexperience · @livinglencois
@@ -680,10 +676,10 @@ export default function LencoisPage() {
       <div className="lenc-sticky-spacer" />
       <div className="lenc-sticky">
         <div style={{ lineHeight: 1.05 }}>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 2 }}>a partir de</div>
-          <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 19, letterSpacing: '-.02em', color: 'var(--canvas)' }}>R$ 3.599</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 2 }}>próxima turma</div>
+          <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 19, letterSpacing: '-.02em', color: 'var(--canvas)' }}>Em breve · 2027</div>
         </div>
-        <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: 'center', padding: '14px', background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', textDecoration: 'none' }}>Reservar →</a>
+        <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: 'center', padding: '14px', background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', textDecoration: 'none' }}>Estou interessado →</a>
       </div>
 
       <SiteFooter dark={false} />

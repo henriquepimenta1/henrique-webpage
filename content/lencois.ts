@@ -7,9 +7,9 @@ export const WA_GERAL = WA_BASE + encodeURIComponent(
   "Olá! Tenho interesse na Travessia dos Lençóis Maranhenses. Pode me passar mais informações sobre datas e vagas disponíveis?"
 )
 
-export function waMsg(label: string, datas: string, price: string) {
+export function waMsg(label: string) {
   return WA_BASE + encodeURIComponent(
-    `Olá! Tenho interesse na ${label} (${datas}) — ${price}. Ainda tem vagas disponíveis?`
+    `Olá! Tenho interesse na ${label} (Lençóis Maranhenses, 2027). Pode me colocar na lista de interessados?`
   )
 }
 
@@ -19,7 +19,6 @@ export interface Pacote {
   dias: string
   km: string
   oasis: string
-  price: string
   desc: string
   featured: boolean
 }
@@ -27,31 +26,28 @@ export interface Pacote {
 export const PACOTES: Pacote[] = [
   {
     label: "Travessia Intensiva",
-    datas: "8 a 10 de Agosto",
+    datas: "Em breve · 2027",
     dias: "3 dias",
     km: "35km",
     oasis: "2 oásis",
-    price: "R$ 3.599",
     desc: "Aventura concentrada para quem tem menos tempo. A essência dos Lençóis em 3 dias completos.",
     featured: false,
   },
   {
     label: "Travessia Completa",
-    datas: "3 a 6 de Agosto",
+    datas: "Em breve · 2027",
     dias: "4 dias",
     km: "52km",
     oasis: "3 oásis",
-    price: "R$ 3.899",
     desc: "52km do início ao fim. A experiência mais equilibrada e completa dos Lençóis.",
     featured: true,
   },
   {
     label: "Imersão Total",
-    datas: "12 a 16 de Agosto",
+    datas: "Em breve · 2027",
     dias: "5 dias",
     km: "64km",
     oasis: "4 oásis",
-    price: "R$ 4.499",
     desc: "Ritmo contemplativo, mais tempo em cada oásis. Para quem quer viver cada detalhe.",
     featured: false,
   },
