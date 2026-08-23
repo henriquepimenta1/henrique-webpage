@@ -18,10 +18,26 @@ const FONTS = ["Rabisco Nº1", "Rabisco Nº2", "Rabisco Nº3"];
 /** Taxa do arquivo final — independente do fps do tremor. */
 const EXPORT_FPS = 24;
 
+/**
+ * Preview de avaliação: libera 4K, tira a marca d'água e o limite diário.
+ * A lógica do tier pago fica intacta — basta voltar para `false` para
+ * reativar tudo de uma vez.
+ */
+const MODO_TESTE = true;
+
 const RESOLUTIONS = {
   "720": { width: 1280, height: 720 },
   "1080": { width: 1920, height: 1080 },
+  "2160": { width: 3840, height: 2160 },
 } as const;
+
+type ResolutionKey = keyof typeof RESOLUTIONS;
+
+const RESOLUTION_LABELS: Record<ResolutionKey, string> = {
+  "720": "720p",
+  "1080": "1080p",
+  "2160": "4K",
+};
 
 const STROKE_BY_THICKNESS = { fina: 0, regular: 6, grossa: 16 } as const;
 const DEMO_TEXT = "ação.";
@@ -104,7 +120,7 @@ export default function RabiscoPage() {
   const [background, setBackground] = useState<"transparent" | "solid">("transparent");
   const [bgColor, setBgColor] = useState("#0d0c0b");
   const [format, setFormat] = useState<"png" | "mp4">("png");
-  const [resolution, setResolution] = useState<"720" | "1080">("1080");
+  const [resolution, setResolution] = useState<ResolutionKey>("1080");
   const [playing, setPlaying] = useState(true);
   const [progress, setProgress] = useState(38);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -146,7 +162,7 @@ export default function RabiscoPage() {
   }, [playing, durationSeconds]);
 
   const handleExportClick = async () => {
-    if (exportsUsed >= EXPORT_LIMIT) {
+    if (!MODO_TESTE && exportsUsed >= EXPORT_LIMIT) {
       setExportState("limited");
       return;
     }
@@ -169,7 +185,7 @@ export default function RabiscoPage() {
         exportFps: EXPORT_FPS,
         durationSeconds: Number(durationSeconds),
         ...RESOLUTIONS[resolution],
-        watermark: true, // versão gratuita
+        watermark: !MODO_TESTE, // versão gratuita
         // H.264 não tem alfa. Preto fixo de propósito: no DaVinci/Premiere o
         // modo de composição Screen/Add derruba o preto, então o overlay sai
         // de graça. No PNG este campo é ignorado.
@@ -289,15 +305,22 @@ export default function RabiscoPage() {
       <div className={styles.field}>
         <span className={styles.fieldLabel}>Resolução</span>
         <div className={styles.chipRow}>
-          <button className={styles.chip} data-active={resolution === "1080" ? "1" : "0"} onClick={() => setResolution("1080")}>
-            1080p
-          </button>
-          <button className={styles.chip} data-active={resolution === "720" ? "1" : "0"} onClick={() => setResolution("720")}>
-            720p
-          </button>
-          <span className={styles.chip} data-locked="1">
-            <LockIcon /> 4K
-          </span>
+          {(Object.keys(RESOLUTIONS) as ResolutionKey[]).map((key) =>
+            key === "2160" && !MODO_TESTE ? (
+              <span key={key} className={styles.chip} data-locked="1">
+                <LockIcon /> 4K
+              </span>
+            ) : (
+              <button
+                key={key}
+                className={styles.chip}
+                data-active={resolution === key ? "1" : "0"}
+                onClick={() => setResolution(key)}
+              >
+                {RESOLUTION_LABELS[key]}
+              </button>
+            ),
+          )}
         </div>
       </div>
       <Slider
@@ -357,7 +380,13 @@ export default function RabiscoPage() {
             ) : (
               <>ZIP com {exportFrameCount} PNGs transparentes a {EXPORT_FPS}fps.</>
             )}{" "}
-            Marca d&rsquo;água na versão gratuita · {exportsUsed}/{EXPORT_LIMIT} exports hoje.
+            {MODO_TESTE ? (
+              <>Modo de teste: 4K liberado, sem marca d&rsquo;água e sem limite diário.</>
+            ) : (
+              <>
+                Marca d&rsquo;água na versão gratuita · {exportsUsed}/{EXPORT_LIMIT} exports hoje.
+              </>
+            )}
           </p>
         </>
       )}
@@ -372,7 +401,8 @@ export default function RabiscoPage() {
             <span className="path">euhenriq.com.br /</span> rabisco
           </Link>
           <span className={styles.planStatus}>
-            <span className={styles.planDot} /> gratuito · {exportsUsed}/{EXPORT_LIMIT} exports hoje
+            <span className={styles.planDot} data-on={MODO_TESTE ? "1" : undefined} />
+            {MODO_TESTE ? "modo de teste · tudo liberado" : `gratuito · ${exportsUsed}/${EXPORT_LIMIT} exports hoje`}
           </span>
         </div>
 
