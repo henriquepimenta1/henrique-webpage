@@ -67,36 +67,6 @@
   overflow: hidden;
   padding: 24px;
 }
-.canvasWord {
-  font-family: var(--font-hand);
-  color: var(--accent);
-  line-height: 1;
-  display: inline-flex;
-  align-items: baseline;
-  white-space: nowrap;
-  max-width: 100%;
-}
-.canvasWordText { overflow: hidden; white-space: nowrap; transition: width .08s linear; }
-
-.letter {
-  display: inline-block;
-  transform-origin: 50% 65%;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  will-change: transform;
-}
-@media (prefers-reduced-motion: reduce) {
-  .letter { animation: none !important; }
-}
-.caret {
-  width: 2px;
-  background: var(--accent);
-  margin-left: 6px;
-  flex-shrink: 0;
-  animation: blink 1s step-end infinite;
-}
-@keyframes blink { 50% { opacity: 0; } }
-
 .transport {
   height: 44px;
   flex-shrink: 0;

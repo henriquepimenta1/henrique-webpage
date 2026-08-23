@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./rabisco.module.css";
-import "./rabisco-keyframes.css";
+import ScribbleCanvas from "./scribble-canvas";
 
 // Rabisco — ferramenta de scribble animado para filmmakers.
-// Preview de avaliação: visual + interação de UI reais; o traço manuscrito
-// (fonte SVG animada) e o export real ainda não existem — ver nota no rodapé
-// do handoff. Layout segue exatamente os tokens de .theme-fdl (globals.css).
+// O traço vem de paths vetoriais perturbados em tempo real (ver scribble.ts),
+// não de glifos alternativos pré-desenhados: é isso que faz o slider de Tremor
+// controlar a deformação de verdade. Export real ainda não implementado.
+// Layout segue os tokens de .theme-fdl (globals.css).
 
 const FONTS = ["Rabisco Nº1", "Rabisco Nº2", "Rabisco Nº3"];
 const DEMO_TEXT = "ação.";
@@ -66,43 +67,6 @@ function Slider({
       </div>
     </div>
   );
-}
-
-// Pseudo-aleatório determinístico (mesmo valor no servidor e no cliente —
-// evita mismatch de hidratação). Não é criptográfico, só precisa parecer
-// orgânico letra a letra.
-function seededRandom(seed: number): number {
-  const x = Math.sin(seed * 999) * 10000;
-  return x - Math.floor(x);
-}
-
-const JIGGLE_MAX_TRANSLATE_PX = 5;
-const JIGGLE_MAX_ROTATE_DEG = 9;
-
-function renderJiggleLetters(text: string, tremor: number): ReactNode[] {
-  return Array.from(text).map((ch, i) => {
-    const amp = tremor / 100;
-    const rx = seededRandom(i * 7 + 1) * 2 - 1;
-    const ry = seededRandom(i * 7 + 2) * 2 - 1;
-    const rr = seededRandom(i * 7 + 3) * 2 - 1;
-    const duration = 0.28 + seededRandom(i * 7 + 4) * 0.35;
-    const delay = seededRandom(i * 7 + 5) * 0.6;
-
-    const style: CSSProperties & Record<string, string> = {
-      "--amp-x": `${rx * amp * JIGGLE_MAX_TRANSLATE_PX}px`,
-      "--amp-y": `${ry * amp * JIGGLE_MAX_TRANSLATE_PX}px`,
-      "--amp-r": `${rr * amp * JIGGLE_MAX_ROTATE_DEG}deg`,
-      animationName: tremor > 0 ? (i % 2 === 0 ? "rabiscoJiggleA" : "rabiscoJiggleB") : "none",
-      animationDuration: `${duration}s`,
-      animationDelay: `${delay}s`,
-    };
-
-    return (
-      <span key={i} className={styles.letter} style={style}>
-        {ch === " " ? " " : ch}
-      </span>
-    );
-  });
 }
 
 function LockIcon() {
@@ -318,21 +282,13 @@ export default function RabiscoPage() {
         <div className={styles.main}>
           <div className={styles.canvasCol}>
             <div className={styles.canvasStage} style={background === "solid" ? { backgroundImage: "none", backgroundColor: "var(--surface)" } : undefined}>
-              <div
-                className={styles.canvasWord}
-                style={{
-                  color,
-                  fontSize: "clamp(48px, 8vw, 128px)",
-                  filter: thickness === "grossa" ? "drop-shadow(0 0 0.4px currentColor)" : undefined,
-                  WebkitTextStroke: thickness === "grossa" ? "0.6px currentColor" : undefined,
-                  opacity: thickness === "fina" ? 0.82 : 1,
-                }}
-              >
-                <span className={styles.canvasWordText} style={{ width: text.trim() ? "auto" : `${8 + progress * 0.9}%` }}>
-                  {renderJiggleLetters(displayText, tremor)}
-                </span>
-                <span className={styles.caret} style={{ height: "0.7em" }} />
-              </div>
+              <ScribbleCanvas
+                text={displayText}
+                tremor={tremor}
+                thickness={thickness}
+                color={color}
+                progress={progress / 100}
+              />
             </div>
             <div className={styles.transport}>
               <button className={styles.transportBtn} onClick={() => setPlaying((p) => !p)} aria-label={playing ? "pausar" : "reproduzir"}>
