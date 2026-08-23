@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import type { Font } from "opentype.js";
+import { useMemo } from "react";
 import { buildScribble } from "./scribble";
+import { useScribbleFont } from "./use-scribble-font";
 import styles from "./rabisco.module.css";
-
-const FONT_URL = "/fonts/Caveat.ttf";
 
 /**
  * Três quadros é o padrão da animação desenhada à mão ("boil" / animação em
@@ -13,7 +11,6 @@ const FONT_URL = "/fonts/Caveat.ttf";
  */
 const BOIL_FRAMES = 3;
 
-type LoadState = "loading" | "ready" | "error";
 
 interface ScribbleCanvasProps {
   text: string;
@@ -25,7 +22,10 @@ interface ScribbleCanvasProps {
   paused?: boolean;
   thickness: "fina" | "regular" | "grossa";
   color: string;
-  spacing?: number;
+  /** Avanço extra entre letras, fração do corpo (-0.05 a 0.4). */
+  letterSpacing?: number;
+  /** Distância entre linhas, múltiplo do corpo (0.7 a 2.2). */
+  lineHeight?: number;
 }
 
 const STROKE_BY_THICKNESS: Record<ScribbleCanvasProps["thickness"], number> = {
@@ -41,35 +41,10 @@ export default function ScribbleCanvas({
   paused = false,
   thickness,
   color,
-  spacing = 0,
+  letterSpacing = 0,
+  lineHeight = 1.15,
 }: ScribbleCanvasProps) {
-  const [font, setFont] = useState<Font | null>(null);
-  const [state, setState] = useState<LoadState>("loading");
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const [opentype, res] = await Promise.all([
-          import("opentype.js"),
-          fetch(FONT_URL),
-        ]);
-        if (!res.ok) throw new Error(`font ${res.status}`);
-        const buffer = await res.arrayBuffer();
-        if (cancelled) return;
-        setFont(opentype.parse(buffer));
-        setState("ready");
-      } catch {
-        if (!cancelled) setState("error");
-      }
-    }
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const { font, state } = useScribbleFont();
 
   // Com tremor 0 os quadros são idênticos — não vale gerar nem animar.
   const frameCount = tremor > 0 ? BOIL_FRAMES : 1;
@@ -77,9 +52,9 @@ export default function ScribbleCanvas({
   const frames = useMemo(() => {
     if (!font || !text) return null;
     return Array.from({ length: frameCount }, (_, f) =>
-      buildScribble(font, text, tremor, spacing, f),
+      buildScribble(font, text, tremor, { letterSpacing, lineHeight, frame: f }),
     );
-  }, [font, text, tremor, spacing, frameCount]);
+  }, [font, text, tremor, letterSpacing, lineHeight, frameCount]);
 
   if (state === "loading") {
     return (

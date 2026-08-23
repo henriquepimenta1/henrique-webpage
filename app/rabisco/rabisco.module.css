@@ -116,6 +116,21 @@
 .fieldValue { color: var(--text-2); }
 
 .textInput { border: none; border-bottom: 1px solid var(--border-strong); background: none; color: var(--text-1); font-family: var(--font-ui); font-size: 15px; padding: 6px 0; width: 100%; outline-offset: 4px; }
+.textArea {
+  border: none;
+  border-bottom: 1px solid var(--border-strong);
+  background: none;
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 6px 0;
+  width: 100%;
+  outline-offset: 4px;
+  resize: vertical;
+  min-height: 52px;
+}
+.textArea::placeholder { color: var(--text-3); }
 
 .selectRow { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-strong); padding: 8px 0; width: 100%; text-align: left; }
 .selectValue { font-family: var(--font-ui); font-size: 14px; color: var(--text-1); }
@@ -146,7 +161,9 @@
 .chip[data-locked="1"] { color: var(--text-3); display: flex; align-items: center; gap: 5px; cursor: default; }
 
 .exportLink { font-family: var(--font-ui); font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--accent); padding-bottom: 4px; display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; }
+.exportLink:disabled { color: var(--text-3); border-bottom-color: var(--text-3); cursor: default; }
 .exportNote { font-family: var(--font-ui); font-size: 11px; color: var(--text-3); margin-top: 10px; line-height: 1.5; }
+.errorNote { font-family: var(--font-ui); font-size: 12px; color: var(--error); margin-top: 10px; line-height: 1.5; }
 .limitMsg { font-family: var(--font-ui); font-size: 13px; color: var(--text-1); margin-top: 4px; }
 .limitLink { color: var(--accent); border-bottom: 1px solid var(--accent); }
 .progressRow { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }

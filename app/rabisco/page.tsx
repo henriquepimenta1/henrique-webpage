@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import styles from "./rabisco.module.css";
 import ScribbleCanvas from "./scribble-canvas";
+import { useScribbleFont } from "./use-scribble-font";
+import { exportPngSequence, triggerDownload } from "./export";
 
 // Rabisco — ferramenta de scribble animado para filmmakers.
 // O traço vem de paths vetoriais perturbados em tempo real (ver scribble.ts),
@@ -12,6 +14,16 @@ import ScribbleCanvas from "./scribble-canvas";
 // Layout segue os tokens de .theme-fdl (globals.css).
 
 const FONTS = ["Rabisco Nº1", "Rabisco Nº2", "Rabisco Nº3"];
+
+/** Taxa do arquivo final — independente do fps do tremor. */
+const EXPORT_FPS = 24;
+
+const RESOLUTIONS = {
+  "720": { width: 1280, height: 720 },
+  "1080": { width: 1920, height: 1080 },
+} as const;
+
+const STROKE_BY_THICKNESS = { fina: 0, regular: 6, grossa: 16 } as const;
 const DEMO_TEXT = "ação.";
 const EXPORT_LIMIT = 3;
 
@@ -85,7 +97,8 @@ export default function RabiscoPage() {
   const [tremor, setTremor] = useState(32);
   const [speed, setSpeed] = useState(55);
   const [duration, setDuration] = useState(40);
-  const [letterDelay, setLetterDelay] = useState(25);
+  const [letterSpacingPct, setLetterSpacingPct] = useState(20);
+  const [lineHeightPct, setLineHeightPct] = useState(30);
   const [loop, setLoop] = useState(true);
   const [color, setColor] = useState("#c08246");
   const [background, setBackground] = useState<"transparent" | "solid">("transparent");
@@ -95,14 +108,19 @@ export default function RabiscoPage() {
   const [progress, setProgress] = useState(38);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [exportsUsed, setExportsUsed] = useState(2);
-  const [exportState, setExportState] = useState<"idle" | "exporting" | "limited">("idle");
+  const [exportState, setExportState] = useState<"idle" | "exporting" | "limited" | "error">("idle");
   const [exportFrame, setExportFrame] = useState(0);
+  const cancelExportRef = useRef(false);
+  const { font } = useScribbleFont();
 
   const displayText = text.trim() ? text : DEMO_TEXT;
   const durationSeconds = (0.8 + (duration / 100) * 3.6).toFixed(1);
   // Abaixo de ~4fps o tremor lê como piscada; acima de ~14 vira vibração.
   const boilFps = Math.round(4 + (speed / 100) * 10);
-  const delayMs = Math.round(20 + (letterDelay / 100) * 140);
+  // Negativo aperta as letras; o teto evita a palavra virar letras soltas.
+  const letterSpacing = -0.05 + (letterSpacingPct / 100) * 0.45;
+  const lineHeight = 0.7 + (lineHeightPct / 100) * 1.5;
+  const exportFrameCount = Math.max(1, Math.round(Number(durationSeconds) * EXPORT_FPS));
 
   // Reproduz o preview em loop enquanto "playing" — puramente visual.
   useEffect(() => {
@@ -120,32 +138,43 @@ export default function RabiscoPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playing, durationSeconds]);
 
-  // Simula export: conta quadros, respeita o limite grátis diário.
-  useEffect(() => {
-    if (exportState !== "exporting") return;
-    const totalFrames = 96;
-    const id = setInterval(() => {
-      setExportFrame((f) => {
-        const next = f + 6;
-        if (next >= totalFrames) {
-          clearInterval(id);
-          setExportState("idle");
-          setExportsUsed((u) => u + 1);
-          return 0;
-        }
-        return next;
-      });
-    }, 90);
-    return () => clearInterval(id);
-  }, [exportState]);
-
-  const handleExportClick = () => {
+  const handleExportClick = async () => {
     if (exportsUsed >= EXPORT_LIMIT) {
       setExportState("limited");
       return;
     }
+    if (!font) return;
+
+    cancelExportRef.current = false;
     setExportFrame(0);
     setExportState("exporting");
+
+    try {
+      const res = await exportPngSequence({
+        font,
+        text: displayText,
+        tremor,
+        letterSpacing,
+        lineHeight,
+        strokeWidth: STROKE_BY_THICKNESS[thickness],
+        color,
+        boilFps,
+        exportFps: EXPORT_FPS,
+        durationSeconds: Number(durationSeconds),
+        ...RESOLUTIONS[resolution],
+        watermark: true, // versão gratuita
+        onProgress: (done) => setExportFrame(done),
+        shouldCancel: () => cancelExportRef.current,
+      });
+
+      if (res) {
+        triggerDownload(res.blob, res.filename);
+        setExportsUsed((u) => u + 1);
+      }
+      setExportState("idle");
+    } catch {
+      setExportState("error");
+    }
   };
 
   const controlsSections = (
@@ -167,23 +196,22 @@ export default function RabiscoPage() {
       </div>
 
       <div className={styles.section}>
-        <p className={styles.sectionTitle}>Animação</p>
-        <Slider label="Duração" value={duration} valueLabel={`${durationSeconds}s`} onChange={setDuration} />
-        <Slider label="Atraso entre letras" value={letterDelay} valueLabel={`${delayMs}ms`} onChange={setLetterDelay} />
-        <div className={styles.field}>
-          <div className={styles.toggleRow}>
-            <span className={styles.fieldLabel} style={{ display: "block" }}>
-              Loop
-            </span>
-            <button
-              className={styles.toggleTrack}
-              aria-pressed={loop}
-              onClick={() => setLoop((v) => !v)}
-            >
-              <span className={styles.toggleKnob} style={{ left: loop ? 20 : 2 }} />
-            </button>
-          </div>
-        </div>
+        <p className={styles.sectionTitle}>Composição</p>
+        <Slider
+          label="Espaço entre letras"
+          value={letterSpacingPct}
+          valueLabel={`${letterSpacing >= 0 ? "+" : ""}${Math.round(letterSpacing * 100)}%`}
+          onChange={setLetterSpacingPct}
+        />
+        <Slider
+          label="Entrelinha"
+          value={lineHeightPct}
+          valueLabel={`${lineHeight.toFixed(2)}×`}
+          onChange={setLineHeightPct}
+        />
+        <p className={styles.exportNote} style={{ marginTop: 2 }}>
+          Enter no campo de texto cria uma nova linha.
+        </p>
       </div>
 
       <div className={styles.section}>
@@ -238,30 +266,54 @@ export default function RabiscoPage() {
           </span>
         </div>
       </div>
+      <Slider
+        label="Duração"
+        value={duration}
+        valueLabel={`${durationSeconds}s · ${exportFrameCount} quadros`}
+        onChange={setDuration}
+      />
 
       {exportState === "exporting" ? (
         <>
           <div className={styles.progressRow}>
-            <span className={styles.progressLabel}>renderizando quadro {exportFrame}/96</span>
-            <button className={styles.cancelLink} onClick={() => setExportState("idle")}>
+            <span className={styles.progressLabel}>
+              renderizando quadro {exportFrame}/{exportFrameCount}
+            </span>
+            <button
+              className={styles.cancelLink}
+              onClick={() => {
+                cancelExportRef.current = true;
+                setExportState("idle");
+              }}
+            >
               cancelar
             </button>
           </div>
           <div className={styles.sliderTrack} style={{ marginTop: 8, padding: 0, height: 2 }}>
-            <div className={styles.sliderFill} style={{ width: `${(exportFrame / 96) * 100}%`, top: 0 }} />
+            <div
+              className={styles.sliderFill}
+              style={{ width: `${(exportFrame / exportFrameCount) * 100}%`, top: 0 }}
+            />
           </div>
         </>
       ) : exportState === "limited" ? (
         <p className={styles.limitMsg}>
-          3 exports hoje. Mais amanhã — ou <a className={styles.limitLink}>PRO agora →</a>
+          {EXPORT_LIMIT} exports hoje. Mais amanhã — ou{" "}
+          <a className={styles.limitLink}>PRO agora →</a>
         </p>
       ) : (
         <>
-          <a className={styles.exportLink} onClick={handleExportClick}>
-            Exportar sequência →
-          </a>
+          <button className={styles.exportLink} onClick={handleExportClick} disabled={!font}>
+            {font ? "Exportar sequência →" : "carregando traço ···"}
+          </button>
+          {exportState === "error" && (
+            <p className={styles.errorNote}>
+              o render falhou. tente uma duração menor ou 720p.
+            </p>
+          )}
           <p className={styles.exportNote}>
-            Grátis: com marca d&rsquo;água · {exportsUsed}/{EXPORT_LIMIT} exports hoje. Sem cadastro de cartão.
+            ZIP com {exportFrameCount} PNGs transparentes a {EXPORT_FPS}fps · marca d&rsquo;água na
+            versão gratuita · {exportsUsed}/{EXPORT_LIMIT} exports hoje.
           </p>
         </>
       )}
@@ -290,6 +342,8 @@ export default function RabiscoPage() {
                 paused={!playing}
                 thickness={thickness}
                 color={color}
+                letterSpacing={letterSpacing}
+                lineHeight={lineHeight}
               />
             </div>
             <div className={styles.transport}>
@@ -324,7 +378,14 @@ export default function RabiscoPage() {
           <div className={styles.rail}>
             <div className={styles.section}>
               <p className={styles.sectionTitle}>Texto</p>
-              <input className={styles.textInput} placeholder={DEMO_TEXT} value={text} onChange={(e) => setText(e.target.value)} maxLength={60} />
+              <textarea
+              className={styles.textArea}
+              placeholder={DEMO_TEXT}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              maxLength={160}
+              rows={2}
+            />
             </div>
             <div className={styles.section}>
               <p className={styles.sectionTitle}>Fonte de traço</p>
@@ -344,7 +405,14 @@ export default function RabiscoPage() {
             <p className={styles.sectionTitle} style={{ marginBottom: 8 }}>
               Texto
             </p>
-            <input className={styles.textInput} placeholder={DEMO_TEXT} value={text} onChange={(e) => setText(e.target.value)} maxLength={60} />
+            <textarea
+              className={styles.textArea}
+              placeholder={DEMO_TEXT}
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              maxLength={160}
+              rows={2}
+            />
           </div>
 
           <div className={styles.fontScroll}>

@@ -26,12 +26,15 @@ export interface GlyphInstance {
   char: string;
   /** Ordem de escrita, para revelar letra a letra. */
   index: number;
+  /** Linha a que a letra pertence (0-based). */
+  line: number;
 }
 
 export interface ScribbleResult {
   glyphs: GlyphInstance[];
   viewBox: string;
-  /** Altura da caixa em unidades do viewBox — usado para escalar o stroke. */
+  /** Dimensões da caixa em unidades do viewBox — usadas no export. */
+  width: number;
   height: number;
 }
 
@@ -121,9 +124,36 @@ function perturbToPathData(
 const FONT_SIZE = 200;
 const PADDING = 40;
 
+export interface ScribbleOptions {
+  /** Avanço extra entre letras, como fração do corpo da fonte (-0.05 a 0.4). */
+  letterSpacing?: number;
+  /** Distância entre linhas, múltiplo do corpo (0.7 a 2.2). */
+  lineHeight?: number;
+  /** Índice do quadro do tremor. */
+  frame?: number;
+}
+
+interface Placed {
+  char: string;
+  advance: number;
+  glyph: ReturnType<Font["charToGlyph"]>;
+}
+
+/** Mede uma linha sem desenhar — necessário para centralizar. */
+function measureLine(font: Font, line: string, extra: number): { items: Placed[]; width: number } {
+  let width = 0;
+  const items = Array.from(line).map((char) => {
+    const glyph = font.charToGlyph(char);
+    const advance = ((glyph.advanceWidth ?? 0) / font.unitsPerEm) * FONT_SIZE + extra;
+    width += advance;
+    return { char, advance, glyph };
+  });
+  return { items, width: Math.max(0, width - extra) };
+}
+
 /**
  * Monta o texto inteiro. `tremor` vai de 0 (fonte original, limpa) a 100.
- * `spacing` é o ajuste extra de avanço entre letras, em unidades do viewBox.
+ * Quebras de linha em `text` viram linhas de verdade, centralizadas entre si.
  *
  * `frame` gera uma versão alternativa da MESMA palavra: ciclar entre alguns
  * quadros a ~8-12fps produz o "boil" da animação desenhada à mão — é o que
@@ -133,47 +163,57 @@ export function buildScribble(
   font: Font,
   text: string,
   tremor: number,
-  spacing = 0,
-  frame = 0,
+  options: ScribbleOptions = {},
 ): ScribbleResult {
+  const { letterSpacing = 0, lineHeight = 1.15, frame = 0 } = options;
   const amp = Math.max(0, Math.min(100, tremor)) / 100;
+  const extra = letterSpacing * FONT_SIZE;
+  const lineStep = lineHeight * FONT_SIZE;
+
+  const rawLines = text.split("\n");
+  const measured = rawLines.map((l) => measureLine(font, l, extra));
+  const maxWidth = Math.max(...measured.map((m) => m.width), 1);
+
   const glyphs: GlyphInstance[] = [];
-  const baselineY = 0;
-  let cursorX = 0;
+  let index = 0;
 
-  const chars = Array.from(text);
-  chars.forEach((char, i) => {
-    const glyph = font.charToGlyph(char);
-    const advance = ((glyph.advanceWidth ?? 0) / font.unitsPerEm) * FONT_SIZE;
+  measured.forEach((line, lineIdx) => {
+    const baselineY = lineIdx * lineStep;
+    // Centraliza cada linha em relação à mais larga.
+    let cursorX = (maxWidth - line.width) / 2;
 
-    if (char.trim() !== "") {
-      const path = glyph.getPath(cursorX, baselineY, FONT_SIZE);
-      // A semente combina caractere, posição e quadro: o mesmo "a" em
-      // posições diferentes ganha formas diferentes, e cada quadro redesenha
-      // a letra de outro jeito (é daí que vem o tremor). Determinística —
-      // não pisca a cada keystroke.
-      const seed = char.codePointAt(0)! * 31 + i * 97 + frame * 7919;
-      glyphs.push({
-        d: perturbToPathData(path, amp, seed, cursorX + advance / 2, baselineY),
-        char,
-        index: i,
-      });
-    }
-
-    cursorX += advance + spacing;
+    line.items.forEach((item) => {
+      if (item.char.trim() !== "") {
+        const path = item.glyph.getPath(cursorX, baselineY, FONT_SIZE);
+        // A semente combina caractere, posição e quadro: o mesmo "a" em
+        // posições diferentes ganha formas diferentes, e cada quadro redesenha
+        // a letra de outro jeito (é daí que vem o tremor). Determinística —
+        // não pisca a cada keystroke.
+        const seed = item.char.codePointAt(0)! * 31 + index * 97 + lineIdx * 383 + frame * 7919;
+        glyphs.push({
+          d: perturbToPathData(path, amp, seed, cursorX + item.advance / 2, baselineY),
+          char: item.char,
+          index,
+          line: lineIdx,
+        });
+      }
+      cursorX += item.advance;
+      index += 1;
+    });
   });
 
   // A caixa é generosa de propósito: o warp e a rotação empurram o traço
   // para fora das métricas nominais da fonte.
   const ascent = (font.ascender / font.unitsPerEm) * FONT_SIZE;
   const descent = (font.descender / font.unitsPerEm) * FONT_SIZE;
-  const minY = baselineY - ascent - PADDING;
-  const height = ascent - descent + PADDING * 2;
-  const width = Math.max(cursorX, 1) + PADDING * 2;
+  const lastBaseline = (rawLines.length - 1) * lineStep;
+  const minY = -ascent - PADDING;
+  const maxY = lastBaseline - descent + PADDING;
 
   return {
     glyphs,
-    viewBox: `${-PADDING} ${minY} ${width} ${height}`,
-    height,
+    viewBox: `${-PADDING} ${minY} ${maxWidth + PADDING * 2} ${maxY - minY}`,
+    width: maxWidth + PADDING * 2,
+    height: maxY - minY,
   };
 }
