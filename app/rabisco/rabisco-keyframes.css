@@ -1,0 +1,16 @@
+/* Keyframes do jiggle por letra do Rabisco. CSS global (não .module.css)
+   de propósito: os nomes precisam ser referenciáveis literalmente via
+   `style.animationName` no JS — CSS Modules faz hash de @keyframes locais,
+   então essa animação não pode viver no rabisco.module.css. */
+@keyframes rabiscoJiggleA {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(var(--amp-x), calc(var(--amp-y) * -1)) rotate(var(--amp-r)); }
+  50% { transform: translate(calc(var(--amp-x) * -0.6), var(--amp-y)) rotate(calc(var(--amp-r) * -0.7)); }
+  75% { transform: translate(calc(var(--amp-x) * 0.4), calc(var(--amp-y) * -0.5)) rotate(calc(var(--amp-r) * 0.5)); }
+}
+@keyframes rabiscoJiggleB {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  30% { transform: translate(calc(var(--amp-x) * -1), var(--amp-y)) rotate(calc(var(--amp-r) * -1)); }
+  60% { transform: translate(var(--amp-x), calc(var(--amp-y) * -0.6)) rotate(calc(var(--amp-r) * 0.8)); }
+  85% { transform: translate(calc(var(--amp-x) * -0.3), calc(var(--amp-y) * 0.4)) rotate(calc(var(--amp-r) * -0.4)); }
+}

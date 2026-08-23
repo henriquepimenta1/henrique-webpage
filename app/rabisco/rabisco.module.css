@@ -77,6 +77,17 @@
   max-width: 100%;
 }
 .canvasWordText { overflow: hidden; white-space: nowrap; transition: width .08s linear; }
+
+.letter {
+  display: inline-block;
+  transform-origin: 50% 65%;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .letter { animation: none !important; }
+}
 .caret {
   width: 2px;
   background: var(--accent);

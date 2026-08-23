@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 import styles from "./rabisco.module.css";
+import "./rabisco-keyframes.css";
 
 // Rabisco — ferramenta de scribble animado para filmmakers.
 // Preview de avaliação: visual + interação de UI reais; o traço manuscrito
@@ -65,6 +66,43 @@ function Slider({
       </div>
     </div>
   );
+}
+
+// Pseudo-aleatório determinístico (mesmo valor no servidor e no cliente —
+// evita mismatch de hidratação). Não é criptográfico, só precisa parecer
+// orgânico letra a letra.
+function seededRandom(seed: number): number {
+  const x = Math.sin(seed * 999) * 10000;
+  return x - Math.floor(x);
+}
+
+const JIGGLE_MAX_TRANSLATE_PX = 5;
+const JIGGLE_MAX_ROTATE_DEG = 9;
+
+function renderJiggleLetters(text: string, tremor: number): ReactNode[] {
+  return Array.from(text).map((ch, i) => {
+    const amp = tremor / 100;
+    const rx = seededRandom(i * 7 + 1) * 2 - 1;
+    const ry = seededRandom(i * 7 + 2) * 2 - 1;
+    const rr = seededRandom(i * 7 + 3) * 2 - 1;
+    const duration = 0.28 + seededRandom(i * 7 + 4) * 0.35;
+    const delay = seededRandom(i * 7 + 5) * 0.6;
+
+    const style: CSSProperties & Record<string, string> = {
+      "--amp-x": `${rx * amp * JIGGLE_MAX_TRANSLATE_PX}px`,
+      "--amp-y": `${ry * amp * JIGGLE_MAX_TRANSLATE_PX}px`,
+      "--amp-r": `${rr * amp * JIGGLE_MAX_ROTATE_DEG}deg`,
+      animationName: tremor > 0 ? (i % 2 === 0 ? "rabiscoJiggleA" : "rabiscoJiggleB") : "none",
+      animationDuration: `${duration}s`,
+      animationDelay: `${delay}s`,
+    };
+
+    return (
+      <span key={i} className={styles.letter} style={style}>
+        {ch === " " ? " " : ch}
+      </span>
+    );
+  });
 }
 
 function LockIcon() {
@@ -291,7 +329,7 @@ export default function RabiscoPage() {
                 }}
               >
                 <span className={styles.canvasWordText} style={{ width: text.trim() ? "auto" : `${8 + progress * 0.9}%` }}>
-                  {displayText}
+                  {renderJiggleLetters(displayText, tremor)}
                 </span>
                 <span className={styles.caret} style={{ height: "0.7em" }} />
               </div>
