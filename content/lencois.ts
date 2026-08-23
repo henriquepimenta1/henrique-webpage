@@ -7,56 +7,6 @@ export const WA_GERAL = WA_BASE + encodeURIComponent(
   "Olá! Tenho interesse na Travessia dos Lençóis Maranhenses. Pode me passar mais informações sobre datas e vagas disponíveis?"
 )
 
-export function waMsg(label: string, datas: string, price: string) {
-  return WA_BASE + encodeURIComponent(
-    `Olá! Tenho interesse na ${label} (${datas}) — ${price}. Ainda tem vagas disponíveis?`
-  )
-}
-
-export interface Pacote {
-  label: string
-  datas: string
-  dias: string
-  km: string
-  oasis: string
-  price: string
-  desc: string
-  featured: boolean
-}
-
-export const PACOTES: Pacote[] = [
-  {
-    label: "Travessia Intensiva",
-    datas: "8 a 10 de Agosto",
-    dias: "3 dias",
-    km: "35km",
-    oasis: "2 oásis",
-    price: "R$ 3.599",
-    desc: "Aventura concentrada para quem tem menos tempo. A essência dos Lençóis em 3 dias completos.",
-    featured: false,
-  },
-  {
-    label: "Travessia Completa",
-    datas: "3 a 6 de Agosto",
-    dias: "4 dias",
-    km: "52km",
-    oasis: "3 oásis",
-    price: "R$ 3.899",
-    desc: "52km do início ao fim. A experiência mais equilibrada e completa dos Lençóis.",
-    featured: true,
-  },
-  {
-    label: "Imersão Total",
-    datas: "12 a 16 de Agosto",
-    dias: "5 dias",
-    km: "64km",
-    oasis: "4 oásis",
-    price: "R$ 4.499",
-    desc: "Ritmo contemplativo, mais tempo em cada oásis. Para quem quer viver cada detalhe.",
-    featured: false,
-  },
-]
-
 export interface DiaRoteiro {
   num: string
   rota: string
@@ -111,12 +61,6 @@ export const INCLUIDO = [
 
 export const NAO_INCLUIDO =
   "Transporte São Luís → Barreirinhas · Hospedagem antes/depois da travessia · Bebidas extras · Despesas pessoais"
-
-export const POLITICA_PAGAMENTO = [
-  { title: "25% de sinal",     desc: "Para garantir sua vaga na turma escolhida" },
-  { title: "Restante na viagem", desc: "À vista ou parcelado em até 12x*" },
-  { title: "Cancelamento",     desc: "Até 30 dias: crédito de 12 meses. 29–15 dias: retenção de 50%" },
-]
 
 export const PARCEIROS = "@lencoisexperience · @livinglencois"
 
