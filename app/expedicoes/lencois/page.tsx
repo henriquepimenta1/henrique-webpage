@@ -8,7 +8,6 @@ import {
   PACOTES,
   INCLUIDO,
   NAO_INCLUIDO,
-  POLITICA_PAGAMENTO,
   FOTOS_GALERIA,
   WA_GERAL,
   waMsg,
@@ -260,7 +259,6 @@ export default function LencoisPage() {
           .lenc-pad   { padding: 56px 24px !important; }
           .lenc-hero-pad { padding: 100px 24px 40px !important; }
           .lenc-day   { grid-template-columns: 1fr !important; }
-          .lenc-pol   { grid-template-columns: 1fr !important; }
           .gear-grid  { grid-template-columns: 1fr !important; }
           .notis-grid { grid-template-columns: 1fr !important; }
           .outros-grid { grid-template-columns: 1fr !important; }
@@ -613,16 +611,6 @@ export default function LencoisPage() {
           {/* CARROSSEL MOBILE — só visível em ≤900px */}
           <div className="lenc-packs-mobile" style={{ display: 'none', marginBottom: 32 }}>
             <PacotesCarousel />
-          </div>
-
-          {/* Política pagamento */}
-          <div className="lenc-pol" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
-            {POLITICA_PAGAMENTO.map(item => (
-              <div key={item.title} style={{ padding: '20px 24px', background: 'var(--canvas)', border: '1px solid var(--line)' }}>
-                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 700, color: 'var(--bark)', marginBottom: 4 }}>{item.title}</div>
-                <div style={{ fontFamily: 'var(--font-serif)', fontSize: 13, color: 'var(--stone)', lineHeight: 1.6 }}>{item.desc}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>

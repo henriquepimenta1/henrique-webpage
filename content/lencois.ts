@@ -108,12 +108,6 @@ export const INCLUIDO = [
 export const NAO_INCLUIDO =
   "Transporte São Luís → Barreirinhas · Hospedagem antes/depois da travessia · Bebidas extras · Despesas pessoais"
 
-export const POLITICA_PAGAMENTO = [
-  { title: "25% de sinal",     desc: "Para garantir sua vaga na turma escolhida" },
-  { title: "Restante na viagem", desc: "À vista ou parcelado em até 12x*" },
-  { title: "Cancelamento",     desc: "Até 30 dias: crédito de 12 meses. 29–15 dias: retenção de 50%" },
-]
-
 export const PARCEIROS = "@lencoisexperience · @livinglencois"
 
 // Fotos disponíveis em /public/images/lencois/
