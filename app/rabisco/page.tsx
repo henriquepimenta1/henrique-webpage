@@ -170,9 +170,10 @@ export default function RabiscoPage() {
         durationSeconds: Number(durationSeconds),
         ...RESOLUTIONS[resolution],
         watermark: true, // versão gratuita
-        // H.264 não tem alfa: se o fundo está transparente, o MP4 é achatado
-        // sobre o preto. No PNG este campo é ignorado.
-        background: background === "solid" ? bgColor : "#000000",
+        // H.264 não tem alfa. Preto fixo de propósito: no DaVinci/Premiere o
+        // modo de composição Screen/Add derruba o preto, então o overlay sai
+        // de graça. No PNG este campo é ignorado.
+        background: "#000000",
         onProgress: (done: number) => setExportFrame(done),
         shouldCancel: () => cancelExportRef.current,
       };
@@ -347,13 +348,11 @@ export default function RabiscoPage() {
           <p className={styles.exportNote}>
             {format === "mp4" ? (
               <>
-                MP4 H.264, {exportFrameCount} quadros a {EXPORT_FPS}fps.{" "}
-                <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>
-                  MP4 não tem transparência
-                </strong>{" "}
-                — o traço sai achatado sobre{" "}
-                {background === "solid" ? bgColor.toUpperCase() : "preto"}. Para sobrepor no
-                DaVinci sem fundo, use PNG.
+                MP4 H.264, {exportFrameCount} quadros a {EXPORT_FPS}fps, sempre com{" "}
+                <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>fundo preto</strong> —
+                H.264 não tem transparência. No DaVinci/Premiere, ponha o clipe por cima e use o
+                modo de composição <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>Screen</strong>{" "}
+                (ou Add): o preto some e sobra só o traço.
               </>
             ) : (
               <>ZIP com {exportFrameCount} PNGs transparentes a {EXPORT_FPS}fps.</>
