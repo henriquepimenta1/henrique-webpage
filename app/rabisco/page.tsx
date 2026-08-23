@@ -5,7 +5,7 @@ import Link from "next/link";
 import styles from "./rabisco.module.css";
 import ScribbleCanvas from "./scribble-canvas";
 import { useScribbleFont } from "./use-scribble-font";
-import { exportPngSequence, triggerDownload } from "./export";
+import { exportPngSequence, exportMp4, canExportMp4, triggerDownload } from "./export";
 
 // Rabisco — ferramenta de scribble animado para filmmakers.
 // O traço vem de paths vetoriais perturbados em tempo real (ver scribble.ts),
@@ -98,10 +98,11 @@ export default function RabiscoPage() {
   const [speed, setSpeed] = useState(55);
   const [duration, setDuration] = useState(40);
   const [letterSpacingPct, setLetterSpacingPct] = useState(20);
-  const [lineHeightPct, setLineHeightPct] = useState(30);
+  const [lineHeightPct, setLineHeightPct] = useState(46);
   const [loop, setLoop] = useState(true);
   const [color, setColor] = useState("#c08246");
   const [background, setBackground] = useState<"transparent" | "solid">("transparent");
+  const [bgColor, setBgColor] = useState("#0d0c0b");
   const [format, setFormat] = useState<"png" | "mp4">("png");
   const [resolution, setResolution] = useState<"720" | "1080">("1080");
   const [playing, setPlaying] = useState(true);
@@ -112,6 +113,10 @@ export default function RabiscoPage() {
   const [exportFrame, setExportFrame] = useState(0);
   const cancelExportRef = useRef(false);
   const { font } = useScribbleFont();
+  // Só no cliente: `window.VideoEncoder` não existe no SSR e checar direto
+  // no render causaria divergência de hidratação.
+  const [mp4Supported, setMp4Supported] = useState(true);
+  useEffect(() => setMp4Supported(canExportMp4()), []);
 
   const displayText = text.trim() ? text : DEMO_TEXT;
   const durationSeconds = (0.8 + (duration / 100) * 3.6).toFixed(1);
@@ -119,7 +124,9 @@ export default function RabiscoPage() {
   const boilFps = Math.round(4 + (speed / 100) * 10);
   // Negativo aperta as letras; o teto evita a palavra virar letras soltas.
   const letterSpacing = -0.05 + (letterSpacingPct / 100) * 0.45;
-  const lineHeight = 0.7 + (lineHeightPct / 100) * 1.5;
+  // Vai bem abaixo de 1 de propósito: abaixo de ~0.6 as linhas se sobrepõem,
+  // que é um efeito legítimo em lettering.
+  const lineHeight = 0.25 + (lineHeightPct / 100) * 1.95;
   const exportFrameCount = Math.max(1, Math.round(Number(durationSeconds) * EXPORT_FPS));
 
   // Reproduz o preview em loop enquanto "playing" — puramente visual.
@@ -150,7 +157,7 @@ export default function RabiscoPage() {
     setExportState("exporting");
 
     try {
-      const res = await exportPngSequence({
+      const params = {
         font,
         text: displayText,
         tremor,
@@ -163,9 +170,14 @@ export default function RabiscoPage() {
         durationSeconds: Number(durationSeconds),
         ...RESOLUTIONS[resolution],
         watermark: true, // versão gratuita
-        onProgress: (done) => setExportFrame(done),
+        // H.264 não tem alfa: se o fundo está transparente, o MP4 é achatado
+        // sobre o preto. No PNG este campo é ignorado.
+        background: background === "solid" ? bgColor : "#000000",
+        onProgress: (done: number) => setExportFrame(done),
         shouldCancel: () => cancelExportRef.current,
-      });
+      };
+
+      const res = format === "mp4" ? await exportMp4(params) : await exportPngSequence(params);
 
       if (res) {
         triggerDownload(res.blob, res.filename);
@@ -234,6 +246,20 @@ export default function RabiscoPage() {
             </button>
           </div>
         </div>
+        {background === "solid" && (
+          <div className={styles.field}>
+            <span className={styles.fieldLabel}>Cor do fundo</span>
+            <div className={styles.colorRow}>
+              <input
+                type="color"
+                className={styles.colorSwatch}
+                value={bgColor}
+                onChange={(e) => setBgColor(e.target.value)}
+              />
+              <span className={styles.colorHex}>{bgColor.toUpperCase()}</span>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
@@ -247,7 +273,14 @@ export default function RabiscoPage() {
           <button className={styles.chip} data-active={format === "png" ? "1" : "0"} onClick={() => setFormat("png")}>
             PNG sequência
           </button>
-          <button className={styles.chip} data-active={format === "mp4" ? "1" : "0"} onClick={() => setFormat("mp4")}>
+          <button
+            className={styles.chip}
+            data-active={format === "mp4" ? "1" : "0"}
+            data-locked={mp4Supported ? undefined : "1"}
+            disabled={!mp4Supported}
+            title={mp4Supported ? undefined : "este browser não tem WebCodecs"}
+            onClick={() => setFormat("mp4")}
+          >
             MP4
           </button>
         </div>
@@ -312,8 +345,20 @@ export default function RabiscoPage() {
             </p>
           )}
           <p className={styles.exportNote}>
-            ZIP com {exportFrameCount} PNGs transparentes a {EXPORT_FPS}fps · marca d&rsquo;água na
-            versão gratuita · {exportsUsed}/{EXPORT_LIMIT} exports hoje.
+            {format === "mp4" ? (
+              <>
+                MP4 H.264, {exportFrameCount} quadros a {EXPORT_FPS}fps.{" "}
+                <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>
+                  MP4 não tem transparência
+                </strong>{" "}
+                — o traço sai achatado sobre{" "}
+                {background === "solid" ? bgColor.toUpperCase() : "preto"}. Para sobrepor no
+                DaVinci sem fundo, use PNG.
+              </>
+            ) : (
+              <>ZIP com {exportFrameCount} PNGs transparentes a {EXPORT_FPS}fps.</>
+            )}{" "}
+            Marca d&rsquo;água na versão gratuita · {exportsUsed}/{EXPORT_LIMIT} exports hoje.
           </p>
         </>
       )}
@@ -334,7 +379,14 @@ export default function RabiscoPage() {
 
         <div className={styles.main}>
           <div className={styles.canvasCol}>
-            <div className={styles.canvasStage} style={background === "solid" ? { backgroundImage: "none", backgroundColor: "var(--surface)" } : undefined}>
+            <div
+              className={styles.canvasStage}
+              style={
+                background === "solid"
+                  ? { backgroundImage: "none", backgroundColor: bgColor }
+                  : undefined
+              }
+            >
               <ScribbleCanvas
                 text={displayText}
                 tremor={tremor}

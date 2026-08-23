@@ -159,6 +159,7 @@
 .chip { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-2); border: 1px solid var(--border); padding: 7px 12px; }
 .chip[data-active="1"] { color: var(--text-1); border-color: var(--accent); }
 .chip[data-locked="1"] { color: var(--text-3); display: flex; align-items: center; gap: 5px; cursor: default; }
+.chip:disabled { color: var(--text-3); cursor: default; opacity: .55; }
 
 .exportLink { font-family: var(--font-ui); font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--accent); padding-bottom: 4px; display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; }
 .exportLink:disabled { color: var(--text-3); border-bottom-color: var(--text-3); cursor: default; }

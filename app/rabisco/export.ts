@@ -1,6 +1,9 @@
-// Export da sequência PNG. Cada quadro é o SVG do tremor rasterizado num
-// canvas transparente do tamanho final — é isso que entra no DaVinci/Premiere
-// como camada por cima do vídeo.
+// Export do Rabisco. Dois caminhos a partir do mesmo desenho:
+//
+//   PNG — sequência de quadros com fundo transparente, num ZIP. É o formato
+//         para sobrepor no DaVinci/Premiere.
+//   MP4 — arquivo único via WebCodecs. H.264 NÃO tem canal alfa, então o
+//         quadro é achatado sobre uma cor de fundo.
 
 import type { Font } from "opentype.js";
 import { buildScribble, type ScribbleResult } from "./scribble";
@@ -22,12 +25,37 @@ export interface ExportParams {
   height: number;
   /** Marca d'água na versão gratuita. */
   watermark: boolean;
+  /** Cor de fundo. Obrigatória no MP4 (sem alfa); ignorada no PNG. */
+  background?: string;
   onProgress?: (done: number, total: number) => void;
   /** Devolve true para abortar entre quadros. */
   shouldCancel?: () => boolean;
 }
 
+export interface ExportResult {
+  blob: Blob;
+  filename: string;
+  frames: number;
+}
+
 const BOIL_FRAMES = 3;
+
+/** WebCodecs + H.264 disponíveis neste browser? */
+export function canExportMp4(): boolean {
+  return typeof window !== "undefined" && "VideoEncoder" in window;
+}
+
+function boilFramesOf(p: ExportParams): ScribbleResult[] {
+  // Os desenhos do tremor são só BOIL_FRAMES: gera uma vez e reusa ao longo
+  // da sequência, em vez de recalcular os paths a cada quadro exportado.
+  return Array.from({ length: p.tremor > 0 ? BOIL_FRAMES : 1 }, (_, f) =>
+    buildScribble(p.font, p.text, p.tremor, {
+      letterSpacing: p.letterSpacing,
+      lineHeight: p.lineHeight,
+      frame: f,
+    }),
+  );
+}
 
 function svgMarkup(frame: ScribbleResult, p: ExportParams): string {
   const paths = frame.glyphs
@@ -47,13 +75,8 @@ function svgMarkup(frame: ScribbleResult, p: ExportParams): string {
   );
 }
 
-/** Rasteriza um SVG num canvas transparente. */
-async function rasterize(
-  markup: string,
-  width: number,
-  height: number,
-  watermark: boolean,
-): Promise<Blob> {
+/** Carrega o SVG como imagem — o passo que exige um blob URL. */
+async function svgToImage(markup: string): Promise<HTMLImageElement> {
   const url = URL.createObjectURL(new Blob([markup], { type: "image/svg+xml" }));
   try {
     const img = new Image();
@@ -62,87 +85,204 @@ async function rasterize(
       img.onerror = () => reject(new Error("falha ao rasterizar o quadro"));
       img.src = url;
     });
-
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("canvas indisponível");
-    ctx.drawImage(img, 0, 0, width, height);
-
-    if (watermark) {
-      ctx.save();
-      ctx.font = `${Math.round(height * 0.028)}px system-ui, sans-serif`;
-      ctx.fillStyle = "rgba(255,255,255,0.55)";
-      ctx.textAlign = "right";
-      ctx.textBaseline = "bottom";
-      ctx.fillText("euhenriq.com.br/rabisco", width - height * 0.03, height - height * 0.03);
-      ctx.restore();
-    }
-
-    return await new Promise<Blob>((resolve, reject) => {
-      canvas.toBlob(
-        (b) => (b ? resolve(b) : reject(new Error("canvas não gerou PNG"))),
-        "image/png",
-      );
-    });
+    return img;
   } finally {
     URL.revokeObjectURL(url);
   }
 }
 
-export interface ExportResult {
-  blob: Blob;
-  filename: string;
-  frames: number;
+function paintFrame(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  p: ExportParams,
+  background?: string,
+): void {
+  ctx.clearRect(0, 0, p.width, p.height);
+  if (background) {
+    ctx.fillStyle = background;
+    ctx.fillRect(0, 0, p.width, p.height);
+  }
+  ctx.drawImage(img, 0, 0, p.width, p.height);
+
+  if (p.watermark) {
+    ctx.save();
+    ctx.font = `${Math.round(p.height * 0.028)}px system-ui, sans-serif`;
+    ctx.fillStyle = "rgba(255,255,255,0.55)";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("euhenriq.com.br/rabisco", p.width - p.height * 0.03, p.height - p.height * 0.03);
+    ctx.restore();
+  }
 }
+
+function makeCanvas(p: ExportParams): {
+  canvas: HTMLCanvasElement;
+  ctx: CanvasRenderingContext2D;
+} {
+  const canvas = document.createElement("canvas");
+  canvas.width = p.width;
+  canvas.height = p.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("canvas indisponível");
+  return { canvas, ctx };
+}
+
+function slugOf(text: string): string {
+  return (
+    text
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "")
+      .slice(0, 24) || "rabisco"
+  );
+}
+
+/** Qual dos desenhos do tremor cai no quadro `i` da saída. */
+function boilIndexAt(i: number, p: ExportParams, count: number): number {
+  return Math.floor((i * p.boilFps) / p.exportFps) % count;
+}
+
+// ─────────────────────────── PNG ───────────────────────────
 
 export async function exportPngSequence(p: ExportParams): Promise<ExportResult | null> {
   const total = Math.max(1, Math.round(p.durationSeconds * p.exportFps));
-
-  // Os desenhos do tremor são só BOIL_FRAMES: gera uma vez e reusa ao longo
-  // da sequência, em vez de recalcular os paths a cada quadro exportado.
-  const boil = Array.from({ length: p.tremor > 0 ? BOIL_FRAMES : 1 }, (_, f) =>
-    buildScribble(p.font, p.text, p.tremor, {
-      letterSpacing: p.letterSpacing,
-      lineHeight: p.lineHeight,
-      frame: f,
-    }),
-  );
+  const boil = boilFramesOf(p);
+  const { canvas, ctx } = makeCanvas(p);
 
   const JSZip = (await import("jszip")).default;
   const zip = new JSZip();
   const pad = String(total).length;
 
+  // Só existem `boil.length` imagens possíveis — rasteriza cada uma uma vez.
+  const imgs = await Promise.all(boil.map((f) => svgToImage(svgMarkup(f, p))));
+
   for (let i = 0; i < total; i++) {
     if (p.shouldCancel?.()) return null;
 
-    const boilIdx = Math.floor((i * p.boilFps) / p.exportFps) % boil.length;
-    const png = await rasterize(
-      svgMarkup(boil[boilIdx], p),
-      p.width,
-      p.height,
-      p.watermark,
-    );
+    paintFrame(ctx, imgs[boilIndexAt(i, p, boil.length)], p);
+    const png = await new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob(
+        (b) => (b ? resolve(b) : reject(new Error("canvas não gerou PNG"))),
+        "image/png",
+      );
+    });
     zip.file(`rabisco_${String(i + 1).padStart(pad, "0")}.png`, png);
 
     p.onProgress?.(i + 1, total);
-    // Devolve a thread ao browser para a barra de progresso andar.
     await new Promise((r) => setTimeout(r, 0));
   }
 
   if (p.shouldCancel?.()) return null;
 
   const blob = await zip.generateAsync({ type: "blob" });
-  const slug =
-    p.text
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "")
-      .slice(0, 24) || "rabisco";
+  return {
+    blob,
+    filename: `${slugOf(p.text)}_${p.width}x${p.height}_${total}f.zip`,
+    frames: total,
+  };
+}
 
-  return { blob, filename: `${slug}_${p.width}x${p.height}_${total}f.zip`, frames: total };
+// ─────────────────────────── MP4 ───────────────────────────
+
+/** Do mais capaz para o mais compatível. */
+const H264_CODECS = ["avc1.640028", "avc1.4d0028", "avc1.42001f"];
+
+async function pickCodec(width: number, height: number, framerate: number): Promise<string> {
+  for (const codec of H264_CODECS) {
+    try {
+      const { supported } = await VideoEncoder.isConfigSupported({
+        codec,
+        width,
+        height,
+        framerate,
+      });
+      if (supported) return codec;
+    } catch {
+      // perfil desconhecido neste browser — tenta o próximo
+    }
+  }
+  throw new Error("nenhum perfil H.264 suportado");
+}
+
+export async function exportMp4(p: ExportParams): Promise<ExportResult | null> {
+  if (!canExportMp4()) throw new Error("WebCodecs indisponível neste browser");
+
+  const total = Math.max(1, Math.round(p.durationSeconds * p.exportFps));
+  const boil = boilFramesOf(p);
+  const { canvas, ctx } = makeCanvas(p);
+  // H.264 não tem alfa: sem cor definida, achata sobre preto.
+  const background = p.background ?? "#000000";
+
+  const [{ Muxer, ArrayBufferTarget }, codec] = await Promise.all([
+    import("mp4-muxer"),
+    pickCodec(p.width, p.height, p.exportFps),
+  ]);
+
+  const muxer = new Muxer({
+    target: new ArrayBufferTarget(),
+    video: { codec: "avc", width: p.width, height: p.height, frameRate: p.exportFps },
+    fastStart: "in-memory",
+  });
+
+  let encodeError: Error | null = null;
+  const encoder = new VideoEncoder({
+    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+    error: (e) => {
+      encodeError = e instanceof Error ? e : new Error(String(e));
+    },
+  });
+
+  encoder.configure({
+    codec,
+    width: p.width,
+    height: p.height,
+    framerate: p.exportFps,
+    // ~0.1 bit por pixel por quadro: generoso para traço chapado.
+    bitrate: Math.round(p.width * p.height * p.exportFps * 0.1),
+  });
+
+  try {
+    const imgs = await Promise.all(boil.map((f) => svgToImage(svgMarkup(f, p))));
+    const frameDuration = 1e6 / p.exportFps;
+
+    for (let i = 0; i < total; i++) {
+      if (p.shouldCancel?.()) {
+        encoder.close();
+        return null;
+      }
+      if (encodeError) throw encodeError;
+
+      paintFrame(ctx, imgs[boilIndexAt(i, p, boil.length)], p, background);
+
+      const frame = new VideoFrame(canvas, {
+        timestamp: Math.round(i * frameDuration),
+        duration: Math.round(frameDuration),
+      });
+      // Keyframe a cada segundo mantém o arquivo navegável na timeline.
+      encoder.encode(frame, { keyFrame: i % p.exportFps === 0 });
+      frame.close();
+
+      // Sem isso a fila do encoder cresce sem limite e estoura a memória.
+      while (encoder.encodeQueueSize > 8) {
+        await new Promise((r) => setTimeout(r, 0));
+      }
+      p.onProgress?.(i + 1, total);
+    }
+
+    await encoder.flush();
+    if (encodeError) throw encodeError;
+    muxer.finalize();
+
+    const { buffer } = muxer.target;
+    return {
+      blob: new Blob([buffer], { type: "video/mp4" }),
+      filename: `${slugOf(p.text)}_${p.width}x${p.height}_${p.exportFps}fps.mp4`,
+      frames: total,
+    };
+  } finally {
+    if (encoder.state !== "closed") encoder.close();
+  }
 }
 
 export function triggerDownload(blob: Blob, filename: string): void {
