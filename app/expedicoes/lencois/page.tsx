@@ -1,16 +1,14 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import SiteNav from '@/components/nav'
 import SiteFooter from '@/components/site-footer'
 import {
-  PACOTES,
   INCLUIDO,
   NAO_INCLUIDO,
   FOTOS_GALERIA,
   WA_GERAL,
-  waMsg,
 } from '@/content/lencois'
 import LencoisMap from '@/components/lencois-map'
 const DIA_COLORS = ['', 'var(--rust)', '#6FA3D8', '#4A5838', 'var(--rust-soft)']
@@ -119,111 +117,6 @@ function GearChecklist() {
   )
 }
 
-/* ─── Carrossel de Pacotes Mobile ──────────────────────────────── */
-function PacotesCarousel() {
-  const [active, setActive] = useState(1) // featured no meio
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-    const onScroll = () => {
-      const cardWidth = el.offsetWidth * 0.88 + 12 // card + gap
-      const idx = Math.round(el.scrollLeft / cardWidth)
-      setActive(idx)
-    }
-    el.addEventListener('scroll', onScroll, { passive: true })
-    return () => el.removeEventListener('scroll', onScroll)
-  }, [])
-
-  const scrollTo = (i: number) => {
-    const el = scrollRef.current
-    if (!el) return
-    const cardWidth = el.offsetWidth * 0.88 + 12
-    el.scrollTo({ left: i * cardWidth, behavior: 'smooth' })
-  }
-
-  return (
-    <div>
-      <div
-        ref={scrollRef}
-        style={{
-          display: 'flex',
-          gap: 12,
-          overflowX: 'auto',
-          scrollSnapType: 'x mandatory',
-          WebkitOverflowScrolling: 'touch',
-          padding: '4px 6vw 16px',
-          margin: '0 -24px',
-          scrollbarWidth: 'none',
-        }}
-        className="pack-scroll"
-      >
-        <style>{`.pack-scroll::-webkit-scrollbar { display: none; }`}</style>
-        {PACOTES.map(p => (
-          <div
-            key={p.label}
-            style={{
-              flex: '0 0 88%',
-              scrollSnapAlign: 'center',
-              padding: '32px 24px',
-              position: 'relative',
-              background: p.featured ? 'var(--bark)' : 'var(--canvas)',
-              borderTop: p.featured ? '3px solid var(--rust)' : '3px solid transparent',
-              outline: p.featured ? '1px solid var(--rust)' : '1px solid var(--line)',
-              display: 'flex',
-              flexDirection: 'column',
-            }}
-          >
-            {p.featured && (
-              <div style={{
-                position: 'absolute', top: -13, left: 24,
-                background: 'var(--rust)', color: 'var(--canvas)',
-                fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em',
-                textTransform: 'uppercase', padding: '5px 14px',
-              }}>Mais popular</div>
-            )}
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: p.featured ? 'var(--rust-soft)' : 'var(--stone)', marginBottom: 8 }}>{p.label}</div>
-            <div style={{ fontFamily: 'var(--font-ui)', fontSize: 20, fontWeight: 700, color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 10 }}>{p.datas}</div>
-            <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
-              {[p.dias, p.km, p.oasis].map(v => (
-                <span key={v} style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.12em', padding: '3px 9px', color: p.featured ? 'var(--canvas)' : 'var(--stone)', border: `1px solid ${p.featured ? 'var(--forest-soft)' : 'var(--line)'}` }}>{v}</span>
-              ))}
-            </div>
-            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 14, lineHeight: 1.55, color: p.featured ? 'var(--ashe)' : 'var(--stone)', marginBottom: 20 }}>{p.desc}</p>
-            <a href={waMsg(p.label)} target="_blank" rel="noopener noreferrer" style={{
-              display: 'block', textAlign: 'center', textDecoration: 'none',
-              padding: '14px 20px', fontFamily: 'var(--font-ui)', fontSize: 11,
-              fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase',
-              background: p.featured ? 'var(--rust)' : 'transparent',
-              color: p.featured ? 'var(--canvas)' : 'var(--bark)',
-              border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}`,
-              marginTop: 'auto',
-            }}>Estou interessado →</a>
-          </div>
-        ))}
-      </div>
-
-      {/* Dots */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: 8 }}>
-        {PACOTES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => scrollTo(i)}
-            aria-label={`Pacote ${i + 1}`}
-            style={{
-              width: i === active ? 24 : 8, height: 8,
-              borderRadius: 4, padding: 0, border: 'none',
-              background: i === active ? 'var(--rust)' : 'var(--line)',
-              cursor: 'pointer', transition: 'width .3s, background .3s',
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  )
-}
-
 
 /* ─── Política de cancelamento ─────────────────────────────────── */
 const CANCELAMENTO = [
@@ -247,7 +140,6 @@ export default function LencoisPage() {
       <style>{`
         .lenc-trip-img { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
         .lenc-img-wrap:hover .lenc-trip-img { transform: scale(1.04); }
-        .lenc-pack:hover { outline: 1px solid var(--rust); }
         .lenc-cta-btn:hover { opacity: .88; }
         @media (prefers-reduced-motion: reduce) { .lenc-hero-video { display: none !important; } }
 
@@ -265,6 +157,7 @@ export default function LencoisPage() {
           .lenc-incluso-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
           .lenc-nivel { flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
           .lenc-nivel-divider { display: none !important; }
+          .lenc-nextrun { padding: 40px 24px !important; }
         }
 
         /* ── iPhone (≤480px) — foco principal ── */
@@ -578,39 +471,20 @@ export default function LencoisPage() {
         </div>
       </section>
 
-      {/* ── PACOTES ── */}
+      {/* ── PRÓXIMA TURMA ── */}
       <section style={{ background: 'var(--canvas-deep)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
         <div className="lenc-pad" style={{ padding: '96px 56px' }}>
-          <div style={{ marginBottom: 48 }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: 14 }}>№ 07 · Em breve · 2027</div>
-            <h2 className="lenc-section-title-lg" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: 0, color: 'var(--bark)' }}>
-              Escolha seu <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--moss)' }}>pacote.</span>
+          <div className="lenc-nextrun" style={{ padding: '56px 48px', background: 'var(--bark)', border: '1px solid var(--rust)', borderTop: '3px solid var(--rust)', textAlign: 'center' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust-soft)', marginBottom: 18 }}>№ 07 · Próxima turma</div>
+            <h2 className="lenc-section-title-lg" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: '0 0 16px', color: 'var(--canvas)' }}>
+              Em breve <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>· 2027.</span>
             </h2>
-          </div>
-
-          {/* DESKTOP: grid 3 cols / MOBILE: carrossel */}
-          <div className="lenc-packs-desktop" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2, marginBottom: 32 }}>
-            {PACOTES.map(p => (
-              <div key={p.label} className="lenc-pack" style={{ padding: '40px 32px', position: 'relative', background: p.featured ? 'var(--bark)' : 'var(--canvas)', borderTop: p.featured ? '3px solid var(--rust)' : '3px solid transparent', outline: p.featured ? '1px solid var(--rust)' : '1px solid var(--line)' }}>
-                {p.featured && <div style={{ position: 'absolute', top: -13, left: 32, background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', padding: '5px 14px' }}>Mais popular</div>}
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, letterSpacing: '.22em', textTransform: 'uppercase', color: p.featured ? 'var(--rust-soft)' : 'var(--stone)', marginBottom: 8 }}>{p.label}</div>
-                <div style={{ fontFamily: 'var(--font-ui)', fontSize: 22, fontWeight: 700, color: p.featured ? 'var(--canvas)' : 'var(--bark)', marginBottom: 10 }}>{p.datas}</div>
-                <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
-                  {[p.dias, p.km, p.oasis].map(v => (
-                    <span key={v} style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', padding: '3px 10px', color: p.featured ? 'var(--canvas)' : 'var(--stone)', border: `1px solid ${p.featured ? 'var(--forest-soft)' : 'var(--line)'}` }}>{v}</span>
-                  ))}
-                </div>
-                <p style={{ fontFamily: 'var(--font-serif)', fontSize: 15, lineHeight: 1.6, color: p.featured ? 'var(--ashe)' : 'var(--stone)', marginBottom: 28 }}>{p.desc}</p>
-                <a href={waMsg(p.label)} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none', padding: '14px 24px', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase', background: p.featured ? 'var(--rust)' : 'transparent', color: p.featured ? 'var(--canvas)' : 'var(--bark)', border: `1px solid ${p.featured ? 'var(--rust)' : 'var(--bark)'}` }}>
-                  Estou interessado →
-                </a>
-              </div>
-            ))}
-          </div>
-
-          {/* CARROSSEL MOBILE — só visível em ≤900px */}
-          <div className="lenc-packs-mobile" style={{ display: 'none', marginBottom: 32 }}>
-            <PacotesCarousel />
+            <p style={{ fontFamily: 'var(--font-serif)', fontSize: 17, lineHeight: 1.6, color: 'var(--ashe)', maxWidth: '48ch', margin: '0 auto 32px' }}>
+              Novas datas da Travessia dos Lençóis Maranhenses em definição. Chame no WhatsApp pra entrar na lista de interessados e ser avisado assim que abrirem as vagas.
+            </p>
+            <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn" style={{ display: 'inline-block', textDecoration: 'none', padding: '16px 36px', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase', background: 'var(--rust)', color: 'var(--canvas)', border: '1px solid var(--rust)' }}>
+              Estou interessado →
+            </a>
           </div>
         </div>
       </section>
@@ -672,11 +546,9 @@ export default function LencoisPage() {
 
       <SiteFooter dark={false} />
 
-      {/* Switch desktop/mobile pacotes + timeline + barra fixa mobile */}
+      {/* Switch timeline + barra fixa mobile */}
       <style>{`
         @media(max-width: 900px) {
-          .lenc-packs-desktop { display: none !important; }
-          .lenc-packs-mobile  { display: block !important; }
           .lenc-tl-line { display: none !important; }
           .lenc-day-rail { flex-direction: row !important; align-items: center !important; gap: 12px !important; align-self: auto !important; padding-top: 0 !important; }
           .lenc-day-rail .lenc-day-num { font-size: 34px !important; margin-top: 0 !important; }
