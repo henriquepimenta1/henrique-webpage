@@ -7,52 +7,6 @@ export const WA_GERAL = WA_BASE + encodeURIComponent(
   "Olá! Tenho interesse na Travessia dos Lençóis Maranhenses. Pode me passar mais informações sobre datas e vagas disponíveis?"
 )
 
-export function waMsg(label: string) {
-  return WA_BASE + encodeURIComponent(
-    `Olá! Tenho interesse na ${label} (Lençóis Maranhenses, 2027). Pode me colocar na lista de interessados?`
-  )
-}
-
-export interface Pacote {
-  label: string
-  datas: string
-  dias: string
-  km: string
-  oasis: string
-  desc: string
-  featured: boolean
-}
-
-export const PACOTES: Pacote[] = [
-  {
-    label: "Travessia Intensiva",
-    datas: "Em breve · 2027",
-    dias: "3 dias",
-    km: "35km",
-    oasis: "2 oásis",
-    desc: "Aventura concentrada para quem tem menos tempo. A essência dos Lençóis em 3 dias completos.",
-    featured: false,
-  },
-  {
-    label: "Travessia Completa",
-    datas: "Em breve · 2027",
-    dias: "4 dias",
-    km: "52km",
-    oasis: "3 oásis",
-    desc: "52km do início ao fim. A experiência mais equilibrada e completa dos Lençóis.",
-    featured: true,
-  },
-  {
-    label: "Imersão Total",
-    datas: "Em breve · 2027",
-    dias: "5 dias",
-    km: "64km",
-    oasis: "4 oásis",
-    desc: "Ritmo contemplativo, mais tempo em cada oásis. Para quem quer viver cada detalhe.",
-    featured: false,
-  },
-]
-
 export interface DiaRoteiro {
   num: string
   rota: string
