@@ -124,12 +124,17 @@ const PADDING = 40;
 /**
  * Monta o texto inteiro. `tremor` vai de 0 (fonte original, limpa) a 100.
  * `spacing` é o ajuste extra de avanço entre letras, em unidades do viewBox.
+ *
+ * `frame` gera uma versão alternativa da MESMA palavra: ciclar entre alguns
+ * quadros a ~8-12fps produz o "boil" da animação desenhada à mão — é o que
+ * faz a letra parecer que está tremendo, e não apenas torta.
  */
 export function buildScribble(
   font: Font,
   text: string,
   tremor: number,
   spacing = 0,
+  frame = 0,
 ): ScribbleResult {
   const amp = Math.max(0, Math.min(100, tremor)) / 100;
   const glyphs: GlyphInstance[] = [];
@@ -143,10 +148,11 @@ export function buildScribble(
 
     if (char.trim() !== "") {
       const path = glyph.getPath(cursorX, baselineY, FONT_SIZE);
-      // Semente combina o caractere e a posição: o mesmo "a" em posições
-      // diferentes ganha formas diferentes, mas cada um é estável entre
-      // renders (não pisca a cada keystroke).
-      const seed = char.codePointAt(0)! * 31 + i * 97;
+      // A semente combina caractere, posição e quadro: o mesmo "a" em
+      // posições diferentes ganha formas diferentes, e cada quadro redesenha
+      // a letra de outro jeito (é daí que vem o tremor). Determinística —
+      // não pisca a cada keystroke.
+      const seed = char.codePointAt(0)! * 31 + i * 97 + frame * 7919;
       glyphs.push({
         d: perturbToPathData(path, amp, seed, cursorX + advance / 2, baselineY),
         char,

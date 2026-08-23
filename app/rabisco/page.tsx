@@ -100,7 +100,8 @@ export default function RabiscoPage() {
 
   const displayText = text.trim() ? text : DEMO_TEXT;
   const durationSeconds = (0.8 + (duration / 100) * 3.6).toFixed(1);
-  const speedLabel = (0.6 + (speed / 100) * 1.8).toFixed(1);
+  // Abaixo de ~4fps o tremor lê como piscada; acima de ~14 vira vibração.
+  const boilFps = Math.round(4 + (speed / 100) * 10);
   const delayMs = Math.round(20 + (letterDelay / 100) * 140);
 
   // Reproduz o preview em loop enquanto "playing" — puramente visual.
@@ -162,7 +163,7 @@ export default function RabiscoPage() {
           </div>
         </div>
         <Slider label="Tremor" value={tremor} valueLabel={`${tremor}%`} onChange={setTremor} />
-        <Slider label="Velocidade" value={speed} valueLabel={`${speedLabel}×`} onChange={setSpeed} />
+        <Slider label="Velocidade do tremor" value={speed} valueLabel={`${boilFps} fps`} onChange={setSpeed} />
       </div>
 
       <div className={styles.section}>
@@ -285,9 +286,10 @@ export default function RabiscoPage() {
               <ScribbleCanvas
                 text={displayText}
                 tremor={tremor}
+                boilFps={boilFps}
+                paused={!playing}
                 thickness={thickness}
                 color={color}
-                progress={progress / 100}
               />
             </div>
             <div className={styles.transport}>
