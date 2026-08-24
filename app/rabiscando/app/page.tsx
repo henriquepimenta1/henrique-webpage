@@ -6,6 +6,7 @@ import styles from "../rabiscando.module.css";
 import ScribbleCanvas from "../scribble-canvas";
 import { useScribbleFont } from "../use-scribble-font";
 import { MAX_TREMOR } from "../scribble";
+import Conta from "./conta";
 import { SCRIBBLE_FONTS, DEFAULT_FONT_ID, fontById } from "../fonts";
 import { exportPngSequence, exportMp4, canExportMp4, triggerDownload } from "../export";
 
@@ -390,10 +391,7 @@ export default function RabiscandoEditorPage() {
           <Link className={styles.wordmark} href="/">
             <span className="path">euhenriq.com.br /</span> rabiscando
           </Link>
-          {/* Estado da assinatura entra aqui quando o Clerk estiver ligado. */}
-          <span className={styles.planStatus}>
-            <span className={styles.planDot} data-on="1" /> assinante
-          </span>
+          <Conta />
         </div>
 
         <div className={styles.main}>

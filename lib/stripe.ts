@@ -28,7 +28,12 @@ export function stripe(): Stripe {
   return cached;
 }
 
-export type Plano = "mensal" | "anual";
+// Reexportados para não quebrar quem já importava daqui. A definição mora em
+// rabiscando-plano.ts, que o cliente pode importar sem trazer o SDK junto.
+export { METADATA_KEY } from "./rabiscando-plano";
+export type { Plano, RabiscandoMetadata } from "./rabiscando-plano";
+
+import type { Plano } from "./rabiscando-plano";
 
 export function priceIdDoPlano(plano: Plano): string {
   return plano === "anual"
@@ -50,17 +55,4 @@ export function baseUrl(): string {
   const vercel = process.env.VERCEL_URL;
   if (vercel) return `https://${vercel}`;
   return "http://localhost:3000";
-}
-
-/** Chave onde o status da assinatura vive no publicMetadata do Clerk. */
-export const METADATA_KEY = "rabiscando";
-
-export interface RabiscandoMetadata {
-  /** Só isto decide o acesso. */
-  ativo: boolean;
-  stripeCustomerId?: string;
-  subscriptionId?: string;
-  plano?: Plano;
-  /** ISO — fim do período pago já contratado. */
-  validoAte?: string;
 }
