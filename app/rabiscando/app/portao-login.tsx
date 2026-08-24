@@ -105,8 +105,8 @@ export default function PortaoLogin() {
           <p style={sobrancelha}>Rabiscando · acesso</p>
           <h1 style={titulo}>Entra que o editor está do outro lado.</h1>
           <p style={apoio}>
-            12 traços, até 4K, PNG transparente e MP4. Sua conta guarda os ajustes entre uma
-            sessão e outra.
+            12 traços, até 4K, PNG transparente e MP4. O que você exporta é seu, uso comercial
+            incluído.
           </p>
         </header>
 

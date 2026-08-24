@@ -47,7 +47,12 @@ export default function DarkFooter({ coords = "10°17′S 76°54′W · alt 4 80
         </div>
       </div>
       <div className="v2-footer-base">
-        <span>© 2026 · Henrique Sesana Pimenta · Todos os direitos reservados</span>
+        <span>
+          © 2026 · Henrique Sesana Pimenta · Todos os direitos reservados ·{" "}
+          <Link className="v2-footer-link" href="/privacidade" style={{ display: "inline" }}>
+            Privacidade
+          </Link>
+        </span>
         <span>{coords}</span>
       </div>
     </footer>
