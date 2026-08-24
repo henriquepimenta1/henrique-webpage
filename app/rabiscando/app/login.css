@@ -1,0 +1,117 @@
+/* Grade da tela de entrada. Fora do clerk-tema.css de propósito: aqui é
+   layout nosso, lá é o remendo em cima das classes `cl-` do Clerk.
+
+   Os valores são literais pelo mesmo motivo explicado em clerk-tema.css —
+   o Clerk joga partes da interface em portal no body, fora do escopo
+   `.theme-fdl`, onde `var(--accent)` resolveria para o token do shadcn. */
+
+.rbs-login {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+}
+
+/* Em duas colunas a altura é TRAVADA na viewport: sem isso a coluna do
+   formulário estica a linha do grid, o painel da arte cresce junto e a
+   legenda dele cai abaixo da dobra. Quem rola é o formulário, por dentro. */
+@media (min-width: 901px) {
+  .rbs-login {
+    height: 100svh;
+    overflow: hidden;
+  }
+}
+
+/* ── coluna da arte ── */
+.rbs-login__arte {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* folga maior embaixo: é onde mora a legenda. */
+  padding: var(--s-7) var(--s-6) var(--s-72);
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+
+/* z-index: o canvas ocupa a área toda do painel e passaria por cima. */
+.rbs-login__legenda {
+  position: absolute;
+  z-index: 1;
+  left: var(--s-5);
+  bottom: var(--s-4);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ── coluna do formulário ── */
+/* `overflow-y:auto` + `margin:auto` no lugar de `justify-content:center`:
+   centralizado enquanto cabe, rolável quando não cabe (notebook baixo, ou
+   o card crescendo com erro de senha e verificação em duas etapas). Com
+   `justify-content:center` o topo do formulário ficaria inalcançável. */
+.rbs-login__form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding: var(--s-5) var(--pad-page);
+  overflow-y: auto;
+}
+
+.rbs-login__form > * {
+  flex-shrink: 0;
+}
+
+.rbs-login__form > :last-child {
+  margin-bottom: auto;
+}
+
+.rbs-login__cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin-top: auto;
+}
+
+/* O card do Clerk traz o próprio título ("Sign in to…"); com o h1 acima
+   seriam dois títulos empilhados. Escondido só dentro desta tela. */
+.rbs-login .cl-header {
+  display: none !important;
+}
+
+/* Sem borda: quem emoldura o formulário aqui é a própria coluna. */
+.rbs-login .cl-card,
+.rbs-login .cl-rootBox {
+  border: none !important;
+  background: transparent !important;
+  width: 100% !important;
+  max-width: 380px !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* ── empilhado: a arte vira faixa e o formulário fica acima da dobra ── */
+@media (max-width: 900px) {
+  .rbs-login {
+    grid-template-columns: 1fr;
+  }
+
+  .rbs-login__arte {
+    height: 180px;
+    padding: var(--s-3);
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rbs-login__legenda {
+    left: var(--pad-page);
+    bottom: var(--s-2);
+  }
+
+  .rbs-login__form {
+    padding: var(--s-5) var(--pad-page) var(--s-6);
+    gap: var(--s-3);
+  }
+}

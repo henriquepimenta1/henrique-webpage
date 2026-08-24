@@ -1,0 +1,295 @@
+.rabiscando {
+  /* Herda os tokens "Fim de Luz" de .theme-fdl (ver globals.css). */
+  --error: #b5533a;
+  position: relative;
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  min-height: 640px;
+  overflow: hidden;
+}
+.rabiscando * { box-sizing: border-box; }
+.rabiscando a { color: inherit; text-decoration: none; }
+.rabiscando button { font: inherit; color: inherit; background: none; border: none; padding: 0; cursor: pointer; }
+.rabiscando input { font: inherit; color: inherit; }
+
+/* ── topbar ── */
+.topbar {
+  height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+}
+.wordmark {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--text-1);
+}
+.wordmark .path { color: var(--text-3); font-weight: 400; }
+.planStatus {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.planDot { width: 6px; height: 6px; background: var(--text-3); border-radius: 50%; flex-shrink: 0; }
+.planDot[data-on="1"] { background: var(--accent); }
+
+/* ── conta (canto direito da topbar) ── */
+.conta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+/* Fonte de interface, não a mono das etiquetas: isto é uma AÇÃO, e deve ler
+   como o "Exportar sequência" do painel, não como o rótulo do plano ao lado. */
+.contaLink {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--border-strong);
+  padding: 0 0 2px;
+  cursor: pointer;
+}
+.contaLink:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.contaLink:disabled { color: var(--text-3); cursor: default; border-bottom-color: var(--border); }
+.contaErro {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #b5533a;
+}
+
+/* Abaixo de 640px a topbar aperta. Some o RÓTULO do plano (o ponto ao lado
+   já diz se está ativo), nunca o botão: ele é o único caminho para cancelar,
+   e o popover do Clerk não leva ao portal do Stripe. */
+@media (max-width: 640px) {
+  .conta { gap: 12px; }
+  .planLabel { display: none; }
+}
+
+/* ── main split ── */
+.main { flex: 1; display: flex; min-height: 0; }
+
+.canvasCol { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.canvasStage {
+  flex: 1;
+  position: relative;
+  background-image:
+    linear-gradient(45deg, var(--surface) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--surface) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--surface) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--surface) 75%);
+  background-size: 28px 28px;
+  background-position: 0 0, 0 14px, 14px -14px, -14px 0;
+  background-color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 24px;
+}
+/* ── tremor: ciclo de quadros ("boil" da animação desenhada à mão) ──
+   Cada grupo fica visível 1/3 do ciclo. A duração e o atraso de fase vêm
+   do componente (dependem do fps escolhido no slider). */
+.boilFrame {
+  animation-name: rabiscandoBoil;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+@keyframes rabiscandoBoil {
+  0%      { opacity: 1; }
+  33.32%  { opacity: 1; }
+  33.33%  { opacity: 0; }
+  100%    { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Congela num quadro só — o tremor é decorativo, não informativo. */
+  .boilFrame { animation: none; }
+  .boilFrame:not(:first-of-type) { display: none; }
+}
+
+.transport {
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 20px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.transportBtn { flex-shrink: 0; display: flex; padding: 6px; margin: -6px; opacity: .85; transition: opacity .14s; }
+.transportBtn:hover { opacity: 1; }
+.transportTrack { flex: 1; height: 2px; background: var(--border); position: relative; }
+.transportFill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); }
+.transportTime { font-family: var(--font-mono); font-size: 10px; color: var(--text-2); white-space: nowrap; }
+
+/* ── control rail (desktop) ── */
+.rail { width: 376px; flex-shrink: 0; border-left: 1px solid var(--border); overflow-y: auto; padding: 20px 24px 32px; }
+
+.section { padding: 18px 0; border-bottom: 1px solid var(--border); }
+.section:first-child { padding-top: 0; }
+.section:last-child { border-bottom: none; }
+.sectionTitle { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--text-3); margin: 0 0 14px; }
+
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.fieldLabel { font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-3); display: flex; justify-content: space-between; }
+.fieldValue { color: var(--text-2); }
+
+.textInput { border: none; border-bottom: 1px solid var(--border-strong); background: none; color: var(--text-1); font-family: var(--font-ui); font-size: 15px; padding: 6px 0; width: 100%; outline-offset: 4px; }
+.textArea {
+  border: none;
+  border-bottom: 1px solid var(--border-strong);
+  background: none;
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 1.5;
+  padding: 6px 0;
+  width: 100%;
+  outline-offset: 4px;
+  resize: vertical;
+  min-height: 52px;
+}
+.textArea::placeholder { color: var(--text-3); }
+
+.selectRow { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-strong); padding: 8px 0; width: 100%; text-align: left; transition: border-color .14s; }
+.selectRow:hover { border-bottom-color: var(--accent); }
+.selectRow:hover .chevron { color: var(--accent); }
+.selectValue { font-family: var(--font-ui); font-size: 14px; color: var(--text-1); }
+.select {
+  appearance: none;
+  flex: 1;
+  border: none;
+  background: none;
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+}
+/* O popup nativo herda o fundo do sistema — sem isso as opções ficam
+   texto claro sobre fundo claro em alguns temas. */
+.select option { background: var(--surface); color: var(--text-1); }
+.chevron { color: var(--text-3); }
+
+/* Estado ativo por INVERSÃO (preenche em âmbar, texto no tom do fundo).
+   Só trocar a cor da borda era invisível no escuro. */
+.tabs { display: flex; gap: 8px; }
+.tab {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  padding: 9px 0;
+  transition: color .14s, border-color .14s, background-color .14s;
+}
+.tab:hover { color: var(--text-1); border-color: var(--border-strong); background: var(--surface-el); }
+.tab[data-active="1"] { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 500; }
+.tab[data-active="1"]:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+.sliderTrack { height: 2px; background: var(--border); position: relative; margin-top: 10px; padding: 11px 0; cursor: pointer; touch-action: none; }
+.sliderTrack::before { content: ""; position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: var(--border); }
+.sliderFill { position: absolute; left: 0; top: 11px; height: 2px; background: var(--text-2); transition: background-color .14s; }
+.sliderHandle {
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  position: absolute;
+  top: 12px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition: transform .14s, background-color .14s;
+}
+.sliderTrack:hover .sliderHandle,
+.sliderTrack:focus-visible .sliderHandle { transform: translate(-50%, -50%) scale(1.35); background: var(--accent-hover); }
+.sliderTrack:hover .sliderFill { background: var(--accent); }
+
+.colorRow { display: flex; align-items: center; gap: 10px; }
+.colorSwatch { width: 22px; height: 22px; border: 1px solid var(--border-strong); flex-shrink: 0; appearance: none; padding: 0; background: none; }
+.colorSwatch::-webkit-color-swatch-wrapper { padding: 0; }
+.colorSwatch::-webkit-color-swatch { border: none; }
+.colorHex { font-family: var(--font-mono); font-size: 12px; color: var(--text-2); }
+
+.chipRow { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  padding: 8px 13px;
+  transition: color .14s, border-color .14s, background-color .14s;
+}
+.chip:hover { color: var(--text-1); border-color: var(--border-strong); background: var(--surface-el); }
+.chip[data-active="1"] { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 500; }
+.chip[data-active="1"]:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.chip[data-locked="1"] { color: var(--text-3); display: flex; align-items: center; gap: 5px; cursor: default; }
+.chip:disabled { color: var(--text-3); cursor: default; opacity: .45; }
+.chip:disabled:hover { color: var(--text-3); border-color: var(--border); background: none; }
+
+.exportLink { font-family: var(--font-ui); font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--accent); padding-bottom: 4px; display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; }
+.exportLink { transition: color .14s, border-color .14s; }
+.exportLink:hover { color: var(--accent-hover); border-bottom-color: var(--accent-hover); }
+.exportLink:disabled { color: var(--text-3); border-bottom-color: var(--text-3); cursor: default; }
+.exportLink:disabled:hover { color: var(--text-3); border-bottom-color: var(--text-3); }
+.cancelLink { transition: color .14s, border-color .14s; }
+.cancelLink:hover { color: var(--error); border-bottom-color: var(--error); }
+.exportNote { font-family: var(--font-ui); font-size: 11px; color: var(--text-3); margin-top: 10px; line-height: 1.5; }
+.errorNote { font-family: var(--font-ui); font-size: 12px; color: var(--error); margin-top: 10px; line-height: 1.5; }
+.limitMsg { font-family: var(--font-ui); font-size: 13px; color: var(--text-1); margin-top: 4px; }
+.limitLink { color: var(--accent); border-bottom: 1px solid var(--accent); }
+.progressRow { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+.progressLabel { font-family: var(--font-mono); font-size: 11px; color: var(--text-2); }
+.cancelLink { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); border-bottom: 1px solid var(--text-3); }
+
+/* ── persistent CTA strip ── */
+.ctaStrip { height: 40px; flex-shrink: 0; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 16px; text-align: center; }
+.ctaMsg { font-family: var(--font-ui); font-size: 12px; color: var(--text-2); }
+.ctaLink { font-family: var(--font-ui); font-size: 12px; font-weight: 600; color: var(--accent); border-bottom: 1px solid var(--accent); padding-bottom: 2px; }
+.ctaPrice { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
+
+/* ── mobile-only pieces ── */
+.mobileBody { display: none; }
+.fontScroll { display: flex; gap: 8px; overflow-x: auto; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+.fontChip { flex-shrink: 0; font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); border: 1px solid var(--border); padding: 10px 14px; white-space: nowrap; transition: color .14s, border-color .14s, background-color .14s; }
+.fontChip:hover { color: var(--text-1); border-color: var(--border-strong); background: var(--surface-el); }
+.fontChip[data-active="1"] { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 500; }
+.disclosure { display: flex; align-items: center; justify-content: space-between; padding: 16px; border-bottom: 1px solid var(--border); width: 100%; text-align: left; }
+.disclosureLabel { font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); }
+
+@media (max-width: 880px) {
+  .main { flex-direction: column; overflow-y: auto; }
+  .canvasCol { flex: none; }
+  .canvasStage { height: 34vh; min-height: 220px; }
+  .rail { display: none; }
+  .mobileBody { display: block; }
+  .ctaStrip { gap: 8px; }
+  .ctaMsg { display: none; }
+}

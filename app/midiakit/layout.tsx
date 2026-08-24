@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Media Kit — Henrique Sesana | Adventure Filmmaker",
     description: "Cineasta de aventura e guia de expedições. Métricas, portfólio e serviços para parcerias com marcas outdoor.",
-    url: "https://euhenriq.com.br/midiakit",
+    url: "https://euhenriq.com/midiakit",
     siteName: "henriq.eu",
     images: [{ url: "/images/exp-huayhuash.jpg", width: 1200, height: 630, alt: "Henrique Sesana — Adventure Filmmaker" }],
     type: "website",
