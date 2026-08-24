@@ -6,7 +6,7 @@ import {
   baseUrl,
   METADATA_KEY,
   type Plano,
-  type RabiscoMetadata,
+  type RabiscandoMetadata,
 } from "@/lib/stripe";
 
 // Cria a sessão de checkout e devolve a URL hospedada do Stripe.
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   try {
     const clerk = await clerkClient();
     const user = await clerk.users.getUser(userId);
-    const meta = (user.publicMetadata?.[METADATA_KEY] ?? {}) as RabiscoMetadata;
+    const meta = (user.publicMetadata?.[METADATA_KEY] ?? {}) as RabiscandoMetadata;
 
     // Reaproveita o customer para não criar um duplicado a cada tentativa
     // de assinatura (e para o portal encontrar o histórico).
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
       await clerk.users.updateUser(userId, {
         publicMetadata: {
           ...user.publicMetadata,
-          [METADATA_KEY]: { ...meta, stripeCustomerId: customerId } satisfies RabiscoMetadata,
+          [METADATA_KEY]: { ...meta, stripeCustomerId: customerId } satisfies RabiscandoMetadata,
         },
       });
     }
@@ -53,8 +53,8 @@ export async function POST(req: Request) {
       mode: "subscription",
       customer: customerId,
       line_items: [{ price: priceIdDoPlano(plano), quantity: 1 }],
-      success_url: `${baseUrl()}/rabisco/app?assinatura=ok`,
-      cancel_url: `${baseUrl()}/rabisco?assinatura=cancelada`,
+      success_url: `${baseUrl()}/rabiscando/app?assinatura=ok`,
+      cancel_url: `${baseUrl()}/rabiscando?assinatura=cancelada`,
       locale: "pt-BR",
       allow_promotion_codes: true,
       // Necessário para nota fiscal e para o Stripe calcular imposto no BR.

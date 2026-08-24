@@ -6,7 +6,7 @@ import {
   webhookSecret,
   METADATA_KEY,
   type Plano,
-  type RabiscoMetadata,
+  type RabiscandoMetadata,
 } from "@/lib/stripe";
 
 // Webhook do Stripe: é ISTO que concede e revoga o acesso.
@@ -35,14 +35,14 @@ function fimDoPeriodo(sub: Stripe.Subscription): string | undefined {
   return typeof bruto === "number" ? new Date(bruto * 1000).toISOString() : undefined;
 }
 
-async function aplicarNoClerk(clerkUserId: string, patch: Partial<RabiscoMetadata>) {
+async function aplicarNoClerk(clerkUserId: string, patch: Partial<RabiscandoMetadata>) {
   const clerk = await clerkClient();
   const user = await clerk.users.getUser(clerkUserId);
-  const atual = (user.publicMetadata?.[METADATA_KEY] ?? {}) as RabiscoMetadata;
+  const atual = (user.publicMetadata?.[METADATA_KEY] ?? {}) as RabiscandoMetadata;
   await clerk.users.updateUser(clerkUserId, {
     publicMetadata: {
       ...user.publicMetadata,
-      [METADATA_KEY]: { ...atual, ...patch } satisfies RabiscoMetadata,
+      [METADATA_KEY]: { ...atual, ...patch } satisfies RabiscandoMetadata,
     },
   });
 }

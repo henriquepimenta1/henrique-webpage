@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { buildScribble } from "./scribble";
 import { useScribbleFont } from "./use-scribble-font";
-import styles from "./rabisco.module.css";
+import styles from "./rabiscando.module.css";
 
 /**
  * Três quadros é o padrão da animação desenhada à mão ("boil" / animação em

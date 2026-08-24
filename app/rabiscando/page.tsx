@@ -6,7 +6,7 @@ import DarkFooter from "@/components/dark-footer";
 import ScribbleCanvas from "./scribble-canvas";
 import LandingHero from "./landing-hero";
 
-// Landing pública do Rabisco. O editor vive em /rabisco/app, atrás de
+// Landing pública do Rabiscando. O editor vive em /rabiscando/app, atrás de
 // login + assinatura — aqui não há uso gratuito, só demonstração.
 // O herói roda a ferramenta de verdade (mesmo componente do editor), não
 // um vídeo gravado: é a demonstração mais honesta que dá para fazer.
@@ -62,7 +62,7 @@ const RECURSOS: { titulo: string; texto: string }[] = [
   },
 ];
 
-export default function RabiscoLandingPage() {
+export default function RabiscandoLandingPage() {
   return (
     <div className="theme-fdl">
       <DarkTopNav />
@@ -297,7 +297,7 @@ export default function RabiscoLandingPage() {
                 </span>
                 <span style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-3)" }}>/mês</span>
               </p>
-              <Link className="v2-accent-link" href="/rabisco/app">
+              <Link className="v2-accent-link" href="/rabiscando/app">
                 Assinar mensal →
               </Link>
             </div>
@@ -331,7 +331,7 @@ export default function RabiscoLandingPage() {
                 </span>
                 <span style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-3)" }}>/ano</span>
               </p>
-              <Link className="v2-accent-link" href="/rabisco/app">
+              <Link className="v2-accent-link" href="/rabiscando/app">
                 Assinar anual →
               </Link>
             </div>
@@ -351,7 +351,7 @@ export default function RabiscoLandingPage() {
         </section>
       </main>
 
-      <DarkFooter coords="rabisco · traço animado" />
+      <DarkFooter coords="rabiscando · traço animado" />
     </div>
   );
 }

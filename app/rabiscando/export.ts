@@ -1,4 +1,4 @@
-// Export do Rabisco. Dois caminhos a partir do mesmo desenho:
+// Export do Rabiscando. Dois caminhos a partir do mesmo desenho:
 //
 //   PNG — sequência de quadros com fundo transparente, num ZIP. É o formato
 //         para sobrepor no DaVinci/Premiere.
@@ -110,7 +110,7 @@ function paintFrame(
     ctx.fillStyle = "rgba(255,255,255,0.55)";
     ctx.textAlign = "right";
     ctx.textBaseline = "bottom";
-    ctx.fillText("euhenriq.com.br/rabisco", p.width - p.height * 0.03, p.height - p.height * 0.03);
+    ctx.fillText("euhenriq.com.br/rabiscando", p.width - p.height * 0.03, p.height - p.height * 0.03);
     ctx.restore();
   }
 }
@@ -134,7 +134,7 @@ function slugOf(text: string): string {
       .toLowerCase()
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "")
-      .slice(0, 24) || "rabisco"
+      .slice(0, 24) || "rabiscando"
   );
 }
 
@@ -167,7 +167,7 @@ export async function exportPngSequence(p: ExportParams): Promise<ExportResult |
         "image/png",
       );
     });
-    zip.file(`rabisco_${String(i + 1).padStart(pad, "0")}.png`, png);
+    zip.file(`rabiscando_${String(i + 1).padStart(pad, "0")}.png`, png);
 
     p.onProgress?.(i + 1, total);
     await new Promise((r) => setTimeout(r, 0));

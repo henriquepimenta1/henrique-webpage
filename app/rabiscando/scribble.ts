@@ -1,4 +1,4 @@
-// Núcleo do Rabisco: transforma texto em paths vetoriais perturbados.
+// Núcleo do Rabiscando: transforma texto em paths vetoriais perturbados.
 //
 // A variação de forma NÃO vem de glifos alternativos pré-desenhados na fonte
 // (isso limitaria a 2-3 formas fixas por letra e deixaria o slider de tremor

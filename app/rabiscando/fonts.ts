@@ -1,4 +1,4 @@
-// Fontes disponíveis no Rabisco. Todas livres para uso comercial —
+// Fontes disponíveis no Rabiscando. Todas livres para uso comercial —
 // SIL OFL ou Apache 2.0 — com os textos de licença em public/fonts/licencas.
 //
 // `pontos` é a média de pontos de controle por letra, medida com opentype.js.

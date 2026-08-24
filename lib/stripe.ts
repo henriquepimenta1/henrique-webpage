@@ -22,7 +22,7 @@ export function stripe(): Stripe {
       // Fixar a versão evita que uma atualização da API do Stripe mude o
       // comportamento das rotas sem aviso.
       apiVersion: "2026-07-29.dahlia",
-      appInfo: { name: "Rabisco (euhenriq.com.br)" },
+      appInfo: { name: "Rabiscando (euhenriq.com.br)" },
     });
   }
   return cached;
@@ -53,9 +53,9 @@ export function baseUrl(): string {
 }
 
 /** Chave onde o status da assinatura vive no publicMetadata do Clerk. */
-export const METADATA_KEY = "rabisco";
+export const METADATA_KEY = "rabiscando";
 
-export interface RabiscoMetadata {
+export interface RabiscandoMetadata {
   /** Só isto decide o acesso. */
   ativo: boolean;
   stripeCustomerId?: string;

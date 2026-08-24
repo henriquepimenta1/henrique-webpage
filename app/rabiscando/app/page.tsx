@@ -2,13 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import styles from "../rabisco.module.css";
+import styles from "../rabiscando.module.css";
 import ScribbleCanvas from "../scribble-canvas";
 import { useScribbleFont } from "../use-scribble-font";
 import { SCRIBBLE_FONTS, DEFAULT_FONT_ID, fontById } from "../fonts";
 import { exportPngSequence, exportMp4, canExportMp4, triggerDownload } from "../export";
 
-// Rabisco — ferramenta de scribble animado para filmmakers.
+// Rabiscando — ferramenta de scribble animado para filmmakers.
 // O traço vem de paths vetoriais perturbados em tempo real (ver scribble.ts),
 // não de glifos alternativos pré-desenhados: é isso que faz o slider de Tremor
 // controlar a deformação de verdade. Export real ainda não implementado.
@@ -89,7 +89,7 @@ function Slider({
   );
 }
 
-export default function RabiscoEditorPage() {
+export default function RabiscandoEditorPage() {
   const [text, setText] = useState("");
   const [fontId, setFontId] = useState(DEFAULT_FONT_ID);
   const [thickness, setThickness] = useState<"fina" | "regular" | "grossa">("regular");
@@ -352,10 +352,10 @@ export default function RabiscoEditorPage() {
 
   return (
     <div className="theme-fdl">
-      <div className={styles.rabisco}>
+      <div className={styles.rabiscando}>
         <div className={styles.topbar}>
           <Link className={styles.wordmark} href="/">
-            <span className="path">euhenriq.com.br /</span> rabisco
+            <span className="path">euhenriq.com.br /</span> rabiscando
           </Link>
           {/* Estado da assinatura entra aqui quando o Clerk estiver ligado. */}
           <span className={styles.planStatus}>
@@ -492,7 +492,7 @@ export default function RabiscoEditorPage() {
 
         <div className={styles.ctaStrip}>
           <span className={styles.ctaMsg}>4K, fonte própria e sem marca d&rsquo;água —</span>
-          <a className={styles.ctaLink}>Rabisco PRO →</a>
+          <a className={styles.ctaLink}>Rabiscando PRO →</a>
           <span className={styles.ctaPrice}>a partir de R$19/mês</span>
         </div>
       </div>

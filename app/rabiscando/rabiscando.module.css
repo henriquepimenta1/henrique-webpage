@@ -1,4 +1,4 @@
-.rabisco {
+.rabiscando {
   /* Herda os tokens "Fim de Luz" de .theme-fdl (ver globals.css). */
   --error: #b5533a;
   position: relative;
@@ -11,10 +11,10 @@
   min-height: 640px;
   overflow: hidden;
 }
-.rabisco * { box-sizing: border-box; }
-.rabisco a { color: inherit; text-decoration: none; }
-.rabisco button { font: inherit; color: inherit; background: none; border: none; padding: 0; cursor: pointer; }
-.rabisco input { font: inherit; color: inherit; }
+.rabiscando * { box-sizing: border-box; }
+.rabiscando a { color: inherit; text-decoration: none; }
+.rabiscando button { font: inherit; color: inherit; background: none; border: none; padding: 0; cursor: pointer; }
+.rabiscando input { font: inherit; color: inherit; }
 
 /* ── topbar ── */
 .topbar {
@@ -72,11 +72,11 @@
    Cada grupo fica visível 1/3 do ciclo. A duração e o atraso de fase vêm
    do componente (dependem do fps escolhido no slider). */
 .boilFrame {
-  animation-name: rabiscoBoil;
+  animation-name: rabiscandoBoil;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
 }
-@keyframes rabiscoBoil {
+@keyframes rabiscandoBoil {
   0%      { opacity: 1; }
   33.32%  { opacity: 1; }
   33.33%  { opacity: 0; }

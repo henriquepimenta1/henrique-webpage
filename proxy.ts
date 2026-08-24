@@ -9,7 +9,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 // prerender. Aqui só a área da ferramenta e as rotas de pagamento entram.
 
 const rotasProtegidas = createRouteMatcher([
-  "/rabisco/app(.*)",
+  "/rabiscando/app(.*)",
   "/api/stripe/checkout",
   "/api/stripe/portal",
 ]);
@@ -23,5 +23,5 @@ export default clerkMiddleware(async (auth, req) => {
 });
 
 export const config = {
-  matcher: ["/rabisco/app/:path*", "/api/stripe/:path*"],
+  matcher: ["/rabiscando/app/:path*", "/api/stripe/:path*"],
 };
