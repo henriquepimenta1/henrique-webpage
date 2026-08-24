@@ -8,8 +8,13 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 // expedições...) passarem pelo middleware e potencialmente perderem o
 // prerender. Aqui só a área da ferramenta e as rotas de pagamento entram.
 
+// `/rabiscando/app` NÃO entra aqui de propósito. `auth.protect()` redireciona
+// o deslogado para a página hospedada do Clerk (accounts.dev), que ignora
+// nosso tema e tira a pessoa do domínio no meio do fluxo. O portão daquela
+// área é o layout: ele lê `auth()` no servidor e renderiza a nossa tela de
+// entrada. O middleware continua rodando na rota — é ele que popula a sessão
+// que o layout lê —, só não decide o redirecionamento.
 const rotasProtegidas = createRouteMatcher([
-  "/rabiscando/app(.*)",
   "/api/stripe/checkout",
   "/api/stripe/portal",
 ]);

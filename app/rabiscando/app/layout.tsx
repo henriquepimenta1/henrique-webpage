@@ -1,9 +1,12 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { ClerkProvider, SignIn, UserButton } from "@clerk/nextjs";
+import { ClerkProvider, UserButton } from "@clerk/nextjs";
+import { ptBR } from "@clerk/localizations";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { METADATA_KEY, type RabiscandoMetadata } from "@/lib/stripe";
+import PortaoLogin from "./portao-login";
 import "./clerk-tema.css";
+import "./login.css";
 
 // Portão do editor.
 //
@@ -47,27 +50,13 @@ const titulo: React.CSSProperties = {
 export default async function EditorLayout({ children }: { children: ReactNode }) {
   const { userId } = await auth();
 
+  // `localization`: o formulário do Clerk vem em inglês por padrão, e o resto
+  // da ferramenta é todo em português.
   return (
-    <ClerkProvider>
+    <ClerkProvider localization={ptBR}>
       {!userId ? (
         <div className="theme-fdl">
-          <div style={enquadre}>
-            <p style={sobrancelha}>Rabiscando · acesso</p>
-            <h1 style={titulo}>Entre para usar a ferramenta.</h1>
-            {/* As cores base vêm daqui; o resto do ajuste está em
-                clerk-tema.css, que explica por que não usamos o pacote
-                de temas oficial. */}
-            <SignIn
-              routing="hash"
-              appearance={{
-                variables: {
-                  colorBackground: "#171412",
-                  colorPrimary: "#C08246",
-                  borderRadius: "0px",
-                },
-              }}
-            />
-          </div>
+          <PortaoLogin />
         </div>
       ) : (
         <ChecagemAssinatura>{children}</ChecagemAssinatura>
