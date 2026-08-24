@@ -22,7 +22,7 @@ export function stripe(): Stripe {
       // Fixar a versão evita que uma atualização da API do Stripe mude o
       // comportamento das rotas sem aviso.
       apiVersion: "2026-07-29.dahlia",
-      appInfo: { name: "Rabiscando (euhenriq.com.br)" },
+      appInfo: { name: "Rabiscando (euhenriq.com)" },
     });
   }
   return cached;

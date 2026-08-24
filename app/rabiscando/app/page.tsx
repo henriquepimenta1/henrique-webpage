@@ -389,7 +389,7 @@ export default function RabiscandoEditorPage() {
       <div className={styles.rabiscando}>
         <div className={styles.topbar}>
           <Link className={styles.wordmark} href="/">
-            <span className="path">euhenriq.com.br /</span> rabiscando
+            <span className="path">euhenriq.com /</span> rabiscando
           </Link>
           <Conta />
         </div>

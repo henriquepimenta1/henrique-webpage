@@ -110,7 +110,7 @@ function paintFrame(
     ctx.fillStyle = "rgba(255,255,255,0.55)";
     ctx.textAlign = "right";
     ctx.textBaseline = "bottom";
-    ctx.fillText("euhenriq.com.br/rabiscando", p.width - p.height * 0.03, p.height - p.height * 0.03);
+    ctx.fillText("euhenriq.com/rabiscando", p.width - p.height * 0.03, p.height - p.height * 0.03);
     ctx.restore();
   }
 }
