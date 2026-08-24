@@ -115,7 +115,13 @@ export default function PortaoLogin() {
         {/* Sem os `forceRedirectUrl` o Clerk manda para "/" depois de
             autenticar — a home do site, não o editor de onde a pessoa veio.
             `signUp*` cobre quem chega por "Registre-se" no rodapé do card. */}
+        {/* `withSignUp` mantém quem ainda não tem conta AQUI DENTRO: um
+            e-mail desconhecido segue para o cadastro no mesmo componente.
+            Sem ele, o rodapé do card manda para accounts.euhenriq.com — a
+            página hospedada do Clerk, que ignora nosso tema e o português,
+            e joga a pessoa para fora do domínio no meio do cadastro. */}
         <SignIn
+          withSignUp
           routing="hash"
           forceRedirectUrl="/rabiscando/app"
           signUpForceRedirectUrl="/rabiscando/app"
