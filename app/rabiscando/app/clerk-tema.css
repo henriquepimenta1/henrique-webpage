@@ -1,95 +1,120 @@
-/* Tema do formulário de login, nos tokens do "Fim de Luz".
+/* Tema do formulário de login, nos valores do "Fim de Luz".
  *
  * Por que CSS e não a API de aparência do Clerk: o pacote oficial
  * @clerk/themes só tem versão estável para o Clerk v6 (traz um
  * @clerk/shared 3.x embutido, contra o 4.x que o v7 usa), e as chaves
  * `baseTheme`/`colorText` não existem no tipo Theme desta versão.
  *
- * Estas classes `cl-` são a superfície de estilo pública do Clerk, mas
- * seguem sendo internas dele: se um upgrade mudar os nomes, o login volta
- * ao visual padrão — feio, porém funcional. Nada aqui quebra o fluxo.
+ * Por que valores LITERAIS e não var(--surface) etc.: os tokens do
+ * "Fim de Luz" são escopados em `.theme-fdl`, não em `:root`, justamente
+ * para não colidirem com os do shadcn. Fora desse escopo, `var(--accent)`
+ * não fica vazio — ele resolve silenciosamente para o `--accent` do
+ * shadcn, que é quase branco. Como o Clerk renderiza popovers e modais
+ * via portal direto no `body`, depender das variáveis deixaria partes da
+ * interface com a cor errada sem nenhum aviso.
+ *
+ * As classes `cl-` são a superfície de estilo pública do Clerk, mas
+ * seguem internas: se um upgrade renomeá-las, o login volta ao visual
+ * padrão — feio, porém funcional. Nada aqui quebra o fluxo.
  */
 
 .cl-rootBox,
 .cl-card {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
+  background: #171412 !important;
+  border: 1px solid rgba(237, 231, 219, 0.12) !important;
   border-radius: 0 !important;
   box-shadow: none !important;
 }
 
 .cl-headerTitle,
 .cl-formFieldLabel,
-.cl-userButtonPopoverActionButtonText {
-  color: var(--text-1) !important;
-  font-family: var(--font-ui) !important;
+.cl-userButtonPopoverActionButtonText,
+.cl-userPreviewMainIdentifier {
+  color: #ede7db !important;
+  font-family: var(--font-ui), system-ui, sans-serif !important;
 }
 
 .cl-headerSubtitle,
 .cl-footerActionText,
 .cl-dividerText,
-.cl-formFieldInfoText {
-  color: var(--text-3) !important;
-  font-family: var(--font-ui) !important;
+.cl-formFieldInfoText,
+.cl-userPreviewSecondaryIdentifier {
+  color: #9a9183 !important;
+  font-family: var(--font-ui), system-ui, sans-serif !important;
 }
 
 /* Campos: linha embaixo em vez de caixa, como o resto da ferramenta. */
 .cl-formFieldInput {
-  background: var(--bg) !important;
-  color: var(--text-1) !important;
+  background: #0d0c0b !important;
+  color: #ede7db !important;
   border: none !important;
-  border-bottom: 1px solid var(--border-strong) !important;
+  border-bottom: 1px solid rgba(237, 231, 219, 0.22) !important;
   border-radius: 0 !important;
   box-shadow: none !important;
 }
 .cl-formFieldInput:focus {
-  outline: 2px solid var(--accent) !important;
+  outline: 2px solid #c08246 !important;
   outline-offset: 3px !important;
-  border-bottom-color: var(--accent) !important;
+  border-bottom-color: #c08246 !important;
 }
 
 /* Botão principal: mesma inversão em âmbar dos chips do editor. */
 .cl-formButtonPrimary {
-  background: var(--accent) !important;
-  color: var(--bg) !important;
-  border: 1px solid var(--accent) !important;
+  background: #c08246 !important;
+  color: #0d0c0b !important;
+  border: 1px solid #c08246 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
   text-transform: uppercase !important;
-  letter-spacing: .08em !important;
-  font-family: var(--font-ui) !important;
+  letter-spacing: 0.08em !important;
+  font-family: var(--font-ui), system-ui, sans-serif !important;
   font-weight: 600 !important;
 }
 .cl-formButtonPrimary:hover {
-  background: var(--accent-hover) !important;
-  border-color: var(--accent-hover) !important;
+  background: #d19558 !important;
+  border-color: #d19558 !important;
 }
 
 /* Entrar com Google e afins. */
 .cl-socialButtonsBlockButton,
 .cl-socialButtonsIconButton {
-  background: none !important;
-  color: var(--text-1) !important;
-  border: 1px solid var(--border) !important;
+  background: transparent !important;
+  color: #ede7db !important;
+  border: 1px solid rgba(237, 231, 219, 0.12) !important;
   border-radius: 0 !important;
 }
 .cl-socialButtonsBlockButton:hover,
 .cl-socialButtonsIconButton:hover {
-  border-color: var(--border-strong) !important;
-  background: var(--surface-el) !important;
+  border-color: rgba(237, 231, 219, 0.22) !important;
+  background: #211d19 !important;
 }
 
-.cl-dividerLine { background: var(--border) !important; }
+.cl-dividerLine {
+  background: rgba(237, 231, 219, 0.12) !important;
+}
 
 .cl-footerActionLink,
 .cl-alternativeMethodsBlockButton {
-  color: var(--accent) !important;
+  color: #c08246 !important;
   border-radius: 0 !important;
 }
-.cl-footerActionLink:hover { color: var(--accent-hover) !important; }
+.cl-footerActionLink:hover {
+  color: #d19558 !important;
+}
 
-/* A faixa de rodapé do Clerk é clara por padrão e destoa do fundo. */
-.cl-footer,
-.cl-internal-1dauvpw {
+/* Popover do botão de usuário — este renderiza via portal no body, fora
+   de qualquer escopo de tema. */
+.cl-userButtonPopoverCard,
+.cl-popoverBox {
+  background: #171412 !important;
+  border: 1px solid rgba(237, 231, 219, 0.12) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.cl-userButtonPopoverActionButton:hover {
+  background: #211d19 !important;
+}
+
+.cl-footer {
   background: transparent !important;
 }
