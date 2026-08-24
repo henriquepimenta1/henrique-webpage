@@ -521,11 +521,6 @@ export default function RabiscandoEditorPage() {
           <div style={{ padding: "0 16px" }}>{exportSection}</div>
         </div>
 
-        <div className={styles.ctaStrip}>
-          <span className={styles.ctaMsg}>4K, fonte própria e sem marca d&rsquo;água —</span>
-          <a className={styles.ctaLink}>Rabiscando PRO →</a>
-          <span className={styles.ctaPrice}>a partir de R$19/mês</span>
-        </div>
       </div>
     </div>
   );

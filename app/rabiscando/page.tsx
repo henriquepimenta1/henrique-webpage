@@ -121,15 +121,19 @@ export default function RabiscandoLandingPage() {
 .rbl-cta-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:var(--s-3);margin:0 0 var(--s-5)}
 .rbl-cta{font-family:var(--font-ui);font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--accent);border:1px solid var(--accent);padding:15px 28px;text-decoration:none;transition:background-color .15s,border-color .15s}
 .rbl-cta:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+@media(max-width:640px){
+  .rbl-cta-row{flex-direction:column;gap:var(--s-2);margin-bottom:var(--s-4)}
+  .rbl-cta{width:100%;text-align:center;padding:16px 20px}
+}
 .rbl-cta-2{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3);text-decoration:none;border-bottom:1px solid var(--border-strong);padding-bottom:3px;transition:color .15s,border-color .15s}
 .rbl-cta-2:hover{color:var(--accent);border-bottom-color:var(--accent)}
 
-.rbl-passos{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--s-40)}
+.rbl-passos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:var(--s-40)}
 .rbl-passo-n{font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;color:var(--accent);display:block;margin-bottom:12px}
 .rbl-passo-t{font-family:var(--font-serif);font-weight:500;font-size:21px;color:var(--text-1);margin:0 0 10px;line-height:1.25}
 .rbl-passo-d{font-family:var(--font-ui);font-size:14px;line-height:1.65;color:var(--text-2);margin:0;max-width:34ch}
 
-.rbl-faq{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--s-40) var(--s-5)}
+.rbl-faq{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:var(--s-40) var(--s-5)}
 .rbl-faq-p{font-family:var(--font-ui);font-weight:600;font-size:16px;color:var(--text-1);margin:0 0 8px}
 .rbl-faq-r{font-family:var(--font-ui);font-size:14px;line-height:1.7;color:var(--text-2);margin:0;max-width:46ch}
 
@@ -219,7 +223,7 @@ export default function RabiscandoLandingPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))",
               gap: "var(--s-5) var(--s-40)",
             }}
           >
@@ -284,7 +288,7 @@ export default function RabiscandoLandingPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))",
               gap: 1,
               background: "var(--border)",
               border: "1px solid var(--border)",
@@ -358,7 +362,7 @@ export default function RabiscandoLandingPage() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))",
               gap: 1,
               background: "var(--border)",
               border: "1px solid var(--border)",

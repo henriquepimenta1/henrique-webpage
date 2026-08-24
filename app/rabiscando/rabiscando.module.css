@@ -213,15 +213,18 @@
 .tab[data-active="1"] { color: var(--bg); background: var(--accent); border-color: var(--accent); font-weight: 500; }
 .tab[data-active="1"]:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 
-.sliderTrack { height: 2px; background: var(--border); position: relative; margin-top: 10px; padding: 11px 0; cursor: pointer; touch-action: none; }
-.sliderTrack::before { content: ""; position: absolute; left: 0; right: 0; top: 11px; height: 2px; background: var(--border); }
-.sliderFill { position: absolute; left: 0; top: 11px; height: 2px; background: var(--text-2); transition: background-color .14s; }
+/* A área de toque é o padding; a trilha visível fica no centro dela. As três
+   peças abaixo dependem desse valor, então ele é uma variável — no celular
+   o padding cresce (alvo de dedo) e o desenho continua alinhado. */
+.sliderTrack { --trilha-pad: 11px; height: 2px; background: var(--border); position: relative; margin-top: 10px; padding: var(--trilha-pad) 0; cursor: pointer; touch-action: none; }
+.sliderTrack::before { content: ""; position: absolute; left: 0; right: 0; top: var(--trilha-pad); height: 2px; background: var(--border); }
+.sliderFill { position: absolute; left: 0; top: var(--trilha-pad); height: 2px; background: var(--text-2); transition: background-color .14s; }
 .sliderHandle {
   width: 12px;
   height: 12px;
   background: var(--accent);
   position: absolute;
-  top: 12px;
+  top: calc(var(--trilha-pad) + 1px);
   transform: translate(-50%, -50%);
   pointer-events: none;
   transition: transform .14s, background-color .14s;
@@ -269,11 +272,6 @@
 .progressLabel { font-family: var(--font-mono); font-size: 11px; color: var(--text-2); }
 .cancelLink { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); border-bottom: 1px solid var(--text-3); }
 
-/* ── persistent CTA strip ── */
-.ctaStrip { height: 40px; flex-shrink: 0; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 16px; text-align: center; }
-.ctaMsg { font-family: var(--font-ui); font-size: 12px; color: var(--text-2); }
-.ctaLink { font-family: var(--font-ui); font-size: 12px; font-weight: 600; color: var(--accent); border-bottom: 1px solid var(--accent); padding-bottom: 2px; }
-.ctaPrice { font-family: var(--font-mono); font-size: 10px; color: var(--text-3); }
 
 /* ── mobile-only pieces ── */
 .mobileBody { display: none; }
@@ -287,9 +285,27 @@
 @media (max-width: 880px) {
   .main { flex-direction: column; overflow-y: auto; }
   .canvasCol { flex: none; }
-  .canvasStage { height: 34vh; min-height: 220px; }
+  /* `position:sticky` no palco: rolando os controles, o desenho continua
+     à vista. Sem isso a pessoa mexe no tremor sem ver o efeito — que é o
+     ponto inteiro da ferramenta. */
+  .canvasCol { position: sticky; top: 0; z-index: 2; background: var(--bg); }
+  .canvasStage { height: 30vh; min-height: 180px; padding: 16px; }
   .rail { display: none; }
   .mobileBody { display: block; }
-  .ctaStrip { gap: 8px; }
-  .ctaMsg { display: none; }
+
+  /* A altura fixa de 100svh vale no desktop, onde o rail rola sozinho. No
+     celular o corpo inteiro é que rola — travar em 100svh cortaria o
+     final dos controles. */
+  .rabiscando { height: auto; min-height: 100svh; overflow: visible; }
+
+  .topbar { padding: 0 16px; }
+  .transport { padding: 0 16px; gap: 10px; }
+
+  /* Alvos de toque: 44px é o mínimo que o dedo acerta sem erro. */
+  .chip { padding: 11px 14px; }
+  .tab { padding: 11px 12px; }
+  .sliderTrack { --trilha-pad: 15px; }
+
+  /* Respiro para a barra de gestos do iPhone. */
+  .mobileBody { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
 }
