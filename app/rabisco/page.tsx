@@ -4,6 +4,7 @@ import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 import ScribbleCanvas from "./scribble-canvas";
+import LandingHero from "./landing-hero";
 
 // Landing pública do Rabisco. O editor vive em /rabisco/app, atrás de
 // login + assinatura — aqui não há uso gratuito, só demonstração.
@@ -12,6 +13,22 @@ import ScribbleCanvas from "./scribble-canvas";
 
 const PRECO_MENSAL = "29";
 const PRECO_ANUAL = "249";
+
+// Só fontes que o herói já baixa — a galeria não custa download nenhum.
+const AMOSTRAS: {
+  texto: string;
+  fonte: string;
+  fontId: string;
+  thickness: "fina" | "regular" | "grossa";
+  tremor: number;
+}[] = [
+  { texto: "Itatiaia", fonte: "Permanent Marker", fontId: "permanent-marker", thickness: "regular", tremor: 30 },
+  { texto: "−8 °C", fonte: "Gloria Hallelujah", fontId: "gloria-hallelujah", thickness: "grossa", tremor: 40 },
+  { texto: "km 42", fonte: "Handlee", fontId: "handlee", thickness: "grossa", tremor: 34 },
+  { texto: "via láctea", fonte: "Architects Daughter", fontId: "architects-daughter", thickness: "regular", tremor: 28 },
+  { texto: "bivaque", fonte: "Shadows Into Light", fontId: "shadows-into-light", thickness: "grossa", tremor: 36 },
+  { texto: "fim de luz", fonte: "Permanent Marker", fontId: "permanent-marker", thickness: "fina", tremor: 24 },
+];
 
 const RECURSOS: { titulo: string; texto: string }[] = [
   {
@@ -90,44 +107,7 @@ export default function RabiscoLandingPage() {
             Sem After Effects, sem plugin, sem esperar render.
           </p>
 
-          <div
-            style={{
-              height: "clamp(200px, 32vw, 340px)",
-              border: "1px solid var(--border)",
-              backgroundImage:
-                "linear-gradient(45deg, var(--surface) 25%, transparent 25%), linear-gradient(-45deg, var(--surface) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--surface) 75%), linear-gradient(-45deg, transparent 75%, var(--surface) 75%)",
-              backgroundSize: "26px 26px",
-              backgroundPosition: "0 0, 0 13px, 13px -13px, -13px 0",
-              backgroundColor: "var(--bg)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: 24,
-              marginBottom: "var(--s-2)",
-            }}
-          >
-            <ScribbleCanvas
-              fontId="caveat"
-              text="ação."
-              tremor={34}
-              boilFps={10}
-              thickness="regular"
-              color="#C08246"
-              lineHeight={1.15}
-            />
-          </div>
-          <p
-            style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: 10,
-              letterSpacing: ".2em",
-              textTransform: "uppercase",
-              color: "var(--text-3)",
-              marginBottom: "var(--sect-y)",
-            }}
-          >
-            isto é a ferramenta rodando, não um vídeo
-          </p>
+          <LandingHero />
         </section>
 
         {/* ── o que faz ── */}
@@ -172,6 +152,83 @@ export default function RabiscoLandingPage() {
                   {r.texto}
                 </p>
               </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── galeria: mesmas fontes já carregadas pelo herói, zero download extra ── */}
+        <section
+          style={{
+            padding: "var(--sect-y) var(--pad-page)",
+            borderTop: "1px solid var(--border)",
+            maxWidth: 1280,
+            margin: "0 auto",
+          }}
+        >
+          <p className="v2-eyebrow" style={{ textAlign: "center" }}>
+            Alguns traços
+          </p>
+          <h2
+            style={{
+              fontFamily: "var(--font-serif)",
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: "clamp(22px, 2.8vw, 34px)",
+              textAlign: "center",
+              margin: "var(--s-2) auto var(--s-5)",
+              maxWidth: "24ch",
+              color: "var(--text-1)",
+              textWrap: "balance",
+            }}
+          >
+            Doze fontes manuscritas, todas com o mesmo tremor por baixo.
+          </h2>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: 1,
+              background: "var(--border)",
+              border: "1px solid var(--border)",
+            }}
+          >
+            {AMOSTRAS.map((a) => (
+              <figure key={a.texto} style={{ margin: 0, background: "var(--bg)" }}>
+                <div
+                  style={{
+                    height: 150,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "20px 16px",
+                    overflow: "hidden",
+                  }}
+                >
+                  <ScribbleCanvas
+                    fontId={a.fontId}
+                    text={a.texto}
+                    tremor={a.tremor}
+                    boilFps={8}
+                    thickness={a.thickness}
+                    color="#C08246"
+                    lineHeight={1.05}
+                  />
+                </div>
+                <figcaption
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 9,
+                    letterSpacing: ".18em",
+                    textTransform: "uppercase",
+                    color: "var(--text-3)",
+                    padding: "0 16px 14px",
+                    textAlign: "center",
+                  }}
+                >
+                  {a.fonte}
+                </figcaption>
+              </figure>
             ))}
           </div>
         </section>
