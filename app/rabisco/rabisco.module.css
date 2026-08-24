@@ -138,6 +138,21 @@
 .selectRow:hover { border-bottom-color: var(--accent); }
 .selectRow:hover .chevron { color: var(--accent); }
 .selectValue { font-family: var(--font-ui); font-size: 14px; color: var(--text-1); }
+.select {
+  appearance: none;
+  flex: 1;
+  border: none;
+  background: none;
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+}
+/* O popup nativo herda o fundo do sistema — sem isso as opções ficam
+   texto claro sobre fundo claro em alguns temas. */
+.select option { background: var(--surface); color: var(--text-1); }
 .chevron { color: var(--text-3); }
 
 /* Estado ativo por INVERSÃO (preenche em âmbar, texto no tom do fundo).

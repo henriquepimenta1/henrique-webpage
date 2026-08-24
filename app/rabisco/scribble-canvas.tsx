@@ -13,6 +13,8 @@ const BOIL_FRAMES = 3;
 
 
 interface ScribbleCanvasProps {
+  /** Id da fonte no registro (ver fonts.ts). */
+  fontId: string;
   text: string;
   /** 0–100 — amplitude da deformação por letra. */
   tremor: number;
@@ -35,6 +37,7 @@ const STROKE_BY_THICKNESS: Record<ScribbleCanvasProps["thickness"], number> = {
 };
 
 export default function ScribbleCanvas({
+  fontId,
   text,
   tremor,
   boilFps,
@@ -44,7 +47,7 @@ export default function ScribbleCanvas({
   letterSpacing = 0,
   lineHeight = 1.15,
 }: ScribbleCanvasProps) {
-  const { font, state } = useScribbleFont();
+  const { font, state } = useScribbleFont(fontId);
 
   // Com tremor 0 os quadros são idênticos — não vale gerar nem animar.
   const frameCount = tremor > 0 ? BOIL_FRAMES : 1;

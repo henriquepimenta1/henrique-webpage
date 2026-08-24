@@ -2,49 +2,63 @@
 
 import { useEffect, useState } from "react";
 import type { Font } from "opentype.js";
-
-const FONT_URL = "/fonts/Caveat.ttf";
+import { DEFAULT_FONT_ID, fontById } from "./fonts";
 
 export type FontState = "loading" | "ready" | "error";
 
-// Cache no módulo: o preview e o export compartilham a mesma fonte, e uma
-// remontagem do componente não baixa nem reparseia de novo.
-let cached: Promise<Font> | null = null;
+// Cache por fonte: cada uma é baixada e parseada uma única vez, e o preview
+// e o export compartilham a mesma instância. Trocar de fonte e voltar não
+// baixa de novo.
+const cache = new Map<string, Promise<Font>>();
 
-function loadFont(): Promise<Font> {
-  if (!cached) {
-    cached = (async () => {
-      const [opentype, res] = await Promise.all([import("opentype.js"), fetch(FONT_URL)]);
-      if (!res.ok) throw new Error(`font ${res.status}`);
-      return opentype.parse(await res.arrayBuffer());
-    })().catch((err) => {
-      cached = null; // permite nova tentativa depois de uma falha de rede
-      throw err;
-    });
-  }
-  return cached;
+function loadFont(id: string): Promise<Font> {
+  const existing = cache.get(id);
+  if (existing) return existing;
+
+  const promise = (async () => {
+    const [opentype, res] = await Promise.all([
+      import("opentype.js"),
+      fetch(fontById(id).file),
+    ]);
+    if (!res.ok) throw new Error(`font ${res.status}`);
+    return opentype.parse(await res.arrayBuffer());
+  })().catch((err) => {
+    cache.delete(id); // permite nova tentativa depois de uma falha de rede
+    throw err;
+  });
+
+  cache.set(id, promise);
+  return promise;
 }
 
-export function useScribbleFont(): { font: Font | null; state: FontState } {
-  const [font, setFont] = useState<Font | null>(null);
-  const [state, setState] = useState<FontState>("loading");
+export function useScribbleFont(id: string = DEFAULT_FONT_ID): {
+  font: Font | null;
+  state: FontState;
+} {
+  // Guarda a fonte JUNTO do id que a originou. Assim o estado é derivado da
+  // comparação com o id pedido, em vez de ser sincronizado à mão dentro do
+  // efeito — e a fonte anterior continua na tela enquanto a nova baixa, sem
+  // o canvas piscar em branco a cada troca.
+  const [loaded, setLoaded] = useState<{ id: string; font: Font } | null>(null);
+  const [failedId, setFailedId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    loadFont().then(
-      (f) => {
-        if (cancelled) return;
-        setFont(f);
-        setState("ready");
+    loadFont(id).then(
+      (font) => {
+        if (!cancelled) setLoaded({ id, font });
       },
       () => {
-        if (!cancelled) setState("error");
+        if (!cancelled) setFailedId(id);
       },
     );
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [id]);
 
-  return { font, state };
+  const state: FontState =
+    failedId === id ? "error" : loaded?.id === id ? "ready" : "loading";
+
+  return { font: loaded?.font ?? null, state };
 }

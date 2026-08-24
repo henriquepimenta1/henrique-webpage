@@ -5,6 +5,7 @@ import Link from "next/link";
 import styles from "./rabisco.module.css";
 import ScribbleCanvas from "./scribble-canvas";
 import { useScribbleFont } from "./use-scribble-font";
+import { SCRIBBLE_FONTS, DEFAULT_FONT_ID, fontById } from "./fonts";
 import { exportPngSequence, exportMp4, canExportMp4, triggerDownload } from "./export";
 
 // Rabisco — ferramenta de scribble animado para filmmakers.
@@ -13,7 +14,6 @@ import { exportPngSequence, exportMp4, canExportMp4, triggerDownload } from "./e
 // controlar a deformação de verdade. Export real ainda não implementado.
 // Layout segue os tokens de .theme-fdl (globals.css).
 
-const FONTS = ["Rabisco Nº1", "Rabisco Nº2", "Rabisco Nº3"];
 
 /** Taxa do arquivo final — independente do fps do tremor. */
 const EXPORT_FPS = 24;
@@ -108,7 +108,7 @@ function LockIcon() {
 
 export default function RabiscoPage() {
   const [text, setText] = useState("");
-  const [fontIdx, setFontIdx] = useState(1);
+  const [fontId, setFontId] = useState(DEFAULT_FONT_ID);
   const [thickness, setThickness] = useState<"fina" | "regular" | "grossa">("regular");
   const [tremor, setTremor] = useState(32);
   const [speed, setSpeed] = useState(55);
@@ -128,7 +128,7 @@ export default function RabiscoPage() {
   const [exportState, setExportState] = useState<"idle" | "exporting" | "limited" | "error">("idle");
   const [exportFrame, setExportFrame] = useState(0);
   const cancelExportRef = useRef(false);
-  const { font } = useScribbleFont();
+  const { font } = useScribbleFont(fontId);
   // Só no cliente: `window.VideoEncoder` não existe no SSR e checar direto
   // no render causaria divergência de hidratação.
   const [mp4Supported, setMp4Supported] = useState(true);
@@ -417,6 +417,7 @@ export default function RabiscoPage() {
               }
             >
               <ScribbleCanvas
+                fontId={fontId}
                 text={displayText}
                 tremor={tremor}
                 boilFps={boilFps}
@@ -470,10 +471,24 @@ export default function RabiscoPage() {
             </div>
             <div className={styles.section}>
               <p className={styles.sectionTitle}>Fonte de traço</p>
-              <button className={styles.selectRow} onClick={() => setFontIdx((i) => (i + 1) % FONTS.length)}>
-                <span className={styles.selectValue}>{FONTS[fontIdx]}</span>
+              <div className={styles.selectRow}>
+                <select
+                  className={styles.select}
+                  value={fontId}
+                  onChange={(e) => setFontId(e.target.value)}
+                  aria-label="Fonte de traço"
+                >
+                  {SCRIBBLE_FONTS.map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.name}
+                    </option>
+                  ))}
+                </select>
                 <span className={styles.chevron}>⌄</span>
-              </button>
+              </div>
+              <p className={styles.exportNote} style={{ marginTop: 8 }}>
+                {fontById(fontId).nota} · {fontById(fontId).licenca}
+              </p>
             </div>
             {controlsSections}
             {exportSection}
@@ -497,9 +512,14 @@ export default function RabiscoPage() {
           </div>
 
           <div className={styles.fontScroll}>
-            {FONTS.map((f, i) => (
-              <button key={f} className={styles.fontChip} data-active={fontIdx === i ? "1" : "0"} onClick={() => setFontIdx(i)}>
-                {f}
+            {SCRIBBLE_FONTS.map((f) => (
+              <button
+                key={f.id}
+                className={styles.fontChip}
+                data-active={fontId === f.id ? "1" : "0"}
+                onClick={() => setFontId(f.id)}
+              >
+                {f.name}
               </button>
             ))}
           </div>
