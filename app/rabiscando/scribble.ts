@@ -122,7 +122,21 @@ function perturbToPathData(
 }
 
 const FONT_SIZE = 200;
+/** Folga da caixa com tremor 0. Cresce com a amplitude — ver `padFor`. */
 const PADDING = 40;
+
+/** Teto do slider de tremor. 100 é "mão trêmula"; daí para cima é estilo. */
+export const MAX_TREMOR = 200;
+
+/**
+ * Em amplitude alta o traço sai MUITO da métrica nominal: a 200 são ±14px de
+ * warp, ±12px de deslocamento de linha de base e ±10° de rotação, que num
+ * corpo de 200px já joga o canto da letra uns 17px para fora. Com a folga
+ * fixa de 40 o traço encostaria na borda da caixa e seria cortado no export.
+ */
+function padFor(amp: number): number {
+  return PADDING * (1 + amp);
+}
 
 export interface ScribbleOptions {
   /** Avanço extra entre letras, como fração do corpo da fonte (-0.05 a 0.4). */
@@ -152,7 +166,8 @@ function measureLine(font: Font, line: string, extra: number): { items: Placed[]
 }
 
 /**
- * Monta o texto inteiro. `tremor` vai de 0 (fonte original, limpa) a 100.
+ * Monta o texto inteiro. `tremor` vai de 0 (fonte original, limpa) a
+ * MAX_TREMOR; 100 é o limite do que ainda passa por caligrafia humana.
  * Quebras de linha em `text` viram linhas de verdade, centralizadas entre si.
  *
  * `frame` gera uma versão alternativa da MESMA palavra: ciclar entre alguns
@@ -166,7 +181,8 @@ export function buildScribble(
   options: ScribbleOptions = {},
 ): ScribbleResult {
   const { letterSpacing = 0, lineHeight = 1.15, frame = 0 } = options;
-  const amp = Math.max(0, Math.min(100, tremor)) / 100;
+  const amp = Math.max(0, Math.min(MAX_TREMOR, tremor)) / 100;
+  const pad = padFor(amp);
   const extra = letterSpacing * FONT_SIZE;
   const lineStep = lineHeight * FONT_SIZE;
 
@@ -207,13 +223,13 @@ export function buildScribble(
   const ascent = (font.ascender / font.unitsPerEm) * FONT_SIZE;
   const descent = (font.descender / font.unitsPerEm) * FONT_SIZE;
   const lastBaseline = (rawLines.length - 1) * lineStep;
-  const minY = -ascent - PADDING;
-  const maxY = lastBaseline - descent + PADDING;
+  const minY = -ascent - pad;
+  const maxY = lastBaseline - descent + pad;
 
   return {
     glyphs,
-    viewBox: `${-PADDING} ${minY} ${maxWidth + PADDING * 2} ${maxY - minY}`,
-    width: maxWidth + PADDING * 2,
+    viewBox: `${-pad} ${minY} ${maxWidth + pad * 2} ${maxY - minY}`,
+    width: maxWidth + pad * 2,
     height: maxY - minY,
   };
 }

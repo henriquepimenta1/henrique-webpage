@@ -5,6 +5,7 @@ import Link from "next/link";
 import styles from "../rabiscando.module.css";
 import ScribbleCanvas from "../scribble-canvas";
 import { useScribbleFont } from "../use-scribble-font";
+import { MAX_TREMOR } from "../scribble";
 import { SCRIBBLE_FONTS, DEFAULT_FONT_ID, fontById } from "../fonts";
 import { exportPngSequence, exportMp4, canExportMp4, triggerDownload } from "../export";
 
@@ -15,8 +16,12 @@ import { exportPngSequence, exportMp4, canExportMp4, triggerDownload } from "../
 // Layout segue os tokens de .theme-fdl (globals.css).
 
 
-/** Taxa do arquivo final — independente do fps do tremor. */
-const EXPORT_FPS = 24;
+/** Taxas do arquivo final — independentes do fps do tremor.
+ *  24 é o padrão de cinema e continua sendo o default; 25 existe para casar
+ *  com material PAL, 30 e 60 para redes sociais e câmera lenta. */
+const EXPORT_FPS_OPTIONS = [12, 24, 25, 30, 60] as const;
+type ExportFps = (typeof EXPORT_FPS_OPTIONS)[number];
+const DEFAULT_EXPORT_FPS: ExportFps = 24;
 
 const RESOLUTIONS = {
   "720": { width: 1280, height: 720 },
@@ -40,11 +45,14 @@ function Slider({
   value,
   valueLabel,
   onChange,
+  max = 100,
 }: {
   label: string;
   value: number;
   valueLabel: string;
   onChange: (v: number) => void;
+  /** Sliders normalizados vão a 100; o de Tremor vai além (ver MAX_TREMOR). */
+  max?: number;
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +61,7 @@ function Slider({
     if (!el) return;
     const rect = el.getBoundingClientRect();
     const pct = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
-    onChange(Math.round(pct * 100));
+    onChange(Math.round(pct * max));
   };
 
   return (
@@ -75,15 +83,16 @@ function Slider({
         aria-label={label}
         aria-valuenow={value}
         aria-valuemin={0}
-        aria-valuemax={100}
+        aria-valuemax={max}
         tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === "ArrowRight") onChange(Math.min(100, value + 2));
-          if (e.key === "ArrowLeft") onChange(Math.max(0, value - 2));
+          const passo = Math.max(1, Math.round(max / 50));
+          if (e.key === "ArrowRight") onChange(Math.min(max, value + passo));
+          if (e.key === "ArrowLeft") onChange(Math.max(0, value - passo));
         }}
       >
-        <div className={styles.sliderFill} style={{ width: `${value}%` }} />
-        <div className={styles.sliderHandle} style={{ left: `${value}%` }} />
+        <div className={styles.sliderFill} style={{ width: `${(value / max) * 100}%` }} />
+        <div className={styles.sliderHandle} style={{ left: `${(value / max) * 100}%` }} />
       </div>
     </div>
   );
@@ -104,6 +113,7 @@ export default function RabiscandoEditorPage() {
   const [bgColor, setBgColor] = useState("#0d0c0b");
   const [format, setFormat] = useState<"png" | "mp4">("png");
   const [resolution, setResolution] = useState<ResolutionKey>("1080");
+  const [exportFps, setExportFps] = useState<ExportFps>(DEFAULT_EXPORT_FPS);
   const [playing, setPlaying] = useState(true);
   const [progress, setProgress] = useState(38);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -125,7 +135,7 @@ export default function RabiscandoEditorPage() {
   // Vai bem abaixo de 1 de propósito: abaixo de ~0.6 as linhas se sobrepõem,
   // que é um efeito legítimo em lettering.
   const lineHeight = 0.25 + (lineHeightPct / 100) * 1.95;
-  const exportFrameCount = Math.max(1, Math.round(Number(durationSeconds) * EXPORT_FPS));
+  const exportFrameCount = Math.max(1, Math.round(Number(durationSeconds) * exportFps));
 
   // Reproduz o preview em loop enquanto "playing" — puramente visual.
   useEffect(() => {
@@ -160,7 +170,7 @@ export default function RabiscandoEditorPage() {
         strokeWidth: STROKE_BY_THICKNESS[thickness],
         color,
         boilFps,
-        exportFps: EXPORT_FPS,
+        exportFps,
         durationSeconds: Number(durationSeconds),
         ...RESOLUTIONS[resolution],
         watermark: false, // acesso é só por assinatura — não há tier grátis
@@ -195,7 +205,13 @@ export default function RabiscandoEditorPage() {
             ))}
           </div>
         </div>
-        <Slider label="Tremor" value={tremor} valueLabel={`${tremor}%`} onChange={setTremor} />
+        <Slider
+          label="Tremor"
+          value={tremor}
+          max={MAX_TREMOR}
+          valueLabel={tremor > 100 ? `${tremor}% · exagero` : `${tremor}%`}
+          onChange={setTremor}
+        />
         <Slider label="Velocidade do tremor" value={speed} valueLabel={`${boilFps} fps`} onChange={setSpeed} />
       </div>
 
@@ -292,6 +308,23 @@ export default function RabiscandoEditorPage() {
           ))}
         </div>
       </div>
+      <div className={styles.field}>
+        <span className={styles.fieldLabel}>
+          Quadros por segundo <span className={styles.fieldValue}>{exportFps} fps</span>
+        </span>
+        <div className={styles.chipRow}>
+          {EXPORT_FPS_OPTIONS.map((f) => (
+            <button
+              key={f}
+              className={styles.chip}
+              data-active={exportFps === f ? "1" : "0"}
+              onClick={() => setExportFps(f)}
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+      </div>
       <Slider
         label="Duração"
         value={duration}
@@ -329,20 +362,20 @@ export default function RabiscandoEditorPage() {
           </button>
           {exportState === "error" && (
             <p className={styles.errorNote}>
-              o render falhou. tente uma duração menor ou 720p.
+              o render falhou. tente menos fps, uma duração menor ou 720p.
             </p>
           )}
           <p className={styles.exportNote}>
             {format === "mp4" ? (
               <>
-                MP4 H.264, {exportFrameCount} quadros a {EXPORT_FPS}fps, sempre com{" "}
+                MP4 H.264, {exportFrameCount} quadros a {exportFps}fps, sempre com{" "}
                 <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>fundo preto</strong> —
                 H.264 não tem transparência. No DaVinci/Premiere, ponha o clipe por cima e use o
                 modo de composição <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>Screen</strong>{" "}
                 (ou Add): o preto some e sobra só o traço.
               </>
             ) : (
-              <>ZIP com {exportFrameCount} PNGs transparentes a {EXPORT_FPS}fps.</>
+              <>ZIP com {exportFrameCount} PNGs transparentes a {exportFps}fps.</>
             )}
           </p>
         </>
