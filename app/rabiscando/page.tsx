@@ -65,7 +65,7 @@ const RECURSOS: { titulo: string; texto: string }[] = [
 export default function RabiscandoLandingPage() {
   return (
     <div className="theme-fdl">
-      <DarkTopNav />
+      <DarkTopNav active="Rabiscando" />
 
       <main style={{ paddingTop: "var(--hero-clear)" }}>
         {/* ── herói: a ferramenta se apresenta escrevendo ── */}

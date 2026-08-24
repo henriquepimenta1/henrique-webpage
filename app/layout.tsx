@@ -29,6 +29,10 @@ const reenieBeanie = Reenie_Beanie({
 });
 
 export const metadata: Metadata = {
+  // Sem metadataBase o Next resolve imagens de OG contra localhost em
+  // desenvolvimento e emite aviso no build; com ela, os caminhos relativos
+  // de cada página viram URL absoluta sozinhos.
+  metadataBase: new URL("https://euhenriq.com"),
   title: "henriq.eu",
   description: "Fotógrafo & Explorador Outdoor. Portfolio, Presets e Expedições.",
 };
