@@ -1,0 +1,95 @@
+/* Tema do formulário de login, nos tokens do "Fim de Luz".
+ *
+ * Por que CSS e não a API de aparência do Clerk: o pacote oficial
+ * @clerk/themes só tem versão estável para o Clerk v6 (traz um
+ * @clerk/shared 3.x embutido, contra o 4.x que o v7 usa), e as chaves
+ * `baseTheme`/`colorText` não existem no tipo Theme desta versão.
+ *
+ * Estas classes `cl-` são a superfície de estilo pública do Clerk, mas
+ * seguem sendo internas dele: se um upgrade mudar os nomes, o login volta
+ * ao visual padrão — feio, porém funcional. Nada aqui quebra o fluxo.
+ */
+
+.cl-rootBox,
+.cl-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.cl-headerTitle,
+.cl-formFieldLabel,
+.cl-userButtonPopoverActionButtonText {
+  color: var(--text-1) !important;
+  font-family: var(--font-ui) !important;
+}
+
+.cl-headerSubtitle,
+.cl-footerActionText,
+.cl-dividerText,
+.cl-formFieldInfoText {
+  color: var(--text-3) !important;
+  font-family: var(--font-ui) !important;
+}
+
+/* Campos: linha embaixo em vez de caixa, como o resto da ferramenta. */
+.cl-formFieldInput {
+  background: var(--bg) !important;
+  color: var(--text-1) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--border-strong) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.cl-formFieldInput:focus {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 3px !important;
+  border-bottom-color: var(--accent) !important;
+}
+
+/* Botão principal: mesma inversão em âmbar dos chips do editor. */
+.cl-formButtonPrimary {
+  background: var(--accent) !important;
+  color: var(--bg) !important;
+  border: 1px solid var(--accent) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  text-transform: uppercase !important;
+  letter-spacing: .08em !important;
+  font-family: var(--font-ui) !important;
+  font-weight: 600 !important;
+}
+.cl-formButtonPrimary:hover {
+  background: var(--accent-hover) !important;
+  border-color: var(--accent-hover) !important;
+}
+
+/* Entrar com Google e afins. */
+.cl-socialButtonsBlockButton,
+.cl-socialButtonsIconButton {
+  background: none !important;
+  color: var(--text-1) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0 !important;
+}
+.cl-socialButtonsBlockButton:hover,
+.cl-socialButtonsIconButton:hover {
+  border-color: var(--border-strong) !important;
+  background: var(--surface-el) !important;
+}
+
+.cl-dividerLine { background: var(--border) !important; }
+
+.cl-footerActionLink,
+.cl-alternativeMethodsBlockButton {
+  color: var(--accent) !important;
+  border-radius: 0 !important;
+}
+.cl-footerActionLink:hover { color: var(--accent-hover) !important; }
+
+/* A faixa de rodapé do Clerk é clara por padrão e destoa do fundo. */
+.cl-footer,
+.cl-internal-1dauvpw {
+  background: transparent !important;
+}

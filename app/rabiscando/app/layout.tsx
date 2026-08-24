@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ClerkProvider, SignIn, UserButton } from "@clerk/nextjs";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { METADATA_KEY, type RabiscandoMetadata } from "@/lib/stripe";
+import "./clerk-tema.css";
 
 // Portão do editor.
 //
@@ -53,8 +54,9 @@ export default async function EditorLayout({ children }: { children: ReactNode }
           <div style={enquadre}>
             <p style={sobrancelha}>Rabiscando · acesso</p>
             <h1 style={titulo}>Entre para usar a ferramenta.</h1>
-            {/* Aparência do Clerk ajustada aos tokens do "Fim de Luz" — o
-                visual padrão dele é claro e destoaria do resto do site. */}
+            {/* As cores base vêm daqui; o resto do ajuste está em
+                clerk-tema.css, que explica por que não usamos o pacote
+                de temas oficial. */}
             <SignIn
               routing="hash"
               appearance={{
