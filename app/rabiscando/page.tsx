@@ -68,16 +68,8 @@ const DUVIDAS: { p: string; r: string }[] = [
     r: "Pode. O que você exporta é seu, uso comercial incluído. As doze fontes são licenciadas para uso comercial (SIL OFL ou Apache 2.0) e os textos de licença acompanham os arquivos.",
   },
   {
-    p: "Meu texto vai pra algum servidor?",
-    r: "Não. O desenho e o arquivo final são gerados dentro do seu navegador, na sua máquina. Nem o texto que você escreve nem o arquivo exportado passam por servidor meu.",
-  },
-  {
     p: "E se eu cancelar?",
     r: "Você cancela sozinho, num botão dentro da ferramenta, e continua com acesso até o fim do período já pago. Nada de e-mail pedindo para ficar. O que você já exportou continua seu para sempre.",
-  },
-  {
-    p: "Preciso instalar alguma coisa?",
-    r: "Nada. Abre no navegador e funciona. Para exportar MP4 é preciso um navegador atual — Chrome, Edge ou Safari recentes; se o seu não suportar, a ferramenta avisa e o PNG continua disponível.",
   },
 ];
 
@@ -116,7 +108,14 @@ const RECURSOS: { titulo: string; texto: string }[] = [
 export default function RabiscandoLandingPage() {
   return (
     <div className="theme-fdl">
-      <DarkTopNav active="Rabiscando" />
+      <DarkTopNav
+        active="Rabiscando"
+        acao={
+          <Link className="rb-btn rb-btn--primary rb-btn--sm" href="#assinar">
+            Assinar
+          </Link>
+        }
+      />
 
       <style>{`
 .rbl-cta-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:var(--s-3);margin:0 0 var(--s-2)}
@@ -136,7 +135,14 @@ export default function RabiscandoLandingPage() {
 .rbl-faq-r{font-family:var(--font-ui);font-size:14px;line-height:1.7;color:var(--text-2);margin:0;max-width:46ch}
 
 .rbl-sect{padding:var(--sect-y) var(--pad-page);border-top:1px solid var(--border);max-width:1280px;margin:0 auto}
-.rbl-sect-h{font-family:var(--font-serif);font-style:italic;font-weight:400;font-size:clamp(22px,2.8vw,34px);color:var(--text-1);margin:var(--s-2) 0 var(--s-5);text-wrap:balance;max-width:24ch}
+.rbl-sect-h{font-family:var(--font-ui);font-weight:600;font-size:clamp(19px,2.2vw,26px);letter-spacing:-.01em;color:var(--text-1);margin:var(--s-1) 0 var(--s-5);text-wrap:balance;max-width:26ch}
+
+/* Faixa de especificação: para quem edita vídeo, formato e resolução são
+   prova. Substitui três parágrafos de prosa por uma linha que responde
+   "isso serve pra mim?" antes de qualquer argumento. */
+.rbl-spec{border-top:1px solid var(--border);border-bottom:1px solid var(--border);margin-top:var(--sect-y);padding:18px var(--pad-page);display:flex;flex-wrap:wrap;justify-content:center;gap:10px 22px;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3)}
+.rbl-spec b{color:var(--text-2);font-weight:400}
+.rbl-spec span{color:var(--border-strong)}
       `}</style>
 
       <main style={{ paddingTop: "var(--hero-clear)" }}>
@@ -196,8 +202,16 @@ export default function RabiscandoLandingPage() {
           <LandingHero />
         </section>
 
+        <div className="rbl-spec">
+          <b>PNG alfa</b><span>·</span>
+          <b>MP4 H.264</b><span>·</span>
+          <b>até 4K</b><span>·</span>
+          <b>DaVinci, Premiere, Final Cut</b><span>·</span>
+          <b>roda no navegador</b>
+        </div>
+
         {/* ── como funciona: a sequência real, três passos ── */}
-        <section className="rbl-sect">
+        <section className="rbl-sect" style={{ borderTop: "none" }}>
           <p className="v2-eyebrow">Como funciona</p>
           <h2 className="rbl-sect-h">Do texto ao arquivo na timeline, em três passos.</h2>
 
@@ -213,14 +227,9 @@ export default function RabiscandoLandingPage() {
         </section>
 
         {/* ── o que faz ── */}
-        <section
-          style={{
-            padding: "var(--sect-y) var(--pad-page)",
-            borderTop: "1px solid var(--border)",
-            maxWidth: 1280,
-            margin: "0 auto",
-          }}
-        >
+        <section className="rbl-sect">
+          <p className="v2-eyebrow">O que vem junto</p>
+          <h2 className="rbl-sect-h">Sem versão capada, sem marca d&rsquo;água.</h2>
           <div
             style={{
               display: "grid",
@@ -267,22 +276,8 @@ export default function RabiscandoLandingPage() {
             margin: "0 auto",
           }}
         >
-          <p className="v2-eyebrow" style={{ textAlign: "center" }}>
-            Alguns traços
-          </p>
-          <h2
-            style={{
-              fontFamily: "var(--font-serif)",
-              fontStyle: "italic",
-              fontWeight: 400,
-              fontSize: "clamp(22px, 2.8vw, 34px)",
-              textAlign: "center",
-              margin: "var(--s-2) auto var(--s-5)",
-              maxWidth: "24ch",
-              color: "var(--text-1)",
-              textWrap: "balance",
-            }}
-          >
+          <p className="v2-eyebrow">Alguns traços</p>
+          <h2 className="rbl-sect-h">
             Doze fontes manuscritas, todas com o mesmo tremor por baixo.
           </h2>
 

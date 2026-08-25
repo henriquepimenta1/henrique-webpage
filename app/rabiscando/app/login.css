@@ -14,7 +14,7 @@
 /* Em duas colunas a altura é TRAVADA na viewport: sem isso a coluna do
    formulário estica a linha do grid, o painel da arte cresce junto e a
    legenda dele cai abaixo da dobra. Quem rola é o formulário, por dentro. */
-@media (min-width: 901px) {
+@media (min-width: 881px) {
   .rbs-login {
     height: 100svh;
     overflow: hidden;
@@ -93,13 +93,13 @@
 }
 
 /* ── empilhado: a arte vira faixa e o formulário fica acima da dobra ── */
-@media (max-width: 900px) {
+@media (max-width: 880px) {
   .rbs-login {
     grid-template-columns: 1fr;
   }
 
   .rbs-login__arte {
-    height: 180px;
+    height: 132px;
     padding: var(--s-3);
     border-right: none;
     border-bottom: 1px solid var(--border);

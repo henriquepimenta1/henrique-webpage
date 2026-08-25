@@ -58,8 +58,13 @@
   border-bottom-color: #c08246 !important;
 }
 
-/* Botão principal: mesma inversão em âmbar dos chips do editor. */
+/* Botão principal — nível 1 do sistema (ver botoes.css): âmbar sólido,
+   texto na cor do fundo, largura cheia, 48px. */
 .cl-formButtonPrimary {
+  min-height: 48px !important;
+  width: 100% !important;
+  letter-spacing: .06em !important;
+  font-size: 14px !important;
   background: #c08246 !important;
   color: #0d0c0b !important;
   border: 1px solid #c08246 !important;
@@ -75,12 +80,13 @@
   border-color: #d19558 !important;
 }
 
-/* Entrar com Google e afins. */
+/* Google e afins — nível 2: fundo de superfície, borda forte. */
 .cl-socialButtonsBlockButton,
 .cl-socialButtonsIconButton {
-  background: transparent !important;
+  min-height: 48px !important;
+  background: #171412 !important;
   color: #ede7db !important;
-  border: 1px solid rgba(237, 231, 219, 0.12) !important;
+  border: 1px solid rgba(237, 231, 219, 0.22) !important;
   border-radius: 0 !important;
 }
 .cl-socialButtonsBlockButton:hover,
@@ -117,4 +123,25 @@
 
 .cl-footer {
   background: transparent !important;
+}
+
+/* Foco por teclado. O Clerk zera o contorno em vários botões, e sem isto
+   a pessoa que navega por Tab não vê onde está. */
+.cl-formButtonPrimary:focus-visible,
+.cl-socialButtonsBlockButton:focus-visible,
+.cl-footerActionLink:focus-visible,
+.cl-alternativeMethodsBlockButton:focus-visible {
+  outline: 1px solid #c08246 !important;
+  outline-offset: 3px !important;
+}
+.cl-formButtonPrimary:focus-visible {
+  outline-color: #ede7db !important;
+  outline-offset: 2px !important;
+}
+
+/* Alvo de toque no celular. */
+@media (max-width: 880px) {
+  .cl-formFieldInput { min-height: 44px !important; }
+  .cl-footerActionLink,
+  .cl-alternativeMethodsBlockButton { min-height: 44px !important; display: inline-flex !important; align-items: center !important; }
 }

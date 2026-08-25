@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState, type CSSProperties } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { DARK_NAV_L, DARK_NAV_R } from "@/components/dark-nav-links";
 
 // Chrome "Fim de Luz" — topbar. Divergências por página viram props:
@@ -8,9 +8,12 @@ import { DARK_NAV_L, DARK_NAV_R } from "@/components/dark-nav-links";
 interface DarkTopNavProps {
   active?: string;
   topStyle?: CSSProperties;
+  /** Ação opcional à direita da nav. Existe para a landing do Rabiscando
+   *  poder oferecer "Assinar" sem que o botão apareça nas outras páginas. */
+  acao?: ReactNode;
 }
 
-export default function DarkTopNav({ active, topStyle }: DarkTopNavProps) {
+export default function DarkTopNav({ active, topStyle, acao }: DarkTopNavProps) {
   const [open, setOpen] = useState(false);
 
   const link = (l: { label: string; href: string }) => (
@@ -43,8 +46,9 @@ export default function DarkTopNav({ active, topStyle }: DarkTopNavProps) {
           Eu Henriq
         </Link>
       )}
-      <nav className="v2-nav" style={{ justifyContent: "flex-end" }}>
+      <nav className="v2-nav" style={{ justifyContent: "flex-end", alignItems: "center" }}>
         {DARK_NAV_R.map(link)}
+        {acao}
       </nav>
       <button className="v2-menu-btn" onClick={() => setOpen(true)}>
         Menu
