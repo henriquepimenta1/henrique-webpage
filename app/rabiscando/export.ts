@@ -28,6 +28,8 @@ export interface ExportParams {
   /** Cor de fundo. Ausente = transparente no PNG; no MP4 vira preto,
    *  porque H.264 não tem canal alfa. */
   background?: string;
+  /** Fundo destinado a recorte por cor (chroma key). Ver `paintFrame`. */
+  chromaKey?: boolean;
   onProgress?: (done: number, total: number) => void;
   /** Devolve true para abortar entre quadros. */
   shouldCancel?: () => boolean;
@@ -92,6 +94,28 @@ async function svgToImage(markup: string): Promise<HTMLImageElement> {
   }
 }
 
+/**
+ * Remove a suavização das bordas: todo pixel vira transparente ou opaco,
+ * sem meio-termo.
+ *
+ * É o que torna o fundo verde utilizável. A borda suavizada de um traço é
+ * uma faixa de pixels meio traço, meio fundo — e quando o editor remove o
+ * verde, essa mistura não some: fica a franja verde no contorno. Num traço
+ * trêmulo, que é quase todo borda, isso aparece em cada letra.
+ *
+ * O custo é serrilhado. Some na prática porque a saída é grande: exportado
+ * em 4K e escalado para caber num vídeo vertical, o degrau some. Por isso
+ * isto NÃO se aplica a fundo comum, onde a suavização é o que se quer.
+ */
+function endurecerBordas(ctx: CanvasRenderingContext2D, largura: number, altura: number): void {
+  const dados = ctx.getImageData(0, 0, largura, altura);
+  const px = dados.data;
+  for (let i = 3; i < px.length; i += 4) {
+    px[i] = px[i] >= 128 ? 255 : 0;
+  }
+  ctx.putImageData(dados, 0, 0);
+}
+
 function paintFrame(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
@@ -99,6 +123,20 @@ function paintFrame(
   background?: string,
 ): void {
   ctx.clearRect(0, 0, p.width, p.height);
+
+  if (background && p.chromaKey) {
+    // O traço entra PRIMEIRO, sobre o transparente: só assim dá para separar
+    // o que é borda do que é fundo. O verde entra depois, por baixo.
+    ctx.drawImage(img, 0, 0, p.width, p.height);
+    endurecerBordas(ctx, p.width, p.height);
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-over";
+    ctx.fillStyle = background;
+    ctx.fillRect(0, 0, p.width, p.height);
+    ctx.restore();
+    return;
+  }
+
   if (background) {
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, p.width, p.height);

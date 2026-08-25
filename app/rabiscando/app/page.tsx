@@ -196,6 +196,10 @@ export default function RabiscandoEditorPage() {
         // preto, sem nenhum aviso. Sem cor escolhida, o PNG sai transparente
         // e o MP4 cai para preto lá dentro — H.264 não tem alfa.
         background: background === "solid" ? bgColor : undefined,
+        // Só o atalho do verde entra em modo chroma. Uma cor sólida qualquer
+        // é escolha estética e merece a suavização normal; o verde é insumo
+        // técnico, feito para ser removido depois.
+        chromaKey: background === "solid" && bgColor.toLowerCase() === VERDE_CHROMA,
         onProgress: (done: number) => setExportFrame(done),
         shouldCancel: () => cancelExportRef.current,
       };
@@ -433,7 +437,8 @@ export default function RabiscandoEditorPage() {
                   <>
                     Com <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>fundo verde</strong>,
                     use o recorte por cor (chroma key) do seu editor — inclusive no CapCut do
-                    celular.
+                    celular. As bordas saem sem suavização de propósito, para o recorte não
+                    deixar franja verde; exporte em 4K para o serrilhado sumir na escala.
                   </>
                 ) : (
                   <>
