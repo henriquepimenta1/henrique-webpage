@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { UserButton, useUser, useClerk } from "@clerk/nextjs";
 import { METADATA_KEY, type RabiscandoMetadata } from "@/lib/rabiscando-plano";
 import styles from "../rabiscando.module.css";
 
@@ -19,6 +19,7 @@ const ROTULO_PLANO: Record<string, string> = {
 
 export default function Conta() {
   const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
   const [abrindo, setAbrindo] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
 
@@ -65,6 +66,33 @@ export default function Conta() {
       )}
 
       <UserButton />
+
+      {/* Sair explícito, além do que existe dentro do UserButton. Aquele fica
+          atrás de um clique no avatar, e ninguém procura ali no meio de uma
+          edição. Volta para a landing, não para o portão de login: sair e
+          cair numa tela pedindo para entrar de novo é confuso. */}
+      <button
+        className="rb-btn rb-btn--icon"
+        onClick={() => signOut({ redirectUrl: "/rabiscando" })}
+        aria-label="Sair da conta"
+        title="Sair da conta"
+      >
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path
+            d="M6 14H3.2A1.2 1.2 0 0 1 2 12.8V3.2A1.2 1.2 0 0 1 3.2 2H6"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+          />
+          <path
+            d="M10.5 11 14 8l-3.5-3M13.6 8H6"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
     </div>
   );
 }
