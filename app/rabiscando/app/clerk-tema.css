@@ -145,3 +145,61 @@
   .cl-footerActionLink,
   .cl-alternativeMethodsBlockButton { min-height: 44px !important; display: inline-flex !important; align-items: center !important; }
 }
+
+/* ── campo do código de verificação ──────────────────────────────────
+   O passo do código usa caixas próprias (`cl-otpCodeFieldInput`), que não
+   são alcançadas por `.cl-formFieldInput`. Sem isto elas ficam sem borda e
+   sem cor de texto sobre o fundo escuro: existem, recebem foco e aceitam
+   digitação, mas são INVISÍVEIS — a pessoa recebe o código e não acha
+   onde digitar.
+
+   A última regra é rede de segurança deliberada: se um upgrade renomear
+   as classes `cl-`, qualquer input dentro do card continua visível. Vale
+   a redundância — um campo invisível não dá erro em lugar nenhum, só
+   trava a pessoa na porta. */
+.cl-otpCodeFieldInputs,
+.cl-otpCodeFieldInputContainer {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: center !important;
+}
+
+.cl-otpCodeFieldInput {
+  width: 44px !important;
+  height: 52px !important;
+  text-align: center !important;
+  font-family: var(--font-mono), ui-monospace, monospace !important;
+  font-size: 20px !important;
+  color: #ede7db !important;
+  background: #0d0c0b !important;
+  border: 1px solid rgba(237, 231, 219, 0.22) !important;
+  border-radius: 0 !important;
+  caret-color: #c08246 !important;
+}
+.cl-otpCodeFieldInput:focus {
+  outline: 2px solid #c08246 !important;
+  outline-offset: 2px !important;
+  border-color: #c08246 !important;
+}
+
+/* Rede de segurança: nenhum input do card pode ficar invisível. */
+.cl-card input {
+  color: #ede7db !important;
+  caret-color: #c08246 !important;
+  -webkit-text-fill-color: #ede7db;
+}
+
+/* O cabeçalho volta em passos que NÃO são o primeiro: é ele que diz
+   "enviamos um código para fulano@..." — sem isso a tela do código fica
+   sem instrução nenhuma, que foi exatamente o que aconteceu. Fica em
+   corpo pequeno para não disputar com o h1 da página. */
+.rbs-login .cl-header {
+  display: flex !important;
+}
+.rbs-login .cl-headerTitle {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+.rbs-login .cl-headerSubtitle {
+  font-size: 13px !important;
+}

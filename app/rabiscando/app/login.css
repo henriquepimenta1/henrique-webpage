@@ -75,11 +75,10 @@
   margin-top: auto;
 }
 
-/* O card do Clerk traz o próprio título ("Sign in to…"); com o h1 acima
-   seriam dois títulos empilhados. Escondido só dentro desta tela. */
-.rbs-login .cl-header {
-  display: none !important;
-}
+/* O cabeçalho do Clerk fica VISÍVEL, em corpo pequeno (ver clerk-tema.css).
+   Escondê-lo evitava dois títulos empilhados no primeiro passo, mas cegava
+   os seguintes: é ele que diz para qual e-mail o código foi enviado. Um
+   título repetido é feio; uma tela de código sem instrução trava a pessoa. */
 
 /* Sem borda: quem emoldura o formulário aqui é a própria coluna. */
 .rbs-login .cl-card,
