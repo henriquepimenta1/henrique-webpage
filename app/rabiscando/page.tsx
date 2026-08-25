@@ -5,7 +5,6 @@ import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 import ScribbleCanvas from "./scribble-canvas";
-import LandingHero from "./landing-hero";
 import { SCRIBBLE_FONTS } from "./fonts";
 import "./botoes.css";
 
@@ -138,8 +137,9 @@ export default function RabiscandoLandingPage() {
 
    O filtro puxa o branco puro para o bege da marca: sem ele, o vídeo
    seria a única coisa #FFFFFF numa página inteira de #EDE7DB. */
-.rbl-titulo-video{display:block;width:100%;max-width:1060px;margin:0 auto;mix-blend-mode:screen;filter:sepia(.22) saturate(1.15) brightness(1.02)}
-.rbl-titulo-wrap{margin:0 0 var(--s-3)}
+.rbl-titulo-video{display:block;width:100%;max-width:min(740px,86vw);margin:0 auto;mix-blend-mode:screen;filter:sepia(.22) saturate(1.15) brightness(1.02)}
+.rbl-titulo-wrap{margin:0 0 var(--s-2)}
+@media(max-width:640px){ .rbl-titulo-wrap{margin-bottom:0} }
 
 .rbl-cta-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:var(--s-3);margin:0 0 var(--s-2)}
 .rbl-risco{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);text-align:center;margin:0 0 var(--s-5)}
@@ -193,6 +193,7 @@ export default function RabiscandoLandingPage() {
               muted
               loop
               playsInline
+              preload="auto"
               aria-label="A palavra Rabiscando escrita à mão, tremendo"
             />
           </div>
@@ -239,8 +240,6 @@ export default function RabiscandoLandingPage() {
           {/* Reversão de risco: numa assinatura, a objeção mais cara não é o
               preço — é o medo de não conseguir sair depois. */}
           <p className="rbl-risco">cancele sozinho, num botão dentro da ferramenta</p>
-
-          <LandingHero />
         </section>
 
         <div className="rbl-spec">
