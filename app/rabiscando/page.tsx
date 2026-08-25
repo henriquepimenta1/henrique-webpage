@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
@@ -107,6 +108,16 @@ const RECURSOS: { titulo: string; texto: string }[] = [
 ];
 
 export default function RabiscandoLandingPage() {
+  // Movimento reduzido: o vídeo congela no primeiro quadro em vez de sumir.
+  // A palavra continua lá, só parada — esconder o título seria pior do que
+  // mostrá-lo estático.
+  const videoTitulo = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      videoTitulo.current?.pause();
+    }
+  }, []);
+
   return (
     <div className="theme-fdl">
       <DarkTopNav
@@ -119,6 +130,17 @@ export default function RabiscandoLandingPage() {
       />
 
       <style>{`
+/* Título em vídeo. O modo de mesclagem "screen" faz o preto do arquivo somar
+   zero contra o fundo do site: o traço branco fica, o fundo some, e as
+   bordas suavizadas continuam suaves — sem recorte, sem franja, sem
+   precisar de canal alfa. É o mesmo princípio que recomendamos a quem
+   edita no CapCut, aplicado aqui.
+
+   O filtro puxa o branco puro para o bege da marca: sem ele, o vídeo
+   seria a única coisa #FFFFFF numa página inteira de #EDE7DB. */
+.rbl-titulo-video{display:block;width:100%;max-width:1060px;margin:0 auto;mix-blend-mode:screen;filter:sepia(.22) saturate(1.15) brightness(1.02)}
+.rbl-titulo-wrap{margin:0 0 var(--s-3)}
+
 .rbl-cta-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:var(--s-3);margin:0 0 var(--s-2)}
 .rbl-risco{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);text-align:center;margin:0 0 var(--s-5)}
 @media(max-width:640px){
@@ -157,6 +179,24 @@ export default function RabiscandoLandingPage() {
           }}
         >
           <p className="v2-eyebrow">Ferramenta · assinatura</p>
+
+          {/* O nome da ferramenta escrito PELA ferramenta. É a demonstração
+              mais curta possível: antes de qualquer texto de venda, a pessoa
+              já viu o produto funcionando. */}
+          <div className="rbl-titulo-wrap">
+            <video
+              ref={videoTitulo}
+              className="rbl-titulo-video"
+              src="/video/rabiscando-titulo.mp4"
+              poster="/video/rabiscando-titulo.jpg"
+              autoPlay
+              muted
+              loop
+              playsInline
+              aria-label="A palavra Rabiscando escrita à mão, tremendo"
+            />
+          </div>
+
           <h1
             style={{
               fontFamily: "var(--font-serif)",
