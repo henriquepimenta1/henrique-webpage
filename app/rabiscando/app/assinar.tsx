@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 // De rabiscando-plano, não de lib/stripe: hoje o import é só de tipo e some
 // na compilação, mas basta alguém trocar por um import de valor para o SDK do
 // Stripe — e a chave secreta — entrarem no bundle do navegador. O arquivo de
@@ -14,7 +15,7 @@ export default function BotoesAssinar() {
   const [carregando, setCarregando] = useState<Plano | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
-  async function assinar(plano: Plano) {
+  const assinar = useCallback(async (plano: Plano) => {
     setCarregando(plano);
     setErro(null);
     try {
@@ -32,7 +33,24 @@ export default function BotoesAssinar() {
       setErro("não foi possível abrir o pagamento. tente de novo.");
       setCarregando(null);
     }
-  }
+  }, []);
+
+  // Quem chegou com o plano já escolhido na landing não deve ter que
+  // escolher de novo: o checkout abre sozinho. Os botões seguem
+  // renderizados embaixo — se a abertura falhar, a pessoa não fica numa
+  // tela morta com um "abrindo pagamento" eterno.
+  const busca = useSearchParams();
+  const jaDisparou = useRef(false);
+
+  useEffect(() => {
+    const plano = busca.get("plano");
+    if (plano !== "mensal" && plano !== "anual") return;
+    // Ref, e não estado: em desenvolvimento o React monta o efeito duas
+    // vezes, e sem a trava seriam duas sessões de checkout criadas.
+    if (jaDisparou.current) return;
+    jaDisparou.current = true;
+    assinar(plano);
+  }, [busca, assinar]);
 
   const botao = (plano: Plano, rotulo: string, destaque: boolean) => (
     <button
@@ -59,6 +77,11 @@ export default function BotoesAssinar() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--s-2)", alignItems: "center" }}>
+      {carregando && (
+        <p style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".16em", textTransform: "uppercase", color: "var(--text-3)", margin: 0 }}>
+          abrindo o pagamento do plano {carregando} ···
+        </p>
+      )}
       <div style={{ display: "flex", gap: "var(--s-2)", flexWrap: "wrap", justifyContent: "center" }}>
         {botao("anual", "Anual · R$ 249", true)}
         {botao("mensal", "Mensal · R$ 29", false)}

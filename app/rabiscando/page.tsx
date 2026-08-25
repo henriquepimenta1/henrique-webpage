@@ -395,7 +395,9 @@ export default function RabiscandoLandingPage() {
                 </span>
                 <span style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-3)" }}>/mês</span>
               </p>
-              <Link className="rb-btn rb-btn--secondary rb-btn--block" href="/rabiscando/app">
+              {/* O plano viaja na URL: sobrevive ao login e ao cadastro, e
+                  do outro lado abre o checkout certo sem perguntar de novo. */}
+              <Link className="rb-btn rb-btn--secondary rb-btn--block" href="/rabiscando/app?plano=mensal">
                 Assinar mensal
               </Link>
             </div>
@@ -429,7 +431,7 @@ export default function RabiscandoLandingPage() {
                 </span>
                 <span style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-3)" }}>/ano</span>
               </p>
-              <Link className="rb-btn rb-btn--secondary rb-btn--block" href="/rabiscando/app">
+              <Link className="rb-btn rb-btn--secondary rb-btn--block" href="/rabiscando/app?plano=anual">
                 Assinar anual
               </Link>
             </div>

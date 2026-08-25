@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { SignIn } from "@clerk/nextjs";
 import ScribbleCanvas from "../scribble-canvas";
@@ -86,6 +87,17 @@ function usePalavra(): string {
 export default function PortaoLogin() {
   const palavra = usePalavra();
 
+  // O plano escolhido na landing chega como ?plano=. Ele precisa sobreviver
+  // ao login: sem isso, quem clicou "Assinar anual" cria a conta e cai numa
+  // tela perguntando de novo qual plano quer — desfazendo a decisão que a
+  // pessoa já tinha tomado.
+  const busca = useSearchParams();
+  const plano = busca.get("plano");
+  const destino =
+    plano === "anual" || plano === "mensal"
+      ? `/rabiscando/app?plano=${plano}`
+      : "/rabiscando/app";
+
   return (
     <div className="rbs-login">
       <aside className="rbs-login__arte" style={grafico} aria-hidden="true">
@@ -124,8 +136,8 @@ export default function PortaoLogin() {
         <SignIn
           withSignUp
           routing="hash"
-          forceRedirectUrl="/rabiscando/app"
-          signUpForceRedirectUrl="/rabiscando/app"
+          forceRedirectUrl={destino}
+          signUpForceRedirectUrl={destino}
           appearance={{
             variables: {
               colorBackground: "#171412",
