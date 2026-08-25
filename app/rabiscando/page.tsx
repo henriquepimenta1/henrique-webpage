@@ -137,7 +137,7 @@ export default function RabiscandoLandingPage() {
 
    O filtro puxa o branco puro para o bege da marca: sem ele, o vídeo
    seria a única coisa #FFFFFF numa página inteira de #EDE7DB. */
-.rbl-titulo-video{display:block;width:100%;max-width:min(740px,86vw);margin:0 auto;mix-blend-mode:screen;filter:sepia(.22) saturate(1.15) brightness(1.02)}
+.rbl-titulo-video{display:block;width:100%;max-width:min(880px,92vw);margin:0 auto;mix-blend-mode:screen;filter:sepia(.22) saturate(1.15) brightness(1.02)}
 .rbl-titulo-wrap{margin:0 0 var(--s-2)}
 @media(max-width:640px){ .rbl-titulo-wrap{margin-bottom:0} }
 
