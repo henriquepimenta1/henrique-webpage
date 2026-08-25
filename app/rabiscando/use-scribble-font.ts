@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Font } from "opentype.js";
-import { DEFAULT_FONT_ID, fontById } from "./fonts";
+import { DEFAULT_FONT_ID, fontById, cssFamily } from "./fonts";
 
 export type FontState = "loading" | "ready" | "error";
 
@@ -21,7 +21,13 @@ function loadFont(id: string): Promise<Font> {
       fetch(fontById(id).file),
     ]);
     if (!res.ok) throw new Error(`font ${res.status}`);
-    return opentype.parse(await res.arrayBuffer());
+    const bytes = await res.arrayBuffer();
+    // Os MESMOS bytes viram também uma fonte do CSS: assim a interface pode
+    // escrever com o traço escolhido — o seletor de espessura mostra "fina/
+    // regular/grossa" na própria letra — sem um segundo download. Falhar aqui
+    // não pode derrubar o preview, que é o que realmente importa.
+    registrarNoCss(id, bytes).catch(() => {});
+    return opentype.parse(bytes);
   })().catch((err) => {
     cache.delete(id); // permite nova tentativa depois de uma falha de rede
     throw err;
@@ -29,6 +35,18 @@ function loadFont(id: string): Promise<Font> {
 
   cache.set(id, promise);
   return promise;
+}
+
+const registradas = new Set<string>();
+
+async function registrarNoCss(id: string, bytes: ArrayBuffer): Promise<void> {
+  if (typeof document === "undefined" || !("fonts" in document)) return;
+  const familia = cssFamily(id);
+  if (registradas.has(familia)) return;
+  registradas.add(familia);
+  const face = new FontFace(familia, bytes);
+  await face.load();
+  document.fonts.add(face);
 }
 
 export function useScribbleFont(id: string = DEFAULT_FONT_ID): {

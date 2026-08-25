@@ -34,6 +34,15 @@ export const SCRIBBLE_FONTS: ScribbleFont[] = [
 
 export const DEFAULT_FONT_ID = "caveat";
 
+/**
+ * Nome da família com que a fonte é registrada no CSS. O prefixo evita
+ * colidir com uma fonte de mesmo nome já instalada na máquina de quem usa —
+ * "Caveat" instalada localmente sequestraria o preview sem aviso.
+ */
+export function cssFamily(id: string): string {
+  return `rbs-${id}`;
+}
+
 export function fontById(id: string): ScribbleFont {
   return SCRIBBLE_FONTS.find((f) => f.id === id) ?? SCRIBBLE_FONTS[0];
 }

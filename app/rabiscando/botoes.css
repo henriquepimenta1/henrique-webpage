@@ -114,3 +114,16 @@
 .theme-fdl .rb-btn:active,.theme-fdl .rb-btn.is-active{transform:none}
 .theme-fdl .rb-btn[aria-busy="true"]::after,.theme-fdl .rb-btn.is-loading::after{animation:none;clip-path:inset(0 62% 0 0)}
 }
+
+
+/* ── acréscimo do projeto, fora do handoff ─────────────────────
+   Toggle que se demonstra: a opção é escrita na própria fonte de traço
+   selecionada, em três corpos crescentes. É o único ponto do sistema onde
+   o toggle troca de fonte, e ganha isso por ser seletor de APARÊNCIA, não
+   de dado — a palavra "grossa" em mono não diz nada; escrita grossa, diz.
+   A fonte vem do FontFace registrado em use-scribble-font.ts, com os
+   mesmos bytes que o canvas já baixou. */
+.theme-fdl .rb-toggle--amostra .rb-toggle__opt{font-family:var(--rbs-familia),var(--font-mono);text-transform:lowercase;letter-spacing:0;line-height:1;padding-top:2px}
+.theme-fdl .rb-toggle--amostra .rb-toggle__opt[data-corpo="1"]{font-size:15px}
+.theme-fdl .rb-toggle--amostra .rb-toggle__opt[data-corpo="2"]{font-size:19px}
+.theme-fdl .rb-toggle--amostra .rb-toggle__opt[data-corpo="3"]{font-size:24px}

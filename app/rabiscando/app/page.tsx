@@ -6,6 +6,7 @@ import styles from "../rabiscando.module.css";
 import ScribbleCanvas from "../scribble-canvas";
 import { useScribbleFont } from "../use-scribble-font";
 import { MAX_TREMOR } from "../scribble";
+import { cssFamily } from "../fonts";
 import Conta from "./conta";
 import "../botoes.css";
 import { SCRIBBLE_FONTS, DEFAULT_FONT_ID, fontById } from "../fonts";
@@ -199,11 +200,17 @@ export default function RabiscandoEditorPage() {
         <p className={styles.sectionTitle}>Traço</p>
         <div className={styles.field}>
           <span className={styles.fieldLabel}>Espessura</span>
-          <div className="rb-toggle rb-toggle--fill" role="group" aria-label="Espessura">
-            {(["fina", "regular", "grossa"] as const).map((t) => (
+          <div
+            className="rb-toggle rb-toggle--fill rb-toggle--amostra"
+            role="group"
+            aria-label="Espessura"
+            style={{ ["--rbs-familia" as string]: cssFamily(fontId) }}
+          >
+            {(["fina", "regular", "grossa"] as const).map((t, i) => (
               <button
                 key={t}
                 className="rb-toggle__opt"
+                data-corpo={i + 1}
                 aria-pressed={thickness === t}
                 onClick={() => setThickness(t)}
               >
@@ -477,11 +484,16 @@ export default function RabiscandoEditorPage() {
             <div className={styles.section}>
               <p className={styles.sectionTitle}>Fonte de traço</p>
               <div className={styles.selectRow}>
+                {/* O nome da fonte escolhida aparece NA fonte escolhida — ela
+                    já está baixada. As opções fechadas seguem na fonte do
+                    sistema: escrever as doze na própria letra custaria baixar
+                    as doze, 1,6 MB, para desenhar um menu. */}
                 <select
                   className={styles.select}
                   value={fontId}
                   onChange={(e) => setFontId(e.target.value)}
                   aria-label="Fonte de traço"
+                  style={{ fontFamily: `${cssFamily(fontId)}, var(--font-ui)`, fontSize: 16 }}
                 >
                   {SCRIBBLE_FONTS.map((f) => (
                     <option key={f.id} value={f.id}>
