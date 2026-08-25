@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SignIn } from "@clerk/nextjs";
 import ScribbleCanvas from "../scribble-canvas";
+import { SCRIBBLE_FONTS } from "../fonts";
 
 // Tela de entrada do editor.
 //
@@ -105,8 +106,8 @@ export default function PortaoLogin() {
           <p style={sobrancelha}>Rabiscando · acesso</p>
           <h1 style={titulo}>Entra que o editor está do outro lado.</h1>
           <p style={apoio}>
-            12 traços, até 4K, PNG transparente e MP4. O que você exporta é seu, uso comercial
-            incluído.
+            {SCRIBBLE_FONTS.length} traços, até 4K, PNG transparente e MP4. O que você exporta
+            é seu, uso comercial incluído.
           </p>
         </header>
 

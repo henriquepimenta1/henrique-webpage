@@ -108,13 +108,13 @@ export default function RabiscandoEditorPage() {
   const [tremor, setTremor] = useState(32);
   const [speed, setSpeed] = useState(55);
   const [duration, setDuration] = useState(40);
-  const [letterSpacingPct, setLetterSpacingPct] = useState(20);
+  const [letterSpacingPct, setLetterSpacingPct] = useState(40);
   const [lineHeightPct, setLineHeightPct] = useState(46);
   const [loop, setLoop] = useState(true);
   const [color, setColor] = useState("#c08246");
   const [background, setBackground] = useState<"transparent" | "solid">("transparent");
   const [bgColor, setBgColor] = useState("#0d0c0b");
-  const [format, setFormat] = useState<"png" | "mp4">("png");
+  const [format, setFormat] = useState<"png" | "mp4">("mp4");
   const [resolution, setResolution] = useState<ResolutionKey>("1080");
   const [exportFps, setExportFps] = useState<ExportFps>(DEFAULT_EXPORT_FPS);
   const [playing, setPlaying] = useState(true);
@@ -127,14 +127,22 @@ export default function RabiscandoEditorPage() {
   // Só no cliente: `window.VideoEncoder` não existe no SSR e checar direto
   // no render causaria divergência de hidratação.
   const [mp4Supported, setMp4Supported] = useState(true);
-  useEffect(() => setMp4Supported(canExportMp4()), []);
+  useEffect(() => {
+    const ok = canExportMp4();
+    setMp4Supported(ok);
+    // MP4 é o padrão, mas depende de WebCodecs. Sem suporte, trocar para PNG
+    // aqui evita a pessoa ficar num formato cujo botão de exportar recusa.
+    if (!ok) setFormat("png");
+  }, []);
 
   const displayText = text.trim() ? text : DEMO_TEXT;
   const durationSeconds = (0.8 + (duration / 100) * 3.6).toFixed(1);
   // Abaixo de ~4fps o tremor lê como piscada; acima de ~14 vira vibração.
   const boilFps = Math.round(4 + (speed / 100) * 10);
-  // Negativo aperta as letras; o teto evita a palavra virar letras soltas.
-  const letterSpacing = -0.05 + (letterSpacingPct / 100) * 0.45;
+  // Negativo aperta as letras até encavalar — efeito legítimo em lettering e
+  // impossível com o piso anterior de -5%. O teto evita a palavra virar
+  // letras soltas.
+  const letterSpacing = -0.2 + (letterSpacingPct / 100) * 0.6;
   // Vai bem abaixo de 1 de propósito: abaixo de ~0.6 as linhas se sobrepõem,
   // que é um efeito legítimo em lettering.
   const lineHeight = 0.25 + (lineHeightPct / 100) * 1.95;

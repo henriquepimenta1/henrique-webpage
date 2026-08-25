@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SCRIBBLE_FONTS } from "./fonts";
 
 // A landing é um componente cliente e componente cliente não exporta
 // `metadata` — sem este layout, o Rabiscando herdava título, descrição e
@@ -9,7 +10,7 @@ import type { Metadata } from "next";
 
 const TITULO = "Rabiscando — texto manuscrito animado para vídeo";
 const DESCRICAO =
-  "Cartelas escritas à mão que tremem como animação em três, prontas para a timeline: 12 traços, até 4K, PNG transparente e MP4. Feito para filmmakers.";
+  `Cartelas escritas à mão que tremem como animação em três, prontas para a timeline: ${SCRIBBLE_FONTS.length} traços, até 4K, PNG transparente e MP4. Feito para filmmakers.`;
 
 export const metadata: Metadata = {
   title: TITULO,

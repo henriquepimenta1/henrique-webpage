@@ -30,6 +30,11 @@ export const SCRIBBLE_FONTS: ScribbleFont[] = [
   { id: "shadows-into-light", name: "Shadows Into Light", file: "/fonts/ShadowsIntoLight.ttf", nota: "a mais fina", pontos: 59, licenca: "OFL" },
   { id: "amatic-sc", name: "Amatic SC", file: "/fonts/AmaticSC-Regular.ttf", nota: "condensada, alta e estreita", pontos: 82, licenca: "OFL" },
   { id: "just-another-hand", name: "Just Another Hand", file: "/fonts/JustAnotherHand-Regular.ttf", nota: "condensada fina", pontos: 93, licenca: "Apache 2.0" },
+  { id: "kalam", name: "Kalam", file: "/fonts/Kalam-Regular.ttf", nota: "caneta de ponta larga, inclinada", pontos: 39, licenca: "OFL" },
+  { id: "caveat-brush", name: "Caveat Brush", file: "/fonts/CaveatBrush-Regular.ttf", nota: "pincel encorpado, a irmã grossa da Caveat", pontos: 113, licenca: "OFL" },
+  { id: "gochi-hand", name: "Gochi Hand", file: "/fonts/GochiHand-Regular.ttf", nota: "traço curto e anguloso", pontos: 77, licenca: "OFL" },
+  { id: "covered-by-your-grace", name: "Covered By Your Grace", file: "/fonts/CoveredByYourGrace-Regular.ttf", nota: "caneta fina, letra apressada", pontos: 71, licenca: "OFL" },
+  { id: "rock-salt", name: "Rock Salt", file: "/fonts/RockSalt-Regular.ttf", nota: "giz cru, a mais irregular — embola com tremor alto", pontos: 246, licenca: "Apache 2.0" },
 ];
 
 export const DEFAULT_FONT_ID = "caveat";

@@ -5,6 +5,7 @@ import { ptBR } from "@clerk/localizations";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { METADATA_KEY, type RabiscandoMetadata } from "@/lib/stripe";
 import PortaoLogin from "./portao-login";
+import { SCRIBBLE_FONTS } from "../fonts";
 import "./clerk-tema.css";
 import "./login.css";
 
@@ -94,7 +95,8 @@ async function ChecagemAssinatura({ children }: { children: ReactNode }) {
             margin: 0,
           }}
         >
-          Acesso completo: 12 traços, até 4K, export em PNG transparente e MP4. Sem versão
+          Acesso completo: {SCRIBBLE_FONTS.length} traços, até 4K, export em PNG transparente e
+          MP4. Sem versão
           capada e sem marca d&rsquo;água.
         </p>
 

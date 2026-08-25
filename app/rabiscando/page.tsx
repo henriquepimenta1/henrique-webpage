@@ -5,6 +5,7 @@ import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 import ScribbleCanvas from "./scribble-canvas";
 import LandingHero from "./landing-hero";
+import { SCRIBBLE_FONTS } from "./fonts";
 import "./botoes.css";
 
 // Landing pública do Rabiscando. O editor vive em /rabiscando/app, atrás de
@@ -65,7 +66,7 @@ const DUVIDAS: { p: string; r: string }[] = [
   },
   {
     p: "Posso usar em trabalho de cliente?",
-    r: "Pode. O que você exporta é seu, uso comercial incluído. As doze fontes são licenciadas para uso comercial (SIL OFL ou Apache 2.0) e os textos de licença acompanham os arquivos.",
+    r: "Pode. O que você exporta é seu, uso comercial incluído. Todas as fontes são licenciadas para uso comercial (SIL OFL ou Apache 2.0) e os textos de licença acompanham os arquivos.",
   },
   {
     p: "E se eu cancelar?",
@@ -90,7 +91,7 @@ const RECURSOS: { titulo: string; texto: string }[] = [
       "Arquivo único em H.264 com fundo preto — no modo de composição Screen o preto some e sobra só o traço.",
   },
   {
-    titulo: "12 traços diferentes",
+    titulo: `${SCRIBBLE_FONTS.length} traços diferentes`,
     texto:
       "De marcador gordo a caneta fina. Espessura, tremor, velocidade, espaçamento e entrelinha, todos no controle.",
   },
@@ -278,7 +279,7 @@ export default function RabiscandoLandingPage() {
         >
           <p className="v2-eyebrow">Alguns traços</p>
           <h2 className="rbl-sect-h">
-            Doze fontes manuscritas, todas com o mesmo tremor por baixo.
+            {SCRIBBLE_FONTS.length} fontes manuscritas, todas com o mesmo tremor por baixo.
           </h2>
 
           <div

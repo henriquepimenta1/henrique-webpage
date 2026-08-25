@@ -139,7 +139,7 @@ function padFor(amp: number): number {
 }
 
 export interface ScribbleOptions {
-  /** Avanço extra entre letras, como fração do corpo da fonte (-0.05 a 0.4). */
+  /** Avanço extra entre letras, como fração do corpo da fonte (-0.2 a 0.4). */
   letterSpacing?: number;
   /** Distância entre linhas, múltiplo do corpo (0.7 a 2.2). */
   lineHeight?: number;
