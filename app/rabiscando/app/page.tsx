@@ -41,6 +41,12 @@ const RESOLUTION_LABELS: Record<ResolutionKey, string> = {
 };
 
 const STROKE_BY_THICKNESS = { fina: 0, regular: 6, grossa: 16 } as const;
+
+/** Verde puro. Contra um traço chapado, sem iluminação nem sombra, o verde
+ *  saturado é o que os recortes simples de celular (CapCut, InShot) acertam
+ *  com mais folga — não há derrame de cor para tratar, como haveria numa
+ *  filmagem real, onde o padrão de estúdio (#00B140) faria mais sentido. */
+const VERDE_CHROMA = "#00ff00";
 const DEMO_TEXT = "ação.";
 
 function Slider({
@@ -185,10 +191,11 @@ export default function RabiscandoEditorPage() {
         durationSeconds: Number(durationSeconds),
         ...RESOLUTIONS[resolution],
         watermark: false, // acesso é só por assinatura — não há tier grátis
-        // H.264 não tem alfa. Preto fixo de propósito: no DaVinci/Premiere o
-        // modo de composição Screen/Add derruba o preto, então o overlay sai
-        // de graça. No PNG este campo é ignorado.
-        background: "#000000",
+        // O fundo do arquivo é o mesmo do palco. Antes isto era "#000000"
+        // fixo: quem escolhia verde via o preview verde e recebia um arquivo
+        // preto, sem nenhum aviso. Sem cor escolhida, o PNG sai transparente
+        // e o MP4 cai para preto lá dentro — H.264 não tem alfa.
+        background: background === "solid" ? bgColor : undefined,
         onProgress: (done: number) => setExportFrame(done),
         shouldCancel: () => cancelExportRef.current,
       };
@@ -266,17 +273,43 @@ export default function RabiscandoEditorPage() {
           </div>
         </div>
         <div className={styles.field}>
-          <span className={styles.fieldLabel}>Fundo do preview</span>
-          <div className={styles.chipRow}>
-            <button className={styles.chip} data-active={background === "transparent" ? "1" : "0"} onClick={() => setBackground("transparent")}>
-              Transparente
+          <span className={styles.fieldLabel}>
+            Fundo <span className={styles.fieldValue}>vai no arquivo</span>
+          </span>
+          <div className="rb-toggle rb-toggle--fill" role="group" aria-label="Fundo">
+            <button
+              className="rb-toggle__opt"
+              aria-pressed={background === "transparent"}
+              onClick={() => setBackground("transparent")}
+            >
+              transparente
             </button>
-            <button className={styles.chip} data-active={background === "solid" ? "1" : "0"} onClick={() => setBackground("solid")}>
-              Cor sólida
+            {/* Atalho do fundo verde: um toque, em vez de abrir o seletor de
+                cor e acertar o verde na mão — que no celular é quase
+                impossível. É como quem edita no telefone recorta o traço. */}
+            <button
+              className="rb-toggle__opt"
+              aria-pressed={background === "solid" && bgColor.toLowerCase() === VERDE_CHROMA}
+              onClick={() => {
+                setBackground("solid");
+                setBgColor(VERDE_CHROMA);
+              }}
+            >
+              verde
+            </button>
+            <button
+              className="rb-toggle__opt"
+              aria-pressed={background === "solid" && bgColor.toLowerCase() !== VERDE_CHROMA}
+              onClick={() => {
+                setBackground("solid");
+                if (bgColor.toLowerCase() === VERDE_CHROMA) setBgColor("#0d0c0b");
+              }}
+            >
+              cor
             </button>
           </div>
         </div>
-        {background === "solid" && (
+        {background === "solid" && bgColor.toLowerCase() !== VERDE_CHROMA && (
           <div className={styles.field}>
             <span className={styles.fieldLabel}>Cor do fundo</span>
             <div className={styles.colorRow}>
@@ -394,14 +427,28 @@ export default function RabiscandoEditorPage() {
           <p className={styles.exportNote}>
             {format === "mp4" ? (
               <>
-                MP4 H.264, {exportFrameCount} quadros a {exportFps}fps, sempre com{" "}
-                <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>fundo preto</strong> —
-                H.264 não tem transparência. No DaVinci/Premiere, ponha o clipe por cima e use o
-                modo de composição <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>Screen</strong>{" "}
-                (ou Add): o preto some e sobra só o traço.
+                MP4 H.264, {exportFrameCount} quadros a {exportFps}fps. H.264 não tem
+                transparência, então o traço sai sobre o fundo escolhido acima.{" "}
+                {background === "solid" && bgColor.toLowerCase() === VERDE_CHROMA ? (
+                  <>
+                    Com <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>fundo verde</strong>,
+                    use o recorte por cor (chroma key) do seu editor — inclusive no CapCut do
+                    celular.
+                  </>
+                ) : (
+                  <>
+                    Com <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>fundo preto</strong>,
+                    ponha o clipe por cima e use o modo de composição{" "}
+                    <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>Screen</strong> (ou
+                    Add): o preto some e sobra só o traço.
+                  </>
+                )}
               </>
             ) : (
-              <>ZIP com {exportFrameCount} PNGs transparentes a {exportFps}fps.</>
+              <>
+                ZIP com {exportFrameCount} PNGs a {exportFps}fps,{" "}
+                {background === "solid" ? "com o fundo escolhido acima" : "com transparência real"}.
+              </>
             )}
           </p>
         </>
@@ -445,7 +492,13 @@ export default function RabiscandoEditorPage() {
                   hoje depois do render inteiro. */}
               <p className={styles.saida}>
                 {RESOLUTION_LABELS[resolution]} · {exportFps}fps ·{" "}
-                {format === "png" ? "alfa" : "H.264"}
+                {background === "solid"
+                  ? bgColor.toLowerCase() === VERDE_CHROMA
+                    ? "fundo verde"
+                    : `fundo ${bgColor.toUpperCase()}`
+                  : format === "png"
+                    ? "alfa"
+                    : "fundo preto"}
               </p>
             </div>
             <div className={styles.transport}>

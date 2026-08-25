@@ -25,7 +25,8 @@ export interface ExportParams {
   height: number;
   /** Marca d'água na versão gratuita. */
   watermark: boolean;
-  /** Cor de fundo. Obrigatória no MP4 (sem alfa); ignorada no PNG. */
+  /** Cor de fundo. Ausente = transparente no PNG; no MP4 vira preto,
+   *  porque H.264 não tem canal alfa. */
   background?: string;
   onProgress?: (done: number, total: number) => void;
   /** Devolve true para abortar entre quadros. */
@@ -160,7 +161,7 @@ export async function exportPngSequence(p: ExportParams): Promise<ExportResult |
   for (let i = 0; i < total; i++) {
     if (p.shouldCancel?.()) return null;
 
-    paintFrame(ctx, imgs[boilIndexAt(i, p, boil.length)], p);
+    paintFrame(ctx, imgs[boilIndexAt(i, p, boil.length)], p, p.background);
     const png = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error("canvas não gerou PNG"))),
