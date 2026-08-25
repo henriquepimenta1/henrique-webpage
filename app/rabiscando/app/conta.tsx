@@ -59,7 +59,7 @@ export default function Conta() {
       </span>
 
       {ativo && (
-        <button className={styles.contaLink} onClick={abrirPortal} disabled={abrindo}>
+        <button className="rb-btn rb-btn--tertiary" onClick={abrirPortal} disabled={abrindo}>
           {abrindo ? "abrindo ···" : "gerenciar assinatura"}
         </button>
       )}

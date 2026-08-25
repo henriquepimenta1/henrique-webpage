@@ -5,6 +5,7 @@ import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 import ScribbleCanvas from "./scribble-canvas";
 import LandingHero from "./landing-hero";
+import "./botoes.css";
 
 // Landing pública do Rabiscando. O editor vive em /rabiscando/app, atrás de
 // login + assinatura — aqui não há uso gratuito, só demonstração.
@@ -118,15 +119,12 @@ export default function RabiscandoLandingPage() {
       <DarkTopNav active="Rabiscando" />
 
       <style>{`
-.rbl-cta-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:var(--s-3);margin:0 0 var(--s-5)}
-.rbl-cta{font-family:var(--font-ui);font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--accent);border:1px solid var(--accent);padding:15px 28px;text-decoration:none;transition:background-color .15s,border-color .15s}
-.rbl-cta:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.rbl-cta-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:var(--s-3);margin:0 0 var(--s-2)}
+.rbl-risco{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3);text-align:center;margin:0 0 var(--s-5)}
 @media(max-width:640px){
-  .rbl-cta-row{flex-direction:column;gap:var(--s-2);margin-bottom:var(--s-4)}
-  .rbl-cta{width:100%;text-align:center;padding:16px 20px}
+  .rbl-cta-row{flex-direction:column;gap:var(--s-2)}
+  .rbl-cta-row > *{width:100%}
 }
-.rbl-cta-2{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--text-3);text-decoration:none;border-bottom:1px solid var(--border-strong);padding-bottom:3px;transition:color .15s,border-color .15s}
-.rbl-cta-2:hover{color:var(--accent);border-bottom-color:var(--accent)}
 
 .rbl-passos{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:var(--s-40)}
 .rbl-passo-n{font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;color:var(--accent);display:block;margin-bottom:12px}
@@ -184,13 +182,16 @@ export default function RabiscandoLandingPage() {
           {/* CTA antes da demonstração: quem já entendeu pelo título não
               deveria precisar rolar a página inteira para achar o preço. */}
           <div className="rbl-cta-row">
-            <Link className="rbl-cta" href="#assinar">
+            <Link className="rb-btn rb-btn--primary rb-btn--lg" href="#assinar">
               Assinar · a partir de R$ 29
             </Link>
-            <Link className="rbl-cta-2" href="/rabiscando/app">
-              já assino · entrar
+            <Link className="rb-btn rb-btn--tertiary" href="/rabiscando/app">
+              Já assino, entrar
             </Link>
           </div>
+          {/* Reversão de risco: numa assinatura, a objeção mais cara não é o
+              preço — é o medo de não conseguir sair depois. */}
+          <p className="rbl-risco">cancele sozinho, num botão dentro da ferramenta</p>
 
           <LandingHero />
         </section>
@@ -398,8 +399,8 @@ export default function RabiscandoLandingPage() {
                 </span>
                 <span style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-3)" }}>/mês</span>
               </p>
-              <Link className="v2-accent-link" href="/rabiscando/app">
-                Assinar mensal →
+              <Link className="rb-btn rb-btn--secondary rb-btn--block" href="/rabiscando/app">
+                Assinar mensal
               </Link>
             </div>
 
@@ -432,8 +433,8 @@ export default function RabiscandoLandingPage() {
                 </span>
                 <span style={{ fontFamily: "var(--font-ui)", fontSize: 14, color: "var(--text-3)" }}>/ano</span>
               </p>
-              <Link className="v2-accent-link" href="/rabiscando/app">
-                Assinar anual →
+              <Link className="rb-btn rb-btn--secondary rb-btn--block" href="/rabiscando/app">
+                Assinar anual
               </Link>
             </div>
           </div>

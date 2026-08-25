@@ -7,6 +7,7 @@ import ScribbleCanvas from "../scribble-canvas";
 import { useScribbleFont } from "../use-scribble-font";
 import { MAX_TREMOR } from "../scribble";
 import Conta from "./conta";
+import "../botoes.css";
 import { SCRIBBLE_FONTS, DEFAULT_FONT_ID, fontById } from "../fonts";
 import { exportPngSequence, exportMp4, canExportMp4, triggerDownload } from "../export";
 
@@ -198,9 +199,14 @@ export default function RabiscandoEditorPage() {
         <p className={styles.sectionTitle}>Traço</p>
         <div className={styles.field}>
           <span className={styles.fieldLabel}>Espessura</span>
-          <div className={styles.tabs}>
+          <div className="rb-toggle rb-toggle--fill" role="group" aria-label="Espessura">
             {(["fina", "regular", "grossa"] as const).map((t) => (
-              <button key={t} className={styles.tab} data-active={thickness === t ? "1" : "0"} onClick={() => setThickness(t)}>
+              <button
+                key={t}
+                className="rb-toggle__opt"
+                aria-pressed={thickness === t}
+                onClick={() => setThickness(t)}
+              >
                 {t}
               </button>
             ))}
@@ -296,12 +302,12 @@ export default function RabiscandoEditorPage() {
       </div>
       <div className={styles.field}>
         <span className={styles.fieldLabel}>Resolução</span>
-        <div className={styles.chipRow}>
+        <div className="rb-toggle rb-toggle--fill" role="group" aria-label="Resolução">
           {(Object.keys(RESOLUTIONS) as ResolutionKey[]).map((key) => (
             <button
               key={key}
-              className={styles.chip}
-              data-active={resolution === key ? "1" : "0"}
+              className="rb-toggle__opt"
+              aria-pressed={resolution === key}
               onClick={() => setResolution(key)}
             >
               {RESOLUTION_LABELS[key]}
@@ -313,12 +319,12 @@ export default function RabiscandoEditorPage() {
         <span className={styles.fieldLabel}>
           Quadros por segundo <span className={styles.fieldValue}>{exportFps} fps</span>
         </span>
-        <div className={styles.chipRow}>
+        <div className="rb-toggle rb-toggle--fill" role="group" aria-label="Quadros por segundo">
           {EXPORT_FPS_OPTIONS.map((f) => (
             <button
               key={f}
-              className={styles.chip}
-              data-active={exportFps === f ? "1" : "0"}
+              className="rb-toggle__opt"
+              aria-pressed={exportFps === f}
               onClick={() => setExportFps(f)}
             >
               {f}
@@ -340,7 +346,7 @@ export default function RabiscandoEditorPage() {
               renderizando quadro {exportFrame}/{exportFrameCount}
             </span>
             <button
-              className={styles.cancelLink}
+              className="rb-btn rb-btn--tertiary rb-btn--quiet"
               onClick={() => {
                 cancelExportRef.current = true;
                 setExportState("idle");
@@ -358,8 +364,12 @@ export default function RabiscandoEditorPage() {
         </>
       ) : (
         <>
-          <button className={styles.exportLink} onClick={handleExportClick} disabled={!font}>
-            {font ? "Exportar sequência →" : "carregando traço ···"}
+          <button
+            className="rb-btn rb-btn--primary rb-btn--block"
+            onClick={handleExportClick}
+            disabled={!font}
+          >
+            {font ? "Exportar sequência" : "carregando traço ···"}
           </button>
           {exportState === "error" && (
             <p className={styles.errorNote}>
@@ -415,17 +425,24 @@ export default function RabiscandoEditorPage() {
                 letterSpacing={letterSpacing}
                 lineHeight={lineHeight}
               />
+              {/* O palco declara o que vai sair. Custa 14px de altura e mata a
+                  exportação errada — resolução ou fps trocados só aparecem
+                  hoje depois do render inteiro. */}
+              <p className={styles.saida}>
+                {RESOLUTION_LABELS[resolution]} · {exportFps}fps ·{" "}
+                {format === "png" ? "alfa" : "H.264"}
+              </p>
             </div>
             <div className={styles.transport}>
-              <button className={styles.transportBtn} onClick={() => setPlaying((p) => !p)} aria-label={playing ? "pausar" : "reproduzir"}>
+              <button className="rb-btn rb-btn--icon" onClick={() => setPlaying((p) => !p)} aria-label={playing ? "pausar" : "reproduzir"}>
                 {playing ? (
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                    <rect x="3" y="2.5" width="3.4" height="11" fill="var(--text-1)" />
-                    <rect x="9.6" y="2.5" width="3.4" height="11" fill="var(--text-1)" />
+                    <rect x="3" y="2.5" width="3.4" height="11" fill="var(--accent)" />
+                    <rect x="9.6" y="2.5" width="3.4" height="11" fill="var(--accent)" />
                   </svg>
                 ) : (
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                    <path d="M4 2.5v11l9-5.5-9-5.5z" fill="var(--text-1)" />
+                    <path d="M4 2.5v11l9-5.5-9-5.5z" fill="var(--accent)" />
                   </svg>
                 )}
               </button>
@@ -435,7 +452,7 @@ export default function RabiscandoEditorPage() {
               <div className={styles.transportTime}>
                 {(Number(durationSeconds) * (progress / 100)).toFixed(1)}s / {durationSeconds}s
               </div>
-              <button className={styles.transportBtn} onClick={() => setLoop((v) => !v)} aria-label="loop" aria-pressed={loop}>
+              <button className="rb-btn rb-btn--icon" onClick={() => setLoop((v) => !v)} aria-label="loop" aria-pressed={loop}>
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke={loop ? "var(--accent)" : "var(--text-3)"} strokeWidth="1.4">
                   <path d="M2 6a6 6 0 0 1 11-3.5M2.5 2v3.5H6" />
                   <path d="M14 10a6 6 0 0 1-11 3.5M13.5 14v-3.5H10" />
@@ -499,12 +516,12 @@ export default function RabiscandoEditorPage() {
             />
           </div>
 
-          <div className={styles.fontScroll}>
+          <div className="rb-toggle rb-toggle--scroll" role="group" aria-label="Fonte">
             {SCRIBBLE_FONTS.map((f) => (
               <button
                 key={f.id}
-                className={styles.fontChip}
-                data-active={fontId === f.id ? "1" : "0"}
+                className="rb-toggle__opt"
+                aria-pressed={fontId === f.id}
                 onClick={() => setFontId(f.id)}
               >
                 {f.name}

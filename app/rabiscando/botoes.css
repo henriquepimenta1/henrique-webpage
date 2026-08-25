@@ -1,0 +1,116 @@
+/* Sistema de botões do Rabiscando — portado do handoff de design.
+ *
+ * ESCOPADO em `.theme-fdl` de propósito: as classes leem --accent, --surface
+ * e --text-*, que só existem dentro desse escopo. Soltas em :root elas
+ * pegariam os tokens do shadcn — onde --accent é quase branco — e o botão
+ * primário sairia branco sobre branco, sem erro nenhum no console.
+ *
+ * Arquivo global, não CSS Module: os mesmos botões aparecem na landing
+ * (classes globais num <style>) e no editor (módulo), e duplicar o sistema
+ * nos dois é como ele se desalinha de novo.
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+   Rabiscando · sistema de botões — tema "Fim de Luz"
+   Regras da casa: border-radius 0, sem sombra, sem gradiente.
+   Hierarquia = borda + cor + peso tipográfico.
+   Só tokens existentes. Pressionados derivados por color-mix()
+   sobre os mesmos tokens (nenhuma cor literal nova).
+   Seletores .is-hover/.is-active/.is-focus/.is-loading existem para
+   documentação e QA; em produção use os estados nativos.
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── base ─────────────────────────────────────────────────────── */
+.theme-fdl .rb-btn{--rb-h:40px;--rb-px:22px;font-family:var(--font-ui);font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;line-height:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:var(--rb-h);padding:0 var(--rb-px);border:1px solid transparent;border-radius:0;background:none;color:var(--text-1);text-decoration:none;cursor:pointer;position:relative;isolation:isolate;transition:background-color .12s linear,border-color .12s linear,color .12s linear,transform .06s linear}
+.theme-fdl .rb-btn--lg{--rb-h:48px;--rb-px:28px;font-size:14px}
+.theme-fdl .rb-btn--sm{--rb-h:32px;--rb-px:14px;font-size:12px}
+.theme-fdl .rb-btn--block{width:100%}
+
+/* ── nível 1 · ação principal (uma por tela) ──────────────────── */
+.theme-fdl .rb-btn--primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.theme-fdl .rb-btn--primary:active,.theme-fdl .rb-btn--primary.is-active{background:color-mix(in oklab,var(--accent) 84%,var(--bg));border-color:color-mix(in oklab,var(--accent) 84%,var(--bg));transform:translateY(1px)}
+
+/* ── nível 2 · ação secundária ────────────────────────────────── */
+.theme-fdl .rb-btn--secondary{background:var(--surface);border-color:var(--border-strong);color:var(--text-1)}
+.theme-fdl .rb-btn--secondary:active,.theme-fdl .rb-btn--secondary.is-active{background:var(--surface-el);border-color:var(--accent);transform:translateY(1px)}
+
+/* ── nível 3 · ação terciária (texto + fio) ───────────────────── */
+.theme-fdl .rb-btn--tertiary{--rb-h:32px;--rb-px:0;font-size:12px;color:var(--text-2);border-bottom:1px solid var(--border-strong)}
+.theme-fdl .rb-btn--tertiary:active,.theme-fdl .rb-btn--tertiary.is-active{color:var(--accent-hover);border-bottom-color:var(--accent-hover)}
+/* voz de sistema: "cancelar", contadores, avisos técnicos */
+.theme-fdl .rb-btn--tertiary.rb-btn--quiet{font-family:var(--font-mono);font-size:11px;font-weight:400;letter-spacing:.14em;color:var(--text-3)}
+/* "cancelar" já esquenta para --error no app; o token vem de .rabiscando */
+.theme-fdl .rb-btn--quiet:active,.theme-fdl .rb-btn--quiet.is-active{color:var(--error,var(--accent-hover));border-bottom-color:var(--error,var(--accent-hover))}
+
+/* ── modificador · ícone (alvo 44 sem inchar a caixa) ─────────── */
+.theme-fdl .rb-btn--icon{--rb-h:32px;--rb-px:0;width:var(--rb-h);min-width:var(--rb-h);background:var(--surface);border-color:var(--border-strong);color:var(--text-1)}
+.theme-fdl .rb-btn--icon::before{content:"";position:absolute;inset:-6px}
+.theme-fdl .rb-btn--icon:active,.theme-fdl .rb-btn--icon.is-active{background:var(--surface-el);border-color:var(--accent);transform:translateY(1px)}
+
+/* ── hover (só onde existe ponteiro) ──────────────────────────── */
+@media (hover:hover){
+.theme-fdl .rb-btn--primary:hover,.theme-fdl .rb-btn--primary.is-hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.theme-fdl .rb-btn--secondary:hover,.theme-fdl .rb-btn--secondary.is-hover{background:var(--surface-el);border-color:var(--accent)}
+.theme-fdl .rb-btn--tertiary:hover,.theme-fdl .rb-btn--tertiary.is-hover{color:var(--accent);border-bottom-color:var(--accent)}
+.theme-fdl .rb-btn--icon:hover,.theme-fdl .rb-btn--icon.is-hover{background:var(--surface-el);border-color:var(--accent);color:var(--accent)}
+.theme-fdl .rb-btn--quiet:hover,.theme-fdl .rb-btn--quiet.is-hover{color:var(--error,var(--accent));border-bottom-color:var(--error,var(--accent))}
+.theme-fdl .rb-toggle__opt:hover,.theme-fdl .rb-toggle__opt.is-hover{background:var(--surface-el);color:var(--text-1)}
+.theme-fdl .rb-toggle__opt[aria-pressed="true"]:hover,.theme-fdl .rb-toggle__opt.is-on:hover{background:var(--accent-hover);color:var(--bg)}
+}
+
+/* ── focus-visible · obrigatório, teclado ─────────────────────── */
+.theme-fdl .rb-btn:focus,.theme-fdl .rb-toggle__opt:focus{outline:none}
+.theme-fdl .rb-btn:focus-visible,.theme-fdl .rb-btn.is-focus{outline:1px solid var(--accent);outline-offset:3px}
+.theme-fdl .rb-btn--primary:focus-visible,.theme-fdl .rb-btn--primary.is-focus{outline-color:var(--text-1);outline-offset:2px}
+.theme-fdl .rb-btn--tertiary:focus-visible,.theme-fdl .rb-btn--tertiary.is-focus{outline-offset:4px}
+
+/* ── desabilitado ─────────────────────────────────────────────── */
+.rb-btn:disabled,.rb-btn[aria-disabled="true"],.rb-btn.is-disabled,
+.theme-fdl .rb-toggle__opt:disabled,.theme-fdl .rb-toggle__opt.is-disabled{cursor:not-allowed;pointer-events:none;transform:none}
+.theme-fdl .rb-btn--primary:disabled,.theme-fdl .rb-btn--primary.is-disabled{background:var(--surface-el);border-color:var(--border);color:var(--text-3)}
+.rb-btn--secondary:disabled,.rb-btn--secondary.is-disabled,
+.theme-fdl .rb-btn--icon:disabled,.theme-fdl .rb-btn--icon.is-disabled{background:none;border-color:var(--border);color:var(--text-3)}
+.theme-fdl .rb-btn--tertiary:disabled,.theme-fdl .rb-btn--tertiary.is-disabled{color:var(--text-3);border-bottom-color:var(--border)}
+.theme-fdl .rb-toggle__opt:disabled,.theme-fdl .rb-toggle__opt.is-disabled{color:var(--text-3);background:none}
+
+/* ── carregando · fio de 2px varrendo a base (aria-busy) ──────── */
+.theme-fdl .rb-btn[aria-busy="true"],.theme-fdl .rb-btn.is-loading{pointer-events:none;cursor:progress}
+.theme-fdl .rb-btn[aria-busy="true"]::after,.theme-fdl .rb-btn.is-loading::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--accent);animation:rb-sweep 1.1s linear infinite}
+.theme-fdl .rb-btn--primary[aria-busy="true"]::after,.theme-fdl .rb-btn--primary.is-loading::after{background:var(--bg);bottom:0}
+@keyframes rb-sweep{0%{clip-path:inset(0 100% 0 0)}48%{clip-path:inset(0 0 0 0)}52%{clip-path:inset(0 0 0 0)}100%{clip-path:inset(0 0 0 100%)}}
+
+/* ── toggle único · espessura, resolução, fps, fontes ─────────── */
+.theme-fdl .rb-toggle{--rb-h:32px;display:flex;flex-wrap:wrap;width:max-content;border:1px solid var(--border);background:var(--surface)}
+.theme-fdl .rb-toggle__opt{font-family:var(--font-mono);font-size:10px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;line-height:1;display:inline-flex;align-items:center;justify-content:center;min-height:var(--rb-h);padding:0 14px;border:none;border-right:1px solid var(--border);border-radius:0;background:none;color:var(--text-3);cursor:pointer;position:relative;transition:background-color .12s linear,color .12s linear}
+.theme-fdl .rb-toggle__opt:last-child{border-right:none}
+.theme-fdl .rb-toggle__opt[aria-pressed="true"],.theme-fdl .rb-toggle__opt[aria-selected="true"],.theme-fdl .rb-toggle__opt.is-on{background:var(--accent);color:var(--bg)}
+.theme-fdl .rb-toggle__opt:active,.theme-fdl .rb-toggle__opt.is-active{background:color-mix(in oklab,var(--accent) 84%,var(--bg));color:var(--bg)}
+.theme-fdl .rb-toggle__opt:focus-visible,.theme-fdl .rb-toggle__opt.is-focus{outline:1px solid var(--accent);outline-offset:-3px}
+.theme-fdl .rb-toggle--fill{width:100%}
+.theme-fdl .rb-toggle--fill .rb-toggle__opt{flex:1}
+/* grupo longo (fontes): rola na horizontal em vez de quebrar linha */
+.theme-fdl .rb-toggle--scroll{width:100%;flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.theme-fdl .rb-toggle--scroll .rb-toggle__opt{flex:0 0 auto;white-space:nowrap}
+
+/* ── celular · alvo mínimo de 44px (desktop intocado) ───────────
+   880px é o breakpoint real do editor: onde .rail sai e .mobileBody entra. */
+@media (max-width:880px){
+.theme-fdl .rb-btn{--rb-h:44px;--rb-px:24px}
+.theme-fdl .rb-btn--lg{--rb-h:50px}
+.theme-fdl .rb-btn--sm,.theme-fdl .rb-btn--tertiary,.theme-fdl .rb-btn--icon{--rb-h:44px}
+.theme-fdl .rb-btn--icon::before{content:none}
+.theme-fdl .rb-toggle{--rb-h:44px;width:100%}
+.theme-fdl .rb-toggle__opt{flex:1;padding:0 10px}
+}
+@media (pointer:coarse){
+.theme-fdl .rb-btn{--rb-h:44px}
+.theme-fdl .rb-btn--sm,.theme-fdl .rb-btn--tertiary,.theme-fdl .rb-btn--icon{--rb-h:44px}
+.theme-fdl .rb-toggle{--rb-h:44px}
+}
+
+/* ── movimento reduzido ───────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+.theme-fdl .rb-btn,.theme-fdl .rb-toggle__opt{transition:none}
+.theme-fdl .rb-btn:active,.theme-fdl .rb-btn.is-active{transform:none}
+.theme-fdl .rb-btn[aria-busy="true"]::after,.theme-fdl .rb-btn.is-loading::after{animation:none;clip-path:inset(0 62% 0 0)}
+}
