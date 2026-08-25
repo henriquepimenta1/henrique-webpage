@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { Plano } from "@/lib/stripe";
+// De rabiscando-plano, não de lib/stripe: hoje o import é só de tipo e some
+// na compilação, mas basta alguém trocar por um import de valor para o SDK do
+// Stripe — e a chave secreta — entrarem no bundle do navegador. O arquivo de
+// contrato existe justamente para essa fronteira.
+import type { Plano } from "@/lib/rabiscando-plano";
 
 // Botões que levam ao checkout do Stripe. Cliente porque precisa de fetch
 // e de redirecionar o navegador para a URL hospedada.
