@@ -48,6 +48,10 @@ export function cssFamily(id: string): string {
   return `rbs-${id}`;
 }
 
-export function fontById(id: string): ScribbleFont {
-  return SCRIBBLE_FONTS.find((f) => f.id === id) ?? SCRIBBLE_FONTS[0];
+export function fontById(id: string, extras: ScribbleFont[] = []): ScribbleFont {
+  return (
+    extras.find((f) => f.id === id) ??
+    SCRIBBLE_FONTS.find((f) => f.id === id) ??
+    SCRIBBLE_FONTS[0]
+  );
 }

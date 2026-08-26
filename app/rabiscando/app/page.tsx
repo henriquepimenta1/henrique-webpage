@@ -7,6 +7,7 @@ import ScribbleCanvas from "../scribble-canvas";
 import { useScribbleFont } from "../use-scribble-font";
 import { MAX_TREMOR } from "../scribble";
 import { cssFamily } from "../fonts";
+import { useFontesDoUsuario } from "./use-fontes-do-usuario";
 import Conta from "./conta";
 import "../botoes.css";
 import { SCRIBBLE_FONTS, DEFAULT_FONT_ID, fontById } from "../fonts";
@@ -129,7 +130,11 @@ export default function RabiscandoEditorPage() {
   const [exportState, setExportState] = useState<"idle" | "exporting" | "error">("idle");
   const [exportFrame, setExportFrame] = useState(0);
   const cancelExportRef = useRef(false);
-  const { font } = useScribbleFont(fontId);
+  const minhasFontes = useFontesDoUsuario();
+  // As fontes do assinante entram na MESMA lista das que vêm com a
+  // ferramenta: daqui para baixo, nada no editor distingue as duas origens.
+  const todasFontes = [...SCRIBBLE_FONTS, ...minhasFontes.fontes];
+  const { font } = useScribbleFont(fontId, minhasFontes.fontes);
   // Só no cliente: `window.VideoEncoder` não existe no SSR e checar direto
   // no render causaria divergência de hidratação.
   const [mp4Supported, setMp4Supported] = useState(true);
@@ -212,6 +217,64 @@ export default function RabiscandoEditorPage() {
       setExportState("error");
     }
   };
+
+  const ehMinhaFonte = minhasFontes.fontes.some((f) => f.id === fontId);
+
+  const blocoMinhasFontes = (
+    <div style={{ marginTop: 14, borderTop: "1px solid var(--border)", paddingTop: 14 }}>
+      <label
+        className="rb-btn rb-btn--secondary rb-btn--sm rb-btn--block"
+        style={{ cursor: minhasFontes.enviando ? "default" : "pointer" }}
+      >
+        {minhasFontes.enviando ? "lendo ···" : "Usar uma fonte minha"}
+        <input
+          type="file"
+          accept=".ttf,.otf,font/ttf,font/otf"
+          disabled={minhasFontes.enviando || minhasFontes.cheio}
+          style={{ display: "none" }}
+          onChange={async (e) => {
+            const arquivo = e.target.files?.[0];
+            // Zera o input: sem isso, subir o MESMO arquivo de novo depois de
+            // um erro não dispara onChange, e o botão parece morto.
+            e.target.value = "";
+            if (!arquivo) return;
+            const novoId = await minhasFontes.adicionar(arquivo);
+            if (novoId) setFontId(novoId);
+          }}
+        />
+      </label>
+
+      {minhasFontes.erro && <p className={styles.errorNote}>{minhasFontes.erro}</p>}
+
+      {ehMinhaFonte && (
+        <button
+          className="rb-btn rb-btn--tertiary rb-btn--quiet"
+          style={{ marginTop: 10 }}
+          onClick={() => {
+            minhasFontes.remover(fontId);
+            setFontId(DEFAULT_FONT_ID);
+          }}
+        >
+          remover esta fonte
+        </button>
+      )}
+
+      {/* Duas coisas que precisam estar na tela do upload, não enterradas em
+          termos: que a fonte não fica guardada, e que a licença dela é
+          responsabilidade de quem a trouxe. */}
+      <p className={styles.exportNote} style={{ marginTop: 10 }}>
+        .ttf ou .otf, até 3 MB. <strong style={{ color: "var(--text-2)", fontWeight: 500 }}>
+        O arquivo não sai do seu navegador</strong> — não é enviado para
+        servidor nenhum, e por isso a fonte vale só nesta aba: ao fechar, é
+        preciso escolher de novo.
+      </p>
+      <p className={styles.exportNote} style={{ marginTop: 6 }}>
+        As {SCRIBBLE_FONTS.length} fontes da ferramenta são licenciadas para uso
+        comercial. Por uma fonte que você traz, quem responde é você — vale
+        conferir a licença dela antes de usar em trabalho de cliente.
+      </p>
+    </div>
+  );
 
   const controlsSections = (
     <>
@@ -561,7 +624,7 @@ export default function RabiscandoEditorPage() {
                   aria-label="Fonte de traço"
                   style={{ fontFamily: `${cssFamily(fontId)}, var(--font-ui)`, fontSize: 16 }}
                 >
-                  {SCRIBBLE_FONTS.map((f) => (
+                  {todasFontes.map((f) => (
                     <option key={f.id} value={f.id}>
                       {f.name}
                     </option>
@@ -570,8 +633,9 @@ export default function RabiscandoEditorPage() {
                 <span className={styles.chevron}>⌄</span>
               </div>
               <p className={styles.exportNote} style={{ marginTop: 8 }}>
-                {fontById(fontId).nota} · {fontById(fontId).licenca}
+                {fontById(fontId, minhasFontes.fontes).nota}
               </p>
+              {blocoMinhasFontes}
             </div>
             {controlsSections}
             {exportSection}
@@ -595,7 +659,7 @@ export default function RabiscandoEditorPage() {
           </div>
 
           <div className="rb-toggle rb-toggle--scroll" role="group" aria-label="Fonte">
-            {SCRIBBLE_FONTS.map((f) => (
+            {todasFontes.map((f) => (
               <button
                 key={f.id}
                 className="rb-toggle__opt"
