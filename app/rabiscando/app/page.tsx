@@ -134,7 +134,7 @@ export default function RabiscandoEditorPage() {
   // As fontes do assinante entram na MESMA lista das que vêm com a
   // ferramenta: daqui para baixo, nada no editor distingue as duas origens.
   const todasFontes = [...SCRIBBLE_FONTS, ...minhasFontes.fontes];
-  const { font } = useScribbleFont(fontId, minhasFontes.fontes);
+  const { font } = useScribbleFont(fontId);
   // Só no cliente: `window.VideoEncoder` não existe no SSR e checar direto
   // no render causaria divergência de hidratação.
   const [mp4Supported, setMp4Supported] = useState(true);
@@ -633,7 +633,7 @@ export default function RabiscandoEditorPage() {
                 <span className={styles.chevron}>⌄</span>
               </div>
               <p className={styles.exportNote} style={{ marginTop: 8 }}>
-                {fontById(fontId, minhasFontes.fontes).nota}
+                {fontById(fontId).nota}
               </p>
               {blocoMinhasFontes}
             </div>

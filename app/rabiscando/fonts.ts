@@ -48,10 +48,26 @@ export function cssFamily(id: string): string {
   return `rbs-${id}`;
 }
 
-export function fontById(id: string, extras: ScribbleFont[] = []): ScribbleFont {
-  return (
-    extras.find((f) => f.id === id) ??
-    SCRIBBLE_FONTS.find((f) => f.id === id) ??
-    SCRIBBLE_FONTS[0]
-  );
+// Registro das fontes que a pessoa trouxe nesta aba.
+//
+// É estado de módulo, e isso é deliberado: `fontById` é chamado de dentro do
+// ScribbleCanvas, do carregador de fontes e do export — três lugares que não
+// se conhecem. Passar a lista por props exigiria enfiá-la em toda a árvore, e
+// esquecer UM caller faz a fonte cair silenciosamente na padrão, sem erro
+// nenhum. Foi exatamente o que aconteceu.
+//
+// Seguro porque é por aba: existe um editor por página, as fontes vivem só
+// enquanto ela está aberta, e nada disto roda no servidor.
+const trazidas = new Map<string, ScribbleFont>();
+
+export function registrarFonteTrazida(fonte: ScribbleFont): void {
+  trazidas.set(fonte.id, fonte);
+}
+
+export function esquecerFonteTrazida(id: string): void {
+  trazidas.delete(id);
+}
+
+export function fontById(id: string): ScribbleFont {
+  return trazidas.get(id) ?? SCRIBBLE_FONTS.find((f) => f.id === id) ?? SCRIBBLE_FONTS[0];
 }

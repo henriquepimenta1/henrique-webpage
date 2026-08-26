@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { Font } from "opentype.js";
-import { DEFAULT_FONT_ID, fontById, cssFamily, type ScribbleFont } from "./fonts";
+import { DEFAULT_FONT_ID, fontById, cssFamily } from "./fonts";
 
 export type FontState = "loading" | "ready" | "error";
 
@@ -11,14 +11,14 @@ export type FontState = "loading" | "ready" | "error";
 // baixa de novo.
 const cache = new Map<string, Promise<Font>>();
 
-function loadFont(id: string, extras: ScribbleFont[]): Promise<Font> {
+function loadFont(id: string): Promise<Font> {
   const existing = cache.get(id);
   if (existing) return existing;
 
   const promise = (async () => {
     const [opentype, res] = await Promise.all([
       import("opentype.js"),
-      fetch(fontById(id, extras).file),
+      fetch(fontById(id).file),
     ]);
     if (!res.ok) throw new Error(`font ${res.status}`);
     const bytes = await res.arrayBuffer();
@@ -49,11 +49,7 @@ async function registrarNoCss(id: string, bytes: ArrayBuffer): Promise<void> {
   document.fonts.add(face);
 }
 
-export function useScribbleFont(
-  id: string = DEFAULT_FONT_ID,
-  /** Fontes do próprio assinante; entram na resolução do arquivo. */
-  extras: ScribbleFont[] = [],
-): {
+export function useScribbleFont(id: string = DEFAULT_FONT_ID): {
   font: Font | null;
   state: FontState;
 } {
@@ -66,7 +62,7 @@ export function useScribbleFont(
 
   useEffect(() => {
     let cancelled = false;
-    loadFont(id, extras).then(
+    loadFont(id).then(
       (font) => {
         if (!cancelled) setLoaded({ id, font });
       },
@@ -77,9 +73,6 @@ export function useScribbleFont(
     return () => {
       cancelled = true;
     };
-    // `extras` só importa para resolver o arquivo na primeira carga do id;
-    // incluí-lo nas dependências recarregaria a fonte a cada render da lista.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const state: FontState =

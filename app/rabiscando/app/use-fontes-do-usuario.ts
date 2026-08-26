@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { ScribbleFont } from "../fonts";
+import { registrarFonteTrazida, esquecerFonteTrazida, type ScribbleFont } from "../fonts";
 import { MAX_BYTES, MAX_FONTES, PREFIXO_USUARIO } from "@/lib/rabiscando-fontes";
 
 // Fontes que a pessoa traz do próprio computador, sem sair do navegador.
@@ -74,20 +74,23 @@ export function useFontesDoUsuario(): EstadoFontes {
         const url = URL.createObjectURL(new Blob([bytes], { type: "font/ttf" }));
         urls.current.set(id, url);
 
-        setFontes((atuais) => [
-          ...atuais,
-          {
-            id,
-            name: nome.slice(0, 48),
-            file: url,
-            nota: "sua fonte · só nesta sessão",
-            // `pontos` orienta a calibragem do tremor nas fontes que
-            // embarcamos, onde foi medido. Numa fonte de fora não há medição,
-            // e inventar um número seria pior que admitir que não se sabe.
-            pontos: 0,
-            licenca: "OFL",
-          },
-        ]);
+        const nova: ScribbleFont = {
+          id,
+          name: nome.slice(0, 48),
+          file: url,
+          nota: "sua fonte · só nesta sessão",
+          // `pontos` orienta a calibragem do tremor nas fontes que embarcamos,
+          // onde foi medido. Numa fonte de fora não há medição, e inventar um
+          // número seria pior que admitir que não se sabe.
+          pontos: 0,
+          licenca: "OFL",
+        };
+
+        // Registra ANTES do setState: quem desenha o preview resolve a fonte
+        // pelo registro, e ele precisa existir no primeiro render com o id
+        // novo.
+        registrarFonteTrazida(nova);
+        setFontes((atuais) => [...atuais, nova]);
         return id;
       } catch {
         setErro("não foi possível ler o arquivo");
@@ -105,6 +108,7 @@ export function useFontesDoUsuario(): EstadoFontes {
       URL.revokeObjectURL(url);
       urls.current.delete(id);
     }
+    esquecerFonteTrazida(id);
     setFontes((atuais) => atuais.filter((f) => f.id !== id));
   }, []);
 
