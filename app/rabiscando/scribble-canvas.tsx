@@ -5,6 +5,8 @@ import { buildScribble } from "./scribble";
 import { useScribbleFont } from "./use-scribble-font";
 import styles from "./rabiscando.module.css";
 import { LAPIS, LAPIS_CORPO } from "./lapis";
+import { comprimentoDoCaminho, pontoNaFracao } from "./caminho";
+import { fontById } from "./fonts";
 
 /**
  * Três quadros é o padrão da animação desenhada à mão ("boil" / animação em
@@ -44,6 +46,16 @@ const STROKE_BY_THICKNESS: Record<ScribbleCanvasProps["thickness"], number> = {
   fina: 0,
   regular: 6,
   grossa: 16,
+};
+
+/**
+ * Numa fonte de traço único não há contorno para engrossar: a espessura É a
+ * caneta. Zero deixaria a letra invisível, então a escala é outra.
+ */
+const CANETA_POR_ESPESSURA: Record<ScribbleCanvasProps["thickness"], number> = {
+  fina: 6,
+  regular: 13,
+  grossa: 24,
 };
 
 export default function ScribbleCanvas({
@@ -99,9 +111,13 @@ export default function ScribbleCanvas({
 
   if (!frames) return null;
 
-  const strokeWidth = STROKE_BY_THICKNESS[thickness];
+  const tracoUnico = fontById(fontId).tracoUnico === true;
+  const strokeWidth = tracoUnico
+    ? CANETA_POR_ESPESSURA[thickness]
+    : STROKE_BY_THICKNESS[thickness];
   const fps = Math.max(1, boilFps);
   const cycle = frameCount / fps;
+  const escrevendo = revelarMs > 0 && modoRevelacao === "varredura";
 
   // Lápis: os passos vêm da posição real de cada letra, não de uma
   // interpolação do começo ao fim. Com quebra de linha, é isso que faz a mão
@@ -111,14 +127,29 @@ export default function ScribbleCanvas({
   const totalMs = glifos.length ? (glifos[glifos.length - 1].index + 1) * revelarMs : 0;
   const nomeAnimacao = `rbsLapis${Math.round(revelarMs)}x${glifos.length}`;
 
+  // Com traço único o lápis percorre o CAMINHO da letra, amostrado em doze
+  // pontos por letra. Sem ele, só dá para acompanhar a varredura, que anda em
+  // linha reta — é a diferença entre desenhar o "A" e revelá-lo.
+  const AMOSTRAS = 12;
   const passos = glifos
     .flatMap((g) => {
       const de = (g.index * revelarMs * 100) / totalMs;
       const ate = ((g.index + 1) * revelarMs * 100) / totalMs;
-      return [
-        `${de.toFixed(3)}% { transform: translate(${g.x}px, ${g.yBase}px) }`,
-        `${ate.toFixed(3)}% { transform: translate(${g.x + g.avanco}px, ${g.yBase}px) }`,
-      ];
+
+      if (!tracoUnico) {
+        return [
+          `${de.toFixed(3)}% { transform: translate(${g.x}px, ${g.yBase}px) }`,
+          `${ate.toFixed(3)}% { transform: translate(${g.x + g.avanco}px, ${g.yBase}px) }`,
+        ];
+      }
+
+      return Array.from({ length: AMOSTRAS + 1 }, (_, k) => {
+        const fracao = k / AMOSTRAS;
+        const pt = pontoNaFracao(g.d, fracao);
+        if (!pt) return "";
+        const pct = de + (ate - de) * fracao;
+        return `${pct.toFixed(3)}% { transform: translate(${pt.x.toFixed(1)}px, ${pt.y.toFixed(1)}px) }`;
+      }).filter(Boolean);
     })
     .join("\n");
 
@@ -178,16 +209,42 @@ export default function ScribbleCanvas({
             // coexistem no DOM, e ids repetidos fariam um mascarar o outro.
             const idMascara = `varre-${f}-${g.index}`;
 
+            // Traço único é riscado, nunca preenchido: preencher um caminho
+            // de caneta fecha as curvas e transforma o "a" numa mancha.
             const traco = (
               <path
                 d={g.d}
-                fill={color}
-                stroke={strokeWidth > 0 ? color : "none"}
+                fill={tracoUnico ? "none" : color}
+                stroke={tracoUnico || strokeWidth > 0 ? color : "none"}
                 strokeWidth={strokeWidth}
                 strokeLinejoin="round"
                 strokeLinecap="round"
               />
             );
+
+            // Desenho de verdade: a caneta percorre o caminho da letra.
+            if (tracoUnico && escrevendo) {
+              const comprimento = comprimentoDoCaminho(g.d);
+              return (
+                <path
+                  key={`${g.char}-${g.index}`}
+                  className={styles.desenhando}
+                  d={g.d}
+                  fill="none"
+                  stroke={color}
+                  strokeWidth={strokeWidth}
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  strokeDasharray={comprimento}
+                  style={{
+                    ["--rbs-len" as string]: comprimento,
+                    animationDuration: `${revelarMs / 1000}s`,
+                    animationDelay: `${atraso}s`,
+                    animationPlayState: estadoAnimacao,
+                  }}
+                />
+              );
+            }
 
             if (!varrendo) {
               return (

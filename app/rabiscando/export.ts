@@ -8,6 +8,7 @@
 import type { Font } from "opentype.js";
 import { buildScribble, type ScribbleResult } from "./scribble";
 import { LAPIS, LAPIS_CORPO, pontaDoLapis } from "./lapis";
+import { comprimentoDoCaminho, pontoNaFracao } from "./caminho";
 
 export interface ExportParams {
   font: Font;
@@ -38,6 +39,9 @@ export interface ExportParams {
   modoRevelacao?: "passo" | "varredura";
   /** Desenha o lápis acompanhando a varredura. */
   lapis?: boolean;
+  /** Fonte de traço único: o glifo é o caminho da caneta. Muda o desenho de
+   *  preenchido para riscado, e habilita o desenho progressivo real. */
+  tracoUnico?: boolean;
   onProgress?: (done: number, total: number) => void;
   /** Devolve true para abortar entre quadros. */
   shouldCancel?: () => boolean;
@@ -137,13 +141,15 @@ function paintFrame(
    *  bordas — senão o que for desenhado aqui ganharia a franja que o modo
    *  chroma existe para eliminar. */
   depoisDoTraco?: () => void,
+  /** Substitui o desenho do traço, para fontes de traço único. */
+  tracoUnico?: () => void,
 ): void {
   ctx.clearRect(0, 0, p.width, p.height);
 
   if (background && p.chromaKey) {
     // O traço entra PRIMEIRO, sobre o transparente: só assim dá para separar
     // o que é borda do que é fundo. O verde entra depois, por baixo.
-    desenharTraco(ctx, img, p, recortes);
+    desenharTraco(ctx, img, p, recortes, tracoUnico);
     depoisDoTraco?.();
     endurecerBordas(ctx, p.width, p.height);
     ctx.save();
@@ -158,7 +164,7 @@ function paintFrame(
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, p.width, p.height);
   }
-  desenharTraco(ctx, img, p, recortes);
+  desenharTraco(ctx, img, p, recortes, tracoUnico);
   depoisDoTraco?.();
 
   if (p.watermark) {
@@ -172,6 +178,70 @@ function paintFrame(
   }
 }
 
+/**
+ * Desenho progressivo de fonte de traço único, direto no canvas.
+ *
+ * Aqui não há rasterização de SVG: os caminhos são desenhados com Path2D e o
+ * quanto de cada um já foi escrito sai do tracejado do próprio canvas. Além de
+ * mais fiel, é mais barato — o caminho normal precisaria de uma imagem nova
+ * por quadro, porque o traço muda continuamente e não em degraus.
+ */
+function desenharTracoUnico(
+  ctx: CanvasRenderingContext2D,
+  frame: ScribbleResult,
+  p: ExportParams,
+  i: number,
+): void {
+  const { escala, dx, dy } = transformacaoDoViewBox(frame, p);
+  const decorridoMs = (i / p.exportFps) * 1000;
+  const escrevendo = !!p.revelarMs && p.revelarMs > 0 && p.modoRevelacao === "varredura";
+
+  ctx.save();
+  ctx.setTransform(escala, 0, 0, escala, dx, dy);
+  ctx.strokeStyle = p.color;
+  ctx.lineWidth = Math.max(1, p.strokeWidth);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  for (const g of frame.glyphs) {
+    const fracao = escrevendo
+      ? (decorridoMs - g.index * p.revelarMs!) / p.revelarMs!
+      : 1;
+    if (fracao <= 0) continue;
+
+    const caminho = new Path2D(g.d);
+    if (fracao >= 1) {
+      ctx.setLineDash([]);
+    } else {
+      // Um traço do tamanho do caminho inteiro, deslocado: o que sobra à
+      // vista é exatamente a parte já escrita.
+      const comprimento = comprimentoDoCaminho(g.d);
+      ctx.setLineDash([comprimento, comprimento]);
+      ctx.lineDashOffset = comprimento * (1 - fracao);
+    }
+    ctx.stroke(caminho);
+  }
+
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+/** Onde a ponta está num traço único: no caminho da letra, não na varredura. */
+function pontaNoTracoUnico(
+  frame: ScribbleResult,
+  p: ExportParams,
+  i: number,
+): { x: number; y: number } | null {
+  if (!p.revelarMs || p.revelarMs <= 0 || p.modoRevelacao !== "varredura") return null;
+  const decorridoMs = (i / p.exportFps) * 1000;
+
+  for (const g of frame.glyphs) {
+    const fracao = (decorridoMs - g.index * p.revelarMs) / p.revelarMs;
+    if (fracao >= 0 && fracao < 1) return pontoNaFracao(g.d, fracao);
+  }
+  return null;
+}
+
 /** O lápis, no mesmo sistema de coordenadas do traço. */
 function desenharLapis(
   ctx: CanvasRenderingContext2D,
@@ -180,7 +250,7 @@ function desenharLapis(
   i: number,
 ): void {
   if (!p.lapis) return;
-  const ponta = pontaDoLapis(frame, p, i);
+  const ponta = p.tracoUnico ? pontaNoTracoUnico(frame, p, i) : pontaDoLapis(frame, p, i);
   if (!ponta) return;
 
   const { escala, dx, dy } = transformacaoDoViewBox(frame, p);
@@ -215,7 +285,12 @@ function desenharTraco(
   img: HTMLImageElement,
   p: ExportParams,
   recortes?: { x: number; y: number; w: number; h: number }[] | null,
+  tracoUnico?: () => void,
 ): void {
+  if (tracoUnico) {
+    tracoUnico();
+    return;
+  }
   if (!recortes) {
     ctx.drawImage(img, 0, 0, p.width, p.height);
     return;
@@ -366,8 +441,14 @@ export async function exportPngSequence(p: ExportParams): Promise<ExportResult |
     if (p.shouldCancel?.()) return null;
 
     const quadroBoil = boil[boilIndexAt(i, p, boil.length)];
-    paintFrame(ctx, cache(i), p, p.background, recortesDaVarredura(quadroBoil, p, i), () =>
-      desenharLapis(ctx, quadroBoil, p, i),
+    paintFrame(
+      ctx,
+      cache(i),
+      p,
+      p.background,
+      recortesDaVarredura(quadroBoil, p, i),
+      () => desenharLapis(ctx, quadroBoil, p, i),
+      p.tracoUnico ? () => desenharTracoUnico(ctx, quadroBoil, p, i) : undefined,
     );
     const png = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
@@ -462,8 +543,14 @@ export async function exportMp4(p: ExportParams): Promise<ExportResult | null> {
       if (encodeError) throw encodeError;
 
       const quadroBoil = boil[boilIndexAt(i, p, boil.length)];
-      paintFrame(ctx, cache(i), p, background, recortesDaVarredura(quadroBoil, p, i), () =>
-        desenharLapis(ctx, quadroBoil, p, i),
+      paintFrame(
+        ctx,
+        cache(i),
+        p,
+        background,
+        recortesDaVarredura(quadroBoil, p, i),
+        () => desenharLapis(ctx, quadroBoil, p, i),
+        p.tracoUnico ? () => desenharTracoUnico(ctx, quadroBoil, p, i) : undefined,
       );
 
       const frame = new VideoFrame(canvas, {

@@ -42,6 +42,9 @@ const RESOLUTION_LABELS: Record<ResolutionKey, string> = {
 };
 
 const STROKE_BY_THICKNESS = { fina: 0, regular: 6, grossa: 16 } as const;
+/** Numa fonte de traço único a espessura É a caneta — não há contorno para
+ *  engrossar, e zero deixaria a letra invisível. Espelha o canvas. */
+const CANETA_POR_ESPESSURA = { fina: 6, regular: 13, grossa: 24 } as const;
 
 /** Verde puro. Contra um traço chapado, sem iluminação nem sombra, o verde
  *  saturado é o que os recortes simples de celular (CapCut, InShot) acertam
@@ -190,6 +193,8 @@ export default function RabiscandoEditorPage() {
   // Vai bem abaixo de 1 de propósito: abaixo de ~0.6 as linhas se sobrepõem,
   // que é um efeito legítimo em lettering.
   const lineHeight = 0.25 + (lineHeightPct / 100) * 1.95;
+  const fonteAtual = fontById(fontId);
+  const tracoUnico = fonteAtual.tracoUnico === true;
   const tremorEfetivo = tremorLigado ? tremor : 0;
   // 40ms é quase datilografia; 400ms é uma palavra por vez.
   const revelarMs = revelar ? Math.round(40 + (revelarPct / 100) * 360) : 0;
@@ -237,7 +242,8 @@ export default function RabiscandoEditorPage() {
         lapis: lapis && modoRevelacao === "varredura",
         letterSpacing,
         lineHeight,
-        strokeWidth: STROKE_BY_THICKNESS[thickness],
+        strokeWidth: (tracoUnico ? CANETA_POR_ESPESSURA : STROKE_BY_THICKNESS)[thickness],
+        tracoUnico,
         color,
         boilFps,
         exportFps,
@@ -408,7 +414,9 @@ export default function RabiscandoEditorPage() {
         )}
         <p className={styles.exportNote} style={{ marginTop: revelar ? 4 : 8 }}>
           {revelar
-            ? modoRevelacao === "varredura"
+            ? modoRevelacao === "varredura" && tracoUnico
+              ? "A caneta percorre o traço da letra — o A sai como duas diagonais e depois a barra. Só as fontes de traço único guardam esse caminho."
+              : modoRevelacao === "varredura"
               ? `Cada letra é desenhada da esquerda para a direita, no tempo do intervalo. Os espaços contam como letra — a pausa neles é o que faz parecer escrita.${lapis ? " O lápis some quando a palavra termina." : ""}`
               : "Cada letra aparece inteira, uma a uma."
             : "A cartela aparece inteira, de uma vez."}

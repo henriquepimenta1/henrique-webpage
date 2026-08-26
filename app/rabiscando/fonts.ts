@@ -15,6 +15,13 @@ export interface ScribbleFont {
   nota: string;
   pontos: number;
   licenca: "OFL" | "Apache 2.0";
+  /**
+   * Fonte de TRAÇO ÚNICO: o glifo é o caminho da caneta, não o contorno da
+   * letra. É a única família em que dá para desenhar a letra do jeito que ela
+   * é escrita — o "A" sai como duas diagonais e depois a barra — porque só
+   * nela existe a informação de por onde a ponta passa.
+   */
+  tracoUnico?: boolean;
 }
 
 export const SCRIBBLE_FONTS: ScribbleFont[] = [
@@ -35,6 +42,10 @@ export const SCRIBBLE_FONTS: ScribbleFont[] = [
   { id: "gochi-hand", name: "Gochi Hand", file: "/fonts/GochiHand-Regular.ttf", nota: "traço curto e anguloso", pontos: 77, licenca: "OFL" },
   { id: "covered-by-your-grace", name: "Covered By Your Grace", file: "/fonts/CoveredByYourGrace-Regular.ttf", nota: "caneta fina, letra apressada", pontos: 71, licenca: "OFL" },
   { id: "rock-salt", name: "Rock Salt", file: "/fonts/RockSalt-Regular.ttf", nota: "giz cru, a mais irregular — embola com tremor alto", pontos: 246, licenca: "Apache 2.0" },
+
+  // Traço único: desenham de verdade, letra por letra, no caminho da caneta.
+  { id: "relief-single", name: "Relief SingleLine", file: "/fonts/ReliefSingleLine-CAD.ttf", nota: "traço único · caneta técnica, desenha de verdade", pontos: 8, licenca: "OFL", tracoUnico: true },
+  { id: "mistral-single", name: "Mistral SingleLine", file: "/fonts/MistralSingleLine.otf", nota: "traço único · cursiva, desenha de verdade", pontos: 46, licenca: "OFL", tracoUnico: true },
 ];
 
 export const DEFAULT_FONT_ID = "caveat";
