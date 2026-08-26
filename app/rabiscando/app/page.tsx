@@ -193,10 +193,14 @@ export default function RabiscandoEditorPage() {
   // que é um efeito legítimo em lettering.
   const lineHeight = 0.25 + (lineHeightPct / 100) * 1.95;
   const fonteAtual = fontById(fontId);
-  const tracoUnico = fonteAtual.tracoUnico === true;
   const tremorEfetivo = tremorLigado ? tremor : 0;
   // 40ms é quase datilografia; 400ms é uma palavra por vez.
   const revelarMs = revelar ? Math.round(40 + (revelarPct / 100) * 360) : 0;
+  const escrevendoDeVerdade = revelarMs > 0 && modoRevelacao === "varredura";
+  const usaEsqueleto = fonteAtual.esqueletoOk === true && escrevendoDeVerdade;
+  // Desenhar pelo caminho: ou a fonte já é traço único, ou a linha de centro
+  // foi extraída dela.
+  const tracoUnico = fonteAtual.tracoUnico === true || usaEsqueleto;
   // Quanto tempo a revelação precisa para escrever tudo. Se passar da
   // duração, o clipe acaba no meio da palavra — e isso só apareceria depois
   // do render, no arquivo final.
@@ -242,6 +246,7 @@ export default function RabiscandoEditorPage() {
         lineHeight,
         strokeWidth: (tracoUnico ? CANETA_POR_ESPESSURA : STROKE_BY_THICKNESS)[thickness],
         tracoUnico,
+        esqueleto: usaEsqueleto ? fontId : (false as const),
         color,
         boilFps,
         exportFps,
@@ -410,7 +415,7 @@ export default function RabiscandoEditorPage() {
         <p className={styles.exportNote} style={{ marginTop: revelar ? 4 : 8 }}>
           {revelar
             ? modoRevelacao === "varredura" && tracoUnico
-              ? "A caneta percorre o traço da letra — o A sai como duas diagonais e depois a barra. Só as fontes de traço único guardam esse caminho."
+              ? "A caneta percorre o traço da letra, do começo ao fim, como quem escreve no papel."
               : modoRevelacao === "varredura"
               ? `Cada letra é desenhada da esquerda para a direita, no tempo do intervalo. Os espaços contam como letra — a pausa neles é o que faz parecer escrita.`
               : "Cada letra aparece inteira, uma a uma."

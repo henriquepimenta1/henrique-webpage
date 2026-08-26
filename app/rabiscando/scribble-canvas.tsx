@@ -70,8 +70,14 @@ export default function ScribbleCanvas({
   ciclo = 0,
 }: ScribbleCanvasProps) {
   const { font, state } = useScribbleFont(fontId);
-  const tracoUnico = fontById(fontId).tracoUnico === true;
-  const larguraDaCaneta = tracoUnico
+  const fonte = fontById(fontId);
+  const tracoUnico = fonte.tracoUnico === true;
+  // Escrever com esqueleto só faz sentido enquanto há escrita acontecendo: em
+  // repouso a letra deve voltar a ser a do desenho original.
+  const escreveComEsqueleto =
+    fonte.esqueletoOk === true && revelarMs > 0 && modoRevelacao === "varredura";
+  const desenhaCaminho = tracoUnico || escreveComEsqueleto;
+  const larguraDaCaneta = desenhaCaminho
     ? CANETA_POR_ESPESSURA[thickness]
     : STROKE_BY_THICKNESS[thickness];
 
@@ -86,9 +92,10 @@ export default function ScribbleCanvas({
         lineHeight,
         frame: f,
         strokeWidth: larguraDaCaneta,
+        esqueleto: escreveComEsqueleto ? fontId : false,
       }),
     );
-  }, [font, text, tremor, letterSpacing, lineHeight, frameCount, larguraDaCaneta]);
+  }, [font, text, tremor, letterSpacing, lineHeight, frameCount, larguraDaCaneta, escreveComEsqueleto, fontId]);
 
   if (state === "loading") {
     return (
@@ -161,8 +168,8 @@ export default function ScribbleCanvas({
             const traco = (
               <path
                 d={g.d}
-                fill={tracoUnico ? "none" : color}
-                stroke={tracoUnico || strokeWidth > 0 ? color : "none"}
+                fill={desenhaCaminho ? "none" : color}
+                stroke={desenhaCaminho || strokeWidth > 0 ? color : "none"}
                 strokeWidth={strokeWidth}
                 strokeLinejoin="round"
                 strokeLinecap="round"
@@ -170,7 +177,7 @@ export default function ScribbleCanvas({
             );
 
             // Desenho de verdade: a caneta percorre o caminho da letra.
-            if (tracoUnico && escrevendo) {
+            if (desenhaCaminho && escrevendo) {
               const comprimento = comprimentoDoCaminho(g.d);
               return (
                 <path

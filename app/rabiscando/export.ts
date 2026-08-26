@@ -36,9 +36,11 @@ export interface ExportParams {
   /** "passo" mostra a letra inteira; "varredura" desenha da esquerda para a
    *  direita. Ver `recortesDaVarredura`. */
   modoRevelacao?: "passo" | "varredura";
-  /** Fonte de traço único: o glifo é o caminho da caneta. Muda o desenho de
-   *  preenchido para riscado, e habilita o desenho progressivo real. */
+  /** O desenho segue o CAMINHO da caneta: ou a fonte é de traço único, ou a
+   *  linha de centro foi extraída. Muda de preenchido para riscado. */
   tracoUnico?: boolean;
+  /** Id da fonte quando a linha de centro deve ser extraída (ver esqueleto.ts). */
+  esqueleto?: string | false;
   onProgress?: (done: number, total: number) => void;
   /** Devolve true para abortar entre quadros. */
   shouldCancel?: () => boolean;
@@ -66,6 +68,7 @@ function boilFramesOf(p: ExportParams): ScribbleResult[] {
       lineHeight: p.lineHeight,
       frame: f,
       strokeWidth: p.strokeWidth,
+      esqueleto: p.esqueleto,
     }),
   );
 }

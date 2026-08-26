@@ -7,6 +7,7 @@
 // variações é ilimitado.
 
 import type { Font, Path } from "opentype.js";
+import { esqueletoDoGlifo } from "./esqueleto";
 
 /** Comando de path no formato que a opentype.js produz. */
 export interface PathCommand {
@@ -132,6 +133,38 @@ function perturbToPathData(
   return out.join(" ");
 }
 
+/** Aplica a mesma deformação do contorno a um conjunto de polilinhas. */
+function perturbarPolilinhas(
+  linhas: { x: number; y: number }[][],
+  offsetX: number,
+  baselineY: number,
+  amp: number,
+  seed: number,
+  pivotX: number,
+): string {
+  const rot = ((seeded(seed) * 2 - 1) * MAX_ROTATE_DEG * amp * Math.PI) / 180;
+  const dyBase = (seeded(seed + 5) * 2 - 1) * MAX_BASELINE_PX * amp;
+  const cos = Math.cos(rot);
+  const sin = Math.sin(rot);
+
+  return linhas
+    .map((linha) =>
+      linha
+        .map((pt, i) => {
+          const x = pt.x + offsetX;
+          const y = pt.y + baselineY;
+          const [wx, wy] = warpPoint(x, y, amp, seed);
+          const ox = wx - pivotX;
+          const oy = wy - baselineY;
+          const rx = pivotX + ox * cos - oy * sin;
+          const ry = baselineY + ox * sin + oy * cos + dyBase;
+          return `${i === 0 ? "M" : "L"}${rx.toFixed(2)} ${ry.toFixed(2)}`;
+        })
+        .join(" "),
+    )
+    .join(" ");
+}
+
 const FONT_SIZE = 200;
 /** Folga da caixa com tremor 0. Cresce com a amplitude — ver `padFor`. */
 const PADDING = 40;
@@ -158,6 +191,9 @@ export interface ScribbleOptions {
    *  desenho se espalha por metade da espessura para cada lado do caminho,
    *  e sem contar isso a letra sai cortada na borda. */
   strokeWidth?: number;
+  /** Desenha a linha de centro da letra em vez do contorno — o caminho que a
+   *  caneta percorreu. Exige a chave da fonte para o cache do esqueleto. */
+  esqueleto?: string | false;
   /** Índice do quadro do tremor. */
   frame?: number;
 }
@@ -195,7 +231,7 @@ export function buildScribble(
   tremor: number,
   options: ScribbleOptions = {},
 ): ScribbleResult {
-  const { letterSpacing = 0, lineHeight = 1.15, frame = 0, strokeWidth = 0 } = options;
+  const { letterSpacing = 0, lineHeight = 1.15, frame = 0, strokeWidth = 0, esqueleto = false } = options;
   const amp = Math.max(0, Math.min(MAX_TREMOR, tremor)) / 100;
   const pad = padFor(amp) + strokeWidth;
   const extra = letterSpacing * FONT_SIZE;
@@ -215,14 +251,29 @@ export function buildScribble(
 
     line.items.forEach((item) => {
       if (item.char.trim() !== "") {
-        const path = item.glyph.getPath(cursorX, baselineY, FONT_SIZE);
         // A semente combina caractere, posição e quadro: o mesmo "a" em
         // posições diferentes ganha formas diferentes, e cada quadro redesenha
         // a letra de outro jeito (é daí que vem o tremor). Determinística —
         // não pisca a cada keystroke.
         const seed = item.char.codePointAt(0)! * 31 + index * 97 + lineIdx * 383 + frame * 7919;
+
+        // O esqueleto é calculado UMA vez por letra, sem tremor, e depois
+        // recebe a mesma deformação que o contorno receberia. Extraí-lo do
+        // desenho já trêmulo custaria uma rasterização por quadro.
+        const traços = esqueleto ? esqueletoDoGlifo(esqueleto, font, item.char, FONT_SIZE) : null;
+
+        const d = traços
+          ? perturbarPolilinhas(traços, cursorX, baselineY, amp, seed, cursorX + item.advance / 2)
+          : perturbToPathData(
+              item.glyph.getPath(cursorX, baselineY, FONT_SIZE),
+              amp,
+              seed,
+              cursorX + item.advance / 2,
+              baselineY,
+            );
+
         glyphs.push({
-          d: perturbToPathData(path, amp, seed, cursorX + item.advance / 2, baselineY),
+          d,
           char: item.char,
           index,
           line: lineIdx,

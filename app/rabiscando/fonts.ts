@@ -22,11 +22,17 @@ export interface ScribbleFont {
    * nela existe a informação de por onde a ponta passa.
    */
   tracoUnico?: boolean;
+  /**
+   * A linha de centro desta fonte pode ser extraída com qualidade aceitável
+   * (ver esqueleto.ts). Só vale para traço fino e de espessura constante —
+   * numa fonte de pincel o esqueleto sai com farpas nas junções.
+   */
+  esqueletoOk?: boolean;
 }
 
 export const SCRIBBLE_FONTS: ScribbleFont[] = [
   { id: "caveat", name: "Caveat", file: "/fonts/Caveat.ttf", nota: "marcador arredondado", pontos: 45, licenca: "OFL" },
-  { id: "reenie-beanie", name: "Reenie Beanie", file: "/fonts/ReenieBeanie.ttf", nota: "a da assinatura do site", pontos: 71, licenca: "OFL" },
+  { id: "reenie-beanie", name: "Reenie Beanie", file: "/fonts/ReenieBeanie.ttf", nota: "a da assinatura do site · desenha de verdade", pontos: 71, licenca: "OFL", esqueletoOk: true },
   { id: "permanent-marker", name: "Permanent Marker", file: "/fonts/PermanentMarker-Regular.ttf", nota: "o mais grosso e chapado", pontos: 126, licenca: "Apache 2.0" },
   { id: "patrick-hand", name: "Patrick Hand", file: "/fonts/PatrickHand-Regular.ttf", nota: "contorno limpo, a mais legível", pontos: 37, licenca: "OFL" },
   { id: "indie-flower", name: "Indie Flower", file: "/fonts/IndieFlower-Regular.ttf", nota: "arredondada e informal", pontos: 50, licenca: "OFL" },
