@@ -30,6 +30,9 @@ interface ScribbleCanvasProps {
   lineHeight?: number;
   /** Intervalo entre uma letra e a seguinte, em ms. 0 mostra tudo de uma vez. */
   revelarMs?: number;
+  /** "passo" mostra a letra inteira de uma vez; "varredura" desenha da
+   *  esquerda para a direita, como quem escreve. */
+  modoRevelacao?: "passo" | "varredura";
   /** Muda para reiniciar a revelação — o preview em loop precisa recomeçar. */
   ciclo?: number;
 }
@@ -51,6 +54,7 @@ export default function ScribbleCanvas({
   letterSpacing = 0,
   lineHeight = 1.15,
   revelarMs = 0,
+  modoRevelacao = "passo",
   ciclo = 0,
 }: ScribbleCanvasProps) {
   const { font, state } = useScribbleFont(fontId);
@@ -122,28 +126,70 @@ export default function ScribbleCanvas({
               : undefined
           }
         >
-          {frame.glyphs.map((g) => (
-            <path
-              key={`${g.char}-${g.index}`}
-              className={revelarMs > 0 ? styles.revelando : undefined}
-              style={
-                revelarMs > 0
-                  ? {
-                      // O índice conta os espaços também: uma pausa onde há
-                      // espaço é o que faz a escrita parecer escrita.
-                      animationDelay: `${(g.index * revelarMs) / 1000}s`,
-                      animationPlayState: paused ? "paused" : "running",
-                    }
-                  : undefined
-              }
-              d={g.d}
-              fill={color}
-              stroke={strokeWidth > 0 ? color : "none"}
-              strokeWidth={strokeWidth}
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
-          ))}
+          {frame.glyphs.map((g) => {
+            const atraso = (g.index * revelarMs) / 1000;
+            const estadoAnimacao = paused ? ("paused" as const) : ("running" as const);
+            const varrendo = revelarMs > 0 && modoRevelacao === "varredura";
+            // Um id por quadro do tremor E por letra: os três quadros
+            // coexistem no DOM, e ids repetidos fariam um mascarar o outro.
+            const idMascara = `varre-${f}-${g.index}`;
+
+            const traco = (
+              <path
+                d={g.d}
+                fill={color}
+                stroke={strokeWidth > 0 ? color : "none"}
+                strokeWidth={strokeWidth}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
+            );
+
+            if (!varrendo) {
+              return (
+                <g
+                  key={`${g.char}-${g.index}`}
+                  className={revelarMs > 0 ? styles.revelando : undefined}
+                  style={
+                    revelarMs > 0
+                      ? {
+                          // O índice conta os espaços também: uma pausa onde há
+                          // espaço é o que faz a escrita parecer escrita.
+                          animationDelay: `${atraso}s`,
+                          animationPlayState: estadoAnimacao,
+                        }
+                      : undefined
+                  }
+                >
+                  {traco}
+                </g>
+              );
+            }
+
+            return (
+              <g key={`${g.char}-${g.index}`}>
+                <mask id={idMascara} maskUnits="userSpaceOnUse">
+                  <rect
+                    className={styles.varredura}
+                    x={g.x}
+                    y={g.yTopo}
+                    width={g.avanco}
+                    height={g.yBase - g.yTopo}
+                    fill="#fff"
+                    style={{
+                      // A varredura ocupa a fatia inteira daquela letra: ela
+                      // termina exatamente quando a seguinte começa, e a mão
+                      // não "para" entre uma e outra.
+                      animationDuration: `${revelarMs / 1000}s`,
+                      animationDelay: `${atraso}s`,
+                      animationPlayState: estadoAnimacao,
+                    }}
+                  />
+                </mask>
+                <g mask={`url(#${idMascara})`}>{traco}</g>
+              </g>
+            );
+          })}
         </g>
       ))}
     </svg>

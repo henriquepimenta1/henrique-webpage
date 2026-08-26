@@ -141,6 +141,7 @@ export default function RabiscandoEditorPage() {
   const [tremorLigado, setTremorLigado] = useState(true);
   const [revelar, setRevelar] = useState(false);
   const [revelarPct, setRevelarPct] = useState(35);
+  const [modoRevelacao, setModoRevelacao] = useState<"passo" | "varredura">("varredura");
   const [speed, setSpeed] = useState(55);
   const [duration, setDuration] = useState(40);
   const [letterSpacingPct, setLetterSpacingPct] = useState(40);
@@ -231,6 +232,7 @@ export default function RabiscandoEditorPage() {
         text: displayText,
         tremor: tremorEfetivo,
         revelarMs,
+        modoRevelacao,
         letterSpacing,
         lineHeight,
         strokeWidth: STROKE_BY_THICKNESS[thickness],
@@ -371,16 +373,39 @@ export default function RabiscandoEditorPage() {
         <p className={styles.sectionTitle}>Escrita</p>
         <Interruptor rotulo="revelação" ligado={revelar} onChange={setRevelar} />
         {revelar && (
-          <Slider
-            label="Intervalo entre letras"
-            value={revelarPct}
-            valueLabel={`${revelarMs} ms`}
-            onChange={setRevelarPct}
-          />
+          <>
+            <div className={styles.field}>
+              <span className={styles.fieldLabel}>Como a letra entra</span>
+              <div className="rb-toggle rb-toggle--fill" role="group" aria-label="Como a letra entra">
+                <button
+                  className="rb-toggle__opt"
+                  aria-pressed={modoRevelacao === "varredura"}
+                  onClick={() => setModoRevelacao("varredura")}
+                >
+                  sendo escrita
+                </button>
+                <button
+                  className="rb-toggle__opt"
+                  aria-pressed={modoRevelacao === "passo"}
+                  onClick={() => setModoRevelacao("passo")}
+                >
+                  de uma vez
+                </button>
+              </div>
+            </div>
+            <Slider
+              label="Intervalo entre letras"
+              value={revelarPct}
+              valueLabel={`${revelarMs} ms`}
+              onChange={setRevelarPct}
+            />
+          </>
         )}
         <p className={styles.exportNote} style={{ marginTop: revelar ? 4 : 8 }}>
           {revelar
-            ? "As letras entram uma a uma, na ordem — os espaços contam como uma letra, que é o que faz parecer escrita."
+            ? modoRevelacao === "varredura"
+              ? "Cada letra é desenhada da esquerda para a direita, no tempo do intervalo. Os espaços contam como letra — a pausa neles é o que faz parecer escrita."
+              : "Cada letra aparece inteira, uma a uma."
             : "A cartela aparece inteira, de uma vez."}
         </p>
         {revelacaoNaoCabe && (
@@ -631,6 +656,7 @@ export default function RabiscandoEditorPage() {
                 tremor={tremorEfetivo}
                 boilFps={boilFps}
                 revelarMs={revelarMs}
+                modoRevelacao={modoRevelacao}
                 ciclo={ciclo}
                 paused={!playing}
                 thickness={thickness}

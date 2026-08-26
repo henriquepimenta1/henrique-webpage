@@ -32,6 +32,9 @@ export interface ExportParams {
   chromaKey?: boolean;
   /** Intervalo entre uma letra e a seguinte, em ms. 0 escreve tudo de uma vez. */
   revelarMs?: number;
+  /** "passo" mostra a letra inteira; "varredura" desenha da esquerda para a
+   *  direita. Ver `recortesDaVarredura`. */
+  modoRevelacao?: "passo" | "varredura";
   onProgress?: (done: number, total: number) => void;
   /** Devolve true para abortar entre quadros. */
   shouldCancel?: () => boolean;
@@ -126,13 +129,14 @@ function paintFrame(
   img: HTMLImageElement,
   p: ExportParams,
   background?: string,
+  recortes?: { x: number; y: number; w: number; h: number }[] | null,
 ): void {
   ctx.clearRect(0, 0, p.width, p.height);
 
   if (background && p.chromaKey) {
     // O traço entra PRIMEIRO, sobre o transparente: só assim dá para separar
     // o que é borda do que é fundo. O verde entra depois, por baixo.
-    ctx.drawImage(img, 0, 0, p.width, p.height);
+    desenharTraco(ctx, img, p, recortes);
     endurecerBordas(ctx, p.width, p.height);
     ctx.save();
     ctx.globalCompositeOperation = "destination-over";
@@ -146,7 +150,7 @@ function paintFrame(
     ctx.fillStyle = background;
     ctx.fillRect(0, 0, p.width, p.height);
   }
-  ctx.drawImage(img, 0, 0, p.width, p.height);
+  desenharTraco(ctx, img, p, recortes);
 
   if (p.watermark) {
     ctx.save();
@@ -157,6 +161,27 @@ function paintFrame(
     ctx.fillText("euhenriq.com/rabiscando", p.width - p.height * 0.03, p.height - p.height * 0.03);
     ctx.restore();
   }
+}
+
+/** Desenha o traço inteiro, ou só as áreas já escritas. */
+function desenharTraco(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  p: ExportParams,
+  recortes?: { x: number; y: number; w: number; h: number }[] | null,
+): void {
+  if (!recortes) {
+    ctx.drawImage(img, 0, 0, p.width, p.height);
+    return;
+  }
+  if (recortes.length === 0) return;
+
+  ctx.save();
+  ctx.beginPath();
+  for (const r of recortes) ctx.rect(r.x, r.y, r.w, r.h);
+  ctx.clip();
+  ctx.drawImage(img, 0, 0, p.width, p.height);
+  ctx.restore();
 }
 
 function makeCanvas(p: ExportParams): {
@@ -183,11 +208,64 @@ function slugOf(text: string): string {
 }
 
 /**
+ * Reproduz em números o que o `preserveAspectRatio="xMidYMid meet"` faz no
+ * SVG: escala uniforme pelo lado que couber, centralizada nos dois eixos.
+ * É o que permite converter posição de letra em pixel do canvas.
+ */
+function transformacaoDoViewBox(frame: ScribbleResult, p: ExportParams) {
+  const [vx, vy, vw, vh] = frame.viewBox.split(/\s+/).map(Number);
+  const escala = Math.min(p.width / vw, p.height / vh);
+  return {
+    escala,
+    dx: (p.width - vw * escala) / 2 - vx * escala,
+    dy: (p.height - vh * escala) / 2 - vy * escala,
+  };
+}
+
+/**
+ * Os retângulos que devem ficar VISÍVEIS no quadro `i`, em pixels do canvas.
+ *
+ * A varredura não exige uma imagem por quadro: a imagem é sempre a do texto
+ * inteiro, e o que muda é o recorte. Num dado instante todas as letras
+ * anteriores estão completas — um retângulo só as cobre — e no máximo uma
+ * está pela metade. Dois recortes por quadro, contra centenas de
+ * rasterizações em 4K.
+ */
+function recortesDaVarredura(
+  frame: ScribbleResult,
+  p: ExportParams,
+  i: number,
+): { x: number; y: number; w: number; h: number }[] | null {
+  if (!p.revelarMs || p.revelarMs <= 0 || p.modoRevelacao !== "varredura") return null;
+
+  const decorridoMs = (i / p.exportFps) * 1000;
+  const { escala, dx, dy } = transformacaoDoViewBox(frame, p);
+  const areas: { x: number; y: number; w: number; h: number }[] = [];
+
+  for (const g of frame.glyphs) {
+    const inicio = g.index * p.revelarMs;
+    const progresso = (decorridoMs - inicio) / p.revelarMs;
+    if (progresso <= 0) continue;
+    const fatia = Math.min(1, progresso);
+    areas.push({
+      x: g.x * escala + dx,
+      y: g.yTopo * escala + dy,
+      w: g.avanco * fatia * escala,
+      h: (g.yBase - g.yTopo) * escala,
+    });
+  }
+
+  return areas;
+}
+
+/**
  * Até que índice de letra o quadro `i` mostra. Espelha a conta do preview:
  * uma letra a cada `revelarMs`, contando os espaços. Sem revelação, tudo.
  */
 function revelacaoAt(i: number, p: ExportParams): number {
-  if (!p.revelarMs || p.revelarMs <= 0) return Infinity;
+  // Na varredura o corte é geométrico, não por índice: a imagem é sempre a
+  // do texto inteiro e quem esconde é o recorte.
+  if (!p.revelarMs || p.revelarMs <= 0 || p.modoRevelacao === "varredura") return Infinity;
   return Math.floor((i / p.exportFps) * 1000 / p.revelarMs);
 }
 
@@ -241,7 +319,7 @@ export async function exportPngSequence(p: ExportParams): Promise<ExportResult |
   for (let i = 0; i < total; i++) {
     if (p.shouldCancel?.()) return null;
 
-    paintFrame(ctx, cache(i), p, p.background);
+    paintFrame(ctx, cache(i), p, p.background, recortesDaVarredura(boil[boilIndexAt(i, p, boil.length)], p, i));
     const png = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error("canvas não gerou PNG"))),
@@ -334,7 +412,7 @@ export async function exportMp4(p: ExportParams): Promise<ExportResult | null> {
       }
       if (encodeError) throw encodeError;
 
-      paintFrame(ctx, cache(i), p, background);
+      paintFrame(ctx, cache(i), p, background, recortesDaVarredura(boil[boilIndexAt(i, p, boil.length)], p, i));
 
       const frame = new VideoFrame(canvas, {
         timestamp: Math.round(i * frameDuration),

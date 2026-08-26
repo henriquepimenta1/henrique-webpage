@@ -120,6 +120,19 @@
   pointer-events: none;
 }
 
+/* ── varredura: a letra sendo escrita da esquerda para a direita ──
+   A máscara abre no eixo X. `transform-box: fill-box` faz a origem ser a
+   caixa do próprio retângulo, e não a do SVG inteiro — sem isso cada letra
+   abriria a partir do canto da cartela. */
+@keyframes rabiscandoVarrer { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+.varredura {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation-name: rabiscandoVarrer;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+
 /* ── revelação: as letras aparecendo uma a uma ──
    Um passo seco por letra, não um fade: escrita à mão aparece de uma vez,
    traço por traço. `steps(1)` com duração mínima faz o salto; quem controla

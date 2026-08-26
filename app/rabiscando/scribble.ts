@@ -28,6 +28,15 @@ export interface GlyphInstance {
   index: number;
   /** Linha a que a letra pertence (0-based). */
   line: number;
+  /** Borda esquerda da letra, em unidades do viewBox. */
+  x: number;
+  /** Largura de avanço da letra, nas mesmas unidades. É por onde a
+   *  varredura da escrita passa — não a largura do desenho, que o tremor
+   *  faz transbordar. */
+  avanco: number;
+  /** Topo e base da faixa desta linha, para a varredura não invadir a de cima. */
+  yTopo: number;
+  yBase: number;
 }
 
 export interface ScribbleResult {
@@ -211,6 +220,12 @@ export function buildScribble(
           char: item.char,
           index,
           line: lineIdx,
+          x: cursorX,
+          avanco: item.advance,
+          // A faixa é generosa: o tremor e a rotação empurram o traço para
+          // fora das métricas, e um recorte apertado cortaria a letra.
+          yTopo: baselineY - FONT_SIZE * 1.25,
+          yBase: baselineY + FONT_SIZE * 0.55,
         });
       }
       cursorX += item.advance;
