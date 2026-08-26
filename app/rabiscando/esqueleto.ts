@@ -84,16 +84,39 @@ function traçar(bits: Uint8Array, w: number, h: number): Polilinha[] {
     const linha: Polilinha = [];
     let x = x0;
     let y = y0;
+    // Direção do último passo. Numa junção, seguir reto é o que mantém o
+    // traço inteiro: escolher o primeiro vizinho da lista faz a caneta virar
+    // à toa, partir a letra ali e deixar o resto como cacos soltos.
+    let dirX = 0;
+    let dirY = 0;
+
     for (;;) {
       linha.push({ x, y });
       restante[idx(x, y)] = 0;
-      const proximo = VIZINHOS.map(([dx, dy]) => [x + dx, y + dy] as const).find(
+
+      const candidatos = VIZINHOS.map(([dx, dy]) => [x + dx, y + dy, dx, dy] as const).filter(
         ([vx, vy]) => vx >= 0 && vy >= 0 && vx < w && vy < h && restante[idx(vx, vy)] === 1,
       );
-      if (!proximo) break;
-      [x, y] = proximo;
+      if (candidatos.length === 0) break;
+
+      const proximo =
+        dirX === 0 && dirY === 0
+          ? candidatos[0]
+          : candidatos.reduce((melhor, c) =>
+              // Produto escalar: quanto maior, mais o passo continua a
+              // direção que a caneta já vinha seguindo.
+              c[2] * dirX + c[3] * dirY > melhor[2] * dirX + melhor[3] * dirY ? c : melhor,
+            );
+
+      dirX = proximo[2];
+      dirY = proximo[3];
+      x = proximo[0];
+      y = proximo[1];
     }
-    if (linha.length > 2) linhas.push(linha);
+
+    // Dois pontos já são um traço. O corte anterior, em três, jogava fora os
+    // pedaços curtos que sobram das junções — e eram partes da letra.
+    if (linha.length >= 2) linhas.push(linha);
   };
 
   // Primeiro as pontas: um traço que começa numa ponta sai inteiro e na
