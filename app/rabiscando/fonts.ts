@@ -37,7 +37,7 @@ export const SCRIBBLE_FONTS: ScribbleFont[] = [
   { id: "patrick-hand", name: "Patrick Hand", file: "/fonts/PatrickHand-Regular.ttf", nota: "contorno limpo, a mais legível", pontos: 37, licenca: "OFL" },
   { id: "indie-flower", name: "Indie Flower", file: "/fonts/IndieFlower-Regular.ttf", nota: "arredondada e informal", pontos: 50, licenca: "OFL" },
   { id: "handlee", name: "Handlee", file: "/fonts/Handlee-Regular.ttf", nota: "casual, traço médio", pontos: 43, licenca: "OFL" },
-  { id: "architects-daughter", name: "Architects Daughter", file: "/fonts/ArchitectsDaughter-Regular.ttf", nota: "fina, arquitetônica", pontos: 49, licenca: "OFL" },
+  { id: "architects-daughter", name: "Architects Daughter", file: "/fonts/ArchitectsDaughter-Regular.ttf", nota: "fina, arquitetônica · desenha de verdade", pontos: 49, licenca: "OFL", esqueletoOk: true },
   { id: "sriracha", name: "Sriracha", file: "/fonts/Sriracha-Regular.ttf", nota: "pincel, traço variável", pontos: 51, licenca: "OFL" },
   { id: "gloria-hallelujah", name: "Gloria Hallelujah", file: "/fonts/GloriaHallelujah.ttf", nota: "escolar, redonda", pontos: 61, licenca: "OFL" },
   { id: "shadows-into-light", name: "Shadows Into Light", file: "/fonts/ShadowsIntoLight.ttf", nota: "a mais fina · desenha de verdade", pontos: 59, licenca: "OFL", esqueletoOk: true },
