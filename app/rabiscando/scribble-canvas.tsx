@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { buildScribble } from "./scribble";
 import { useScribbleFont } from "./use-scribble-font";
 import styles from "./rabiscando.module.css";
+import { LAPIS, LAPIS_CORPO } from "./lapis";
 
 /**
  * Três quadros é o padrão da animação desenhada à mão ("boil" / animação em
@@ -35,6 +36,8 @@ interface ScribbleCanvasProps {
   modoRevelacao?: "passo" | "varredura";
   /** Muda para reiniciar a revelação — o preview em loop precisa recomeçar. */
   ciclo?: number;
+  /** Desenha o lápis acompanhando a varredura. */
+  lapis?: boolean;
 }
 
 const STROKE_BY_THICKNESS: Record<ScribbleCanvasProps["thickness"], number> = {
@@ -55,6 +58,7 @@ export default function ScribbleCanvas({
   lineHeight = 1.15,
   revelarMs = 0,
   modoRevelacao = "passo",
+  lapis = false,
   ciclo = 0,
 }: ScribbleCanvasProps) {
   const { font, state } = useScribbleFont(fontId);
@@ -99,6 +103,25 @@ export default function ScribbleCanvas({
   const fps = Math.max(1, boilFps);
   const cycle = frameCount / fps;
 
+  // Lápis: os passos vêm da posição real de cada letra, não de uma
+  // interpolação do começo ao fim. Com quebra de linha, é isso que faz a mão
+  // voltar para a margem em vez de atravessar a cartela na diagonal.
+  const varrendoAgora = revelarMs > 0 && modoRevelacao === "varredura" && lapis;
+  const glifos = frames[0].glyphs;
+  const totalMs = glifos.length ? (glifos[glifos.length - 1].index + 1) * revelarMs : 0;
+  const nomeAnimacao = `rbsLapis${Math.round(revelarMs)}x${glifos.length}`;
+
+  const passos = glifos
+    .flatMap((g) => {
+      const de = (g.index * revelarMs * 100) / totalMs;
+      const ate = ((g.index + 1) * revelarMs * 100) / totalMs;
+      return [
+        `${de.toFixed(3)}% { transform: translate(${g.x}px, ${g.yBase}px) }`,
+        `${ate.toFixed(3)}% { transform: translate(${g.x + g.avanco}px, ${g.yBase}px) }`,
+      ];
+    })
+    .join("\n");
+
   return (
     <svg
       // Remontar reinicia a animação de revelação. É o jeito mais simples de
@@ -110,6 +133,27 @@ export default function ScribbleCanvas({
       aria-label={text}
       role="img"
     >
+      {varrendoAgora && totalMs > 0 && (
+        <>
+          <style>{`@keyframes ${nomeAnimacao} { ${passos} }`}</style>
+          <g
+            style={{
+              animationName: nomeAnimacao,
+              animationDuration: `${totalMs / 1000}s`,
+              animationTimingFunction: "linear",
+              animationFillMode: "both",
+              animationPlayState: paused ? "paused" : "running",
+            }}
+          >
+            <polygon points={LAPIS.map(([x, y]) => `${x},${y}`).join(" ")} fill={color} />
+            <polygon
+              points={LAPIS_CORPO.map(([x, y]) => `${x},${y}`).join(" ")}
+              fill={color}
+              opacity={0.45}
+            />
+          </g>
+        </>
+      )}
       {frames.map((frame, f) => (
         <g
           key={f}

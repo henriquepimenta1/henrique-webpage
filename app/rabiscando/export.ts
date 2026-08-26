@@ -7,6 +7,7 @@
 
 import type { Font } from "opentype.js";
 import { buildScribble, type ScribbleResult } from "./scribble";
+import { LAPIS, LAPIS_CORPO, pontaDoLapis } from "./lapis";
 
 export interface ExportParams {
   font: Font;
@@ -35,6 +36,8 @@ export interface ExportParams {
   /** "passo" mostra a letra inteira; "varredura" desenha da esquerda para a
    *  direita. Ver `recortesDaVarredura`. */
   modoRevelacao?: "passo" | "varredura";
+  /** Desenha o lápis acompanhando a varredura. */
+  lapis?: boolean;
   onProgress?: (done: number, total: number) => void;
   /** Devolve true para abortar entre quadros. */
   shouldCancel?: () => boolean;
@@ -130,6 +133,10 @@ function paintFrame(
   p: ExportParams,
   background?: string,
   recortes?: { x: number; y: number; w: number; h: number }[] | null,
+  /** Chamado logo depois do traço e ANTES do fundo e do endurecimento de
+   *  bordas — senão o que for desenhado aqui ganharia a franja que o modo
+   *  chroma existe para eliminar. */
+  depoisDoTraco?: () => void,
 ): void {
   ctx.clearRect(0, 0, p.width, p.height);
 
@@ -137,6 +144,7 @@ function paintFrame(
     // O traço entra PRIMEIRO, sobre o transparente: só assim dá para separar
     // o que é borda do que é fundo. O verde entra depois, por baixo.
     desenharTraco(ctx, img, p, recortes);
+    depoisDoTraco?.();
     endurecerBordas(ctx, p.width, p.height);
     ctx.save();
     ctx.globalCompositeOperation = "destination-over";
@@ -151,6 +159,7 @@ function paintFrame(
     ctx.fillRect(0, 0, p.width, p.height);
   }
   desenharTraco(ctx, img, p, recortes);
+  depoisDoTraco?.();
 
   if (p.watermark) {
     ctx.save();
@@ -161,6 +170,43 @@ function paintFrame(
     ctx.fillText("euhenriq.com/rabiscando", p.width - p.height * 0.03, p.height - p.height * 0.03);
     ctx.restore();
   }
+}
+
+/** O lápis, no mesmo sistema de coordenadas do traço. */
+function desenharLapis(
+  ctx: CanvasRenderingContext2D,
+  frame: ScribbleResult,
+  p: ExportParams,
+  i: number,
+): void {
+  if (!p.lapis) return;
+  const ponta = pontaDoLapis(frame, p, i);
+  if (!ponta) return;
+
+  const { escala, dx, dy } = transformacaoDoViewBox(frame, p);
+  const px = ponta.x * escala + dx;
+  const py = ponta.y * escala + dy;
+
+  const poligono = (pontos: [number, number][]) => {
+    ctx.beginPath();
+    pontos.forEach(([x, y], n) => {
+      const cx = px + x * escala;
+      const cy = py + y * escala;
+      if (n === 0) ctx.moveTo(cx, cy);
+      else ctx.lineTo(cx, cy);
+    });
+    ctx.closePath();
+    ctx.fill();
+  };
+
+  ctx.save();
+  ctx.fillStyle = p.color;
+  poligono(LAPIS);
+  // O corpo entra com opacidade menor: o lápis é referência de movimento, não
+  // o assunto do quadro. Sólido, ele compete com o traço.
+  ctx.globalAlpha = 0.45;
+  poligono(LAPIS_CORPO);
+  ctx.restore();
 }
 
 /** Desenha o traço inteiro, ou só as áreas já escritas. */
@@ -319,7 +365,10 @@ export async function exportPngSequence(p: ExportParams): Promise<ExportResult |
   for (let i = 0; i < total; i++) {
     if (p.shouldCancel?.()) return null;
 
-    paintFrame(ctx, cache(i), p, p.background, recortesDaVarredura(boil[boilIndexAt(i, p, boil.length)], p, i));
+    const quadroBoil = boil[boilIndexAt(i, p, boil.length)];
+    paintFrame(ctx, cache(i), p, p.background, recortesDaVarredura(quadroBoil, p, i), () =>
+      desenharLapis(ctx, quadroBoil, p, i),
+    );
     const png = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error("canvas não gerou PNG"))),
@@ -412,7 +461,10 @@ export async function exportMp4(p: ExportParams): Promise<ExportResult | null> {
       }
       if (encodeError) throw encodeError;
 
-      paintFrame(ctx, cache(i), p, background, recortesDaVarredura(boil[boilIndexAt(i, p, boil.length)], p, i));
+      const quadroBoil = boil[boilIndexAt(i, p, boil.length)];
+      paintFrame(ctx, cache(i), p, background, recortesDaVarredura(quadroBoil, p, i), () =>
+        desenharLapis(ctx, quadroBoil, p, i),
+      );
 
       const frame = new VideoFrame(canvas, {
         timestamp: Math.round(i * frameDuration),
