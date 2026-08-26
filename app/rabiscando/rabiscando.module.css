@@ -120,6 +120,18 @@
   pointer-events: none;
 }
 
+/* ── revelação: as letras aparecendo uma a uma ──
+   Um passo seco por letra, não um fade: escrita à mão aparece de uma vez,
+   traço por traço. `steps(1)` com duração mínima faz o salto; quem controla
+   o ritmo é o atraso de cada letra, calculado no componente. */
+@keyframes rabiscandoAparecer { from { opacity: 0 } to { opacity: 1 } }
+.revelando {
+  animation-name: rabiscandoAparecer;
+  animation-duration: .001s;
+  animation-timing-function: steps(1, end);
+  animation-fill-mode: both;
+}
+
 /* ── tremor: ciclo de quadros ("boil" da animação desenhada à mão) ──
    Cada grupo fica visível 1/3 do ciclo. A duração e o atraso de fase vêm
    do componente (dependem do fps escolhido no slider). */

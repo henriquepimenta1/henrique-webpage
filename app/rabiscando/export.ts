@@ -30,6 +30,8 @@ export interface ExportParams {
   background?: string;
   /** Fundo destinado a recorte por cor (chroma key). Ver `paintFrame`. */
   chromaKey?: boolean;
+  /** Intervalo entre uma letra e a seguinte, em ms. 0 escreve tudo de uma vez. */
+  revelarMs?: number;
   onProgress?: (done: number, total: number) => void;
   /** Devolve true para abortar entre quadros. */
   shouldCancel?: () => boolean;
@@ -60,8 +62,11 @@ function boilFramesOf(p: ExportParams): ScribbleResult[] {
   );
 }
 
-function svgMarkup(frame: ScribbleResult, p: ExportParams): string {
+function svgMarkup(frame: ScribbleResult, p: ExportParams, ateIndice = Infinity): string {
   const paths = frame.glyphs
+    // A caixa (viewBox) continua a do texto INTEIRO: recortar por letra faria
+    // o desenho crescer e se reposicionar a cada letra que entra.
+    .filter((g) => g.index <= ateIndice)
     .map(
       (g) =>
         `<path d="${g.d}" fill="${p.color}"` +
@@ -177,9 +182,44 @@ function slugOf(text: string): string {
   );
 }
 
+/**
+ * Até que índice de letra o quadro `i` mostra. Espelha a conta do preview:
+ * uma letra a cada `revelarMs`, contando os espaços. Sem revelação, tudo.
+ */
+function revelacaoAt(i: number, p: ExportParams): number {
+  if (!p.revelarMs || p.revelarMs <= 0) return Infinity;
+  return Math.floor((i / p.exportFps) * 1000 / p.revelarMs);
+}
+
 /** Qual dos desenhos do tremor cai no quadro `i` da saída. */
 function boilIndexAt(i: number, p: ExportParams, count: number): number {
   return Math.floor((i * p.boilFps) / p.exportFps) % count;
+}
+
+/**
+ * Devolve, para cada quadro de saída, a imagem já rasterizada — reaproveitando
+ * as repetidas. Sem revelação são `boil.length` imagens no total.
+ */
+async function cacheDeImagens(
+  boil: ScribbleResult[],
+  p: ExportParams,
+  total: number,
+): Promise<(i: number) => HTMLImageElement> {
+  const combinacoes = new Map<string, HTMLImageElement>();
+  const chaveDe = (i: number) => `${boilIndexAt(i, p, boil.length)}:${revelacaoAt(i, p)}`;
+
+  const chaves = new Set<string>();
+  for (let i = 0; i < total; i++) chaves.add(chaveDe(i));
+
+  await Promise.all(
+    [...chaves].map(async (chave) => {
+      const [b, ate] = chave.split(":");
+      const img = await svgToImage(svgMarkup(boil[Number(b)], p, Number(ate)));
+      combinacoes.set(chave, img);
+    }),
+  );
+
+  return (i: number) => combinacoes.get(chaveDe(i))!;
 }
 
 // ─────────────────────────── PNG ───────────────────────────
@@ -193,13 +233,15 @@ export async function exportPngSequence(p: ExportParams): Promise<ExportResult |
   const zip = new JSZip();
   const pad = String(total).length;
 
-  // Só existem `boil.length` imagens possíveis — rasteriza cada uma uma vez.
-  const imgs = await Promise.all(boil.map((f) => svgToImage(svgMarkup(f, p))));
+  // Com revelação, cada combinação de (quadro do tremor × letras visíveis) é
+  // uma imagem diferente. São poucas — 3 quadros vezes o número de letras —,
+  // então o cache resolve; rasterizar por quadro de saída seria centenas.
+  const cache = await cacheDeImagens(boil, p, total);
 
   for (let i = 0; i < total; i++) {
     if (p.shouldCancel?.()) return null;
 
-    paintFrame(ctx, imgs[boilIndexAt(i, p, boil.length)], p, p.background);
+    paintFrame(ctx, cache(i), p, p.background);
     const png = await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
         (b) => (b ? resolve(b) : reject(new Error("canvas não gerou PNG"))),
@@ -282,7 +324,7 @@ export async function exportMp4(p: ExportParams): Promise<ExportResult | null> {
   });
 
   try {
-    const imgs = await Promise.all(boil.map((f) => svgToImage(svgMarkup(f, p))));
+    const cache = await cacheDeImagens(boil, p, total);
     const frameDuration = 1e6 / p.exportFps;
 
     for (let i = 0; i < total; i++) {
@@ -292,7 +334,7 @@ export async function exportMp4(p: ExportParams): Promise<ExportResult | null> {
       }
       if (encodeError) throw encodeError;
 
-      paintFrame(ctx, imgs[boilIndexAt(i, p, boil.length)], p, background);
+      paintFrame(ctx, cache(i), p, background);
 
       const frame = new VideoFrame(canvas, {
         timestamp: Math.round(i * frameDuration),

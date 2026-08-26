@@ -50,6 +50,29 @@ const STROKE_BY_THICKNESS = { fina: 0, regular: 6, grossa: 16 } as const;
 const VERDE_CHROMA = "#00ff00";
 const DEMO_TEXT = "ação.";
 
+function Interruptor({
+  rotulo,
+  ligado,
+  onChange,
+}: {
+  rotulo: string;
+  ligado: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <div className={styles.field}>
+      <div className="rb-toggle rb-toggle--fill" role="group" aria-label={rotulo}>
+        <button className="rb-toggle__opt" aria-pressed={!ligado} onClick={() => onChange(false)}>
+          sem {rotulo}
+        </button>
+        <button className="rb-toggle__opt" aria-pressed={ligado} onClick={() => onChange(true)}>
+          com {rotulo}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function Slider({
   label,
   value,
@@ -113,6 +136,11 @@ export default function RabiscandoEditorPage() {
   const [fontId, setFontId] = useState(DEFAULT_FONT_ID);
   const [thickness, setThickness] = useState<"fina" | "regular" | "grossa">("regular");
   const [tremor, setTremor] = useState(32);
+  // Ligado/desligado separado do valor: desligar e voltar não perde a
+  // calibragem que a pessoa acertou no slider.
+  const [tremorLigado, setTremorLigado] = useState(true);
+  const [revelar, setRevelar] = useState(false);
+  const [revelarPct, setRevelarPct] = useState(35);
   const [speed, setSpeed] = useState(55);
   const [duration, setDuration] = useState(40);
   const [letterSpacingPct, setLetterSpacingPct] = useState(40);
@@ -126,6 +154,9 @@ export default function RabiscandoEditorPage() {
   const [exportFps, setExportFps] = useState<ExportFps>(DEFAULT_EXPORT_FPS);
   const [playing, setPlaying] = useState(true);
   const [progress, setProgress] = useState(38);
+  // Incrementa a cada volta do preview; o canvas usa isso para recomeçar a
+  // revelação junto com o loop.
+  const [ciclo, setCiclo] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [exportState, setExportState] = useState<"idle" | "exporting" | "error">("idle");
   const [exportFrame, setExportFrame] = useState(0);
@@ -157,6 +188,14 @@ export default function RabiscandoEditorPage() {
   // Vai bem abaixo de 1 de propósito: abaixo de ~0.6 as linhas se sobrepõem,
   // que é um efeito legítimo em lettering.
   const lineHeight = 0.25 + (lineHeightPct / 100) * 1.95;
+  const tremorEfetivo = tremorLigado ? tremor : 0;
+  // 40ms é quase datilografia; 400ms é uma palavra por vez.
+  const revelarMs = revelar ? Math.round(40 + (revelarPct / 100) * 360) : 0;
+  // Quanto tempo a revelação precisa para escrever tudo. Se passar da
+  // duração, o clipe acaba no meio da palavra — e isso só apareceria depois
+  // do render, no arquivo final.
+  const msParaEscrever = revelar ? displayText.length * revelarMs : 0;
+  const revelacaoNaoCabe = msParaEscrever > Number(durationSeconds) * 1000;
   const exportFrameCount = Math.max(1, Math.round(Number(durationSeconds) * exportFps));
 
   // Reproduz o preview em loop enquanto "playing" — puramente visual.
@@ -165,8 +204,12 @@ export default function RabiscandoEditorPage() {
     const totalMs = Number(durationSeconds) * 1000;
     const start = performance.now() - (progress / 100) * totalMs;
     let raf: number;
+    let anterior = 0;
     const tick = (now: number) => {
       const pct = ((now - start) / totalMs) % 1;
+      // A volta se detecta pela queda: o percentual só diminui ao reiniciar.
+      if (pct < anterior) setCiclo((c) => c + 1);
+      anterior = pct;
       setProgress(pct * 100);
       raf = requestAnimationFrame(tick);
     };
@@ -186,7 +229,8 @@ export default function RabiscandoEditorPage() {
       const params = {
         font,
         text: displayText,
-        tremor,
+        tremor: tremorEfetivo,
+        revelarMs,
         letterSpacing,
         lineHeight,
         strokeWidth: STROKE_BY_THICKNESS[thickness],
@@ -301,14 +345,51 @@ export default function RabiscandoEditorPage() {
             ))}
           </div>
         </div>
-        <Slider
-          label="Tremor"
-          value={tremor}
-          max={MAX_TREMOR}
-          valueLabel={tremor > 100 ? `${tremor}% · exagero` : `${tremor}%`}
-          onChange={setTremor}
-        />
-        <Slider label="Velocidade do tremor" value={speed} valueLabel={`${boilFps} fps`} onChange={setSpeed} />
+        <Interruptor rotulo="tremor" ligado={tremorLigado} onChange={setTremorLigado} />
+        {/* Com o tremor desligado os dois sliders somem em vez de ficarem
+            inertes: controle visível que não faz nada é pior que ausente. */}
+        {tremorLigado && (
+          <Slider
+            label="Tremor"
+            value={tremor}
+            max={MAX_TREMOR}
+            valueLabel={tremor > 100 ? `${tremor}% · exagero` : `${tremor}%`}
+            onChange={setTremor}
+          />
+        )}
+        {tremorLigado && (
+          <Slider
+            label="Velocidade do tremor"
+            value={speed}
+            valueLabel={`${boilFps} fps`}
+            onChange={setSpeed}
+          />
+        )}
+      </div>
+
+      <div className={styles.section}>
+        <p className={styles.sectionTitle}>Escrita</p>
+        <Interruptor rotulo="revelação" ligado={revelar} onChange={setRevelar} />
+        {revelar && (
+          <Slider
+            label="Intervalo entre letras"
+            value={revelarPct}
+            valueLabel={`${revelarMs} ms`}
+            onChange={setRevelarPct}
+          />
+        )}
+        <p className={styles.exportNote} style={{ marginTop: revelar ? 4 : 8 }}>
+          {revelar
+            ? "As letras entram uma a uma, na ordem — os espaços contam como uma letra, que é o que faz parecer escrita."
+            : "A cartela aparece inteira, de uma vez."}
+        </p>
+        {revelacaoNaoCabe && (
+          <p className={styles.errorNote}>
+            Escrever tudo leva {(msParaEscrever / 1000).toFixed(1)}s, mais que a duração de{" "}
+            {durationSeconds}s — o clipe termina no meio da palavra. Aumente a duração ou
+            diminua o intervalo.
+          </p>
+        )}
       </div>
 
       <div className={styles.section}>
@@ -547,8 +628,10 @@ export default function RabiscandoEditorPage() {
               <ScribbleCanvas
                 fontId={fontId}
                 text={displayText}
-                tremor={tremor}
+                tremor={tremorEfetivo}
                 boilFps={boilFps}
+                revelarMs={revelarMs}
+                ciclo={ciclo}
                 paused={!playing}
                 thickness={thickness}
                 color={color}
@@ -672,7 +755,7 @@ export default function RabiscandoEditorPage() {
           </div>
 
           <button className={styles.disclosure} onClick={() => setMobileOpen((v) => !v)}>
-            <span className={styles.disclosureLabel}>Ajustes avançados · 7</span>
+            <span className={styles.disclosureLabel}>Ajustes avançados</span>
             <span className={styles.chevron}>{mobileOpen ? "︿" : "⌄"}</span>
           </button>
           {mobileOpen && <div style={{ padding: "0 16px" }}>{controlsSections}</div>}

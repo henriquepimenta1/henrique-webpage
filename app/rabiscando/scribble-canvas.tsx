@@ -28,6 +28,10 @@ interface ScribbleCanvasProps {
   letterSpacing?: number;
   /** Distância entre linhas, múltiplo do corpo (0.7 a 2.2). */
   lineHeight?: number;
+  /** Intervalo entre uma letra e a seguinte, em ms. 0 mostra tudo de uma vez. */
+  revelarMs?: number;
+  /** Muda para reiniciar a revelação — o preview em loop precisa recomeçar. */
+  ciclo?: number;
 }
 
 const STROKE_BY_THICKNESS: Record<ScribbleCanvasProps["thickness"], number> = {
@@ -46,6 +50,8 @@ export default function ScribbleCanvas({
   color,
   letterSpacing = 0,
   lineHeight = 1.15,
+  revelarMs = 0,
+  ciclo = 0,
 }: ScribbleCanvasProps) {
   const { font, state } = useScribbleFont(fontId);
 
@@ -91,6 +97,9 @@ export default function ScribbleCanvas({
 
   return (
     <svg
+      // Remontar reinicia a animação de revelação. É o jeito mais simples de
+      // fazê-la acompanhar o loop do preview, e custa pouco: o SVG é pequeno.
+      key={revelarMs > 0 ? ciclo : undefined}
       viewBox={frames[0].viewBox}
       style={{ width: "100%", height: "100%", overflow: "visible" }}
       preserveAspectRatio="xMidYMid meet"
@@ -116,6 +125,17 @@ export default function ScribbleCanvas({
           {frame.glyphs.map((g) => (
             <path
               key={`${g.char}-${g.index}`}
+              className={revelarMs > 0 ? styles.revelando : undefined}
+              style={
+                revelarMs > 0
+                  ? {
+                      // O índice conta os espaços também: uma pausa onde há
+                      // espaço é o que faz a escrita parecer escrita.
+                      animationDelay: `${(g.index * revelarMs) / 1000}s`,
+                      animationPlayState: paused ? "paused" : "running",
+                    }
+                  : undefined
+              }
               d={g.d}
               fill={color}
               stroke={strokeWidth > 0 ? color : "none"}
