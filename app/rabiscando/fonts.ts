@@ -40,7 +40,7 @@ export const SCRIBBLE_FONTS: ScribbleFont[] = [
   { id: "architects-daughter", name: "Architects Daughter", file: "/fonts/ArchitectsDaughter-Regular.ttf", nota: "fina, arquitetônica", pontos: 49, licenca: "OFL" },
   { id: "sriracha", name: "Sriracha", file: "/fonts/Sriracha-Regular.ttf", nota: "pincel, traço variável", pontos: 51, licenca: "OFL" },
   { id: "gloria-hallelujah", name: "Gloria Hallelujah", file: "/fonts/GloriaHallelujah.ttf", nota: "escolar, redonda", pontos: 61, licenca: "OFL" },
-  { id: "shadows-into-light", name: "Shadows Into Light", file: "/fonts/ShadowsIntoLight.ttf", nota: "a mais fina", pontos: 59, licenca: "OFL" },
+  { id: "shadows-into-light", name: "Shadows Into Light", file: "/fonts/ShadowsIntoLight.ttf", nota: "a mais fina · desenha de verdade", pontos: 59, licenca: "OFL", esqueletoOk: true },
   { id: "amatic-sc", name: "Amatic SC", file: "/fonts/AmaticSC-Regular.ttf", nota: "condensada, alta e estreita", pontos: 82, licenca: "OFL" },
   { id: "just-another-hand", name: "Just Another Hand", file: "/fonts/JustAnotherHand-Regular.ttf", nota: "condensada fina", pontos: 93, licenca: "Apache 2.0" },
   { id: "kalam", name: "Kalam", file: "/fonts/Kalam-Regular.ttf", nota: "caneta de ponta larga, inclinada", pontos: 39, licenca: "OFL" },
