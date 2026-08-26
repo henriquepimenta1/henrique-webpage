@@ -7,8 +7,7 @@
 
 import type { Font } from "opentype.js";
 import { buildScribble, type ScribbleResult } from "./scribble";
-import { LAPIS, LAPIS_CORPO, pontaDoLapis } from "./lapis";
-import { comprimentoDoCaminho, pontoNaFracao } from "./caminho";
+import { comprimentoDoCaminho } from "./caminho";
 
 export interface ExportParams {
   font: Font;
@@ -37,8 +36,6 @@ export interface ExportParams {
   /** "passo" mostra a letra inteira; "varredura" desenha da esquerda para a
    *  direita. Ver `recortesDaVarredura`. */
   modoRevelacao?: "passo" | "varredura";
-  /** Desenha o lápis acompanhando a varredura. */
-  lapis?: boolean;
   /** Fonte de traço único: o glifo é o caminho da caneta. Muda o desenho de
    *  preenchido para riscado, e habilita o desenho progressivo real. */
   tracoUnico?: boolean;
@@ -227,59 +224,6 @@ function desenharTracoUnico(
   ctx.restore();
 }
 
-/** Onde a ponta está num traço único: no caminho da letra, não na varredura. */
-function pontaNoTracoUnico(
-  frame: ScribbleResult,
-  p: ExportParams,
-  i: number,
-): { x: number; y: number } | null {
-  if (!p.revelarMs || p.revelarMs <= 0 || p.modoRevelacao !== "varredura") return null;
-  const decorridoMs = (i / p.exportFps) * 1000;
-
-  for (const g of frame.glyphs) {
-    const fracao = (decorridoMs - g.index * p.revelarMs) / p.revelarMs;
-    if (fracao >= 0 && fracao < 1) return pontoNaFracao(g.d, fracao);
-  }
-  return null;
-}
-
-/** O lápis, no mesmo sistema de coordenadas do traço. */
-function desenharLapis(
-  ctx: CanvasRenderingContext2D,
-  frame: ScribbleResult,
-  p: ExportParams,
-  i: number,
-): void {
-  if (!p.lapis) return;
-  const ponta = p.tracoUnico ? pontaNoTracoUnico(frame, p, i) : pontaDoLapis(frame, p, i);
-  if (!ponta) return;
-
-  const { escala, dx, dy } = transformacaoDoViewBox(frame, p);
-  const px = ponta.x * escala + dx;
-  const py = ponta.y * escala + dy;
-
-  const poligono = (pontos: [number, number][]) => {
-    ctx.beginPath();
-    pontos.forEach(([x, y], n) => {
-      const cx = px + x * escala;
-      const cy = py + y * escala;
-      if (n === 0) ctx.moveTo(cx, cy);
-      else ctx.lineTo(cx, cy);
-    });
-    ctx.closePath();
-    ctx.fill();
-  };
-
-  ctx.save();
-  ctx.fillStyle = p.color;
-  poligono(LAPIS);
-  // O corpo entra com opacidade menor: o lápis é referência de movimento, não
-  // o assunto do quadro. Sólido, ele compete com o traço.
-  ctx.globalAlpha = 0.45;
-  poligono(LAPIS_CORPO);
-  ctx.restore();
-}
-
 /** Desenha o traço inteiro, ou só as áreas já escritas. */
 function desenharTraco(
   ctx: CanvasRenderingContext2D,
@@ -448,7 +392,7 @@ export async function exportPngSequence(p: ExportParams): Promise<ExportResult |
       p,
       p.background,
       recortesDaVarredura(quadroBoil, p, i),
-      () => desenharLapis(ctx, quadroBoil, p, i),
+      undefined,
       p.tracoUnico ? () => desenharTracoUnico(ctx, quadroBoil, p, i) : undefined,
     );
     const png = await new Promise<Blob>((resolve, reject) => {
@@ -550,7 +494,7 @@ export async function exportMp4(p: ExportParams): Promise<ExportResult | null> {
         p,
         background,
         recortesDaVarredura(quadroBoil, p, i),
-        () => desenharLapis(ctx, quadroBoil, p, i),
+        undefined,
         p.tracoUnico ? () => desenharTracoUnico(ctx, quadroBoil, p, i) : undefined,
       );
 

@@ -145,7 +145,6 @@ export default function RabiscandoEditorPage() {
   const [revelar, setRevelar] = useState(false);
   const [revelarPct, setRevelarPct] = useState(35);
   const [modoRevelacao, setModoRevelacao] = useState<"passo" | "varredura">("varredura");
-  const [lapis, setLapis] = useState(true);
   const [speed, setSpeed] = useState(55);
   const [duration, setDuration] = useState(40);
   const [letterSpacingPct, setLetterSpacingPct] = useState(40);
@@ -239,7 +238,6 @@ export default function RabiscandoEditorPage() {
         tremor: tremorEfetivo,
         revelarMs,
         modoRevelacao,
-        lapis: lapis && modoRevelacao === "varredura",
         letterSpacing,
         lineHeight,
         strokeWidth: (tracoUnico ? CANETA_POR_ESPESSURA : STROKE_BY_THICKNESS)[thickness],
@@ -407,9 +405,6 @@ export default function RabiscandoEditorPage() {
               valueLabel={`${revelarMs} ms`}
               onChange={setRevelarPct}
             />
-            {modoRevelacao === "varredura" && (
-              <Interruptor rotulo="lápis" ligado={lapis} onChange={setLapis} />
-            )}
           </>
         )}
         <p className={styles.exportNote} style={{ marginTop: revelar ? 4 : 8 }}>
@@ -417,7 +412,7 @@ export default function RabiscandoEditorPage() {
             ? modoRevelacao === "varredura" && tracoUnico
               ? "A caneta percorre o traço da letra — o A sai como duas diagonais e depois a barra. Só as fontes de traço único guardam esse caminho."
               : modoRevelacao === "varredura"
-              ? `Cada letra é desenhada da esquerda para a direita, no tempo do intervalo. Os espaços contam como letra — a pausa neles é o que faz parecer escrita.${lapis ? " O lápis some quando a palavra termina." : ""}`
+              ? `Cada letra é desenhada da esquerda para a direita, no tempo do intervalo. Os espaços contam como letra — a pausa neles é o que faz parecer escrita.`
               : "Cada letra aparece inteira, uma a uma."
             : "A cartela aparece inteira, de uma vez."}
         </p>
@@ -670,7 +665,6 @@ export default function RabiscandoEditorPage() {
                 boilFps={boilFps}
                 revelarMs={revelarMs}
                 modoRevelacao={modoRevelacao}
-                lapis={lapis}
                 ciclo={ciclo}
                 paused={!playing}
                 thickness={thickness}
