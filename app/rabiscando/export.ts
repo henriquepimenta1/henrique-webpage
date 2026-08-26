@@ -68,6 +68,7 @@ function boilFramesOf(p: ExportParams): ScribbleResult[] {
       letterSpacing: p.letterSpacing,
       lineHeight: p.lineHeight,
       frame: f,
+      strokeWidth: p.strokeWidth,
     }),
   );
 }

@@ -37,6 +37,8 @@ export interface GlyphInstance {
   /** Topo e base da faixa desta linha, para a varredura não invadir a de cima. */
   yTopo: number;
   yBase: number;
+  /** A linha de base — onde a caneta corre. */
+  yLinha: number;
 }
 
 export interface ScribbleResult {
@@ -152,6 +154,10 @@ export interface ScribbleOptions {
   letterSpacing?: number;
   /** Distância entre linhas, múltiplo do corpo (0.7 a 2.2). */
   lineHeight?: number;
+  /** Espessura do traço, em unidades do corpo. A caixa precisa dela: o
+   *  desenho se espalha por metade da espessura para cada lado do caminho,
+   *  e sem contar isso a letra sai cortada na borda. */
+  strokeWidth?: number;
   /** Índice do quadro do tremor. */
   frame?: number;
 }
@@ -189,9 +195,9 @@ export function buildScribble(
   tremor: number,
   options: ScribbleOptions = {},
 ): ScribbleResult {
-  const { letterSpacing = 0, lineHeight = 1.15, frame = 0 } = options;
+  const { letterSpacing = 0, lineHeight = 1.15, frame = 0, strokeWidth = 0 } = options;
   const amp = Math.max(0, Math.min(MAX_TREMOR, tremor)) / 100;
-  const pad = padFor(amp);
+  const pad = padFor(amp) + strokeWidth;
   const extra = letterSpacing * FONT_SIZE;
   const lineStep = lineHeight * FONT_SIZE;
 
@@ -226,6 +232,7 @@ export function buildScribble(
           // fora das métricas, e um recorte apertado cortaria a letra.
           yTopo: baselineY - FONT_SIZE * 1.25,
           yBase: baselineY + FONT_SIZE * 0.55,
+          yLinha: baselineY,
         });
       }
       cursorX += item.advance;

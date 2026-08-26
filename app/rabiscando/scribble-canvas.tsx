@@ -74,6 +74,10 @@ export default function ScribbleCanvas({
   ciclo = 0,
 }: ScribbleCanvasProps) {
   const { font, state } = useScribbleFont(fontId);
+  const tracoUnico = fontById(fontId).tracoUnico === true;
+  const larguraDaCaneta = tracoUnico
+    ? CANETA_POR_ESPESSURA[thickness]
+    : STROKE_BY_THICKNESS[thickness];
 
   // Com tremor 0 os quadros são idênticos — não vale gerar nem animar.
   const frameCount = tremor > 0 ? BOIL_FRAMES : 1;
@@ -81,9 +85,14 @@ export default function ScribbleCanvas({
   const frames = useMemo(() => {
     if (!font || !text) return null;
     return Array.from({ length: frameCount }, (_, f) =>
-      buildScribble(font, text, tremor, { letterSpacing, lineHeight, frame: f }),
+      buildScribble(font, text, tremor, {
+        letterSpacing,
+        lineHeight,
+        frame: f,
+        strokeWidth: larguraDaCaneta,
+      }),
     );
-  }, [font, text, tremor, letterSpacing, lineHeight, frameCount]);
+  }, [font, text, tremor, letterSpacing, lineHeight, frameCount, larguraDaCaneta]);
 
   if (state === "loading") {
     return (
@@ -111,10 +120,7 @@ export default function ScribbleCanvas({
 
   if (!frames) return null;
 
-  const tracoUnico = fontById(fontId).tracoUnico === true;
-  const strokeWidth = tracoUnico
-    ? CANETA_POR_ESPESSURA[thickness]
-    : STROKE_BY_THICKNESS[thickness];
+  const strokeWidth = larguraDaCaneta;
   const fps = Math.max(1, boilFps);
   const cycle = frameCount / fps;
   const escrevendo = revelarMs > 0 && modoRevelacao === "varredura";

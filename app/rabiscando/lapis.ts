@@ -15,17 +15,17 @@ import type { ScribbleResult } from "./scribble";
  */
 export const LAPIS: [number, number][] = [
   [0, 0], // ponta, onde o traço nasce
-  [14, -22],
-  [30, -14],
-  [16, 8],
+  [9, -14],
+  [19, -9],
+  [10, 5],
 ];
 
 /** Corpo do lápis, atrás da ponta. */
 export const LAPIS_CORPO: [number, number][] = [
-  [14, -22],
-  [30, -14],
-  [86, -74],
-  [70, -82],
+  [9, -14],
+  [19, -9],
+  [55, -47],
+  [45, -52],
 ];
 
 /**
@@ -48,7 +48,9 @@ export function pontaDoLapis(
     const progresso = (decorridoMs - inicio) / p.revelarMs;
     // A letra que está sendo escrita AGORA — só uma existe por vez.
     if (progresso >= 0 && progresso < 1) {
-      return { x: g.x + g.avanco * progresso, y: g.yBase };
+      // Na linha de base, não no pé da faixa: a faixa é generosa para o
+      // recorte não cortar a letra, e usar o pé dela solta o lápis do traço.
+      return { x: g.x + g.avanco * progresso, y: g.yLinha };
     }
   }
 
