@@ -362,3 +362,83 @@
   /* Respiro para a barra de gestos do iPhone. */
   .mobileBody { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Janela instalada (tela de início)
+   ───────────────────────────────────────────────────────────────
+   O layout declara `viewportFit: "cover"` e barra de status
+   translúcida. Isso estende a página por baixo do notch e da barra
+   de gestos — é o que tira a cara de "site aberto no Safari" — e
+   transfere para cá a obrigação de reservar aquele espaço.
+
+   Sem o que vem abaixo, o wordmark fica atrás do relógio do iPhone
+   e o transporte, atrás da barra de gestos.
+
+   As regras valem sempre, não só em standalone: `env()` devolve 0
+   onde não há recorte, então no desktop e no navegador comum nada
+   muda. Condicionar a `display-mode: standalone` daria dois
+   caminhos de layout para manter, e o errado só apareceria no
+   aparelho de alguém.
+   ═══════════════════════════════════════════════════════════════ */
+
+.topbar {
+  height: calc(48px + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  /* Em paisagem o notch fica na lateral e come o wordmark. */
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+
+.transport {
+  height: calc(44px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+
+.rail {
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-bottom: max(32px, env(safe-area-inset-bottom, 0px));
+}
+
+/* O quique elástico da borda revela o fundo da página atrás do editor e
+   denuncia o navegador. Numa janela instalada isso não existe. */
+.rabiscando {
+  overscroll-behavior: none;
+}
+
+/* O retângulo azul do toque é a marca registrada de página web. Sai daqui —
+   mas só depois de `:active` dar uma resposta no lugar dele, senão o botão
+   passa a parecer quebrado. */
+.rabiscando button,
+.rabiscando a,
+.rabiscando input,
+.rabiscando [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: none) {
+  .rabiscando button:active,
+  .rabiscando a:active,
+  .rabiscando [role="button"]:active {
+    opacity: .55;
+  }
+}
+
+/* O canvas é para desenhar, não para selecionar. Sem isto, segurar o dedo
+   sobre o desenho abre o menu de copiar do iOS no meio do trabalho. */
+.canvasStage {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+@media (max-width: 880px) {
+  /* No celular o corpo inteiro rola e o palco fica sticky no topo — logo é
+     ELE que precisa desviar do notch, não mais só a topbar. */
+  .canvasCol { top: calc(48px + env(safe-area-inset-top, 0px)); }
+  .mobileBody {
+    padding-left: max(0px, env(safe-area-inset-left, 0px));
+    padding-right: max(0px, env(safe-area-inset-right, 0px));
+  }
+}
