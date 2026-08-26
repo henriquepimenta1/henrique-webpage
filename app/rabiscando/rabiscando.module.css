@@ -336,7 +336,16 @@
 .disclosureLabel { font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-2); }
 
 @media (max-width: 880px) {
-  .main { flex-direction: column; overflow-y: auto; }
+  /* `display: contents` dissolve a caixa do .main, e isso é o que faz o
+     sticky abaixo funcionar.
+
+     No mobile o .rail some, então o .main fica com exatamente a altura do
+     .canvasCol — e um sticky nunca passa do limite do próprio pai. Ele não
+     tinha para onde grudar e sumia no primeiro dedo de rolagem. Os controles
+     (.mobileBody) são IRMÃOS do .main, não filhos; sem a caixa no meio, o
+     palco e os controles viram irmãos de verdade dentro do .rabiscando, que
+     aí sim se estende por toda a rolagem. */
+  .main { display: contents; }
   .canvasCol { flex: none; }
   /* `position:sticky` no palco: rolando os controles, o desenho continua
      à vista. Sem isso a pessoa mexe no tremor sem ver o efeito — que é o
@@ -434,9 +443,10 @@
 }
 
 @media (max-width: 880px) {
-  /* No celular o corpo inteiro rola e o palco fica sticky no topo — logo é
-     ELE que precisa desviar do notch, não mais só a topbar. */
-  .canvasCol { top: calc(48px + env(safe-area-inset-top, 0px)); }
+  /* No celular a topbar rola embora e quem fica cravado no topo é o palco —
+     logo é ELE que precisa desviar do notch. Só o inset: somar os 48px da
+     topbar deixaria uma faixa vazia assim que ela saísse de cena. */
+  .canvasCol { top: env(safe-area-inset-top, 0px); }
   .mobileBody {
     padding-left: max(0px, env(safe-area-inset-left, 0px));
     padding-right: max(0px, env(safe-area-inset-right, 0px));
