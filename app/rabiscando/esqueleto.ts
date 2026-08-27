@@ -85,6 +85,10 @@ function afinar(bits: Uint8Array, w: number, h: number): void {
   }
 }
 
+// As três funções a seguir são exportadas para o teste. São puras — bitmap
+// entra, bitmap ou polilinhas saem —, então dá para exercitá-las sem canvas e
+// sem navegador, que é justamente onde mora a lógica que já errou.
+
 /**
  * Os vizinhos acesos de um pixel formam um bloco só?
  *
@@ -97,7 +101,7 @@ function afinar(bits: Uint8Array, w: number, h: number): void {
  * zero, mas os dois pixels se tocam na diagonal. A vizinhança tem no máximo
  * oito pixels, então aqui se mede a adjacência de verdade.
  */
-function umSoBloco(p: number[]): boolean {
+export function umSoBloco(p: number[]): boolean {
   const acesos = VIZINHOS.filter((_, i) => p[i] === 1);
   if (acesos.length === 0) return false;
 
@@ -122,7 +126,7 @@ function umSoBloco(p: number[]): boolean {
  * vez da forma da letra. Depois desta passada sobram três — o cruzamento de
  * verdade — e os ramos passam a ser mensuráveis.
  */
-function limparEscadas(bits: Uint8Array, w: number, h: number): void {
+export function limparEscadas(bits: Uint8Array, w: number, h: number): void {
   const idx = (x: number, y: number) => y * w + x;
   let mudou = true;
 
@@ -143,7 +147,7 @@ function limparEscadas(bits: Uint8Array, w: number, h: number): void {
 }
 
 /** Segue o esqueleto a partir das pontas, produzindo traços contínuos. */
-function traçar(bits: Uint8Array, w: number, h: number): Polilinha[] {
+export function traçar(bits: Uint8Array, w: number, h: number): Polilinha[] {
   const idx = (x: number, y: number) => y * w + x;
   const vizinhosDe = (x: number, y: number) =>
     VIZINHOS.map(([dx, dy]) => [x + dx, y + dy] as const).filter(
@@ -174,36 +178,40 @@ function traçar(bits: Uint8Array, w: number, h: number): Polilinha[] {
     pontas: number[];
   }
   const ramos: Ramo[] = [];
-  const emRamo = new Uint8Array(w * h);
+  // Um ramo pode não ter pixel nenhum entre as duas pontas: quando a espinha
+  // da cunha é rasa, a bifurcação encosta direto no fundo da letra. Por isso
+  // a varredura sai dos NÓS e não dos pixels de passagem — sair da passagem
+  // deixaria a farpa curta invisível, que foi o caso que o teste pegou.
+  const jaVisto = new Set<string>();
 
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
-      const inicio = idx(x, y);
-      if (bits[inicio] !== 1 || emRamo[inicio] || grauDe(inicio) !== 2) continue;
+      const no = idx(x, y);
+      if (bits[no] !== 1 || grauDe(no) === 2) continue;
 
-      const pixels = [inicio];
-      emRamo[inicio] = 1;
-      const pontas: number[] = [];
-
-      // Dos dois lados do pixel de partida até esbarrar num nó.
       for (const partida of vizinhosDe(x, y)) {
+        const pixels: number[] = [];
         let [px, py] = partida;
-        let anterior = inicio;
-        for (;;) {
+        let anterior = no;
+        while (grauDe(idx(px, py)) === 2) {
           const i = idx(px, py);
-          if (grauDe(i) !== 2) {
-            pontas.push(i);
-            break;
-          }
           pixels.push(i);
-          emRamo[i] = 1;
           const seg = vizinhosDe(px, py).filter(([vx, vy]) => idx(vx, vy) !== anterior);
           if (seg.length !== 1) break;
           anterior = i;
           [px, py] = seg[0];
         }
+        const outra = idx(px, py);
+
+        // O mesmo ramo aparece uma vez de cada ponta.
+        const chave = `${Math.min(no, outra)}:${Math.max(no, outra)}:${
+          pixels.length ? Math.min(...pixels) : "-"
+        }`;
+        if (jaVisto.has(chave)) continue;
+        jaVisto.add(chave);
+
+        ramos.push({ pixels, pontas: [no, outra] });
       }
-      ramos.push({ pixels, pontas });
     }
   }
 
@@ -229,6 +237,10 @@ function traçar(bits: Uint8Array, w: number, h: number): Polilinha[] {
 
       for (const i of ramo.pixels) reutilizavel[i] = 1;
       reutilizavel[ponta] = 1;
+      // A ponta solta também: ela tem grau 1, então não é pixel de passagem e
+      // não entra em `pixels`. Sem isto o primeiro braço a consome e o
+      // segundo para um pixel antes do fundo da letra.
+      reutilizavel[solta] = 1;
       naoSemear[solta] = 1;
     }
   }
@@ -318,6 +330,22 @@ function suavizar(linha: Polilinha): Polilinha {
 }
 
 /**
+ * Do desenho cheio às polilinhas do miolo, em pixels do bitmap.
+ *
+ * A ordem é a coisa toda: afinar até um pixel, tirar os degraus que a
+ * afinação deixa, e só então ler a forma. Ler antes de limpar é ler o ruído —
+ * foi o que fez duas tentativas de consertar o "v" irem por água abaixo.
+ *
+ * Separada de `esqueletoDoGlifo` porque aqui não há canvas nem fonte: é
+ * bitmap entrando e polilinha saindo, e é onde o teste pega.
+ */
+export function linhasDoBitmap(bits: Uint8Array, w: number, h: number): Polilinha[] {
+  afinar(bits, w, h);
+  limparEscadas(bits, w, h);
+  return traçar(bits, w, h).map(suavizar);
+}
+
+/**
  * Devolve os traços da letra em unidades da fonte, com a linha de base em 0 e
  * o começo em x=0 — o mesmo sistema do `getPath` do opentype.
  */
@@ -365,11 +393,7 @@ export function esqueletoDoGlifo(
   // engrossar o esqueleto.
   for (let i = 0; i < bits.length; i++) bits[i] = px[i * 4 + 3] > 127 ? 1 : 0;
 
-  afinar(bits, largura, altura);
-  limparEscadas(bits, largura, altura);
-
-  const linhas = traçar(bits, largura, altura)
-    .map(suavizar)
+  const linhas = linhasDoBitmap(bits, largura, altura)
     // De volta às unidades da fonte.
     .map((l) =>
       l.map((pt) => ({
