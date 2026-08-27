@@ -46,7 +46,7 @@ export const SCRIBBLE_FONTS: ScribbleFont[] = [
   { id: "kalam", name: "Kalam", file: "/fonts/Kalam-Regular.ttf", nota: "caneta de ponta larga, inclinada", pontos: 39, licenca: "OFL" },
   { id: "caveat-brush", name: "Caveat Brush", file: "/fonts/CaveatBrush-Regular.ttf", nota: "pincel encorpado, a irmã grossa da Caveat", pontos: 113, licenca: "OFL" },
   { id: "gochi-hand", name: "Gochi Hand", file: "/fonts/GochiHand-Regular.ttf", nota: "traço curto e anguloso", pontos: 77, licenca: "OFL" },
-  { id: "covered-by-your-grace", name: "Covered By Your Grace", file: "/fonts/CoveredByYourGrace-Regular.ttf", nota: "caneta fina, letra apressada", pontos: 71, licenca: "OFL" },
+  { id: "covered-by-your-grace", name: "Covered By Your Grace", file: "/fonts/CoveredByYourGrace-Regular.ttf", nota: "caneta fina, letra apressada · desenha de verdade", pontos: 71, licenca: "OFL", esqueletoOk: true },
   { id: "rock-salt", name: "Rock Salt", file: "/fonts/RockSalt-Regular.ttf", nota: "giz cru, a mais irregular — embola com tremor alto", pontos: 246, licenca: "Apache 2.0" },
 
   // Traço único: desenham de verdade, letra por letra, no caminho da caneta.

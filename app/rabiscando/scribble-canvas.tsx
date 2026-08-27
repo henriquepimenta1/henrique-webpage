@@ -55,6 +55,23 @@ const CANETA_POR_ESPESSURA: Record<ScribbleCanvasProps["thickness"], number> = {
   grossa: 24,
 };
 
+/**
+ * Caneta do ESQUELETO. Mais fina que a de traço único na grossa, e o motivo é
+ * geométrico: numa fonte de traço único a caneta é o desenho todo, mas aqui
+ * ela percorre a linha de centro de uma letra que já tem contra-forma própria.
+ * Passando de ~15 o traço se espalha mais que o olho do "a", do "o" e a
+ * barriga do "ç", e a letra empasta num borrão — visto na Shadows Into Light e
+ * confirmado na Covered By Your Grace, então é da técnica, não da fonte.
+ *
+ * O valor está em unidades do corpo (ver strokeWidth em scribble.ts), logo o
+ * teto acompanha o tamanho da letra em vez de ser um limite fixo em pixels.
+ */
+const CANETA_POR_ESPESSURA_ESQUELETO: Record<ScribbleCanvasProps["thickness"], number> = {
+  fina: 6,
+  regular: 13,
+  grossa: 15,
+};
+
 export default function ScribbleCanvas({
   fontId,
   text,
@@ -86,9 +103,11 @@ export default function ScribbleCanvas({
   const escreveComEsqueleto =
     fonte.esqueletoOk === true && revelarMs > 0 && modoRevelacao === "varredura";
   const desenhaCaminho = tracoUnico || escreveComEsqueleto;
-  const larguraDaCaneta = desenhaCaminho
-    ? CANETA_POR_ESPESSURA[thickness]
-    : STROKE_BY_THICKNESS[thickness];
+  const larguraDaCaneta = escreveComEsqueleto
+    ? CANETA_POR_ESPESSURA_ESQUELETO[thickness]
+    : tracoUnico
+      ? CANETA_POR_ESPESSURA[thickness]
+      : STROKE_BY_THICKNESS[thickness];
 
   // Com tremor 0 os quadros são idênticos — não vale gerar nem animar.
   const frameCount = tremor > 0 ? BOIL_FRAMES : 1;
