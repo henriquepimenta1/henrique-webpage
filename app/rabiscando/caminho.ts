@@ -47,9 +47,15 @@ function amostrar(d: string): Segmento {
   let atual: Ponto = { x: 0, y: 0 };
   let inicioSub: Ponto = { x: 0, y: 0 };
 
-  const empurrar = (p: Ponto) => {
+  // `salto` marca o pulo de um `M`: a caneta sai do papel e vai para outro
+  // ponto. Contar essa distância como traço inflava o comprimento total, e
+  // como o `stroke-dasharray` do preview usa esse número enquanto o SVG mede
+  // o caminho SEM os pulos, a letra terminava de ser escrita antes do fim da
+  // animação e ficava parada esperando. Aparece em qualquer glifo com a
+  // caneta levantada — o "i" da Relief tem quatro subcaminhos.
+  const empurrar = (p: Ponto, salto = false) => {
     if (pontos.length > 0) {
-      total += distancia(pontos[pontos.length - 1], p);
+      if (!salto) total += distancia(pontos[pontos.length - 1], p);
       comprimentos.push(total);
     }
     pontos.push(p);
@@ -65,7 +71,7 @@ function amostrar(d: string): Segmento {
     if (tipo === "M") {
       atual = { x: n[0], y: n[1] };
       inicioSub = atual;
-      empurrar(atual);
+      empurrar(atual, true);
     } else if (tipo === "L") {
       atual = { x: n[0], y: n[1] };
       empurrar(atual);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import { buildScribble } from "./scribble";
 import { useScribbleFont } from "./use-scribble-font";
 import styles from "./rabiscando.module.css";
@@ -69,6 +69,15 @@ export default function ScribbleCanvas({
   modoRevelacao = "passo",
   ciclo = 0,
 }: ScribbleCanvasProps) {
+  // Prefixo único POR INSTÂNCIA do canvas.
+  //
+  // `url(#id)` resolve no documento inteiro, não dentro do próprio <svg>. Com
+  // ids fixos, dois canvases na mesma página compartilham o primeiro conjunto
+  // de máscaras — e todos, menos o primeiro, passam a ser recortados pelas
+  // larguras de avanço de OUTRA fonte. Na landing são seis lado a lado.
+  //
+  // `useId` traz dois-pontos, que quebram o seletor dentro de url(#...).
+  const idInstancia = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const { font, state } = useScribbleFont(fontId);
   const fonte = fontById(fontId);
   const tracoUnico = fonte.tracoUnico === true;
@@ -128,6 +137,18 @@ export default function ScribbleCanvas({
   const cycle = frameCount / fps;
   const escrevendo = revelarMs > 0 && modoRevelacao === "varredura";
 
+  // Região da <mask>, em unidades do usuário.
+  //
+  // Sem x/y/width/height explícitos o SVG usa o padrão do spec — -10% -10%
+  // 120% 120% — e, com `maskUnits="userSpaceOnUse"`, esses percentuais são do
+  // viewport mas ancorados na ORIGEM (0,0), não no canto do viewBox. Como a
+  // linha de base fica em y=0 e a letra sobe para y negativo, a região começava
+  // bem abaixo do topo do texto e cortava a maior parte de cada letra.
+  //
+  // Medido num "rabisco" em Caveat: letras de y=-250 a 118, máscara de -36,8
+  // para baixo. O glifo perdia 60% da altura.
+  const [vbX, vbY, vbLargura, vbAltura] = frames[0].viewBox.split(/\s+/).map(Number);
+
   return (
     <svg
       // Remontar reinicia a animação de revelação. É o jeito mais simples de
@@ -161,7 +182,7 @@ export default function ScribbleCanvas({
             const varrendo = revelarMs > 0 && modoRevelacao === "varredura";
             // Um id por quadro do tremor E por letra: os três quadros
             // coexistem no DOM, e ids repetidos fariam um mascarar o outro.
-            const idMascara = `varre-${f}-${g.index}`;
+            const idMascara = `varre-${idInstancia}-${f}-${g.index}`;
 
             // Traço único é riscado, nunca preenchido: preencher um caminho
             // de caneta fecha as curvas e transforma o "a" numa mancha.
@@ -223,7 +244,14 @@ export default function ScribbleCanvas({
 
             return (
               <g key={`${g.char}-${g.index}`}>
-                <mask id={idMascara} maskUnits="userSpaceOnUse">
+                <mask
+                  id={idMascara}
+                  maskUnits="userSpaceOnUse"
+                  x={vbX}
+                  y={vbY}
+                  width={vbLargura}
+                  height={vbAltura}
+                >
                   <rect
                     className={styles.varredura}
                     x={g.x}
