@@ -146,9 +146,9 @@ export default function RabiscandoEditorPage() {
   const [revelarPct, setRevelarPct] = useState(35);
   const [modoRevelacao, setModoRevelacao] = useState<"passo" | "varredura">("varredura");
   const [speed, setSpeed] = useState(55);
-  const [duration, setDuration] = useState(40);
+  const [duration, setDuration] = useState(16);
   const [letterSpacingPct, setLetterSpacingPct] = useState(40);
-  const [lineHeightPct, setLineHeightPct] = useState(46);
+  const [lineHeightPct, setLineHeightPct] = useState(24);
   const [loop, setLoop] = useState(true);
   const [color, setColor] = useState("#c08246");
   const [background, setBackground] = useState<"transparent" | "solid">("transparent");
@@ -182,7 +182,11 @@ export default function RabiscandoEditorPage() {
   }, []);
 
   const displayText = text.trim() ? text : DEMO_TEXT;
-  const durationSeconds = (0.8 + (duration / 100) * 3.6).toFixed(1);
+  // Teto de 10s. O anterior, 4,4s, não dava para uma frase de duas linhas
+  // escrita devagar — a palavra ainda estava saindo quando o clipe acabava.
+  // O percentual inicial caiu de 40 para 16 para o padrão continuar em ~2,2s:
+  // mexer só na fórmula dobraria a duração de quem abre a ferramenta.
+  const durationSeconds = (0.8 + (duration / 100) * 9.2).toFixed(1);
   // Abaixo de ~4fps o tremor lê como piscada; acima de ~14 vira vibração.
   const boilFps = Math.round(4 + (speed / 100) * 10);
   // Negativo aperta as letras até encavalar — efeito legítimo em lettering e
@@ -191,7 +195,10 @@ export default function RabiscandoEditorPage() {
   const letterSpacing = -0.2 + (letterSpacingPct / 100) * 0.6;
   // Vai bem abaixo de 1 de propósito: abaixo de ~0.6 as linhas se sobrepõem,
   // que é um efeito legítimo em lettering.
-  const lineHeight = 0.25 + (lineHeightPct / 100) * 1.95;
+  // Teto de 4x. Em duas linhas, 2,20x ainda deixava a segunda colada na
+  // primeira quando a fonte tem ascendente alto. Padrão preservado em ~1,15x
+  // pelo percentual inicial (ver a nota da duração).
+  const lineHeight = 0.25 + (lineHeightPct / 100) * 3.75;
   const fonteAtual = fontById(fontId);
   const tremorEfetivo = tremorLigado ? tremor : 0;
   // 40ms é quase datilografia; 400ms é uma palavra por vez.
@@ -207,6 +214,15 @@ export default function RabiscandoEditorPage() {
   const msParaEscrever = revelar ? displayText.length * revelarMs : 0;
   const revelacaoNaoCabe = msParaEscrever > Number(durationSeconds) * 1000;
   const exportFrameCount = Math.max(1, Math.round(Number(durationSeconds) * exportFps));
+
+  // O PNG monta o ZIP inteiro na memória (jszip acumula quadro a quadro e só
+  // então gera o blob). Em 4K cada quadro passa de 4 MB, então o teto novo de
+  // 10s alcança tamanhos que fecham a aba. O MP4 não tem o problema: sai
+  // comprimido. O corte é por bytes estimados, não por número de quadros —
+  // 300 quadros em 720p são inofensivos.
+  const bytesPngEstimados = exportFrameCount * RESOLUTIONS[resolution].width *
+    RESOLUTIONS[resolution].height * 0.5;
+  const pngPesadoDemais = format === "png" && bytesPngEstimados > 1_073_741_824;
 
   // Reproduz o preview em loop enquanto "playing" — puramente visual.
   useEffect(() => {
@@ -572,6 +588,13 @@ export default function RabiscandoEditorPage() {
         valueLabel={`${durationSeconds}s · ${exportFrameCount} quadros`}
         onChange={setDuration}
       />
+      {pngPesadoDemais && (
+        <p className={styles.errorNote}>
+          {exportFrameCount} quadros em 4K como PNG passam de 1 GB no navegador — o ZIP é
+          montado inteiro na memória antes de baixar, e a aba pode fechar sozinha. Exporte
+          em MP4, baixe a resolução, ou encurte o clipe.
+        </p>
+      )}
 
       {exportState === "exporting" ? (
         <>
