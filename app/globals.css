@@ -501,13 +501,27 @@ body {
 .v3-btn{display:inline-flex;align-items:center;gap:9px;font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--bg);background:var(--accent);padding:15px 28px;text-decoration:none;transition:background .2s,transform .2s}
 .v3-btn:hover{background:var(--accent-hover);transform:translateY(-1px)}
 
-/* ── reveal on scroll ── */
-.theme-fdl .reveal{opacity:0;transition:opacity .6s cubic-bezier(.22,1,.36,1)}
-.theme-fdl .reveal.in{opacity:1}
-.theme-fdl .reveal-up{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);will-change:opacity,transform}
-.theme-fdl .reveal-up.in{opacity:1;transform:none}
+/* ── entrada de página (substitui o framer-motion de app/template.tsx) ──
+   Em CSS a animação roda no primeiro paint, sem esperar bundle nem
+   hidratação. `both` mantém o estado final depois de terminar. */
+@keyframes page-enter{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.page-enter{animation:page-enter .45s cubic-bezier(.4,0,.2,1) both}
+@media (prefers-reduced-motion: reduce){.page-enter{animation:none}}
+
+/* ── reveal on scroll ──
+   O estado inicial invisível fica atrás de `html.reveal-js`, que só existe
+   se o script inline da home rodou. Sem isso, um visitante cujo JS ainda não
+   executou (ou falhou) veria a página em branco — e, pior, o conteúdo acima
+   da dobra ficava esperando o observer para aparecer. */
+.theme-fdl .reveal{transition:opacity .6s cubic-bezier(.22,1,.36,1)}
+.theme-fdl .reveal-up{transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);will-change:opacity,transform}
+html.reveal-js .theme-fdl .reveal{opacity:0}
+html.reveal-js .theme-fdl .reveal-up{opacity:0;transform:translateY(28px)}
+html.reveal-js .theme-fdl .reveal.in{opacity:1}
+html.reveal-js .theme-fdl .reveal-up.in{opacity:1;transform:none}
 @media (prefers-reduced-motion: reduce){
-  .theme-fdl .reveal,.theme-fdl .reveal-up{opacity:1!important;transform:none!important;transition:none!important}
+  .theme-fdl .reveal,.theme-fdl .reveal-up,
+  html.reveal-js .theme-fdl .reveal,html.reveal-js .theme-fdl .reveal-up{opacity:1!important;transform:none!important;transition:none!important}
 }
 
 /* ── responsivo Home + chrome ── */

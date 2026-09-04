@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect } from "react";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 
@@ -65,53 +62,34 @@ const EXP_FACTS: ReadonlyArray<[string, string]> = [
   ["Nível", "Intermediário"],
 ];
 
+// Reveal on scroll, como script inline em vez de useEffect.
+//
+// No useEffect isto só rodava depois da hidratação — então tudo com
+// `.reveal`/`.reveal-up`, inclusive o que está acima da dobra, ficava
+// invisível esperando o bundle do React. Inline, roda no parse do HTML:
+// marca `reveal-js` no <html> antes do primeiro paint (é o que liga o
+// estado inicial invisível no CSS) e arma o observer no DOMContentLoaded.
+const REVEAL_BOOTSTRAP = `(function(){
+var d=document;d.documentElement.classList.add('reveal-js');
+function start(){
+var els=[].slice.call(d.querySelectorAll('.reveal,.reveal-up'));
+var show=function(e){e.classList.add('in')};
+if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){els.forEach(show);return}
+var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){show(e.target);io.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+els.forEach(function(e){io.observe(e)});
+var raf=0;
+var sweep=function(){els.forEach(function(e){if(!e.classList.contains('in')&&e.getBoundingClientRect().top<innerHeight*.94)show(e)})};
+sweep();
+addEventListener('load',sweep);
+addEventListener('scroll',function(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;sweep()})},{passive:true});
+}
+if(d.readyState==='loading')d.addEventListener('DOMContentLoaded',start);else start();
+})();`;
+
 export default function HomePage() {
-  useEffect(() => {
-    const els = Array.from(document.querySelectorAll<HTMLElement>(".reveal, .reveal-up"));
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const reveal = (el: Element) => el.classList.add("in");
-    if (reduce || !("IntersectionObserver" in window)) {
-      els.forEach(reveal);
-      return;
-    }
-    const io = new IntersectionObserver(
-      (ents) => {
-        ents.forEach((e) => {
-          if (e.isIntersecting) {
-            reveal(e.target);
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
-    );
-    els.forEach((e) => io.observe(e));
-
-    // fallback: nada acima/dentro da viewport fica invisível (scroll rápido, reload restaurado)
-    let raf = 0;
-    const sweep = () =>
-      els.forEach((e) => {
-        if (!e.classList.contains("in") && e.getBoundingClientRect().top < window.innerHeight * 0.94) reveal(e);
-      });
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        sweep();
-      });
-    };
-    sweep();
-    window.addEventListener("load", sweep);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      io.disconnect();
-      window.removeEventListener("load", sweep);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
   return (
     <div className="theme-fdl">
+      <script dangerouslySetInnerHTML={{ __html: REVEAL_BOOTSTRAP }} />
       <DarkTopNav active="Home" />
 
       {/* ── Entrada: três painéis ── */}
