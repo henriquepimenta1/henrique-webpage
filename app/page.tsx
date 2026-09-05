@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
@@ -29,9 +30,9 @@ const ENTRIES = [
 ] as const;
 
 const RECENT = [
-  { src: "/images/portfolio/as3lagunas-huayhuash.jpg", cap: "As três lagunas", coord: "10°12′S 76°48′W" },
-  { src: "/images/portfolio/acapamento-janca-huayhuash2.jpg", cap: "Janca ao entardecer", coord: "alt 4 350 m" },
-  { src: "/images/portfolio/laguna-acampamento-janca-huayhuash.jpg", cap: "Laguna Janca", coord: "dia 7 de 11" },
+  { src: "/images/portfolio/as3lagunas-huayhuash.jpg", cap: "As três lagunas", coord: "10°12′S 76°48′W", w: 2000, h: 1498 },
+  { src: "/images/portfolio/acapamento-janca-huayhuash2.jpg", cap: "Janca ao entardecer", coord: "alt 4 350 m", w: 2000, h: 1333 },
+  { src: "/images/portfolio/laguna-acampamento-janca-huayhuash.jpg", cap: "Laguna Janca", coord: "dia 7 de 11", w: 1500, h: 2000 },
 ] as const;
 
 const MORE = [
@@ -97,7 +98,17 @@ export default function HomePage() {
         <div className="v3-split-grid">
           {ENTRIES.map((c, i) => (
             <Link key={c.label} className="v3-panel" href={c.href}>
-              <div className="v3-panel-bg" style={{ backgroundImage: `url(${c.img})`, backgroundPosition: c.pos }} />
+              <Image
+                className="v3-panel-bg"
+                src={c.img}
+                alt=""
+                fill
+                sizes="(max-width: 900px) 100vw, 34vw"
+                // Os dois primeiros painéis disputam o LCP no mobile (cada um
+                // ocupa 66svh, então o segundo já entra na primeira dobra).
+                priority={i < 2}
+                style={{ objectPosition: c.pos }}
+              />
               <div className="v3-panel-grad" />
               <div className="v3-panel-top">
                 <span>№ {String(i + 1).padStart(2, "0")}</span>
@@ -147,10 +158,11 @@ export default function HomePage() {
       {/* ── Expedição em aberto ── */}
       <section className="v2-exp">
         <div className="v2-exp-img-col reveal-up">
-          <img
+          <Image
             src="/images/lencois/DJI_20250828174205_0403_D-HDR.jpg"
             alt="Lençóis Maranhenses vistos do alto"
-            loading="lazy"
+            fill
+            sizes="(max-width: 960px) 100vw, 52vw"
           />
         </div>
         <div className="v2-exp-body reveal-up" style={{ transitionDelay: ".1s" }}>
@@ -202,7 +214,13 @@ export default function HomePage() {
         <div className="v3-frames">
           {RECENT.map((f, i) => (
             <figure key={f.src} className="v3-frame reveal" style={{ transitionDelay: `${0.12 + i * 0.12}s` }}>
-              <img src={f.src} alt={f.cap} loading="lazy" />
+              <Image
+                src={f.src}
+                alt={f.cap}
+                width={f.w}
+                height={f.h}
+                sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 42vw"
+              />
               <figcaption>
                 <span>{f.cap}</span>
                 <span>{f.coord}</span>
@@ -217,7 +235,14 @@ export default function HomePage() {
         <div className="v3-more-grid">
           {MORE.map((m, i) => (
             <Link key={m.title} className="v3-more-card reveal-up" href={m.href} style={{ transitionDelay: `${i * 0.12}s` }}>
-              <div className="v3-door-bg" style={{ backgroundImage: `url(${m.img})`, backgroundPosition: m.pos }} />
+              <Image
+                className="v3-door-bg"
+                src={m.img}
+                alt=""
+                fill
+                sizes="(max-width: 960px) 100vw, 50vw"
+                style={{ objectPosition: m.pos }}
+              />
               <div className="v3-door-grad" />
               <div className="v3-more-content">
                 <div className="v2-door-num" style={{ color: "rgba(237,231,219,.55)" }}>
@@ -240,7 +265,13 @@ export default function HomePage() {
 
       {/* ── CTA de fechamento ── */}
       <section className="v3-cta">
-        <div className="v3-cta-bg" style={{ backgroundImage: "url(/images/dunes-aerial.jpg)" }} />
+        <Image
+          className="v3-cta-bg"
+          src="/images/dunes-aerial.jpg"
+          alt=""
+          fill
+          sizes="100vw"
+        />
         <div className="v3-cta-grad" />
         <div className="v3-cta-inner reveal-up">
           <div className="v2-eyebrow">Vamos?</div>

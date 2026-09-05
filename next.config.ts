@@ -28,6 +28,22 @@ const cabecalhos = [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    // Só WebP. O AVIF comprime um pouco melhor, mas cada formato extra é
+    // outra transformação cobrada e outro tempo de encode no primeiro acesso
+    // — e o ganho sobre WebP não paga isso aqui.
+    formats: ["image/webp"],
+    // Larguras derivadas dos breakpoints REAIS do layout (globals.css usa
+    // 640/900/960), não da lista padrão do Next. A padrão inclui 2048 e 3840,
+    // que este site nunca serve: a maior imagem em tela cheia num desktop
+    // 1920 com DPR 2 pede 1920, e os painéis do hero pedem ~34vw.
+    // Menos larguras = menos variantes geradas = menos transformação cobrada.
+    deviceSizes: [400, 640, 828, 1080, 1280, 1600, 1920],
+    // Usadas só por imagens de tamanho fixo abaixo de 640px (avatares,
+    // thumbs). A home é toda `fill`, então esta lista é curta de propósito.
+    imageSizes: [128, 256, 384],
+    minimumCacheTTL: 31536000,
+  },
   async headers() {
     return [{ source: "/:path*", headers: cabecalhos }];
   },
