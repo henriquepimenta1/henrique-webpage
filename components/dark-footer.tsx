@@ -41,7 +41,10 @@ export default function DarkFooter({ coords = "10°17′S 76°54′W · alt 4 80
           <p className="v2-footer-line" style={{ opacity: 0.8 }}>
             Atende worldwide
           </p>
-          <p className="v2-footer-line" style={{ opacity: 0.6 }}>
+          {/* 0.6 dava 3,76:1 sobre --bg e reprovava no AA (mínimo 4,5:1 para
+              texto de 13px). 0.75 dá 5,28:1 e continua abaixo do 0.8 da linha
+              de cima, então a hierarquia visual se mantém. */}
+          <p className="v2-footer-line" style={{ opacity: 0.75 }}>
             Desde 2018
           </p>
         </div>
