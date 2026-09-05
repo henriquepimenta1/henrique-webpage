@@ -104,9 +104,9 @@ export default function HomePage() {
                 alt=""
                 fill
                 sizes="(max-width: 900px) 100vw, 34vw"
-                // Os dois primeiros painéis disputam o LCP no mobile (cada um
-                // ocupa 66svh, então o segundo já entra na primeira dobra).
-                priority={i < 2}
+                // Só o primeiro: o Lighthouse confirma que ele é o elemento
+                // de LCP. Prioridade no segundo painel só tirava banda deste.
+                priority={i === 0}
                 style={{ objectPosition: c.pos }}
               />
               <div className="v3-panel-grad" />

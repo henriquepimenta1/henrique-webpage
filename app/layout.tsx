@@ -14,6 +14,12 @@ const newsreader = Newsreader({
   weight: ["400", "500"],
   style: ["normal", "italic"],
   variable: "--font-serif",
+  // Sem preload de propósito. São quatro faces (com itálico), a família
+  // mais pesada do site, e o LCP da home é uma IMAGEM — prearregá-las
+  // colocava ~100 KB de fonte na frente da imagem que define o LCP.
+  // Acima da dobra o serif só aparece num kicker pequeno, então a troca
+  // via font-display:swap passa despercebida.
+  preload: false,
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
