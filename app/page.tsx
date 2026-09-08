@@ -185,7 +185,7 @@ export default function HomePage() {
             Maranhenses
           </h2>
           <p className="v2-exp-desc">
-            Quatro dias na melhor janela do ano — lagoas cheias, poucos turistas e céu limpo para astrofotografia. Base
+            Quatro dias na melhor janela do ano — lagoas cheias, poucos turistas e o céu escuro que a astrofotografia pede. Base
             em Barreirinhas, travessia a pé até Santo Amaro. Grupos de no máximo dez pessoas.
           </p>
           <div className="v2-exp-facts">

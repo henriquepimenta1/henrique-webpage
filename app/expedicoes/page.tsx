@@ -47,8 +47,8 @@ const TRIPS: Trip[] = [
     status: "Em breve",
     available: true,
     hero: "/images/lencois/DJI_20250828174205_0403_D-HDR.jpg",
-    kicker: "Deserto com lagoas. Sem neblina, com Via Láctea.",
-    desc: "Quatro dias na melhor janela do ano — lagoas cheias, poucos turistas e astrofotografia garantida. Três pacotes de imersão. Base em Barreirinhas, travessia a pé até Santo Amaro.",
+    kicker: "Deserto com lagoas, e o céu inteiro à noite.",
+    desc: "Quatro dias na melhor janela do ano — lagoas cheias, poucos turistas e o céu escuro que a astrofotografia pede. Três pacotes de imersão. Base em Barreirinhas, travessia a pé até Santo Amaro.",
   },
   {
     id: "02",

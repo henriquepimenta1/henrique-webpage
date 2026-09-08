@@ -232,7 +232,7 @@ export default function LencoisPage() {
 
           <div>
             <div className="lenc-hero-handw" style={{ fontFamily: 'var(--font-hand)', fontSize: 44, color: 'var(--rust-soft)', transform: 'rotate(-2deg)', display: 'inline-block', marginBottom: 6 }}>
-              deserto com lagoas, Via Láctea garantida—
+              deserto com lagoas, e o céu inteiro—
             </div>
             <h1 style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 'clamp(48px, 10vw, 140px)', letterSpacing: '-.04em', lineHeight: 0.9, margin: 0, color: 'var(--canvas)' }}>
               Lençóis<br />
@@ -336,7 +336,7 @@ export default function LencoisPage() {
           </div>
 
           {[
-            { num: '01', cor: DIA_COLORS[1], rota: 'Barreirinhas → Baixa Grande', tempo: '8h lancha + 9km caminhada · 3h', desc: 'Travessia de lancha pelo Rio Preguiças até Atins, depois trekking pelas primeiras dunas até o oásis de Baixa Grande. Primeiro pernoite em redário sob o céu estrelado — longe de qualquer luz artificial.', highlight: 'Primeiro oásis · Via Láctea garantida', img: FOTOS_GALERIA[1] },
+            { num: '01', cor: DIA_COLORS[1], rota: 'Barreirinhas → Baixa Grande', tempo: '8h lancha + 9km caminhada · 3h', desc: 'Travessia de lancha pelo Rio Preguiças até Atins, depois trekking pelas primeiras dunas até o oásis de Baixa Grande. Primeiro pernoite em redário sob o céu estrelado — longe de qualquer luz artificial.', highlight: 'Primeiro oásis · primeira noite sob as estrelas', img: FOTOS_GALERIA[1] },
             { num: '02', cor: DIA_COLORS[2], rota: 'Baixa Grande → Queimada dos Britos', tempo: 'Saída 5h · 10km trekking · 5h', desc: 'O dia começa antes do sol. Saída às 5h para capturar o nascer do sol sobre as dunas — a cena mais fotografada da travessia. Travessia do Rio Negro e chegada às lagoas cristalinas do segundo oásis.', highlight: 'Nascer do sol nas dunas · Rio Negro', img: FOTOS_GALERIA[2] },
             { num: '03', cor: DIA_COLORS[3], rota: 'Queimada dos Britos → Betânia', tempo: 'Saída 3h · 18km · 6h de aventura', desc: 'O dia mais longo e mais espetacular. Saída ainda na escuridão, às 3h da madrugada, para cruzar 18km de paisagem lunar. As lagoas desta etapa são as mais impressionantes do circuito — poucas pessoas chegam aqui.', highlight: 'Lagoas mais espetaculares da região', img: FOTOS_GALERIA[3] },
             { num: '04', cor: DIA_COLORS[4], rota: 'Betânia → Santo Amaro', tempo: 'Início 7h · 15km finais · 4h', desc: 'O encerramento triunfal. 15km finais em ritmo mais tranquilo — a travessia já está no corpo. Chegada às 11h em Santo Amaro, com transfer de volta para Barreirinhas. Álbum fotográfico entregue em até 15 dias.', highlight: 'Chegada triunfal 11h · Cenários épicos', img: FOTOS_GALERIA[4] },
