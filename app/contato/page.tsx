@@ -8,6 +8,21 @@ import DarkFooter from '@/components/dark-footer'
 // Aside (correção de negócio): Email · Parcerias & marcas · Instagram · Base.
 export default function ContatoPage() {
   const [sent, setSent] = useState(false)
+  const [nome, setNome] = useState('')
+  const [email, setEmail] = useState('')
+  const [msg, setMsg] = useState('')
+
+  // Enquanto não existe envio pelo servidor, a mensagem vai pelo cliente de
+  // email do visitante. É menos elegante, mas chega — a versão anterior
+  // mostrava "enviada" sem transportar nada.
+  const enviar = (e: React.FormEvent) => {
+    e.preventDefault()
+    const corpo = `${msg}\n\n— ${nome} (${email})`
+    const assunto = `Contato pelo site — ${nome}`
+    window.location.href =
+      `mailto:contato@euhenriq.com?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`
+    setSent(true)
+  }
 
   return (
     <div className="theme-fdl">
@@ -68,22 +83,37 @@ export default function ContatoPage() {
           {!sent ? (
             <form
               style={{ display: 'flex', flexDirection: 'column', gap: 36 }}
-              onSubmit={e => {
-                e.preventDefault()
-                setSent(true)
-              }}
+              onSubmit={enviar}
             >
               <div>
                 <label className="ctd-label" htmlFor="ctd-nome">
                   Nome
                 </label>
-                <input id="ctd-nome" required className="ctd-input" type="text" placeholder="Seu nome" />
+                <input
+                  id="ctd-nome"
+                  name="nome"
+                  required
+                  className="ctd-input"
+                  type="text"
+                  placeholder="Seu nome"
+                  value={nome}
+                  onChange={e => setNome(e.target.value)}
+                />
               </div>
               <div>
                 <label className="ctd-label" htmlFor="ctd-email">
                   Email
                 </label>
-                <input id="ctd-email" required className="ctd-input" type="email" placeholder="voce@exemplo.com" />
+                <input
+                  id="ctd-email"
+                  name="email"
+                  required
+                  className="ctd-input"
+                  type="email"
+                  placeholder="voce@exemplo.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                />
               </div>
               <div>
                 <label className="ctd-label" htmlFor="ctd-msg">
@@ -91,9 +121,12 @@ export default function ContatoPage() {
                 </label>
                 <textarea
                   id="ctd-msg"
+                  name="mensagem"
                   required
                   className="ctd-input"
                   placeholder="Conta um pouco sobre o que tá procurando..."
+                  value={msg}
+                  onChange={e => setMsg(e.target.value)}
                   style={{ minHeight: 140, resize: 'none', display: 'block' }}
                 />
               </div>
@@ -108,7 +141,7 @@ export default function ContatoPage() {
             <div>
               <span className="ctd-sign">obrigado!</span>
               <h2 className="ctd-sent-h">
-                Mensagem <em>enviada.</em>
+                Abri seu <em>email.</em>
               </h2>
               <p
                 style={{
@@ -121,7 +154,8 @@ export default function ContatoPage() {
                   lineHeight: 1.6,
                 }}
               >
-                Em até 48h você recebe minha resposta.
+                Sua mensagem está lá, pronta — é só apertar enviar. Se nada abriu, escreve direto
+                para contato@euhenriq.com. Respondo em até 48h.
               </p>
               <button className="ctd-ghost" onClick={() => setSent(false)}>
                 Nova mensagem
