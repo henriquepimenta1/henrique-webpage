@@ -2,6 +2,15 @@ import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 import PortfolioGallery from "@/components/portfolio-gallery";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Portfólio — henriq.eu",
+  description: "Fotografia de expedição, montanha e natureza. Trabalhos autorais e para marcas.",
+  alternates: { canonical: "/portfolio" },
+};
+
+
 export default function PortfolioPage() {
   return (
     <div className="theme-fdl">

@@ -3,6 +3,15 @@ import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Henrique Sesana — Fotografia, Expedições e Presets",
+  description: "Fotógrafo e cineasta outdoor. Portfólio, expedições guiadas, quadros fine art, presets e LUTs.",
+  alternates: { canonical: "/" },
+};
+
+
 // ── Entrada: três painéis full-screen ──────────────────────────────
 const ENTRIES = [
   {
@@ -93,6 +102,7 @@ export default function HomePage() {
       <script dangerouslySetInnerHTML={{ __html: REVEAL_BOOTSTRAP }} />
       <DarkTopNav active="Home" />
 
+      <main>
       {/* ── Entrada: três painéis ── */}
       <section className="v3-split">
         <div className="v3-split-grid">
@@ -136,9 +146,9 @@ export default function HomePage() {
       <section className="v3-intro">
         <div className="reveal-up">
           <div className="v2-eyebrow">Henrique Sesana · Fotografia de campo</div>
-          <p className="v3-intro-statement">
+          <h1 className="v3-intro-statement">
             Imagens feitas a pé, <em>de onde a estrada acaba</em> — e expedições para levar quem quiser ver a mesma luz.
-          </p>
+          </h1>
         </div>
         <div className="v3-intro-meta reveal-up" style={{ transitionDelay: ".08s" }}>
           <span>Desde 2018</span>
@@ -288,6 +298,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      </main>
 
       <DarkFooter coords="10°17′S 76°54′W · alt 4 800 m" />
     </div>

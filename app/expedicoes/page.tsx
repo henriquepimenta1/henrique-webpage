@@ -2,6 +2,15 @@ import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Expedições — henriq.eu",
+  description: "Expedições fotográficas guiadas em grupos pequenos. Roteiros, datas e como participar.",
+  alternates: { canonical: "/expedicoes" },
+};
+
+
 // Expedições — Dark Editorial "Fim de Luz". Portado do protótipo hi-fi.
 // Regra de negócio: SOB CONSULTA, SEM PREÇOS. Valores sob consulta.
 const EMAIL = "contato@euhenriq.com";
@@ -67,7 +76,7 @@ const TRIPS: Trip[] = [
     alt: "5 050 m",
     km: "130 km",
     level: "Avançado",
-    status: "Em breve",
+    status: "Vagas abertas",
     available: false,
     hero: "/images/exp-huayhuash.jpg",
     kicker: "A trilha mais dura, a luz mais limpa.",

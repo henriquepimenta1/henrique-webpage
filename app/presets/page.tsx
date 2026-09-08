@@ -2,6 +2,15 @@ import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Presets & LUTs — henriq.eu",
+  description: "Presets de Lightroom e LUTs de vídeo para fotografia e filmagem outdoor.",
+  alternates: { canonical: "/presets" },
+};
+
+
 // Loja Presets & LUTs — Dark Editorial "Fim de Luz".
 // Preços/URLs Cakto confirmados no handoff: 39,00 · 34,90 · 37,90.
 interface Collection {
