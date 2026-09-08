@@ -39,12 +39,12 @@ const TRIPS: Trip[] = [
     href: "/expedicoes/lencois",
     name: "Lençóis Maranhenses",
     country: "Brasil · MA",
-    when: "Ago 2026",
+    when: "2027",
     days: 4,
     alt: "40 m",
     km: "52 km",
     level: "Intermediário",
-    status: "Vagas abertas",
+    status: "Em breve",
     available: true,
     hero: "/images/lencois/DJI_20250828174205_0403_D-HDR.jpg",
     kicker: "Deserto com lagoas. Sem neblina, com Via Láctea.",
@@ -76,7 +76,7 @@ const TRIPS: Trip[] = [
     alt: "5 050 m",
     km: "130 km",
     level: "Avançado",
-    status: "Vagas abertas",
+    status: "Em breve",
     available: false,
     hero: "/images/exp-huayhuash.jpg",
     kicker: "A trilha mais dura, a luz mais limpa.",
@@ -215,7 +215,7 @@ export default function ExpedicoesPage() {
             <a className="v2-accent-link" href="#agenda">
               Ver a próxima expedição →
             </a>
-            <span className="ex-hero-note">Lençóis Maranhenses · agosto 2026</span>
+            <span className="ex-hero-note">Lençóis Maranhenses · 2027</span>
           </div>
         </div>
       </section>

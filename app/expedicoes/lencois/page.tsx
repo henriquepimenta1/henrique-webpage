@@ -128,7 +128,7 @@ const CANCELAMENTO = [
 /* ─── NOT / IS ─────────────────────────────────────────────────── */
 const NOT_IS = {
   nao: ['Passeio de 2h', 'Tour de ônibus', 'Grupo de 40', 'Lagoas lotadas', 'Fotos clichês da internet', 'Cansaço', 'Turismo mais do mesmo'],
-  e:   ['4 dias de imersão completa', 'Caminhada consciente', 'Máximo 12 pessoas', 'Oásis secretos fora do roteiro', 'Fotógrafo profissional incluso', 'Transformação real'],
+  e:   ['4 dias de imersão completa', 'Caminhada consciente', 'Máximo 10 pessoas', 'Oásis secretos fora do roteiro', 'Fotógrafo profissional incluso', 'Transformação real'],
 }
 
 /* ══════════════════════════════════════════════════════════════════

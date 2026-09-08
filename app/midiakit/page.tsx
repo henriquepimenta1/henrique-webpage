@@ -273,7 +273,7 @@ export default function MidiakitPage() {
               poético e imersivo — onde o produto entra na paisagem, e não o contrário.
             </p>
             <p className="body" style={{ marginBottom: 36 }}>
-              Em agosto de 2026, volto aos Lençóis Maranhenses para guiar três grupos com fotografia integrada —
+              Em 2027, volto aos Lençóis Maranhenses para guiar três grupos com fotografia integrada —
               travessia com produção própria de ponta a ponta.
             </p>
             <span className="mkd-sign">— Henrique</span>

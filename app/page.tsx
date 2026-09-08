@@ -34,7 +34,7 @@ const ENTRIES = [
     href: "/expedicoes",
     img: "/images/expedicao-lencois.jpg",
     pos: "center 32%",
-    badge: "Próxima turma · ago 2026",
+    badge: "Próxima turma · 2027",
   },
 ] as const;
 
@@ -66,7 +66,7 @@ const MORE = [
 ] as const;
 
 const EXP_FACTS: ReadonlyArray<[string, string]> = [
-  ["Data", "Agosto 2026"],
+  ["Data", "2027"],
   ["Duração", "4 dias"],
   ["Percurso", "52 km"],
   ["Nível", "Intermediário"],
