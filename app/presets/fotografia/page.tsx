@@ -38,7 +38,7 @@ interface PresetCat {
 const PRESET_CATS: PresetCat[] = [
   { id: "verde", label: "Tom Verde", count: 8 },
   { id: "azul", label: "Tom Azul", count: 13 },
-  { id: "laranja", label: "Tom Laranja", count: 6 },
+  { id: "laranja", label: "Tom Laranja", count: 5 },
   { id: "aesthetic", label: "Aesthetic", count: 18 },
 ];
 
@@ -154,7 +154,7 @@ function StickyCTA() {
   return (
     <div className="pf-sticky" style={{ position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 90, background: "rgba(23,20,18,.96)", backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)", borderTop: "1px solid rgba(232,223,201,.15)", transform: show ? "translateY(0)" : "translateY(100%)", transition: "transform .35s cubic-bezier(.4,0,.2,1)", padding: "10px 14px env(safe-area-inset-bottom, 10px)", display: "flex", alignItems: "center", gap: 10 }}>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(232,223,201,.55)", marginBottom: 1 }}>De R$ 79 por</div>
+        <div style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".14em", textTransform: "uppercase", color: "rgba(232,223,201,.55)", marginBottom: 1 }}>De R$ 79,90 por</div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 6, color: "var(--canvas)" }}>
           <span style={{ fontFamily: "var(--font-ui)", fontSize: 22, fontWeight: 700, letterSpacing: "-.02em", lineHeight: 1 }}>R$ {PRICE_VISTA}</span>
           <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, letterSpacing: ".06em", color: "rgba(232,223,201,.5)", whiteSpace: "nowrap" }}>ou {PRICE_N}× R$ {PRICE_PARCEL}</span>
@@ -477,7 +477,7 @@ function HeroRedesigned() {
         </div>
         <div className="pf-hero2-offer">
           <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--stone)", textDecoration: "line-through" }}>R$ 79</span>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--stone)", textDecoration: "line-through" }}>R$ 79,90</span>
             <span style={{ fontFamily: "var(--font-ui)", fontWeight: 700, fontSize: "clamp(28px,4vw,38px)", letterSpacing: "-.02em", color: "var(--bark)", lineHeight: 1 }}>R$ {PRICE_VISTA}</span>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: ".04em", color: "var(--stone)", whiteSpace: "nowrap" }}>ou {PRICE_N}× R$ {PRICE_PARCEL}</span>
           </div>
@@ -740,7 +740,7 @@ export default function PresetsFotografiaPage() {
             </h2>
             <div className="pf-includes">
               {[
-                { n: "01", t: "45 presets Lightroom", d: "Arquivos .xmp para Classic, CC, Mobile e Camera Raw. Dois packs: 18 + 27." },
+                { n: "01", t: "44 presets Lightroom", d: "Arquivos .xmp para Classic, CC, Mobile e Camera Raw. Dois packs: 18 + 26." },
                 { n: "02", t: "Perfis .dng", d: "Perfis de cor — mais estáveis, não bagunçam seus sliders." },
                 { n: "03", t: "Guia de instalação", d: "PDF passo a passo para cada versão do Lightroom." },
                 { n: "04", t: "Videoaula", d: "Como escolher o preset certo e fazer ajustes finos." },
@@ -799,7 +799,7 @@ export default function PresetsFotografiaPage() {
               </div>
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 8, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--stone)", marginBottom: 14 }}>acesso vitalício · download imediato</div>
               <div style={{ borderTop: "1px solid var(--line)", paddingTop: 12, marginBottom: 14 }}>
-                {["45 presets .xmp + .dng", "2 packs: 18 + 27", "Guia PDF + videoaula", "Licença pessoal e comercial", "Atualizações vitalícias", "Suporte por email"].map(item => (
+                {["44 presets .xmp + .dng", "2 packs: 18 + 26", "Guia PDF + videoaula", "Licença pessoal e comercial", "Atualizações vitalícias", "Suporte por email"].map(item => (
                   <div key={item} style={{ display: "flex", gap: 8, padding: "5px 0", fontFamily: "var(--font-serif)", fontSize: 13, color: "rgba(232,223,201,.72)" }}>
                     <span style={{ color: "var(--moss)", fontWeight: 700, flexShrink: 0 }}>✓</span><span>{item}</span>
                   </div>
