@@ -2,6 +2,15 @@ import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Quadros Fine Art — henriq.eu",
+  description: "Impressões fine art das expedições. Consulte tamanhos, acabamentos e disponibilidade.",
+  alternates: { canonical: "/quadros" },
+};
+
+
 // Quadros — Fim de Luz, variante clara (galeria).
 // Regra de negócio: sob encomenda — sem preços.
 type TierKey = "signature" | "collectors" | "open";

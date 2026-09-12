@@ -2,6 +2,15 @@ import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Presets & LUTs — henriq.eu",
+  description: "Presets de Lightroom e LUTs de vídeo para fotografia e filmagem outdoor.",
+  alternates: { canonical: "/presets" },
+};
+
+
 // Loja Presets & LUTs — Dark Editorial "Fim de Luz".
 // Preços/URLs Cakto confirmados no handoff: 39,00 · 34,90 · 37,90.
 interface Collection {
@@ -26,7 +35,7 @@ const COLLECTIONS: Collection[] = [
     name: "Outdoor Cinematic Presets",
     forWhat: "Fotografia · Lightroom",
     formats: ".xmp · .dng",
-    count: "45 presets",
+    count: "44 presets",
     href: "/presets/fotografia",
     buy: "https://pay.cakto.com.br/C4dmPFR",
     img: "/images/portfolio/pico-ciririca-serradoibitiraquire.jpg",
@@ -53,7 +62,7 @@ const COLLECTIONS: Collection[] = [
     num: "03",
     name: "Outdoor Cinematic LUTs",
     forWhat: "Vídeo · 5 perfis log",
-    formats: ".cube · .3dl",
+    formats: ".cube",
     count: "21 LUTs",
     href: "/presets/video",
     buy: "https://pay.cakto.com.br/6tNxcGs",

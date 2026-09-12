@@ -251,7 +251,7 @@ function Hero() {
           <a href="#arquivos" style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 26px", border: "1px solid var(--line-2)", color: "var(--ink)", fontFamily: "var(--mono)", fontSize: 12, letterSpacing: ".12em", textTransform: "uppercase", textDecoration: "none", whiteSpace: "nowrap" }}>Ver os {TOTAL} arquivos</a>
         </div>
         <div className="odg-hero-meta" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 1, marginTop: "clamp(40px,6vw,72px)", border: "1px solid var(--line)", background: "var(--line)" }}>
-          {([["Arquivos",TOTAL],["Formato",".xmp · .dng"],["Plataforma","LR · ACR · Mobile"],["Licença","Vitálícia"]] as [string,string|number][]).map(([k, v]) => (
+          {([["Arquivos",TOTAL],["Formato",".xmp · .dng"],["Plataforma","LR · ACR · Mobile"],["Licença","Vitalícia"]] as [string,string|number][]).map(([k, v]) => (
             <div key={String(k)} style={{ background: "var(--bg)", padding: "16px 18px" }}>
               <div style={{ fontFamily: "var(--mono)", fontSize: 9, letterSpacing: ".2em", textTransform: "uppercase", color: "var(--ink-3)", marginBottom: 7 }}>{k}</div>
               <div style={{ fontFamily: "var(--mono)", fontSize: 15, color: "var(--ink)" }}>{v}</div>
@@ -511,7 +511,7 @@ function FaqFooter() {
                 <h2 style={{ margin: "18px 0 0", fontFamily: "var(--sans)", fontWeight: 700, fontSize: "clamp(30px,4.6vw,56px)", lineHeight: 1, letterSpacing: "-.03em" }}>
                   {TOTAL} filmstocks.<br /><span style={{ color: "var(--amber)" }}>Um</span> carretel.
                 </h2>
-                <p style={{ margin: "20px 0 0", maxWidth: "46ch", fontFamily: "var(--sans)", fontSize: 15, lineHeight: 1.55, color: "var(--ink-2)" }}>Sol, neblina, breu e drone — calibrados em expedição real. .xmp + .dng, licença vitálícia, atualizações sem custo.</p>
+                <p style={{ margin: "20px 0 0", maxWidth: "46ch", fontFamily: "var(--sans)", fontSize: 15, lineHeight: 1.55, color: "var(--ink-2)" }}>Sol, neblina, breu e drone — calibrados em expedição real. .xmp + .dng, licença vitalícia, atualizações sem custo.</p>
               </div>
               <div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 1, background: "var(--line)", border: "1px solid var(--line)", marginBottom: 22 }}>

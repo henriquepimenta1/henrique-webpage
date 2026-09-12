@@ -2,6 +2,15 @@ import Link from "next/link";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Expedições — henriq.eu",
+  description: "Expedições fotográficas guiadas em grupos pequenos. Roteiros, datas e como participar.",
+  alternates: { canonical: "/expedicoes" },
+};
+
+
 // Expedições — Dark Editorial "Fim de Luz". Portado do protótipo hi-fi.
 // Regra de negócio: SOB CONSULTA, SEM PREÇOS. Valores sob consulta.
 const EMAIL = "contato@euhenriq.com";
@@ -30,16 +39,16 @@ const TRIPS: Trip[] = [
     href: "/expedicoes/lencois",
     name: "Lençóis Maranhenses",
     country: "Brasil · MA",
-    when: "Ago 2026",
+    when: "2027",
     days: 4,
     alt: "40 m",
     km: "52 km",
     level: "Intermediário",
-    status: "Vagas abertas",
+    status: "Em breve",
     available: true,
     hero: "/images/lencois/DJI_20250828174205_0403_D-HDR.jpg",
-    kicker: "Deserto com lagoas. Sem neblina, com Via Láctea.",
-    desc: "Quatro dias na melhor janela do ano — lagoas cheias, poucos turistas e astrofotografia garantida. Três pacotes de imersão. Base em Barreirinhas, travessia a pé até Santo Amaro.",
+    kicker: "Deserto com lagoas, e o céu inteiro à noite.",
+    desc: "Quatro dias na melhor janela do ano — lagoas cheias, poucos turistas e o céu escuro que a astrofotografia pede. Três pacotes de imersão. Base em Barreirinhas, travessia a pé até Santo Amaro.",
   },
   {
     id: "02",
@@ -206,7 +215,7 @@ export default function ExpedicoesPage() {
             <a className="v2-accent-link" href="#agenda">
               Ver a próxima expedição →
             </a>
-            <span className="ex-hero-note">Lençóis Maranhenses · agosto 2026</span>
+            <span className="ex-hero-note">Lençóis Maranhenses · 2027</span>
           </div>
         </div>
       </section>
