@@ -136,7 +136,7 @@ const NOT_IS = {
 ══════════════════════════════════════════════════════════════════ */
 export default function LencoisPage() {
   return (
-    <main style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)', overflowX: 'hidden' }}>
+    <main id="conteudo" style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)', overflowX: 'hidden' }}>
       <style>{`
         .lenc-trip-img { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
         .lenc-img-wrap:hover .lenc-trip-img { transform: scale(1.04); }

@@ -27,7 +27,7 @@ const STATS = [
 
 export default function RondoniaPage() {
   return (
-    <main style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)' }}>
+    <main id="conteudo" style={{ background: 'var(--canvas)', color: 'var(--bark)', fontFamily: 'var(--font-ui)' }}>
       <style>{`
         .ron-hero-img { transition: transform 1.2s cubic-bezier(.2,.7,.2,1); }
         .ron-img-wrap:hover .ron-hero-img { transform: scale(1.03); }

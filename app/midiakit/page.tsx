@@ -233,6 +233,8 @@ export default function MidiakitPage() {
 
       <DarkTopNav active="Midiakit" />
 
+      <main id="conteudo">
+
       {/* HERO */}
       <section className="mkd-hero">
         <img src="/images/exp-huayhuash.jpg" alt="Cordilheira Huayhuash" />
@@ -447,6 +449,8 @@ export default function MidiakitPage() {
           </div>
         </div>
       </section>
+
+      </main>
 
       <DarkFooter coords="10°17′S 76°54′W · alt 4 800 m" />
     </div>

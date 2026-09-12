@@ -126,6 +126,8 @@ export default function SobrePage() {
 
       <DarkTopNav active="Sobre" />
 
+      <main id="conteudo">
+
       {/* HERO */}
       <section className="sbd-hero">
         <div className="sbd-hero-left">
@@ -194,6 +196,8 @@ export default function SobrePage() {
         <p>&ldquo;Transformando minhas aventuras em experiências sensoriais.&rdquo;</p>
         <span className="sign">— Henrique</span>
       </section>
+
+      </main>
 
       <DarkFooter coords="23°33′S 46°38′W · São Paulo" />
     </div>

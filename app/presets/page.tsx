@@ -112,6 +112,8 @@ export default function PresetsPage() {
     <div className="theme-fdl">
       <DarkTopNav active="Presets" />
 
+      <main id="conteudo">
+
       <header className="prd-head" style={{ position: "relative", overflow: "hidden" }}>
         <video
           autoPlay
@@ -220,6 +222,8 @@ export default function PresetsPage() {
           ))}
         </div>
       </section>
+
+      </main>
 
       <DarkFooter coords="calibrado em campo · não em estúdio" />
     </div>

@@ -16,6 +16,8 @@ export default function PortfolioPage() {
     <div className="theme-fdl">
       <DarkTopNav active="Portfolio" />
 
+      <main id="conteudo">
+
       <header style={{ padding: "var(--hero-clear) var(--pad-page) var(--sect-y)" }}>
         <div className="v2-eyebrow" style={{ marginBottom: 22 }}>
           № 01 · Fotografias autorais
@@ -37,6 +39,8 @@ export default function PortfolioPage() {
       </header>
 
       <PortfolioGallery />
+
+      </main>
 
       <DarkFooter coords="10°17′S 76°54′W · alt 4 800 m" />
     </div>

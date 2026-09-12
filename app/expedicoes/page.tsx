@@ -201,6 +201,8 @@ export default function ExpedicoesPage() {
 
       <DarkTopNav active="Expedições" topStyle={{ background: "transparent", position: "relative" }} />
 
+      <main id="conteudo">
+
       <section className="ex-hero">
         <img src="/images/lencois/DJI_20250828174205_0403_D-HDR.jpg" alt="Lençóis Maranhenses vistos do alto" />
         <div className="ex-hero-grad" />
@@ -254,6 +256,8 @@ export default function ExpedicoesPage() {
           Escrever pra Henrique →
         </a>
       </section>
+
+      </main>
 
       <DarkFooter coords="2°34′S 43°07′W · Atins → Santo Amaro" />
     </div>
