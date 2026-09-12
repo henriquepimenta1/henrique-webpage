@@ -102,7 +102,7 @@ export default function HomePage() {
       <script dangerouslySetInnerHTML={{ __html: REVEAL_BOOTSTRAP }} />
       <DarkTopNav active="Home" />
 
-      <main>
+      <main id="conteudo">
       {/* ── Entrada: três painéis ── */}
       <section className="v3-split">
         <div className="v3-split-grid">

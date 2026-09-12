@@ -201,7 +201,7 @@ export default function PrivacidadePage() {
 
       <DarkTopNav />
 
-      <main className="prv-wrap">
+      <main id="conteudo" className="prv-wrap">
         <header>
           <p className="prv-kicker">Privacidade</p>
           <h1 className="prv-h1">

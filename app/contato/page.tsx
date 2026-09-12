@@ -67,7 +67,7 @@ export default function ContatoPage() {
 
       <DarkTopNav active="Contato" />
 
-      <main className="ctd-wrap" data-screen-label="Contato">
+      <main id="conteudo" className="ctd-wrap" data-screen-label="Contato">
         {/* FORM */}
         <div>
           <div className="v2-eyebrow" style={{ marginBottom: 22 }}>

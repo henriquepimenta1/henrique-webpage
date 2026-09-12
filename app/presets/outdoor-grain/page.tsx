@@ -542,6 +542,8 @@ export default function OutdoorGrainPage() {
   return (
     <div className="theme-fdl">
       <DarkTopNav active="Presets" />
+
+      <main id="conteudo">
       <div
         className={[styles.odg, spaceGrotesk.variable, ibmPlexMono.variable].join(" ")}
         style={{ ["--mono" as string]: "var(--odg-mono, 'IBM Plex Mono', ui-monospace, monospace)", ["--sans" as string]: "var(--odg-sans, 'Space Grotesk', system-ui, sans-serif)" }}
@@ -554,6 +556,8 @@ export default function OutdoorGrainPage() {
         <Arquivos />
         <FaqFooter />
       </div>
+      </main>
+
       <DarkFooter coords="grão · calibrado em campo" />
     </div>
   );

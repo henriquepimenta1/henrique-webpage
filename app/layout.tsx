@@ -56,7 +56,12 @@ export default function RootLayout({
         reenieBeanie.variable,
       )}
     >
-      <body>{children}</body>
+      <body>
+        <a href="#conteudo" className="skip-link">
+          Pular para o conteúdo
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

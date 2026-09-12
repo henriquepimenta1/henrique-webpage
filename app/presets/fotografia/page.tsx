@@ -716,6 +716,8 @@ export default function PresetsFotografiaPage() {
 
         <DarkTopNav active="Presets" />
 
+        <main id="conteudo">
+
         {/* ═══ HERO ═══ */}
         <HeroRedesigned />
 
@@ -810,6 +812,8 @@ export default function PresetsFotografiaPage() {
             </div>
           </div>
         </section>
+
+        </main>
 
         <DarkFooter coords="calibrado em campo · não em estúdio" />
         <div className="pf-sticky-spacer" />

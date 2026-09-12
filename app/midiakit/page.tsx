@@ -94,9 +94,6 @@ export default function MidiakitPage() {
   }, []);
   return (
     <div ref={rootRef} className="media-kit">
-      <a className="skip" href="#conteudo">
-        {"Pular para o conteúdo"}
-      </a>
       <div className="wrap">
         <header className="top">
           <a

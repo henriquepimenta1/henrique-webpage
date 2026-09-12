@@ -134,6 +134,8 @@ export default function QuadrosPage() {
 
       <DarkTopNav active="Quadros" />
 
+      <main id="conteudo">
+
       <header className="qd-hero" data-screen-label="Quadros — Entrada">
         <div className="qd-kicker">№ 04 · Galeria · Fine Art Prints</div>
         <h1 className="qd-h1">Quadros</h1>
@@ -178,6 +180,8 @@ export default function QuadrosPage() {
           Entrar em contato
         </Link>
       </section>
+
+      </main>
 
       <DarkFooter coords="2°29'S 43°07'W — Lençóis Maranhenses" />
     </div>

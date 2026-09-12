@@ -168,7 +168,7 @@ export default function RabiscandoLandingPage() {
 .rbl-spec span{color:var(--border-strong)}
       `}</style>
 
-      <main style={{ paddingTop: "var(--hero-clear)" }}>
+      <main id="conteudo" style={{ paddingTop: "var(--hero-clear)" }}>
         {/* ── herói: a ferramenta se apresenta escrevendo ── */}
         <section
           style={{

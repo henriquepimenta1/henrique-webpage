@@ -615,6 +615,8 @@ export default function LutsPage() {
 
       <DarkTopNav active="Presets" />
 
+      <main id="conteudo">
+
       {/* ═══ HERO ═══ */}
       <section className="lut-hero">
         <div className="lut-hero-head">
@@ -827,6 +829,8 @@ export default function LutsPage() {
       <section className="lut-disclaimer">
         Estes LUTs são interpretações criativas autorais inspiradas na linguagem visual do cinema. Não são produtos oficiais, licenciados ou afiliados a nenhum filme, estúdio ou detentor de direitos. Marcas e títulos citados pertencem a seus respectivos donos e servem apenas como referência estética.
       </section>
+
+      </main>
 
       <DarkFooter coords="cor de cinema · calibrada em campo" />
       <div style={{ height: 74 }} />

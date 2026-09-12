@@ -624,3 +624,24 @@ html.reveal-js .theme-fdl .reveal-up.in{opacity:1;transform:none}
   .prd-palette{padding:var(--s-56) var(--s-3)}
   .prd-pal-grid{gap:10px}
 }
+
+/* ── Skip-link ─────────────────────────────────────────────────── */
+/* Fica fora da tela até receber foco pelo teclado. Não usa
+   display:none nem visibility:hidden, que o tirariam da ordem de foco. */
+.skip-link{
+  position:fixed; top:0; left:0; z-index:9999;
+  transform:translateY(-120%);
+  padding:12px 20px;
+  background:var(--forest); color:var(--canvas);
+  font-family:var(--font-ui); font-size:14px; font-weight:600;
+  text-decoration:none;
+  border:1px solid var(--canvas);
+  transition:transform .18s ease;
+}
+/* :focus, não :focus-visible — o skip-link só é alcançável por teclado, e
+   focus-visible depende de heurística do browser que falha em alguns casos. */
+.skip-link:focus{
+  transform:translateY(0);
+  outline:2px solid var(--rust-soft); outline-offset:3px;
+}
+@media (prefers-reduced-motion:reduce){ .skip-link{transition:none} }
