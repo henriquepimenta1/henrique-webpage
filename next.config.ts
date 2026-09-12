@@ -42,6 +42,10 @@ const nextConfig: NextConfig = {
     // Usadas só por imagens de tamanho fixo abaixo de 640px (avatares,
     // thumbs). A home é toda `fill`, então esta lista é curta de propósito.
     imageSizes: [128, 256, 384],
+    // O padrão do next/image é 75 — baixo demais para fotografia em tela
+    // cheia, ainda mais sobre um JPEG que já passou por compressão. 90 é o
+    // que a home usa; 75 fica para thumbs, onde ninguém repara.
+    qualities: [75, 90],
     minimumCacheTTL: 31536000,
   },
   async headers() {

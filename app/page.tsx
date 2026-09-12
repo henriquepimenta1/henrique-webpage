@@ -117,6 +117,7 @@ export default function HomePage() {
                 // Só o primeiro: o Lighthouse confirma que ele é o elemento
                 // de LCP. Prioridade no segundo painel só tirava banda deste.
                 priority={i === 0}
+                quality={90}
                 style={{ objectPosition: c.pos }}
               />
               <div className="v3-panel-grad" />
@@ -173,6 +174,7 @@ export default function HomePage() {
             alt="Lençóis Maranhenses vistos do alto"
             fill
             sizes="(max-width: 960px) 100vw, 52vw"
+            quality={90}
           />
         </div>
         <div className="v2-exp-body reveal-up" style={{ transitionDelay: ".1s" }}>
@@ -230,6 +232,7 @@ export default function HomePage() {
                 width={f.w}
                 height={f.h}
                 sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 42vw"
+                quality={90}
               />
               <figcaption>
                 <span>{f.cap}</span>
@@ -251,6 +254,7 @@ export default function HomePage() {
                 alt=""
                 fill
                 sizes="(max-width: 960px) 100vw, 50vw"
+                quality={90}
                 style={{ objectPosition: m.pos }}
               />
               <div className="v3-door-grad" />
@@ -281,6 +285,7 @@ export default function HomePage() {
           alt=""
           fill
           sizes="100vw"
+          quality={90}
         />
         <div className="v3-cta-grad" />
         <div className="v3-cta-inner reveal-up">
