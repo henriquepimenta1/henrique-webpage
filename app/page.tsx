@@ -113,7 +113,12 @@ export default function HomePage() {
                 src={c.img}
                 alt=""
                 fill
-                sizes="(max-width: 900px) 100vw, 34vw"
+                // Estes painéis são altos e estreitos e a foto é horizontal:
+                // com object-fit:cover ela é ampliada até cobrir a ALTURA, e a
+                // largura pintada passa do dobro da largura do painel. O sizes
+                // precisa descrever a largura pintada, não a do container —
+                // senão o browser baixa uma variante pequena e o CSS a estica.
+                sizes="(max-width: 900px) 190vw, 75vw"
                 // Só o primeiro: o Lighthouse confirma que ele é o elemento
                 // de LCP. Prioridade no segundo painel só tirava banda deste.
                 priority={i === 0}
@@ -231,7 +236,7 @@ export default function HomePage() {
                 alt={f.cap}
                 width={f.w}
                 height={f.h}
-                sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 42vw"
+                sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 63vw"
                 quality={90}
               />
               <figcaption>
