@@ -1006,8 +1006,8 @@ const LUT_CSS = `
 @media(min-width:781px){ .lut-sticky{ display:none; } }
 
 /* lightbox */
-.lut-lb{ position:fixed; inset:0; z-index:200; background:rgba(6,7,5,.95); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:center; padding:clamp(14px,4vw,40px); }
-.lut-lb-inner{ width:100%; max-width:1000px; }
+.lut-lb{ position:fixed; inset:0; z-index:200; background:rgba(6,7,5,.95); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); display:flex; justify-content:center; overflow-y:auto; overscroll-behavior:contain; padding:clamp(14px,4vw,40px); }
+.lut-lb-inner{ width:100%; max-width:1000px; margin:auto; }
 .lut-lb-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
 .lut-lb-x{ width:34px; height:34px; border-radius:50%; border:1px solid var(--hair); background:transparent; color:var(--canvas); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
 .lut-lb .lut-frame{ border:1px solid var(--hair); }
