@@ -1,14 +1,9 @@
 "use server";
 
-import { registrar, validar, type Erros } from "@/lib/interesse";
+import type { EstadoForm } from "@/lib/estado-form";
+import { registrar, validar } from "@/lib/interesse";
 
-export interface EstadoForm {
-  estado: "parado" | "ok" | "erro";
-  erros?: Erros;
-  mensagem?: string;
-}
-
-export const ESTADO_INICIAL: EstadoForm = { estado: "parado" };
+// Só funções assíncronas podem sair daqui — ver lib/estado-form.ts.
 
 export async function entrarNaLista(
   _anterior: EstadoForm,

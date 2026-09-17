@@ -2,7 +2,8 @@
 
 import { useActionState, useId } from "react";
 
-import { ESTADO_INICIAL, entrarNaLista } from "@/app/expedicoes/acoes";
+import { entrarNaLista } from "@/app/expedicoes/acoes";
+import { ESTADO_INICIAL } from "@/lib/estado-form";
 
 // Formulário da lista de interesse.
 //
