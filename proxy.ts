@@ -14,6 +14,10 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 // área é o layout: ele lê `auth()` no servidor e renderiza a nossa tela de
 // entrada. O middleware continua rodando na rota — é ele que popula a sessão
 // que o layout lê —, só não decide o redirecionamento.
+// `/admin` entra no matcher pelo mesmo motivo do Rabiscando: o middleware
+// popula a sessão que o layout lê. Quem barra é `app/admin/layout.tsx`, que
+// além de exigir login confere o ID contra ADMIN_USER_IDS — sem a variável
+// configurada, ninguém entra.
 const rotasProtegidas = createRouteMatcher([
   "/api/stripe/checkout",
   "/api/stripe/portal",
@@ -28,5 +32,5 @@ export default clerkMiddleware(async (auth, req) => {
 });
 
 export const config = {
-  matcher: ["/rabiscando/app/:path*", "/api/stripe/:path*"],
+  matcher: ["/rabiscando/app/:path*", "/api/stripe/:path*", "/admin/:path*"],
 };

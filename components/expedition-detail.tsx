@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import dynamic from "next/dynamic";
 import type { Expedition } from "@/lib/expeditions";
+import FormInteresse from "./form-interesse";
 
 const TerrainMap = dynamic(() => import("./terrain-map"), { ssr: false });
 
@@ -62,10 +63,6 @@ function CheckList({ items, type }: { items: string[]; type: "included" | "exclu
 }
 
 export default function ExpeditionDetail({ expedition, onClose }: Props) {
-  const whatsappText = encodeURIComponent(
-    `Olá! Tenho interesse em agendar a expedição Lençóis Maranhenses ${expedition.stats.days} Dias. Podemos conversar?`
-  );
-
   return (
     <AnimatePresence>
       <motion.section
@@ -218,38 +215,15 @@ export default function ExpeditionDetail({ expedition, onClose }: Props) {
                 className="font-display text-2xl font-bold tracking-tight mb-2"
                 style={{ color: "#E6DDD4" }}
               >
-                Fale comigo e agende esta viagem
+                Entre na lista desta expedição
               </h3>
               <p className="text-sm" style={{ color: "#60584E" }}>
                 Lençóis Maranhenses · {expedition.stats.days} Dias · {expedition.stats.distance}
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              <a
-                href={`https://wa.me/35799123456?text=${whatsappText}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full text-sm font-semibold transition-all hover:opacity-90"
-                style={{
-                  background: "#E6DDD4",
-                  color: "#0E0C0A",
-                }}
-              >
-                WhatsApp
-                <span>→</span>
-              </a>
-              <a
-                href={`mailto:contato@euhenriq.com?subject=Expedição Lençóis ${expedition.stats.days} Dias&body=${whatsappText}`}
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full text-sm font-medium transition-all"
-                style={{
-                  background: "rgba(255,255,255,.04)",
-                  border: "1px solid rgba(255,255,255,.08)",
-                  color: "#887E76",
-                }}
-              >
-                E-mail
-              </a>
+            <div className="w-full max-w-md">
+              <FormInteresse expedicao={expedition.id} tom="escuro" />
             </div>
 
             <p className="text-[11px]" style={{ color: "#3A3028" }}>

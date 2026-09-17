@@ -8,9 +8,9 @@ import {
   INCLUIDO,
   NAO_INCLUIDO,
   FOTOS_GALERIA,
-  WA_GERAL,
 } from '@/content/lencois'
 import LencoisMap from '@/components/lencois-map'
+import FormInteresse from '@/components/form-interesse'
 const DIA_COLORS = ['', 'var(--rust)', '#6FA3D8', '#4A5838', 'var(--rust-soft)']
 
 
@@ -474,17 +474,15 @@ export default function LencoisPage() {
       {/* ── PRÓXIMA TURMA ── */}
       <section style={{ background: 'var(--canvas-deep)', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
         <div className="lenc-pad" style={{ padding: '96px 56px' }}>
-          <div className="lenc-nextrun" style={{ padding: '56px 48px', background: 'var(--bark)', border: '1px solid var(--rust)', borderTop: '3px solid var(--rust)', textAlign: 'center' }}>
+          <div id="lista-interesse" className="lenc-nextrun" style={{ padding: '56px 48px', background: 'var(--bark)', border: '1px solid var(--rust)', borderTop: '3px solid var(--rust)', textAlign: 'center' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.22em', textTransform: 'uppercase', color: 'var(--rust-soft)', marginBottom: 18 }}>№ 07 · Próxima turma</div>
             <h2 className="lenc-section-title-lg" style={{ fontFamily: 'var(--font-ui)', fontSize: 'clamp(36px, 5vw, 56px)', fontWeight: 600, letterSpacing: '-.02em', lineHeight: 1, margin: '0 0 16px', color: 'var(--canvas)' }}>
               Em breve <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>· 2027.</span>
             </h2>
             <p style={{ fontFamily: 'var(--font-serif)', fontSize: 17, lineHeight: 1.6, color: 'var(--ashe)', maxWidth: '48ch', margin: '0 auto 32px' }}>
-              Novas datas da Travessia dos Lençóis Maranhenses em definição. Chame no WhatsApp pra entrar na lista de interessados e ser avisado assim que abrirem as vagas.
+              Novas datas da Travessia dos Lençóis Maranhenses em definição. Deixe seu contato e eu aviso assim que as vagas abrirem.
             </p>
-            <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn" style={{ display: 'inline-block', textDecoration: 'none', padding: '16px 36px', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.22em', textTransform: 'uppercase', background: 'var(--rust)', color: 'var(--canvas)', border: '1px solid var(--rust)' }}>
-              Estou interessado →
-            </a>
+            <FormInteresse expedicao="lencois" tom="escuro" />
           </div>
         </div>
       </section>
@@ -516,11 +514,11 @@ export default function LencoisPage() {
           <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>expedição</span>
         </h2>
         <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontSize: 20, color: 'var(--ashe)', marginTop: 24, maxWidth: '50ch', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
-          Vagas limitadas a 10 pessoas por turma. Em breve, 2027 — chame no WhatsApp para entrar na lista de interessados.
+          Vagas limitadas a 10 pessoas por turma. Em breve, 2027 — entre na lista e seja avisado primeiro.
         </p>
-        <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" className="lenc-cta-btn lenc-cta-final-btn" style={{ marginTop: 40, display: 'inline-block', padding: '18px 40px', background: 'var(--rust-soft)', color: 'var(--forest)', fontFamily: 'var(--font-ui)', fontSize: 12, fontWeight: 700, letterSpacing: '.24em', textTransform: 'uppercase', textDecoration: 'none' }}>
-          Estou interessado →
-        </a>
+        <div style={{ marginTop: 40 }}>
+          <FormInteresse expedicao="lencois" tom="floresta" />
+        </div>
         <div style={{ marginTop: 28, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '.12em', color: 'var(--ashe-dim)' }}>
           Em parceria com @lencoisexperience · @livinglencois
         </div>
@@ -541,7 +539,7 @@ export default function LencoisPage() {
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 8, letterSpacing: '.18em', textTransform: 'uppercase', color: 'var(--ashe-dim)', marginBottom: 2 }}>próxima turma</div>
           <div style={{ fontFamily: 'var(--font-ui)', fontWeight: 700, fontSize: 19, letterSpacing: '-.02em', color: 'var(--canvas)' }}>Em breve · 2027</div>
         </div>
-        <a href={WA_GERAL} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: 'center', padding: '14px', background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', textDecoration: 'none' }}>Estou interessado →</a>
+        <a href="#lista-interesse" style={{ flex: 1, textAlign: 'center', padding: '14px', background: 'var(--rust)', color: 'var(--canvas)', fontFamily: 'var(--font-ui)', fontSize: 11, fontWeight: 700, letterSpacing: '.2em', textTransform: 'uppercase', textDecoration: 'none' }}>Estou interessado →</a>
       </div>
 
       <SiteFooter dark={false} />
