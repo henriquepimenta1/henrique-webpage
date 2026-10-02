@@ -114,6 +114,9 @@ export default function MidiakitPage() {
             <a className="optional" href="#audiencia">
               {"Audiência"}
             </a>
+            <a className="optional" href="/expedicoes/lencois">
+              {"Expedições"}
+            </a>
             <a className="contact-top" href="#contato">
               {"Vamos conversar ↗"}
             </a>
@@ -768,6 +771,9 @@ export default function MidiakitPage() {
                       "Logística de campo e produção audiovisual integradas. Expedições nos Lençóis Maranhenses e projetos sob medida."
                     }
                   </p>
+                  <a className="textlink" href="/expedicoes/lencois">
+                    {"Conheça a expedição dos Lençóis ↗"}
+                  </a>
                 </div>
               </div>
               <div className="service">
