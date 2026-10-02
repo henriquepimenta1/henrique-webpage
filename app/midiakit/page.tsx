@@ -19,12 +19,17 @@ export default function MidiakitPage() {
       );
       if (!video) return;
       button.hidden = false;
+      video.controls = false;
       button.addEventListener(
         "click",
         () => {
           button.hidden = true;
+          video.controls = true;
           void video.play().catch(() => {
-            if (!signal.aborted) button.hidden = false;
+            if (!signal.aborted) {
+              button.hidden = false;
+              video.controls = false;
+            }
           });
         },
         { signal },
@@ -76,7 +81,10 @@ export default function MidiakitPage() {
     return () => {
       controller.abort();
       observer?.disconnect();
-      videos.forEach((video) => video.pause());
+      videos.forEach((video) => {
+        video.pause();
+        video.controls = true;
+      });
       buttons.forEach((button) => {
         button.hidden = true;
       });
