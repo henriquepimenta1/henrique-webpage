@@ -3,7 +3,7 @@
 
 export const WA_BASE = "https://wa.me/5511988128064?text="
 
-export const FORM_INTERESSE = "https://forms.gle/zdC6EgsbiXynL7LH6"
+export const FORM_INTERESSE = "https://forms.gle/znEP8tV4mKgcjhnY7"
 
 export const WA_GERAL = WA_BASE + encodeURIComponent(
   "Olá! Tenho interesse na Travessia dos Lençóis Maranhenses. Pode me passar mais informações sobre datas e vagas disponíveis?"
