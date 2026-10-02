@@ -1,454 +1,804 @@
-import Link from "next/link";
-import DarkTopNav from "@/components/dark-nav";
-import DarkFooter from "@/components/dark-footer";
-import CountUp from "@/components/count-up";
+"use client";
 
-// Midiakit — Dark Editorial "Fim de Luz". Portado do protótipo hi-fi.
-// Sparkline e gráficos usam âmbar var(--accent).
-
-interface Metric {
-  label: string;
-  value: string;
-  sub: string;
-}
-
-interface TopPost {
-  caption: string;
-  reach: string;
-  likes: string;
-  saves: string;
-  img: string;
-}
-
-interface Brand {
-  brand: string;
-  type: string;
-  product: string;
-  img: string;
-  likes?: string;
-  comments?: string;
-  reach?: string;
-  saves?: string;
-}
-
-interface Service {
-  name: string;
-  desc: string;
-}
-
-interface Gear {
-  name: string;
-  cat: string;
-}
-
-interface MidiakitData {
-  metrics: Metric[];
-  topPosts: TopPost[];
-  brands: Brand[];
-  services: Service[];
-  gear: Gear[];
-  destinations: string[];
-}
-
-const D: MidiakitData = {
-  metrics: [
-    { label: "Seguidores", value: "15.458", sub: "@henriq.eu · Criador de Conteúdo Digital" },
-    { label: "Alcance mensal", value: "194k", sub: "194.030 · últimos 30 dias" },
-    { label: "Interações/mês", value: "55,8k", sub: "likes · saves · comentários" },
-    { label: "Engagement rate", value: "28,8%", sub: "muito acima da média do nicho" },
-    { label: "Alcance médio/dia", value: "~6.468", sub: "contas alcançadas/dia" },
-    { label: "Posts publicados", value: "458", sub: "total no perfil" },
-  ],
-  topPosts: [
-    { caption: "Escalando Cabeça de Peixe — Serra dos Órgãos", reach: "11.352", likes: "1.540", saves: "112", img: "escalada-cabeca-depeixe" },
-    { caption: "Atravessando os Lençóis Maranhenses — Ep. 1", reach: "6.857", likes: "481", saves: "25", img: "grupo-caminhando-lencois" },
-    { caption: "Cabeça de Peixe — plano B virou a melhor aventura", reach: "5.911", likes: "447", saves: "20", img: "queimada-dos-britos-lencois" },
-    { caption: "Memories of Peru — Cordilheira de Huayhuash", reach: "4.684", likes: "412", saves: "28", img: "laguna-acampamento-janca-huayhuash" },
-  ],
-  brands: [
-    { brand: "O Boticário", type: "Beauty & Lifestyle", product: "Arbo Puro · Desodorante Colônia", img: "/images/work/OBOTICARIO/OBOTICARIO-001.jpg", likes: "2.277", comments: "107" },
-    { brand: "Aiuruocan", type: "Vestuário Outdoor", product: "White Melton + Colors Blue", img: "/images/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-001.jpg", likes: "276", reach: "3.757" },
-    { brand: "OMA Gear", type: "Gear & Equipamento", product: "Kit Cozinha Ultra Leve · 149g", img: "/images/work/OMA-GEAR/OMA-GEAR-001.jpg", likes: "217", comments: "20" },
-    { brand: "K&F Concept", type: "Equipamento Fotográfico", product: "Tripé Omni Series + FH03", img: "/images/work/KNF-CONCEPT/KNF-CONCEPT-001.jpg", likes: "285", comments: "16" },
-    { brand: "Brightin Star", type: "Óptica", product: "Lente 16mm f/2.8", img: "/images/work/BRIGHTIN-STAR/BRIGHTIN-STAR-001.jpg", reach: "4.053", saves: "31" },
-    { brand: "Botas Vento", type: "Calçados Outdoor", product: "Titan + Finisterre", img: "/images/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-001.jpg", likes: "599", comments: "18" },
-    { brand: "Alto Estilo", type: "Moda & Equipamento", product: "Mochila Ataque 40+5L", img: "/images/work/ALTO-ESTILO/ALTO-ESTILO-001.jpg", likes: "260", reach: "3.423" },
-    { brand: "Gorro Vans", type: "Vestuário Outdoor", product: "Beanie · Pico Mateo 5.150m", img: "/images/work/GORRO-VANS/GORRO-VANS-001.jpg", likes: "197", reach: "5.341" },
-  ],
-  services: [
-    { name: "Reels de Expedição", desc: "Vídeos cinematográficos 15–60s com narrativa emocional" },
-    { name: "Drone Cinematography", desc: "Captação aérea profissional com DJI Air 3S" },
-    { name: "Carrosséis de Destino", desc: "Séries fotográficas editoriais para Instagram" },
-    { name: "Licenciamento de Conteúdo", desc: "Uso em campanhas, sites e materiais da marca" },
-    { name: "Conteúdo Bilíngue PT/EN", desc: "Criação e adaptação para mercado internacional" },
-    { name: "Guia + Produção", desc: "Logística completa + audiovisual integrado" },
-  ],
-  gear: [
-    { name: "Sony A7 IV", cat: "Câmera principal" },
-    { name: "DJI Air 3S", cat: "Drone cinematográfico" },
-    { name: "Comica VM40", cat: "Áudio 32-bit float" },
-    { name: "DaVinci Resolve", cat: "Pós-produção" },
-    { name: "Lightroom", cat: "Presets próprios" },
-  ],
-  destinations: [
-    "Lençóis Maranhenses · MA", "Serra da Mantiqueira · SP/MG", "PN Itatiaia · RJ", "PN Serra dos Órgãos · RJ",
-    "Serra do Ibitiraquire · PR", "Serra da Bocaina · SP/RJ", "Cordilheira Blanca · Peru", "Cordilheira Huayhuash · Peru",
-    "Atacama · Chile",
-    "Bolívia · 2027", "Chile · 2027", "Peru · 2027",
-  ],
-};
-
-function Kicker({ n, label }: { n: string; label: string }) {
-  return (
-    <div className="mkd-kicker">
-      <span>№ {n}</span>
-      <span className="rule" />
-      <span>{label}</span>
-    </div>
-  );
-}
+/* eslint-disable @next/next/no-img-element -- Preserve the approved photography crops and native image URLs. */
+import { useEffect, useRef } from "react";
+import "./midiakit.css";
 
 export default function MidiakitPage() {
+  const rootRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+    const controller = new AbortController();
+    const { signal } = controller;
+    const videos = root.querySelectorAll<HTMLVideoElement>("video");
+    const buttons = root.querySelectorAll<HTMLButtonElement>(".play");
+    buttons.forEach((button) => {
+      const video = Array.from(videos).find(
+        (item) => item.id === button.dataset.video,
+      );
+      if (!video) return;
+      button.hidden = false;
+      button.addEventListener(
+        "click",
+        () => {
+          button.hidden = true;
+          void video.play().catch(() => {
+            if (!signal.aborted) button.hidden = false;
+          });
+        },
+        { signal },
+      );
+      video.addEventListener(
+        "play",
+        () => {
+          button.hidden = true;
+          videos.forEach((other) => {
+            if (other !== video) other.pause();
+          });
+        },
+        { signal },
+      );
+    });
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let observer: IntersectionObserver | undefined;
+    const showAll = () =>
+      root
+        .querySelectorAll(".pending")
+        .forEach((item) => item.classList.remove("pending"));
+    if (!reduced.matches && "IntersectionObserver" in window) {
+      root.classList.add("motion-ready");
+      observer = new IntersectionObserver(
+        (entries) =>
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.remove("pending");
+              observer?.unobserve(entry.target);
+            }
+          }),
+        { threshold: 0.08 },
+      );
+      root.querySelectorAll(".reveal").forEach((item) => {
+        item.classList.add("pending");
+        observer?.observe(item);
+      });
+      reduced.addEventListener(
+        "change",
+        (event) => {
+          if (event.matches) {
+            showAll();
+            observer?.disconnect();
+          }
+        },
+        { signal },
+      );
+    }
+    return () => {
+      controller.abort();
+      observer?.disconnect();
+      videos.forEach((video) => video.pause());
+      buttons.forEach((button) => {
+        button.hidden = true;
+      });
+      showAll();
+      root.classList.remove("motion-ready");
+    };
+  }, []);
   return (
-    <div className="theme-fdl">
-      <style>{`
-/* ── hero ── */
-.mkd-hero{position:relative;min-height:82vh;display:flex;align-items:flex-end;overflow:hidden;margin-top:-76px}
-.mkd-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 35%}
-.mkd-hero-grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,12,11,.72) 0%,rgba(13,12,11,.08) 42%,rgba(13,12,11,.94) 100%)}
-.mkd-hero-body{position:relative;z-index:2;padding:var(--hero-clear) var(--s-5) var(--s-56);width:100%}
-.mkd-h1{font-family:var(--font-serif);font-weight:500;font-size:clamp(48px,7.5vw,104px);letter-spacing:-.015em;line-height:1.02;color:var(--text-1);margin:0;text-wrap:pretty}
-.mkd-h1 em{font-style:italic;font-weight:400;color:var(--text-2)}
-.mkd-hero-meta{margin-top:var(--s-3);display:flex;gap:var(--s-3);flex-wrap:wrap;font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text-2)}
-
-/* ── seções ── */
-.mkd-section{padding:var(--sect-y) var(--s-5);border-top:1px solid var(--border)}
-.mkd-kicker{display:flex;align-items:center;gap:16px;font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);margin-bottom:48px}
-.mkd-kicker .rule{flex:1;height:1px;background:var(--border)}
-.mkd-h2{font-family:var(--font-serif);font-weight:500;font-size:clamp(30px,4vw,46px);letter-spacing:-.01em;line-height:1.1;color:var(--text-1);margin:0 0 48px}
-.mkd-h2 em{font-style:italic;font-weight:400;color:var(--text-2)}
-
-/* sobre */
-.mkd-bio{display:grid;grid-template-columns:1.3fr 1fr;gap:var(--s-72)}
-.mkd-bio-lead{font-family:var(--font-serif);font-style:italic;font-weight:400;font-size:clamp(20px,2.2vw,25px);line-height:1.55;letter-spacing:-.01em;color:var(--text-1);margin:0 0 var(--s-3)}
-.mkd-bio p.body{font-family:var(--font-serif);font-size:15px;line-height:1.75;color:var(--text-2);margin:0 0 var(--s-2)}
-.mkd-sign{font-family:var(--font-hand);font-size:38px;color:var(--accent);display:inline-block;transform:rotate(-2deg)}
-.mkd-portraits{display:flex;flex-direction:column;gap:24px}
-.mkd-portraits img{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 22%;border:1px solid var(--border)}
-.mkd-portrait-2{margin-left:15%;margin-top:-40px}
-
-/* métricas */
-.mkd-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:64px}
-.mkd-metric{background:var(--bg);padding:var(--s-4) var(--s-3)}
-.mkd-metric-k{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--text-3);margin-bottom:var(--s-2)}
-.mkd-metric-v{font-family:var(--font-serif);font-weight:500;font-size:46px;letter-spacing:-.02em;color:var(--text-1);line-height:1;margin-bottom:10px}
-.mkd-metric-s{font-family:var(--font-serif);font-style:italic;font-size:13px;color:var(--text-3)}
-.mkd-spark-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:var(--s-2);gap:16px;flex-wrap:wrap}
-
-/* reels */
-.mkd-posts{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.mkd-post{aspect-ratio:9/16;border:1px solid var(--border);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:var(--s-2);background:var(--surface)}
-.mkd-post-bg{position:absolute;inset:0;background-size:cover;background-position:center 62%}
-.mkd-post-grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,12,11,.15) 0%,rgba(13,12,11,.9) 100%)}
-.mkd-post-body{position:relative;z-index:2;display:flex;flex-direction:column;gap:var(--s-1)}
-.mkd-post-cap{font-family:var(--font-serif);font-size:14px;line-height:1.45;color:var(--text-1);margin:0}
-.mkd-post-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;padding-top:var(--s-1);border-top:1px solid var(--border-strong)}
-
-/* marcas */
-.mkd-brands{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
-.mkd-brand{background:var(--bg);position:relative;aspect-ratio:4/5;overflow:hidden}
-.mkd-brand img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 30%;filter:brightness(.68);transition:transform .9s cubic-bezier(.2,.7,.2,1),filter .3s}
-.mkd-brand:hover img{transform:scale(1.045);filter:brightness(.85)}
-.mkd-brand-grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,12,11,.1) 30%,rgba(13,12,11,.88) 100%);pointer-events:none}
-.mkd-brand-body{position:absolute;inset:0;padding:var(--s-2);display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}
-.mkd-brand-type{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-2);border:1px solid var(--border-strong);padding:4px 8px;align-self:flex-start}
-.mkd-brand-name{font-family:var(--font-serif);font-weight:500;font-size:23px;letter-spacing:-.01em;color:var(--text-1);margin-bottom:4px}
-.mkd-brand-prod{font-family:var(--font-serif);font-style:italic;font-size:13px;color:var(--text-2);margin-bottom:var(--s-2);line-height:1.35}
-.mkd-brand-stats{display:flex;gap:var(--s-2);font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--text-3)}
-
-/* serviços */
-.mkd-services{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border)}
-.mkd-service{background:var(--bg);padding:var(--s-4) var(--s-3)}
-.mkd-service-n{font-family:var(--font-ui);font-weight:600;font-size:16px;color:var(--text-1);margin-bottom:10px;letter-spacing:-.01em}
-.mkd-service-d{font-family:var(--font-serif);font-style:italic;font-size:14px;color:var(--text-2);line-height:1.55}
-
-/* gear + destinos */
-.mkd-split{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-72)}
-.mkd-gear{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-2)}
-.mkd-gear-item{border:1px solid var(--border);padding:var(--s-2) var(--s-2)}
-.mkd-dest-item{padding:var(--s-2) 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.mkd-dest-item:last-child{border-bottom:none}
-
-/* cta */
-.mkd-cta{position:relative;overflow:hidden;border-top:1px solid var(--border)}
-.mkd-cta img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.16}
-.mkd-cta-grad{position:absolute;inset:0;background:linear-gradient(180deg,var(--bg) 0%,rgba(13,12,11,.72) 100%)}
-.mkd-cta-body{position:relative;z-index:2;padding:var(--sect-xl) var(--s-5);max-width:880px}
-.mkd-cta-h{font-family:var(--font-serif);font-weight:500;font-size:clamp(44px,7vw,92px);letter-spacing:-.015em;line-height:1.03;margin:0 0 var(--s-3);color:var(--text-1)}
-.mkd-cta-h em{font-style:italic;font-weight:400;color:var(--text-2)}
-.mkd-cta-p{font-family:var(--font-serif);font-style:italic;font-size:18px;line-height:1.6;color:var(--text-2);max-width:48ch;margin:0 0 var(--s-40)}
-.mkd-btn{display:inline-block;padding:var(--s-2) var(--s-4);background:var(--accent);color:var(--bg);font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:background .2s}
-.mkd-btn:hover{background:var(--accent-hover)}
-.mkd-btn-ghost{display:inline-block;padding:var(--s-2) var(--s-4);border:1px solid var(--border-strong);color:var(--text-1);font-family:var(--font-ui);font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;text-decoration:none}
-
-/* ── responsive ── */
-@media(max-width:1100px){
-  .mkd-bio{grid-template-columns:1fr;gap:48px}
-  .mkd-metrics{grid-template-columns:1fr 1fr}
-  .mkd-posts,.mkd-brands{grid-template-columns:1fr 1fr}
-  .mkd-services{grid-template-columns:1fr 1fr}
-  .mkd-split{grid-template-columns:1fr;gap:var(--s-56)}
-  .mkd-portraits{flex-direction:row;gap:16px}
-  .mkd-portraits img{flex:1;min-width:0}
-  .mkd-portrait-2{margin-left:0;margin-top:48px}
-}
-@media(max-width:640px){
-  .mkd-hero{min-height:88vh}
-  .mkd-hero-body{padding:var(--hero-clear) var(--s-3) var(--s-40)}
-  .mkd-hero-meta{gap:10px var(--s-2);font-size:10px}
-  .mkd-section{padding:var(--s-56) var(--s-3)}
-  .mkd-kicker{margin-bottom:32px}
-  .mkd-h2{margin-bottom:32px}
-  .mkd-metrics,.mkd-services{grid-template-columns:1fr}
-  .mkd-posts,.mkd-brands{grid-template-columns:1fr 1fr;gap:10px}
-  .mkd-posts{gap:10px}
-  .mkd-post{padding:var(--s-1)}
-  .mkd-post-cap{font-size:11.5px;line-height:1.35}
-  .mkd-post-stats{grid-template-columns:1fr 1fr;gap:4px}
-  .mkd-post-stats > div:nth-child(3){display:none}
-  .mkd-brand-name{font-size:17px}
-  .mkd-brand-prod{font-size:11px;margin-bottom:10px}
-  .mkd-brand-body{padding:var(--s-2)}
-  .mkd-brand-stats{gap:10px;font-size:10px;letter-spacing:.14em;flex-wrap:wrap}
-  .mkd-gear{grid-template-columns:1fr 1fr;gap:10px}
-  .mkd-gear-item{padding:var(--s-2) var(--s-2)}
-  .mkd-portraits{flex-direction:row;gap:10px}
-  .mkd-portrait-2{margin-top:var(--s-3)}
-  .mkd-metric-v{font-size:38px}
-  .mkd-metric{padding:var(--s-3) var(--s-3)}
-  .mkd-dest-item span:first-child{font-size:16px}
-  .mkd-cta-body{padding:var(--s-72) var(--s-3)}
-}
-      `}</style>
-
-      <DarkTopNav active="Midiakit" />
-
-      {/* HERO */}
-      <section className="mkd-hero">
-        <img src="/images/exp-huayhuash.jpg" alt="Cordilheira Huayhuash" />
-        <div className="mkd-hero-grad" />
-        <div className="mkd-hero-body">
-          <div className="v2-eyebrow" style={{ marginBottom: 22, color: "var(--text-2)", textShadow: "0 1px 12px rgba(13,12,11,.8)" }}>
-            Media Kit · 2026 · @henriq.eu
-          </div>
-          <h1 className="mkd-h1">
-            Henrique Sesana,
-            <br />
-            <em>adventure filmmaker.</em>
-          </h1>
-          <div className="mkd-hero-meta">
-            <span>Trekking · Montanhismo · Cinematografia</span>
-            <span style={{ opacity: 0.65 }}>São Paulo, BR</span>
-            <span style={{ opacity: 0.65 }}>PT · EN</span>
-          </div>
-        </div>
-      </section>
-
-      {/* № 01 SOBRE */}
-      <section className="mkd-section">
-        <Kicker n="01" label="Sobre" />
-        <div className="mkd-bio">
-          <div>
-            <p className="mkd-bio-lead">
-              Fotógrafo, filmmaker e contador de histórias visuais que nascem da terra, do vento e do tempo. Estética
-              contemplativa, minimalista, profundamente conectada à natureza.
-            </p>
-            <p className="body">
-              As cores que escolho dialogam com o ambiente: verdes densos, tons de areia, luz natural e texturas reais.
-              Composição espontânea, detalhe que o olho quase não vê, instante que carrega presença sutil. Minha
-              fotografia não busca impacto — busca permanência.
-            </p>
-            <p className="body">
-              Já produzi campanhas para marcas de vestuário, turismo e cosméticos, sempre propondo um caminho mais
-              poético e imersivo — onde o produto entra na paisagem, e não o contrário.
-            </p>
-            <p className="body" style={{ marginBottom: 36 }}>
-              Em 2027, volto aos Lençóis Maranhenses para guiar três grupos com fotografia integrada —
-              travessia com produção própria de ponta a ponta.
-            </p>
-            <span className="mkd-sign">— Henrique</span>
-          </div>
-          <div className="mkd-portraits">
-            <img src="/images/portrait.jpg" alt="Henrique em campo" />
-          </div>
-        </div>
-      </section>
-
-      {/* № 02 MÉTRICAS */}
-      <section className="mkd-section">
-        <Kicker n="02" label="Métricas · Instagram" />
-        <div className="mkd-metrics">
-          {D.metrics.map((m) => (
-            <div key={m.label} className="mkd-metric">
-              <div className="mkd-metric-k">{m.label}</div>
-              <div className="mkd-metric-v"><CountUp value={m.value} /></div>
-              <div className="mkd-metric-s">{m.sub}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* № 03 REELS */}
-      <section className="mkd-section">
-        <Kicker n="03" label="Reels em destaque" />
-        <div className="mkd-posts">
-          {D.topPosts.map((p, i) => (
-            <div key={i} className="mkd-post">
-              <div className="mkd-post-bg" style={{ backgroundImage: `url(/images/portfolio/${p.img}.jpg)` }} />
-              <div className="mkd-post-grad" />
-              <div className="mkd-post-body">
-                <div className="v2-eyebrow" style={{ fontSize: 9 }}>
-                  Reel · #{i + 1}
-                </div>
-                <p className="mkd-post-cap">{p.caption}</p>
-                <div className="mkd-post-stats">
-                  {([["Alcance", p.reach], ["Likes", p.likes], ["Saves", p.saves]] as const).map(([k, v]) => (
-                    <div key={k}>
-                      <div
-                        style={{
-                          fontFamily: "var(--font-mono)",
-                          fontSize: 8,
-                          letterSpacing: ".15em",
-                          textTransform: "uppercase",
-                          color: "var(--text-3)",
-                          marginBottom: 2,
-                        }}
-                      >
-                        {k}
-                      </div>
-                      <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-1)" }}>{v}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* № 04 MARCAS */}
-      <section className="mkd-section">
-        <Kicker n="04" label="Marcas · Parcerias" />
-        <h2 className="mkd-h2">
-          Marcas que <em>caminharam junto.</em>
-        </h2>
-        <div className="mkd-brands">
-          {D.brands.map((b, i) => (
-            <article key={i} className="mkd-brand">
-              <img src={b.img} alt={b.brand} loading="lazy" />
-              <div className="mkd-brand-grad" />
-              <div className="mkd-brand-body">
-                <span className="mkd-brand-type">{b.type}</span>
-                <div>
-                  <div className="mkd-brand-name">{b.brand}</div>
-                  <div className="mkd-brand-prod">{b.product}</div>
-                  <div className="mkd-brand-stats">
-                    {b.likes && <span>♥ {b.likes}</span>}
-                    {b.reach && <span>◎ {b.reach}</span>}
-                    {b.comments && <span>✎ {b.comments}</span>}
-                    {b.saves && <span>⌘ {b.saves}</span>}
-                  </div>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* № 05 SERVIÇOS */}
-      <section className="mkd-section">
-        <Kicker n="05" label="Serviços" />
-        <div className="mkd-services">
-          {D.services.map((s) => (
-            <div key={s.name} className="mkd-service">
-              <div className="mkd-service-n">{s.name}</div>
-              <div className="mkd-service-d">{s.desc}</div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* № 06/07 GEAR + DESTINOS */}
-      <section className="mkd-section">
-        <div className="mkd-split">
-          <div>
-            <Kicker n="06" label="Equipamento" />
-            <div className="mkd-gear">
-              {D.gear.map((g) => (
-                <div key={g.name} className="mkd-gear-item">
-                  <div
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: 9,
-                      letterSpacing: ".2em",
-                      textTransform: "uppercase",
-                      color: "var(--text-3)",
-                      marginBottom: 8,
-                    }}
-                  >
-                    {g.cat}
-                  </div>
-                  <div style={{ fontWeight: 600, fontSize: 14, color: "var(--text-1)" }}>{g.name}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <Kicker n="07" label="Destinos · 2024–2026" />
-            <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-              {D.destinations.map((d, i) => (
-                <li key={d} className="mkd-dest-item">
-                  <span style={{ fontFamily: "var(--font-serif)", fontStyle: "italic", fontSize: 18, color: "var(--text-1)" }}>
-                    {d}
-                  </span>
-                  <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".18em", color: "var(--text-3)" }}>
-                    № {String(i + 1).padStart(2, "0")}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="mkd-cta">
-        <img src="/images/lencois/DJI_20250828174205_0403_D-HDR.jpg" alt="" />
-        <div className="mkd-cta-grad" />
-        <div className="mkd-cta-body">
-          <div className="v2-eyebrow" style={{ marginBottom: 22 }}>
-            Vamos conversar
-          </div>
-          <h2 className="mkd-cta-h">
-            Sua marca,
-            <br />
-            <em>na paisagem.</em>
-          </h2>
-          <p className="mkd-cta-p">
-            Briefings personalizados, prazos honestos, conteúdo que dura mais que um ciclo de algoritmo.
-          </p>
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-            <Link className="mkd-btn" href="/contato">
-              Briefing & contato →
-            </Link>
-            <a className="mkd-btn-ghost" href="mailto:contato@euhenriq.com">
-              contato@euhenriq.com
+    <div ref={rootRef} className="media-kit">
+      <a className="skip" href="#conteudo">
+        {"Pular para o conteúdo"}
+      </a>
+      <div className="wrap">
+        <header className="top">
+          <a
+            className="wordmark"
+            href="https://euhenriq.com/"
+            aria-label="Eu Henriq, site principal"
+          >
+            {"eu henriq."}
+          </a>
+          <nav className="nav" aria-label="Navegação">
+            <a href="#filmes">{"Filmes"}</a>
+            <a className="desktop" href="#parcerias">
+              {"Parcerias"}
             </a>
+            <a className="optional" href="#audiencia">
+              {"Audiência"}
+            </a>
+            <a className="contact-top" href="#contato">
+              {"Vamos conversar ↗"}
+            </a>
+          </nav>
+        </header>
+      </div>
+      <main id="conteudo">
+        <div className="wrap">
+          <section className="hero" aria-label="Apresentação">
+            <div className="hero-copy">
+              <div className="kicker muted">
+                {"Henrique Sesana / Mídia kit 2026"}
+              </div>
+              <h1>
+                {"Henrique"}
+                <br />
+                <span>{"Sesana."}</span>
+              </h1>
+              <p>
+                {
+                  "Fotógrafo e filmmaker de aventura, com a engenharia na bagagem. Fotografia, filmes e expedições pelo Brasil, Peru e Chile."
+                }
+              </p>
+              <div className="author">
+                {"São Paulo, Brasil "}
+                <span className="muted">{"·"}</span>
+                {" Em campo, pelo mundo"}
+              </div>
+            </div>
+            <figure className="film">
+              <div className="film-shell">
+                <video
+                  id="atacama"
+                  controls
+                  playsInline
+                  preload="none"
+                  poster="/media/midiakit/atacama.jpg"
+                  aria-label="Filme Atacama, 42 segundos"
+                >
+                  <source src="/media/midiakit/atacama.mp4" type="video/mp4" />
+                  {"Seu navegador não reproduz este vídeo. "}
+                  <a href="/media/midiakit/atacama.mp4">
+                    {"Abrir filme Atacama"}
+                  </a>
+                  {"."}
+                </video>
+                <button
+                  hidden
+                  className="play"
+                  data-video="atacama"
+                  aria-label="Assistir Atacama com áudio"
+                >
+                  <span className="label">
+                    {"Um primeiro olhar sobre o Atacama"}
+                    <br />
+                    <span className="kicker">
+                      {"Assistir ao filme · 00:42"}
+                    </span>
+                  </span>
+                  <span className="circle" aria-hidden="true">
+                    {"▶"}
+                  </span>
+                </button>
+              </div>
+              <figcaption>
+                <span className="film-title">{"Atacama, Chile"}</span>
+                <span className="film-meta">{"01 / Filme de viagem"}</span>
+              </figcaption>
+            </figure>
+          </section>
+          <div className="hero-bottom">
+            <span>{"Fotografia · Cinema · Expedições"}</span>
+            <a href="#filmes">{"Conheça meu trabalho ↓"}</a>
+            <span>{"@henriq.eu"}</span>
           </div>
+          <section className="intro intro-portrait reveal">
+            <div className="intro-heading">
+              <div className="kicker muted">
+                {"01 / De onde vem meu trabalho"}
+              </div>
+              <h2>
+                {"A montanha"}
+                <br />
+                {"foi o começo."}
+              </h2>
+            </div>
+            <figure className="portrait">
+              <img
+                src="/media/midiakit/henrique-montanha.jpg"
+                width="1536"
+                height="2048"
+                loading="lazy"
+                alt="Henrique de gorro vermelho e mochila, em uma paisagem de montanha"
+              />
+            </figure>
+            <div className="intro-body">
+              <p>
+                {
+                  "Sou engenheiro, fotógrafo e filmmaker. A câmera entrou na minha vida junto com a montanha e, desde 2018, me acompanha em escaladas, travessias e expedições pelo Brasil, Peru e Chile."
+                }
+              </p>
+              <p>
+                {
+                  "Já caminhei por boa parte das montanhas brasileiras, estive na cordilheira Huayhuash, no Peru, e explorei o Atacama, no Chile. Os Lençóis Maranhenses também fazem parte dessa história — lá, além de fotografar e filmar, organizo expedições."
+                }
+              </p>
+              <p>
+                {
+                  "Meu trabalho nasce dessas experiências: os dias de caminhada, as pessoas que encontro, o céu à noite e os imprevistos. Produzo fotografia, filmes e timelapses, do registro em campo à edição e à cor. É essa experiência que levo para os projetos com marcas."
+                }
+              </p>
+              <a className="textlink" href="https://euhenriq.com/sobre">
+                {"Mais sobre mim ↗"}
+              </a>
+              <p className="bio-facts">
+                {
+                  "Desde 2018 · Base em São Paulo · Conteúdo em português e inglês"
+                }
+                <br />
+                {"Sony A7 IV · DJI Air 3S · Comica VM40 · DaVinci Resolve"}
+              </p>
+            </div>
+          </section>
+          <section id="filmes">
+            <div className="section-head reveal">
+              <h2>{"Do lado de fora."}</h2>
+              <span className="kicker muted">
+                {"02 / Um pouco de aventura"}
+              </span>
+            </div>
+            <div className="feature">
+              <figure className="film wide reveal">
+                <div className="film-shell">
+                  <video
+                    id="peixe"
+                    controls
+                    playsInline
+                    preload="none"
+                    poster="/media/midiakit/peixe.jpg"
+                    aria-label="Filme Cabeça de Peixe, 20 segundos"
+                  >
+                    <source src="/media/midiakit/peixe.mp4" type="video/mp4" />
+                    {"Seu navegador não reproduz este vídeo. "}
+                    <a href="/media/midiakit/peixe.mp4">
+                      {"Abrir filme Cabeça de Peixe"}
+                    </a>
+                    {"."}
+                  </video>
+                  <button
+                    hidden
+                    className="play"
+                    data-video="peixe"
+                    aria-label="Assistir Cabeça de Peixe com áudio"
+                  >
+                    <span className="label kicker">
+                      {"Assistir ao filme · 00:20"}
+                    </span>
+                    <span className="circle" aria-hidden="true">
+                      {"▶"}
+                    </span>
+                  </button>
+                </div>
+                <figcaption>
+                  <span className="film-title">{"Cabeça de Peixe"}</span>
+                  <span className="film-meta">{"02 / Aventura"}</span>
+                </figcaption>
+              </figure>
+              <div className="feature-copy reveal">
+                <span className="kicker muted">
+                  {"Serra dos Órgãos, Brasil"}
+                </span>
+                <h3>
+                  {"A câmera também"}
+                  <br />
+                  {"vai pra montanha."}
+                </h3>
+                <p>
+                  {
+                    "Um trecho da aventura no Cabeça de Peixe. Escalada, conversa e registro do caminho, com a câmera acompanhando o que acontece em campo."
+                  }
+                </p>
+                <a
+                  className="textlink"
+                  href="https://youtu.be/5bf8usjeb24?si=Q_mUo7LiAM2K2M3i"
+                >
+                  {"Veja o vídeo completo no YouTube ↗"}
+                </a>
+              </div>
+            </div>
+            <div className="feature youtube-feature">
+              <div className="youtube-panel reveal">
+                <img
+                  className="youtube-backdrop"
+                  src="/media/midiakit/youtube-vale.jpg"
+                  width="3840"
+                  height="2160"
+                  loading="lazy"
+                  alt=""
+                />
+                <span className="kicker">{"03 / Filme completo · 09:06"}</span>
+                <h3>
+                  {"O cânion escondido"}
+                  <br />
+                  {"de Rondônia."}
+                </h3>
+                <p>{"Vale do Apertado"}</p>
+                <a
+                  className="watch"
+                  href="https://www.youtube.com/watch?v=VTUgiG2NcgY"
+                >
+                  {"▶ Assistir no YouTube ↗"}
+                </a>
+              </div>
+              <div className="feature-copy reveal">
+                <span className="kicker muted">{"YouTube / @henriq_eu"}</span>
+                <h3>
+                  {"Uma história"}
+                  <br />
+                  {"com mais tempo."}
+                </h3>
+                <p>
+                  {
+                    "Morei 27 anos em Rondônia e descobri esse lugar em um vídeo na internet. Ficava a algumas horas de casa."
+                  }
+                </p>
+                <a
+                  className="textlink"
+                  href="https://www.youtube.com/@henriq_eu"
+                >
+                  {"Conheça meu canal ↗"}
+                </a>
+              </div>
+            </div>
+            <div className="selected-work reveal">
+              <a href="https://www.instagram.com/reel/DdZ7dXShnSO/">
+                <span className="kicker muted">
+                  {"04 / Reel · Lençóis Maranhenses"}
+                </span>
+                <h3>{"Rota dos Povoados ↗"}</h3>
+                <p>{"As famílias e as histórias que dão nome ao caminho."}</p>
+              </a>
+              <a href="https://www.instagram.com/p/DdKRdTZHHr3/">
+                <span className="kicker muted">
+                  {"05 / Carrossel · Lençóis Maranhenses"}
+                </span>
+                <h3>{"Três dias entre povoados ↗"}</h3>
+                <p>
+                  {"Do início na Lagoa Bonita ao encontro com Dona Paixão."}
+                </p>
+              </a>
+              <a href="https://www.instagram.com/p/DczVCttHJF2/">
+                <span className="kicker muted">
+                  {"06 / Carrossel · Mantiqueira"}
+                </span>
+                <h3>{"Amanhecer no Marinzinho ↗"}</h3>
+                <p>
+                  {"À espera do sol, durante a travessia Marins × Itaguaré."}
+                </p>
+              </a>
+            </div>
+            <div className="photo-portfolio reveal">
+              <span className="kicker muted">{"Fotografia / Portfólio"}</span>
+              <a className="textlink" href="https://euhenriq.com/portfolio">
+                {"Conheça minhas fotografias ↗"}
+              </a>
+            </div>
+          </section>
         </div>
-      </section>
-
-      <DarkFooter coords="10°17′S 76°54′W · alt 4 800 m" />
+        <section className="metrics" id="audiencia">
+          <div className="wrap reveal">
+            <div className="section-head">
+              <h2>{"Quem acompanha o caminho."}</h2>
+              <span className="kicker muted">
+                {"03 / Instagram @henriq.eu"}
+              </span>
+            </div>
+            <div className="numbers">
+              <div className="number">
+                <strong>{"17.038"}</strong>
+                <span>
+                  {"seguidores "}
+                  <sup>{"1"}</sup>
+                </span>
+              </div>
+              <div className="number">
+                <strong>{"475,2 mil"}</strong>
+                <span>
+                  {"visualizações em 30 dias "}
+                  <sup>{"1"}</sup>
+                </span>
+              </div>
+              <div className="number">
+                <strong>{"5,16%"}</strong>
+                <span>
+                  {"engajamento por seguidores "}
+                  <sup>{"2"}</sup>
+                </span>
+              </div>
+              <div className="number">
+                <strong>{"15.876"}</strong>
+                <span>
+                  {"reproduções médias de Reels "}
+                  <sup>{"2"}</sup>
+                </span>
+              </div>
+            </div>
+            <div className="audience-highlights">
+              <p>
+                <strong>{"47.162"}</strong>
+                {" interações em 30 dias "}
+                <sup>{"1"}</sup>
+              </p>
+              <p>
+                <strong>{"2.983"}</strong>
+                {" salvamentos em 30 dias "}
+                <sup>{"1"}</sup>
+              </p>
+              <p>
+                <strong>{"93,9%"}</strong>
+                {" índice de credibilidade · classificação alta "}
+                <sup>{"2"}</sup>
+              </p>
+              <p>
+                <strong>{"+36,73%"}</strong>
+                {" crescimento em seis meses no relatório "}
+                <sup>{"2"}</sup>
+              </p>
+            </div>
+            <div className="audience-grid">
+              <div>
+                <h3>{"Uma audiência adulta"}</h3>
+                <p className="audience-key">{"73,8%"}</p>
+                <p>
+                  {
+                    "dos seguidores com idade informada têm entre 25 e 44 anos. "
+                  }
+                  <sup>{"1"}</sup>
+                </p>
+                <p>
+                  {"25–34: 49,8% · 35–44: 24,0%"}
+                  <br />
+                  {"18–24: 14,4% · demais faixas: 11,8%"}
+                </p>
+              </div>
+              <div>
+                <h3>{"Presença no Brasil"}</h3>
+                <p className="audience-key">{"15.160"}</p>
+                <p>
+                  {"seguidores no Brasil. "}
+                  <sup>{"1"}</sup>
+                </p>
+                <p>
+                  {"Principais cidades: São Paulo, Rio de Janeiro e Curitiba."}
+                </p>
+                <p>
+                  {"Entre quem curtiu, 93,28% estão no Brasil. "}
+                  <sup>{"2"}</sup>
+                </p>
+              </div>
+              <div>
+                <h3>{"Perfil dos seguidores"}</h3>
+                <p>
+                  {"Masculino: 55,1%"}
+                  <br />
+                  {"Feminino: 32,5%"}
+                  <br />
+                  {"Não informado: 12,4% "}
+                  <sup>{"1"}</sup>
+                </p>
+                <p>
+                  {
+                    "Fotografia, aventura, travessias e céu noturno são os temas que compartilho com esse público."
+                  }
+                </p>
+              </div>
+            </div>
+            <section className="tiktok-profile" aria-labelledby="tiktok-title">
+              <div>
+                <span className="kicker muted">
+                  {"Também no TikTok / @henriq.eu"}
+                </span>
+                <h3 id="tiktok-title">{"Mais um jeito de acompanhar."}</h3>
+                <a
+                  className="textlink"
+                  href="https://www.tiktok.com/@henriq.eu"
+                >
+                  {"Conheça meu TikTok ↗"}
+                </a>
+              </div>
+              <div className="tiktok-stats">
+                <div>
+                  <strong>{"6.304"}</strong>
+                  <span>{"seguidores"}</span>
+                </div>
+                <div>
+                  <strong>{"196,6 mil"}</strong>
+                  <span>{"curtidas acumuladas no perfil"}</span>
+                </div>
+              </div>
+              <div className="tiktok-links">
+                <a href="https://www.tiktok.com/@henriq.eu/video/7689557935420099848">
+                  {"Marins × Itaguaré ↗"}
+                </a>
+                <a href="https://www.tiktok.com/@henriq.eu/video/7681762766151044359">
+                  {"Lençóis Maranhenses ↗"}
+                </a>
+              </div>
+              <p className="tiktok-source">
+                {
+                  "Fonte: perfil público do TikTok, consultado em 02/10/2026. Curtidas exibidas de forma arredondada pela plataforma."
+                }
+              </p>
+            </section>
+            <div className="metric-notes">
+              <p>
+                <sup>{"1"}</sup>
+                {
+                  " Instagram via Windsor · 02/09–01/10/2026; seguidores consultados em 02/10. Demografia: base de 16.579 perfis em 01/10."
+                }
+              </p>
+              <p>
+                <sup>{"2"}</sup>
+                {
+                  " Análise externa enviada por profissional de recrutamento de influenciadores. Credibilidade referente a quem curtiu. Fonte nominal, período de coleta e amostra não informados; indicadores apresentados conforme o relatório."
+                }
+              </p>
+              <details className="metric-method">
+                <summary>{"Sobre os indicadores"}</summary>
+                <p>
+                  {
+                    "As fontes complementam a apresentação e usam recortes próprios. A taxa de 5,16% é calculada por seguidores no relatório externo. Na amostra de 30 conteúdos do Windsor, a relação entre a soma das interações e a soma dos alcances é de 14,4%, com alcance médio de 7.681 por publicação."
+                  }
+                </p>
+                <p>
+                  {
+                    "Nessa amostra, as médias acumuladas são 10.779 visualizações em 23 Reels e 12.292 em sete carrosséis. A média de 15.876 reproduções em destaque pertence à análise externa. Visualizações podem incluir repetições; alcance de publicações diferentes pode contar a mesma pessoa."
+                  }
+                </p>
+                <p>
+                  {
+                    "O índice de credibilidade é uma classificação da plataforma externa. A taxa de crescimento corresponde à janela de seis meses apresentada nesse relatório."
+                  }
+                </p>
+              </details>
+            </div>
+          </div>
+        </section>
+        <div className="wrap">
+          <section id="parcerias">
+            <div className="section-head reveal">
+              <h2>{"Marcas no caminho."}</h2>
+              <span className="kicker muted">
+                {"04 / Trabalhos & parcerias"}
+              </span>
+            </div>
+            <div className="brands" id="brands">
+              <figure className="brand reveal">
+                <div className="brand-image">
+                  <img
+                    src="/images/work/OBOTICARIO/OBOTICARIO-001.jpg"
+                    alt="O Boticário"
+                    loading="lazy"
+                  />
+                </div>
+                <figcaption>
+                  <h3>{"O Boticário"}</h3>
+                  <p>{"Arbo Puro · Desodorante Colônia"}</p>
+                </figcaption>
+              </figure>
+              <figure className="brand reveal">
+                <div className="brand-image">
+                  <img
+                    src="/images/work/AIUR/MOLETON_MELTON/MOLETON-MELTON-001.jpg"
+                    alt="Aiuruocan"
+                    loading="lazy"
+                  />
+                </div>
+                <figcaption>
+                  <h3>{"Aiuruocan"}</h3>
+                  <p>{"White Melton + Colors Blue"}</p>
+                </figcaption>
+              </figure>
+              <figure className="brand reveal">
+                <div className="brand-image">
+                  <img
+                    src="/images/work/OMA-GEAR/OMA-GEAR-001.jpg"
+                    alt="OMA Gear"
+                    loading="lazy"
+                  />
+                </div>
+                <figcaption>
+                  <h3>{"OMA Gear"}</h3>
+                  <p>{"Kit Cozinha Ultra Leve"}</p>
+                </figcaption>
+              </figure>
+              <figure className="brand reveal">
+                <div className="brand-image">
+                  <img
+                    src="/images/work/KNF-CONCEPT/KNF-CONCEPT-001.jpg"
+                    alt="K&F Concept"
+                    loading="lazy"
+                  />
+                </div>
+                <figcaption>
+                  <h3>{"K&F Concept"}</h3>
+                  <p>{"Tripé Omni Series + FH03"}</p>
+                </figcaption>
+              </figure>
+              <figure className="brand reveal">
+                <div className="brand-image">
+                  <img
+                    src="/images/work/BRIGHTIN-STAR/BRIGHTIN-STAR-001.jpg"
+                    alt="Brightin Star"
+                    loading="lazy"
+                  />
+                </div>
+                <figcaption>
+                  <h3>{"Brightin Star"}</h3>
+                  <p>{"Lente 16mm f/2.8"}</p>
+                </figcaption>
+              </figure>
+              <figure className="brand reveal">
+                <div className="brand-image">
+                  <img
+                    src="/images/work/BOTAS-VENTO/BOTA-TITAN/BOTA-TITAN-001.jpg"
+                    alt="Botas Vento"
+                    loading="lazy"
+                  />
+                </div>
+                <figcaption>
+                  <h3>{"Botas Vento"}</h3>
+                  <p>{"Titan + Finisterre"}</p>
+                </figcaption>
+              </figure>
+              <figure className="brand reveal">
+                <div className="brand-image">
+                  <img
+                    src="/images/work/ALTO-ESTILO/ALTO-ESTILO-001.jpg"
+                    alt="Alto Estilo"
+                    loading="lazy"
+                  />
+                </div>
+                <figcaption>
+                  <h3>{"Alto Estilo"}</h3>
+                  <p>{"Mochila Ataque 40+5L"}</p>
+                </figcaption>
+              </figure>
+              <figure className="brand reveal">
+                <div className="brand-image">
+                  <img
+                    src="/images/work/GORRO-VANS/GORRO-VANS-001.jpg"
+                    alt="Gorro Vans"
+                    loading="lazy"
+                  />
+                </div>
+                <figcaption>
+                  <h3>{"Gorro Vans"}</h3>
+                  <p>{"Beanie · Pico Mateo"}</p>
+                </figcaption>
+              </figure>
+            </div>
+          </section>
+          <details className="archive">
+            <summary>
+              <span>
+                {"Publicações em destaque "}
+                <span className="muted">{"/ seleção atual"}</span>
+              </span>
+            </summary>
+            <p className="muted" style={{ fontSize: "12px" }}>
+              {
+                "Seleção preservada do mídia kit atual. Os resultados abaixo são registros anteriores, sem período informado."
+              }
+            </p>
+            <div className="archive-grid" id="publicacoes">
+              <article>
+                <img
+                  src="/images/portfolio/escalada-cabeca-depeixe.jpg"
+                  alt="Escalando Cabeça de Peixe"
+                  loading="lazy"
+                />
+                <h3>{"Escalando Cabeça de Peixe"}</h3>
+                <p>{"11.352 de alcance · 1.540 likes · 112 saves"}</p>
+              </article>
+              <article>
+                <img
+                  src="/images/portfolio/grupo-caminhando-lencois.jpg"
+                  alt="Travessia dos Lençóis, Ep. 1"
+                  loading="lazy"
+                />
+                <h3>{"Travessia dos Lençóis, Ep. 1"}</h3>
+                <p>{"6.857 de alcance · 481 likes · 25 saves"}</p>
+              </article>
+              <article>
+                <img
+                  src="/images/portfolio/queimada-dos-britos-lencois.jpg"
+                  alt="Cabeça de Peixe: plano B"
+                  loading="lazy"
+                />
+                <h3>{"Cabeça de Peixe: plano B"}</h3>
+                <p>{"5.911 de alcance · 447 likes · 20 saves"}</p>
+              </article>
+              <article>
+                <img
+                  src="/images/portfolio/laguna-acampamento-janca-huayhuash.jpg"
+                  alt="Memories of Peru"
+                  loading="lazy"
+                />
+                <h3>{"Memories of Peru"}</h3>
+                <p>{"4.684 de alcance · 412 likes · 28 saves"}</p>
+              </article>
+            </div>
+          </details>
+          <section className="services">
+            <div className="reveal">
+              <span className="kicker muted">{"05 / Vamos criar juntos"}</span>
+              <h2>
+                {"Da ideia"}
+                <br />
+                {"ao campo."}
+              </h2>
+            </div>
+            <div className="reveal">
+              <div className="service">
+                <span className="kicker">{"01"}</span>
+                <div>
+                  <h3>{"Filmes & Reels"}</h3>
+                  <p>
+                    {
+                      "Reels, filmes para YouTube e produção para os canais da marca, com captação em campo, áudio e drone."
+                    }
+                  </p>
+                </div>
+              </div>
+              <div className="service">
+                <span className="kicker">{"02"}</span>
+                <div>
+                  <h3>{"Fotografia & editoriais"}</h3>
+                  <p>
+                    {
+                      "Ensaios em campo, séries de destino e carrosséis fotográficos."
+                    }
+                  </p>
+                </div>
+              </div>
+              <div className="service">
+                <span className="kicker">{"03"}</span>
+                <div>
+                  <h3>{"Expedição & produção"}</h3>
+                  <p>
+                    {
+                      "Logística de campo e produção audiovisual integradas. Expedições nos Lençóis Maranhenses e projetos sob medida."
+                    }
+                  </p>
+                </div>
+              </div>
+              <div className="service">
+                <span className="kicker">{"04"}</span>
+                <div>
+                  <h3>{"Licenciamento & conteúdo"}</h3>
+                  <p>
+                    {
+                      "Banco de imagens, licenciamento de fotografia e vídeo para campanhas e canais da marca. Conteúdo em português e inglês."
+                    }
+                  </p>
+                </div>
+              </div>
+              <p className="muted" style={{ fontSize: "12px" }}>
+                {"Escopo, direitos de uso e valores definidos por proposta."}
+              </p>
+            </div>
+          </section>
+          <footer className="end reveal" id="contato">
+            <span className="kicker muted">{"Tem uma história em mente?"}</span>
+            <h2>
+              {"Vamos transformar cenas"}
+              <br />
+              <span>{"em experiências."}</span>
+            </h2>
+            <a className="email" href="mailto:contato@euhenriq.com">
+              {"contato@euhenriq.com ↗"}
+            </a>
+            <div className="footerline">
+              <span>{"© 2026 Henrique Sesana Pimenta"}</span>
+              <span>{"Fotografia · Filmes · Expedições"}</span>
+              <a href="https://instagram.com/henriq.eu">{"@henriq.eu ↗"}</a>
+              <a href="https://www.youtube.com/@henriq_eu">{"YouTube ↗"}</a>
+              <a href="https://www.tiktok.com/@henriq.eu">{"TikTok ↗"}</a>
+              <a href="https://euhenriq.com/">{"euhenriq.com ↗"}</a>
+            </div>
+          </footer>
+        </div>
+      </main>
     </div>
   );
 }
