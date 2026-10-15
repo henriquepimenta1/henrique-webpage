@@ -395,60 +395,60 @@ export default function MidiakitPage() {
             </div>
             <div className="numbers">
               <div className="number">
-                <strong>{"17.038"}</strong>
+                <strong>{"17.867"}</strong>
                 <span>
                   {"seguidores "}
                   <sup>{"1"}</sup>
                 </span>
               </div>
               <div className="number">
-                <strong>{"475,2 mil"}</strong>
+                <strong>{"1,66 mi"}</strong>
                 <span>
                   {"visualizações em 30 dias "}
                   <sup>{"1"}</sup>
                 </span>
               </div>
               <div className="number">
-                <strong>{"5,16%"}</strong>
+                <strong>{"6,8%"}</strong>
                 <span>
-                  {"engajamento por seguidores "}
-                  <sup>{"2"}</sup>
+                  {"engajamento médio por Reel "}
+                  <sup>{"1"}</sup>
                 </span>
               </div>
               <div className="number">
-                <strong>{"15.876"}</strong>
+                <strong>{"10,8 mil"}</strong>
                 <span>
-                  {"reproduções médias de Reels "}
-                  <sup>{"2"}</sup>
+                  {"visualizações médias por Reel "}
+                  <sup>{"1"}</sup>
                 </span>
               </div>
             </div>
             <div className="audience-highlights">
               <p>
-                <strong>{"47.162"}</strong>
+                <strong>{"150,2 mil"}</strong>
                 {" interações em 30 dias "}
                 <sup>{"1"}</sup>
               </p>
               <p>
-                <strong>{"2.983"}</strong>
-                {" salvamentos em 30 dias "}
+                <strong>{"12,9 mil"}</strong>
+                {" salvamentos e 11,7 mil compartilhamentos em 30 dias "}
                 <sup>{"1"}</sup>
               </p>
               <p>
-                <strong>{"93,9%"}</strong>
-                {" índice de credibilidade · classificação alta "}
-                <sup>{"2"}</sup>
+                <strong>{"87,5%"}</strong>
+                {" das visualizações vêm de quem ainda não segue o perfil "}
+                <sup>{"1"}</sup>
               </p>
               <p>
-                <strong>{"+36,73%"}</strong>
-                {" crescimento em seis meses no relatório "}
-                <sup>{"2"}</sup>
+                <strong>{"+2.239"}</strong>
+                {" novos seguidores em 30 dias "}
+                <sup>{"1"}</sup>
               </p>
             </div>
             <div className="audience-grid">
               <div>
                 <h3>{"Uma audiência adulta"}</h3>
-                <p className="audience-key">{"73,8%"}</p>
+                <p className="audience-key">{"74%"}</p>
                 <p>
                   {
                     "dos seguidores com idade informada têm entre 25 e 44 anos. "
@@ -456,34 +456,35 @@ export default function MidiakitPage() {
                   <sup>{"1"}</sup>
                 </p>
                 <p>
-                  {"25–34: 49,8% · 35–44: 24,0%"}
+                  {"25–34: 50% · 35–44: 24%"}
                   <br />
-                  {"18–24: 14,4% · demais faixas: 11,8%"}
+                  {"18–24: 14% · demais faixas: 12%"}
                 </p>
               </div>
               <div>
                 <h3>{"Presença no Brasil"}</h3>
-                <p className="audience-key">{"15.160"}</p>
+                <p className="audience-key">{"91,4%"}</p>
                 <p>
-                  {"seguidores no Brasil. "}
+                  {"dos seguidores estão no Brasil. "}
                   <sup>{"1"}</sup>
                 </p>
                 <p>
-                  {"Principais cidades: São Paulo, Rio de Janeiro e Curitiba."}
+                  {
+                    "Principais cidades: São Paulo (11%), Rio de Janeiro e Curitiba."
+                  }
                 </p>
                 <p>
-                  {"Entre quem curtiu, 93,28% estão no Brasil. "}
-                  <sup>{"2"}</sup>
+                  {"Fora do Brasil: Portugal (1,7%) e Estados Unidos (0,9%)."}
                 </p>
               </div>
               <div>
                 <h3>{"Perfil dos seguidores"}</h3>
                 <p>
-                  {"Masculino: 55,1%"}
+                  {"Masculino: 55%"}
                   <br />
-                  {"Feminino: 32,5%"}
+                  {"Feminino: 33%"}
                   <br />
-                  {"Não informado: 12,4% "}
+                  {"Não informado: 12% "}
                   <sup>{"1"}</sup>
                 </p>
                 <p>
@@ -534,30 +535,24 @@ export default function MidiakitPage() {
               <p>
                 <sup>{"1"}</sup>
                 {
-                  " Instagram via Windsor · 02/09–01/10/2026; seguidores consultados em 02/10. Demografia: base de 16.579 perfis em 01/10."
-                }
-              </p>
-              <p>
-                <sup>{"2"}</sup>
-                {
-                  " Análise externa enviada por profissional de recrutamento de influenciadores. Credibilidade referente a quem curtiu. Fonte nominal, período de coleta e amostra não informados; indicadores apresentados conforme o relatório."
+                  " Instagram via Windsor · últimos 30 dias, consultados em 15/10/2026 (36 publicações). Demografia: base de 16.579 perfis."
                 }
               </p>
               <details className="metric-method">
                 <summary>{"Sobre os indicadores"}</summary>
                 <p>
                   {
-                    "As fontes complementam a apresentação e usam recortes próprios. A taxa de 5,16% é calculada por seguidores no relatório externo. Na amostra de 30 conteúdos do Windsor, a relação entre a soma das interações e a soma dos alcances é de 14,4%, com alcance médio de 7.681 por publicação."
+                    "O engajamento por Reel soma curtidas, comentários, salvamentos e compartilhamentos: em média, 1.216 interações por Reel, divididas pelos 17.867 seguidores. No período, 114,5 mil contas interagiram com o perfil."
                   }
                 </p>
                 <p>
                   {
-                    "Nessa amostra, as médias acumuladas são 10.779 visualizações em 23 Reels e 12.292 em sete carrosséis. A média de 15.876 reproduções em destaque pertence à análise externa. Visualizações podem incluir repetições; alcance de publicações diferentes pode contar a mesma pessoa."
+                    "Nos 32 Reels do período, a média é de 10,8 mil visualizações e a mediana, de 3,6 mil: a média é puxada pelos Reels que viralizaram. Os quatro carrosséis tiveram em média 14,4 mil visualizações, 5,6 mil de alcance e cerca de mil interações (5,6%). Visualizações podem incluir repetições."
                   }
                 </p>
                 <p>
                   {
-                    "O índice de credibilidade é uma classificação da plataforma externa. A taxa de crescimento corresponde à janela de seis meses apresentada nesse relatório."
+                    "Os novos seguidores são o valor bruto, sem descontar quem deixou de seguir. A demografia considera só as contas que a Meta consegue identificar: as porcentagens valem para o público todo, mas a base fica abaixo do total de seguidores."
                   }
                 </p>
               </details>
