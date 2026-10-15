@@ -10,7 +10,7 @@ import {
   FOTOS_GALERIA,
   FORM_INTERESSE,
 } from '@/content/lencois'
-import LencoisMap from '@/components/lencois-map'
+import RouteAnimation from '@/components/route-animation'
 const DIA_COLORS = ['', 'var(--rust)', '#6FA3D8', '#4A5838', 'var(--rust-soft)']
 
 
@@ -195,8 +195,6 @@ export default function LencoisPage() {
           .lenc-cancel-row { flex-direction: column !important; gap: 4px !important; align-items: flex-start !important; }
           .lenc-cancel-row > div:last-child { text-align: left !important; }
 
-          /* Mapa wrapper — reenquadra container, sem mexer no <LencoisMap /> */
-          .lenc-map-wrap { aspect-ratio: 4/5 !important; }
         }
 
         /* ── Mobile pequeno (≤360px) ── */
@@ -318,10 +316,15 @@ export default function LencoisPage() {
               <span style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, color: 'var(--rust-soft)' }}>4 dias, 4 cores.</span>
             </h2>
           </div>
-          {/* Wrapper reenquadra o mapa sem alterá-lo */}
-          <div className="lenc-map-wrap" style={{ width: '100%' }}>
-            <LencoisMap />
-          </div>
+          <RouteAnimation
+            dayColors={DIA_COLORS.slice(1)}
+            ctaHref={FORM_INTERESSE}
+            ctaLabel="Estou interessado →"
+            posterWide="/images/lencois/rota-poster-wide.jpg"
+            posterTall="/images/lencois/rota-poster-tall.jpg"
+            title="Travessia dos Lençóis"
+            subtitle="Atins → Santo Amaro"
+          />
         </div>
       </section>
 

@@ -1,0 +1,30 @@
+[
+  {
+    "n": 1,
+    "from": "Barreirinhas",
+    "to": "Baixa Grande",
+    "km": 9,
+    "kmAcc": 9
+  },
+  {
+    "n": 2,
+    "from": "Baixa Grande",
+    "to": "Queimada dos Britos",
+    "km": 10,
+    "kmAcc": 19
+  },
+  {
+    "n": 3,
+    "from": "Queimada dos Britos",
+    "to": "Betânia",
+    "km": 18,
+    "kmAcc": 37
+  },
+  {
+    "n": 4,
+    "from": "Betânia",
+    "to": "Santo Amaro",
+    "km": 15,
+    "kmAcc": 52
+  }
+]
