@@ -677,51 +677,67 @@ export default function MidiakitPage() {
           <details className="archive">
             <summary>
               <span>
-                {"Publicações em destaque "}
+                {"Reels em destaque "}
                 <span className="muted">{"/ seleção atual"}</span>
               </span>
             </summary>
             <p className="muted" style={{ fontSize: "12px" }}>
-              {
-                "Seleção preservada do mídia kit atual. Os resultados abaixo são registros anteriores, sem período informado."
-              }
+              {"Curtidas e comentários públicos, consultados em 15/10/2026."}
             </p>
             <div className="archive-grid" id="publicacoes">
               <article>
-                <img
-                  src="/images/portfolio/escalada-cabeca-depeixe.jpg"
-                  alt="Escalando Cabeça de Peixe"
-                  loading="lazy"
-                />
-                <h3>{"Escalando Cabeça de Peixe"}</h3>
-                <p>{"11.352 de alcance · 1.540 likes · 112 saves"}</p>
+                <a href="https://www.instagram.com/reel/DeADZizhfHB/">
+                  <img
+                    src="/images/quadros/A%20CASA-LENCOIS.jpg"
+                    alt="Casa de palha entre coqueiros nos Lençóis Maranhenses"
+                    loading="lazy"
+                  />
+                  <h3>{"Lençóis Maranhenses ↗"}</h3>
+                </a>
+                <p>{"Eles falam da beleza. Eu fui ver o paraíso."}</p>
+                <p>{"3.294 curtidas · 163 comentários"}</p>
               </article>
               <article>
-                <img
-                  src="/images/portfolio/grupo-caminhando-lencois.jpg"
-                  alt="Travessia dos Lençóis, Ep. 1"
-                  loading="lazy"
-                />
-                <h3>{"Travessia dos Lençóis, Ep. 1"}</h3>
-                <p>{"6.857 de alcance · 481 likes · 25 saves"}</p>
+                <a href="https://www.instagram.com/reel/DY4uauDBcj-/">
+                  <img
+                    src="/media/midiakit/reel-atacama.jpg"
+                    alt="Montanhas refletidas em uma laguna do Atacama"
+                    loading="lazy"
+                  />
+                  <h3>{"Atacama, Chile ↗"}</h3>
+                </a>
+                <p>{"Solo de planeta alienígena. E mesmo assim, fértil."}</p>
+                <p>{"786 curtidas · 124 comentários"}</p>
               </article>
               <article>
-                <img
-                  src="/images/portfolio/queimada-dos-britos-lencois.jpg"
-                  alt="Cabeça de Peixe: plano B"
-                  loading="lazy"
-                />
-                <h3>{"Cabeça de Peixe: plano B"}</h3>
-                <p>{"5.911 de alcance · 447 likes · 20 saves"}</p>
+                <a href="https://www.instagram.com/reel/DVjv2OIAWjh/">
+                  <img
+                    src="/images/portfolio/escalada-cabeca-depeixe.jpg"
+                    alt="Escalador de jaqueta vermelha no Cabeça de Peixe"
+                    loading="lazy"
+                  />
+                  <h3>{"Escalando o Cabeça de Peixe ↗"}</h3>
+                </a>
+                <p>
+                  {
+                    "Seis pessoas, um plano que mudou e uma montanha que não esperou."
+                  }
+                </p>
+                <p>{"1.800 curtidas · 54 comentários"}</p>
               </article>
               <article>
-                <img
-                  src="/images/portfolio/laguna-acampamento-janca-huayhuash.jpg"
-                  alt="Memories of Peru"
-                  loading="lazy"
-                />
-                <h3>{"Memories of Peru"}</h3>
-                <p>{"4.684 de alcance · 412 likes · 28 saves"}</p>
+                <a href="https://www.instagram.com/reel/Dec4xcLhz6z/">
+                  <img
+                    src="/media/midiakit/reel-escalavrado.jpg"
+                    alt="Pico do Escalavrado acima de um mar de nuvens"
+                    loading="lazy"
+                  />
+                  <h3>{"Escalavrado ↗"}</h3>
+                </a>
+                <p>
+                  {"Um dos lugares mais icônicos do Brasil, acima das nuvens."}
+                </p>
+                <p>{"819 curtidas · 75 comentários"}</p>
               </article>
             </div>
           </details>
