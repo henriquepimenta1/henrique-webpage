@@ -320,6 +320,7 @@ export default function LencoisPage() {
             dayColors={DIA_COLORS.slice(1)}
             ctaHref={FORM_INTERESSE}
             ctaLabel="Estou interessado →"
+            posterUltra="/images/lencois/rota-poster-ultra.jpg"
             posterWide="/images/lencois/rota-poster-wide.jpg"
             posterTall="/images/lencois/rota-poster-tall.jpg"
             title="Travessia dos Lençóis"

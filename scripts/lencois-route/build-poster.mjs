@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Gera os pôsteres estáticos do roteiro (o que aparece antes do clique):
-//   public/images/lencois/rota-poster-wide.jpg  (16:9)
+//   public/images/lencois/rota-poster-ultra.jpg (21:9, desktop)
+//   public/images/lencois/rota-poster-wide.jpg  (16:9, tablet)
 //   public/images/lencois/rota-poster-tall.jpg  (4:5, oeste para cima)
 //
 // Com MAPBOX_TOKEN no ambiente, o fundo é o satélite da Mapbox (Static
@@ -24,6 +25,7 @@ const HALO = "rgba(240,233,216,.8)";
 const SAND = "#DCCFB0";
 
 const POSTERS = [
+  { file: "rota-poster-ultra.jpg", w: 2100, h: 900, westUp: false },
   { file: "rota-poster-wide.jpg", w: 1600, h: 900, westUp: false },
   { file: "rota-poster-tall.jpg", w: 1080, h: 1350, westUp: true },
 ];

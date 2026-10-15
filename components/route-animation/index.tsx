@@ -27,6 +27,7 @@ export interface RouteAnimationProps {
   dayColors: readonly string[];
   ctaHref: string;
   ctaLabel: string;
+  posterUltra: string;
   posterWide: string;
   posterTall: string;
   title: string;
@@ -34,7 +35,7 @@ export interface RouteAnimationProps {
 }
 
 export default function RouteAnimation(props: RouteAnimationProps) {
-  const { dayColors, ctaHref, ctaLabel, posterWide, posterTall, title, subtitle } = props;
+  const { dayColors, ctaHref, ctaLabel, posterUltra, posterWide, posterTall, title, subtitle } = props;
   const reducedMotion = useSyncExternalStore(
     subscribeReduced,
     () => window.matchMedia(REDUCED).matches,
@@ -67,9 +68,10 @@ export default function RouteAnimation(props: RouteAnimationProps) {
           <>
             <picture>
               <source media="(max-width: 640px)" srcSet={posterTall} />
+              <source media="(max-width: 1023px)" srcSet={posterWide} />
               <img
                 className={styles.poster}
-                src={posterWide}
+                src={posterUltra}
                 alt="Mapa da travessia dos Lençóis Maranhenses, de Atins a Santo Amaro, com os três pernoites marcados"
                 loading="lazy"
                 decoding="async"

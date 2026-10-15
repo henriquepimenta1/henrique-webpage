@@ -5,14 +5,21 @@
   width: 100%;
 }
 
-/* Proporção reservada desde o primeiro paint: sem salto de layout. */
+/* Proporção reservada desde o primeiro paint: sem salto de layout.
+   Ultra wide (21:9) no desktop, 16:9 no tablet, 4:5 no celular. */
 .frame {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 21 / 9;
   overflow: hidden;
   background: #1b2433;
   border: 1px solid var(--line-dark);
+}
+
+@media (max-width: 1023px) {
+  .frame {
+    aspect-ratio: 16 / 9;
+  }
 }
 
 @media (max-width: 640px) {
