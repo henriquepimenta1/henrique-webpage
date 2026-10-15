@@ -688,8 +688,8 @@ export default function MidiakitPage() {
               <article>
                 <a href="https://www.instagram.com/reel/DeADZizhfHB/">
                   <img
-                    src="/images/quadros/A%20CASA-LENCOIS.jpg"
-                    alt="Casa de palha entre coqueiros nos Lençóis Maranhenses"
+                    src="/media/midiakit/reel-lencois.jpg"
+                    alt="Vista aérea das dunas e lagoas dos Lençóis Maranhenses ao pôr do sol"
                     loading="lazy"
                   />
                   <h3>{"Lençóis Maranhenses ↗"}</h3>
@@ -701,7 +701,7 @@ export default function MidiakitPage() {
                 <a href="https://www.instagram.com/reel/DY4uauDBcj-/">
                   <img
                     src="/media/midiakit/reel-atacama.jpg"
-                    alt="Montanhas refletidas em uma laguna do Atacama"
+                    alt="Vulcão Licancabur sobre o altiplano do Atacama"
                     loading="lazy"
                   />
                   <h3>{"Atacama, Chile ↗"}</h3>
@@ -712,8 +712,8 @@ export default function MidiakitPage() {
               <article>
                 <a href="https://www.instagram.com/reel/DVjv2OIAWjh/">
                   <img
-                    src="/images/portfolio/escalada-cabeca-depeixe.jpg"
-                    alt="Escalador de jaqueta vermelha no Cabeça de Peixe"
+                    src="/media/midiakit/reel-cabeca-de-peixe.jpg"
+                    alt="Henrique de gorro e roupa de escalada, com o céu nublado ao fundo"
                     loading="lazy"
                   />
                   <h3>{"Escalando o Cabeça de Peixe ↗"}</h3>
