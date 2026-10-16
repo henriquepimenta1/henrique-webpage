@@ -14,7 +14,7 @@ export const metadata = {
 // esta página muda junto. Uma política que descreve outro produto é pior do
 // que nenhuma.
 
-const ATUALIZADA_EM = "24 de agosto de 2026";
+const ATUALIZADA_EM = "16 de outubro de 2026";
 const CONTATO = "contato@euhenriq.com";
 
 interface Secao {
@@ -44,9 +44,21 @@ const SECOES: Secao[] = [
       <>
         <p>
           <strong>Navegando pelas páginas públicas</strong> — portfolio, expedições, presets,
-          a apresentação do Rabiscando —, nada é coletado sobre você. Não há analytics, não há
-          pixel de rede social, não há cookie de publicidade. Nenhum banner de cookies aparece
-          porque não há o que consentir.
+          a apresentação do Rabiscando —, os servidores registram dados técnicos de acesso.
+          Na página dos LUTs, o Pixel da Meta só carrega após você aceitar publicidade.
+          Ele envia eventos de visita e visualização do produto, dados técnicos do navegador,
+          endereço IP e identificadores de publicidade à Meta para medir e melhorar anúncios.
+          Você pode recusar sem impedir a compra e rever sua escolha em
+          “Preferências de publicidade” nessa página. A preferência fica salva no navegador
+          até você alterá-la ou limpar os dados do site.
+        </p>
+        <p>
+          <strong>Ao comprar produtos digitais</strong>, o pagamento e a entrega são
+          processados na Cakto. O checkout tem suas próprias configurações de privacidade
+          e pode enviar à Meta eventos de início de checkout e compra confirmada.
+          Parâmetros da campanha podem acompanhar o link para identificar a origem da venda;
+          o identificador de clique da Meta só é encaminhado por esta página após sua aceitação.
+          O site não recebe números de cartão.
         </p>
         <p>
           <strong>Ao criar conta no Rabiscando</strong>, são coletados nome, e-mail e foto de
@@ -75,10 +87,21 @@ const SECOES: Secao[] = [
     corpo: (
       <>
         <p>
-          Nenhum dado é vendido, alugado ou cedido para publicidade. Três empresas processam
-          dados porque operam partes do serviço:
+          Nenhum dado é vendido ou alugado. Estes serviços processam dados para operar
+          o site, os pagamentos e, quando você aceita na página dos LUTs, a medição de anúncios:
         </p>
         <ul>
+          <li>
+            <strong>Meta</strong> — recebe os eventos publicitários da página dos LUTs após
+            sua aceitação. A revogação interrompe os próximos envios do site, mas não apaga
+            automaticamente eventos já enviados. Consulte a{" "}
+            <a href="https://www.facebook.com/privacy/policy/">Política de Privacidade da Meta</a>.
+          </li>
+          <li>
+            <strong>Cakto</strong> — processa as compras de presets e LUTs, o checkout e a
+            confirmação de pagamento. Consulte a{" "}
+            <a href="https://cakto.com.br/">Cakto</a> para suas políticas e atendimento.
+          </li>
           <li>
             <strong>Clerk</strong> — guarda as contas e cuida do login.
           </li>

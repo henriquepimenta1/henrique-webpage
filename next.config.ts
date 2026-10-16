@@ -28,6 +28,8 @@ const cabecalhos = [
 ];
 
 const nextConfig: NextConfig = {
+  outputFileTracingRoot: __dirname,
+  turbopack: { root: __dirname },
   images: {
     // Só WebP. O AVIF comprime um pouco melhor, mas cada formato extra é
     // outra transformação cobrada e outro tempo de encode no primeiro acesso
