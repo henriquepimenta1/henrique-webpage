@@ -8,6 +8,7 @@
 import { useState, useRef, useEffect } from "react";
 import DarkTopNav from "@/components/dark-nav";
 import DarkFooter from "@/components/dark-footer";
+import { LutTracking, LutCheckoutLink } from "@/components/lut-tracking";
 
 // vídeo por LUT — slug derivado do nome bate com /videos/luts/<slug>.mp4
 const slugify = (s: string) =>
@@ -21,7 +22,6 @@ const LUT_PRICE = "37,90";
 const LUT_PARCEL = "4,93";
 const LUT_N = "9";
 const LUT_FROM = "99";
-const LUT_CTA = "https://pay.cakto.com.br/6tNxcGs";
 
 // ── As 6 famílias ───────────────────────────────────────────
 interface Fam {
@@ -428,13 +428,12 @@ function LutSticky() {
           <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "rgba(232,223,201,.5)" }}>{LUT_N}× R$ {LUT_PARCEL}</span>
         </div>
       </div>
-      <a
-        href={LUT_CTA}
+      <LutCheckoutLink
         onClick={() => vibe(15)}
         style={{ padding: "13px 18px", background: "var(--rust-soft)", color: "#0D0C0B", fontFamily: "var(--font-ui)", fontSize: 12, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", textDecoration: "none", flexShrink: 0, whiteSpace: "nowrap" }}
       >
         Comprar →
-      </a>
+      </LutCheckoutLink>
     </div>
   );
 }
@@ -539,7 +538,7 @@ function LutLightbox({ index, onClose, onNav }: { index: number; onClose: () => 
 // ────────────────────────────────────────────────────────────
 function LutBuy({ block }: { block?: boolean }) {
   return (
-    <a href={LUT_CTA} onClick={() => vibe(15)} className="lut-buy" style={block ? { width: "100%" } : undefined}>
+    <LutCheckoutLink onClick={() => vibe(15)} className="lut-buy" style={block ? { width: "100%" } : undefined}>
       <span className="lut-buy-main">
         <span style={{ whiteSpace: "nowrap" }}>Comprar LUT Pack</span>
         <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700 }}>R$ {LUT_PRICE}</span>
@@ -548,7 +547,7 @@ function LutBuy({ block }: { block?: boolean }) {
       <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, letterSpacing: ".1em", color: "rgba(232,223,201,.5)", textTransform: "uppercase", textAlign: "center" }}>
         ou {LUT_N}× R$ {LUT_PARCEL} · download imediato
       </span>
-    </a>
+    </LutCheckoutLink>
   );
 }
 
@@ -611,6 +610,7 @@ export default function LutsPage() {
 
   return (
     <div className="theme-fdl lut-lp">
+      <LutTracking />
       <style>{LUT_CSS}</style>
 
       <DarkTopNav active="Presets" />
