@@ -4,7 +4,8 @@ import Script from "next/script";
 import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type ComponentProps } from "react";
 import { LUT_PIXEL_ID, lutCheckoutUrl } from "@/lib/lut-tracking";
-import { readMarketingConsent as readConsent, subscribeMarketingConsent as subscribe, chooseMarketingConsent as choose, type MetaWindow } from "@/lib/marketing-consent";
+import { readMarketingConsent as readConsent, subscribeMarketingConsent as subscribe, chooseMarketingConsent as choose } from "@/lib/marketing-consent";
+import { scheduleLutView } from "@/lib/meta-lut-events";
 
 function useConsent() {
   return useSyncExternalStore(subscribe, readConsent, () => null);
@@ -28,18 +29,7 @@ export function LutTracking() {
   const sent = useRef(false);
   const open = consent === null || editing;
   return <>
-    {consent === "accepted" && <Script id="henriq-luts-meta" strategy="afterInteractive" onReady={() => {
-      if (sent.current || readConsent() !== "accepted") return;
-      sent.current = true;
-      const fbq = (window as MetaWindow).fbq;
-      fbq?.("consent", "grant");
-      fbq?.("trackSingle", LUT_PIXEL_ID, "PageView");
-      fbq?.("trackSingle", LUT_PIXEL_ID, "ViewContent", {
-        content_ids: ["01c60a70-4520-4ea9-83c9-e6cccdca9544"],
-        content_name: "Outdoor Cinematic - Pack 3D LUTs", content_type: "product",
-        value: 37.9, currency: "BRL",
-      });
-    }}>{bootstrap}</Script>}
+    {consent === "accepted" && <Script id="henriq-luts-meta" strategy="afterInteractive" onReady={() => scheduleLutView(sent)}>{bootstrap}</Script>}
     {open ? <section aria-label="Preferências de publicidade" style={{position:"fixed",bottom:88,left:16,right:16,maxWidth:440,zIndex:1000,padding:20,background:"#191816",color:"#e8dfc9",border:"1px solid #625646",borderRadius:12,fontFamily:"var(--font-ui)",fontSize:14,boxShadow:"0 8px 32px #0008"}}>
       <p style={{margin:"0 0 12px"}}>Podemos usar o Pixel da Meta para medir visitas aos LUTs e melhorar nossos anúncios? Você pode recusar e comprar normalmente. <Link href="/privacidade" style={{textDecoration:"underline"}}>Privacidade</Link></p>
       <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
